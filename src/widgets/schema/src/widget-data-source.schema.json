@@ -1,0 +1,16 @@
+// Not finished yet, TBD and use $ref afterwards.
+{
+  "$id": "https://api.videoindexer.ai/schema/widgets.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "schemaVersion": "1.0",
+  "properties": {
+    "templateUrl": {
+       "type": "string",
+       "description": "Template for data source endpoint",
+    },
+    "httpHeaders": {
+      "type": "array",
+      "description": "List of headers and values to be sent to data source endpoint"
+    }
+  }
+}

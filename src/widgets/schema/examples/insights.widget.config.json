@@ -1,0 +1,30 @@
+{
+  "$schema": "https://api.videoindexer.ai/schema/widgets/insights",
+  "dataSources": {
+    "videoIndex": {
+      "dataSchemaVersion": "1.0",
+      "initLanguage": "en-US",
+      "templateUrl": "https://contoso.auzrewebsites.net/indexes/${accountId}/${videoId}/${language}/?accessToken=${accessToken}",
+      "httpHeaders": {
+        "authorization": "Bearer 123"
+      },
+      "translations": ["en-US", "de-DE"]
+    },
+    "peopleSprite": {
+      "templateUri": "https://contoso.auzrewebsites.net/indexes/${accountId}/$videoId/sprites/people/${page}/?accessToken=${accessToken}",
+      "pageSize": 50
+    },
+    "keyframesSprite": {
+      "templateUrl": "https://contoso.auzrewebsites.net/indexes/${accountId}/$videoId/sprites/kf/${page}/?accessToken=${accessToken}",
+      "pageSize": 50
+    },
+    "vtt": {
+      "templateUrl": "https://contoso.auzrewebsites.net/indexes/${accountId}/$videoId/download/vtt/?accessToken=${accessToken}",
+    }
+  },
+  "downloadOptions": ["vtt"],
+  "preset": "Storyboard",
+  "widgets": ["people", "emotions", "keywords"],
+  "tab": "timeline",
+  "locale": "de-DE"
+}

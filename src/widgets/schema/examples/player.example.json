@@ -1,0 +1,36 @@
+{
+    "$id":"https://api.videoindexer.ai/schema/widgets",
+    "$schema": "https://api.videoindexer.ai/schema/widgets",
+    "schemaVersion": "1.0",
+    "properties": {
+        "widgets": {
+            "player": {
+                "widgetDataSources": {
+                    "videoStream": {
+                        "schemaVersion": "1.0", 
+                        "uri": "https://www.contoso.com/vi/asw34eds/streaming",
+                        "httpHeaders": {
+                            "Authorization": "Bearer JWT"
+                        },
+                        "properties": {
+                        }        
+                    },
+                    "captions": {
+                        "uri": "..."
+                    }
+                },   
+                "properties": { 
+                    "time": 123, 
+                    "captions": "de-DE",
+                    "showCaptions": false, 
+                    "type": "video",
+                    "autoplay": false,
+                    "language": "en-EN",
+                    "captionsDataSource": {
+                        "uri": "..."
+                    }
+                }
+            }
+        }
+    }
+}

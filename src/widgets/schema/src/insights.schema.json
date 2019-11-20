@@ -1,0 +1,108 @@
+{
+  "$id": "https://api.videoindexer.ai/schema/widgets/insights",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "schemaVersion": "0.1",
+  "title": "Video Indexer Insights Widgets Definition",
+  "description": "Video Indexer Insights Widgets Config Schema",
+  "type": "object",
+  "properties": {
+    "dataSources": {
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "description": "Extend this with other data sources or other stuff"
+        },
+        "videoIndex": {
+          "type": "object",
+          "required": ["templateUrl"],
+          "properties": {
+            "properties": {
+              "type" : "object"
+            },
+            "dataSchemaVersion": {
+              "description": "The versions of the schema of data needed by the widget",
+              "type": "string"
+            },
+            "initLanguage": {
+              "description": "The chosen language that the widget will have translation with, default is the source language",
+              "type": "string"
+            },
+            "templateUrl": {
+              "description": "Url template of the index location.",
+              "type": "string"
+            },
+            "httpHeaders": {
+              "type": "object"
+            },
+            "translations": {
+              "description": "List of wanted translations. example: ['en-us','de-de']",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "peopleSprite": {
+          "type": "object",
+          "properties": {
+            "templateUrl": {
+              "type": "string"
+            },
+            "httpHeaders": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "keyframesSprite": {
+          "type": "object",
+          "properties": {
+            "templateUrl": {
+              "type": "string"
+            },
+            "httpHeaders": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "pageSize": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "locale": {
+      "type": "string",
+      "description": "The locale of the widget to render with"
+    },
+    "tab": {
+      "type": "string",
+      "description": "The tab to be selected at first render"
+    },
+    "preset": {
+      "type": "string",
+      "description": "The preset to be selected at first render. default to all"
+    },
+    "widgets": {
+      "description": "Control what insights to render. default is all",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "downloadOptions": {
+      "description": "Control what download options to render. default is all",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

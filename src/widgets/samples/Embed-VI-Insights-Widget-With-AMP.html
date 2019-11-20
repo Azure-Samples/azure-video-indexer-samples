@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Embed VI Insights Widget with Azure Media Player</title>
+    <script src="https://amp.azure.net/libs/amp/latest/azuremediaplayer.min.js"></script>
+    <script src="https://breakdown.blob.core.windows.net/public/amp-vb.plugin.js"></script>
+    <link rel="stylesheet" href="https://amp.azure.net/libs/amp/latest/skins/amp-default/azuremediaplayer.min.css">
+</head>
+  <body>
+    <div class="inline">
+      <video
+        id="vid1"
+        class="azuremediaplayer amp-default-skin"
+        autoplay
+        controls
+        width="640"
+        height="400"
+        poster="poster.jpg"
+      >
+        <p class="amp-no-js">
+          To view this video please enable JavaScript, and consider upgrading to
+          a web browser that supports HTML5 video
+        </p>
+      </video>
+    </div>
+    <div class="inline">
+      <iframe
+        width="680"
+        height="780"
+        src="https://www.videoindexer.ai/embed/insights/00000000-0000-0000-0000-000000000000/4dc0aa32bf/"
+        frameborder=" 0"
+        allowfullscreen="true"
+      ></iframe>
+    </div>
+
+    <script>
+
+      (function() {
+        // Init Source
+        function initSource() {
+          let tracks = [
+            {
+              kind: "captions",
+              // Here is how to load vtt from VI, you can replace it with your vtt url.
+              src: this.getSubtitlesUrl("en-US"),
+              label: "English"
+            }
+          ];
+
+          // Paste the streaming endpoint and the viewToken. you can find them at GetVideoStreaming response
+          // (https://api-portal.videoindexer.ai/docs/services/Operations/operations/Get-Video-Streaming-URL)
+          myPlayer.src(
+            [
+              {
+                // get the src (streaming endpoint) from GetVideoIndex.videos[0].publishedUrl
+                src:
+                  "https://rodmandev.streaming.mediaservices.windows.net/b36bbdad-c001-4f87-84ac-88a67359c13f/What%20is%20Office.ism/manifest(encryption=cbc,format=mpd-time-csf)",
+                type: "video/mp4",
+                protectionInfo: [
+                  {
+                    type: "AES",
+                    // Get the authenticationToken from GetVideoIndex.videos[0].viewToken
+                    authenticationToken:
+                      "Bearer=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cm46bWljcm9zb2Z0OmF6dXJlOm1lZGlhc2VydmljZXM6Y29udGVudGtleWlkZW50aWZpZXIiOiJmYTQ1ZjdlZC02YTNjLTQyMTMtYmQwYi1iMDg3NjA5NWVjZGIiLCJpc3MiOiJodHRwczovL2JyZWFrZG93bi5tZSIsImF1ZCI6IkJyZWFrZG93blVzZXIiLCJleHAiOjE1NzY4NDExODcsIm5iZiI6MTU3NDI0OTEyN30.RA9ptDoQO6NM8_psB2EnAXzWRYcF5zloHPYmtKqskt4"
+                  }
+                ]
+              }
+            ],
+            []
+          );
+        }
+
+        // Init your AMP instance
+        let myPlayer = amp(
+          "vid1",
+          {
+            /* Options */
+            nativeControlsForTouch: false,
+            autoplay: true,
+            controls: true,
+            width: "640",
+            height: "400",
+            poster: "",
+            plugins: {
+              // Declare the vi plugin
+              videobreakedown: {}
+            }
+          },
+          function() {
+            // Init the plugin
+            this.videobreakdown({
+              videoId: "9a296c6ec3",
+              accountId: "00000000-0000-0000-0000-000000000000",
+              syncTranscript: true,
+              syncLanguage: true,
+              accessToken: "" // pass accessToken if you embed a private video only
+              // (https://api-portal.videoindexer.ai/docs/services/authorization/operations/Get-Video-Access-Token?)
+            });
+
+            // Set the source dynamically
+            initSource.call(this);
+          }
+        );
+
+        myPlayer.addEventListener("pause", function(event) {
+          console.log("paused");
+        });
+      })();
+    </script>
+  </body>
+</html>

@@ -28,12 +28,17 @@ Contains samples code for Video Indexer API and Widgets
 
 | File/folder       | Description                                |
 |-------------------|--------------------------------------------|
-| `src`             | Sample source code.                        |
+| `src`             | Samples source code.                       |
 | `.gitignore`      | Define what to ignore at commit time.      |
 | `CHANGELOG.md`    | List of changes to the sample.             |
 | `CONTRIBUTING.md` | Guidelines for contributing to the sample. |
 | `README.md`       | This README file.                          |
 | `LICENSE`         | The license for the sample.                |
+
+There are several samples in the repository.
+
+* [/src/widgets](/src/widgets)
+* [/src/VideoDescriptionSample](/src/VideoDescriptionSample/README.md) This sample application displays an automatic description of Video Indexer thumbnails. The web app grabs the thumbnails from a video stored in Microsoft Video Indexer, calls Computer Vision to get a description and translates it to another language.
 
 ## Prerequisites
 
@@ -47,7 +52,7 @@ Outline the required components and tools that a user might need to have on thei
 Explain how to prepare the sample once the user clones or downloads the repository. The section should outline every step necessary to install dependencies and set up any settings (for example, API keys and output folders).
 -->
 
-## Runnning the sample
+## Running the sample
 
 <!-- Outline step-by-step instructions to execute the sample and see its output. Include steps for executing the sample from the IDE, starting specific services in the Azure portal or anything related to the overall launch of the code. -->
 

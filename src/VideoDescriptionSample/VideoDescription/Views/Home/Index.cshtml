@@ -64,6 +64,14 @@
             <div class="row" style="padding-bottom: 16px">
                 Video Id : <input type="text" name="VideoId" id="VideoId" value="@ViewBag.VideoId" /><br />
             </div>
+            @if (@ViewBag.ErrorMsg != null && @ViewBag.ErrorMsg != "")
+            {
+                <div class="row" style="padding-bottom: 16px">
+                    <div><span style="color:red">Error Message</span> : <span id="ErrorMsg">@ViewBag.ErrorMsg</span><br /></div>
+                </div>
+            }
+
+
             @using (Html.BeginForm("Index", "Home", FormMethod.Get))
             {
                 @*<input type="submit" class="btn btn-primary" value="Process scenes thumbnails" onclick="StartProcess()" />*@
@@ -94,7 +102,7 @@
                     progress.client.signalConnectionId = function (data) {
                         signalConnectionId = data;
                     }
-                                     
+
 
                     // Create a function that the hub can call back to display messages.
                     progress.client.AddProgress = function (message, percentage) {
@@ -155,24 +163,27 @@
                 }
                 <br /><br />
 
-                @foreach (BlobInfo blob in ViewBag.Blobs)
+                @if (@ViewBag.Blobs != null)
                 {
-                    <div class="row">
-                        <a href="@blob.ImageUri" rel="lightbox" title="@blob.Description">
-                            <img src="@blob.ThumbnailUri" width="192" title="@blob.Description" style="padding-right: 16px ; padding-bottom: 0px" />
-                        </a>
-                    </div>
-                    <i>@blob.Description</i><br />
-                    <i>@blob.DescriptionTranslated</i><br />
-                    if (blob.Confidence != null)
+                    foreach (BlobInfo blob in ViewBag.Blobs)
                     {
-                        <sml>Confidence : @blob.Confidence</sml><br />
+                        <div class="row">
+                            <a href="@blob.ImageUri" rel="lightbox" title="@blob.Description">
+                                <img src="@blob.ThumbnailUri" width="192" title="@blob.Description" style="padding-right: 16px ; padding-bottom: 0px" />
+                            </a>
+                        </div>
+                        <i>@blob.Description</i><br />
+                        <i>@blob.DescriptionTranslated</i><br />
+                        if (blob.Confidence != null)
+                        {
+                            <sml>Confidence : @blob.Confidence</sml><br />
+                        }
+                        if (blob.AdjustedStart != null)
+                        {
+                            <sml>Time : @blob.AdjustedStart</sml><br />
+                        }
+                        <br /><br />
                     }
-                    if (blob.AdjustedStart != null)
-                    {
-                        <sml>Time : @blob.AdjustedStart</sml><br />
-                    }
-                    <br /><br />
                 }
             </div>
         </div>

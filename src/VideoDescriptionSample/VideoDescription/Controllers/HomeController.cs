@@ -27,6 +27,7 @@ namespace VideoDescription.Controllers
 
         public JsonResult LongRunningProcess(string mode, string videoId, string viAcctID, string viSubKey, string viLocation, string translationLang)
         {
+            ViewBag.ErrorMsg = String.Empty;//Reset error message
             // let's save the VI credentials intot the user sessions variable to display them when the page refresh
             System.Web.HttpContext.Current.Session["videoId"] = videoId;
             System.Web.HttpContext.Current.Session["VideoIndexerAccountId"] = viAcctID;
@@ -38,7 +39,6 @@ namespace VideoDescription.Controllers
 
             return Json("", JsonRequestBehavior.AllowGet);
         }
-
 
         public ActionResult Index()
         {
@@ -63,7 +63,18 @@ namespace VideoDescription.Controllers
                 System.Web.HttpContext.Current.Session["TranslationLang"] = ConfigurationManager.AppSettings["TranslationLang"];
             }
 
-            CloudStorageAccount account = CloudStorageAccount.Parse(ConfigurationManager.AppSettings["StorageConnectionString"]);
+            CloudStorageAccount account = null;
+            try
+            {
+                account = CloudStorageAccount.Parse(ConfigurationManager.AppSettings["StorageConnectionString"]);
+            }
+            catch (Exception exc)
+            {
+                ViewBag.ErrorMsg = exc.ToString();
+                Functions.SendProgress("Error:" + exc.Message, 0, 1);
+                return View();
+            }
+
             CloudBlobClient client = account.CreateCloudBlobClient();
             string videoId = (string)System.Web.HttpContext.Current.Session["videoId"];
 
@@ -79,9 +90,11 @@ namespace VideoDescription.Controllers
                 {
                     blobsList = container.ListBlobs(prefix: dirHighRes + "/", useFlatBlobListing: true).ToList();
                 }
-                catch
+                catch (Exception exc)
                 {
+                    ViewBag.ErrorMsg = exc.ToString();
                     videoId = null;
+                    Functions.SendProgress("Error:" + exc.Message, 0, 1);
                 }
 
                 foreach (IListBlobItem item in blobsList)
@@ -116,7 +129,6 @@ namespace VideoDescription.Controllers
             ViewBag.VideoIndexerLocation = System.Web.HttpContext.Current.Session["VideoIndexerLocation"];
             ViewBag.TranslationLang = System.Web.HttpContext.Current.Session["TranslationLang"];
 
-
             if (videoId != null)
             {
                 try
@@ -128,8 +140,10 @@ namespace VideoDescription.Controllers
 
                     ViewBag.VideoAccessToken = Task.Run(async () => await myVI.GetVideoAccessTokenAsync(videoId).ConfigureAwait(false)).GetAwaiter().GetResult();
                 }
-                catch
+                catch (Exception exc)
                 {
+                    ViewBag.ErrorMsg = exc.ToString();
+                    Functions.SendProgress("Error in VideoIndexer:" + exc.Message, 0, 1);
                 }
             }
 
@@ -185,9 +199,10 @@ namespace VideoDescription.Controllers
                 }
                 await Task.WhenAll(myTasks.ToArray()).ConfigureAwait(false);
             }
-            catch
+            catch (Exception exc)
             {
-
+                ViewBag.ErrorMsg = exc.ToString();
+                Functions.SendProgress("Error in ListBlobs:" + exc.Message, 0, 1);
             }
 
 
@@ -221,8 +236,11 @@ namespace VideoDescription.Controllers
                 //videoToken = await myVI.GetVideoAccessTokenAsync(videoId).ConfigureAwait(false);
                 jsonData = await myVI.GetInsightsAsync(videoId).ConfigureAwait(false);
             }
-            catch
+            catch (Exception exc)
             {
+                ViewBag.ErrorMsg = exc.ToString();
+                Functions.SendProgress("Error in GetInsightsAsync:" + exc.Message, 0, 1);
+
                 return;
             }
 
@@ -319,8 +337,18 @@ namespace VideoDescription.Controllers
 
                     if (!string.IsNullOrEmpty(translationLang))
                     {
-                        string descriptionTranslated = await Translator.TranslateTextRequest(translatorSubscriptionKey, translatorEndpoint, result.Description.Captions[0].Text, translationLang).ConfigureAwait(false);
-                        thumbnailHighResBlob.Metadata.Add("DescriptionTranslated", Convert.ToBase64String(Encoding.UTF8.GetBytes(descriptionTranslated)));
+                        try
+                        {
+                            string descriptionTranslated = await Translator.TranslateTextRequest(translatorSubscriptionKey, translatorEndpoint, result.Description.Captions[0].Text, translationLang).ConfigureAwait(false);
+                            thumbnailHighResBlob.Metadata.Add("DescriptionTranslated", Convert.ToBase64String(Encoding.UTF8.GetBytes(descriptionTranslated)));
+                        }
+                        catch (Exception exc)
+                        {
+                            ViewBag.ErrorMsg = exc.ToString();
+                            Functions.SendProgress("Error in TranslateTextRequest:" + exc.Message, 0, 1);
+                        }
+
+
                     }
 
                     //var guidThumbnail = Path.GetFileNameWithoutExtension(thumbnailHighResBlob.Name).Substring(18);

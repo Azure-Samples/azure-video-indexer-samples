@@ -159,7 +159,7 @@
 
                 @if (@ViewBag.VideoId != null && @ViewBag.VideoAccessToken != null)
                 {
-                    <iframe width="640" height="360" src="https://www.videoindexer.ai/embed/player/@ViewBag.VideoIndexerAccountId/@ViewBag.VideoId/?accessToken=@ViewBag.VideoAccessToken&autoplay=false" frameborder="0" allowfullscreen></iframe>
+                    <iframe width="640" height="360" src="@ViewBag.PlayerWidgetUrl&autoplay=false" frameborder="0" allowfullscreen></iframe>
                 }
                 <br /><br />
 

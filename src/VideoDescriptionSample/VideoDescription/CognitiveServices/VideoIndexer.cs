@@ -103,5 +103,21 @@ namespace VideoDescription.CognitiveServices
 
             return await thumbnailRequestResult.Content.ReadAsStreamAsync().ConfigureAwait(false);
         }
+
+        public async Task<Uri> GetPlayerWidgetAsync(string videoId)
+        {
+            string videoAccessToken = await GetVideoAccessTokenAsync(videoId).ConfigureAwait(false);
+            Uri requestUri = new Uri($"{apiUrl}/{_location}/Accounts/{_accountId}/Videos/{videoId}/PlayerWidget?accessToken={videoAccessToken}");
+            HttpResponseMessage insightsRequestResult = await client.GetAsync(requestUri).ConfigureAwait(false);
+
+            if (insightsRequestResult.StatusCode == System.Net.HttpStatusCode.MovedPermanently)
+            {
+                return insightsRequestResult.Headers.Location;
+            }
+            else
+            {
+                throw new Exception(insightsRequestResult.ReasonPhrase);
+            }
+        }
     }
 }

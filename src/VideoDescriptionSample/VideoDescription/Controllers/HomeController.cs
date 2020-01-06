@@ -139,6 +139,8 @@ namespace VideoDescription.Controllers
                         (string)System.Web.HttpContext.Current.Session["VideoIndexerSubscriptionKey"]);
 
                     ViewBag.VideoAccessToken = Task.Run(async () => await myVI.GetVideoAccessTokenAsync(videoId).ConfigureAwait(false)).GetAwaiter().GetResult();
+                    ViewBag.PlayerWidgetUrl = Task.Run(async () => await myVI.GetPlayerWidgetAsync(videoId).ConfigureAwait(false)).GetAwaiter().GetResult();
+
                 }
                 catch (Exception exc)
                 {

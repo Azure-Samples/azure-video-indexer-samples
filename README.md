@@ -6,7 +6,7 @@ languages:
 - html
 - .Net
 products:
-- videoindexer
+- azure-video-indexer
 description: "Video Indexer Official Samples"
 urlFragment: "https://www.videoindexer.ai/"
 ---

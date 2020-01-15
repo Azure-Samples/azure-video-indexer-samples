@@ -4,8 +4,10 @@ languages:
 - csharp
 - javascript
 - html
-- .Net
+- .NET
 products:
+- azure
+- azure-media-services
 - azure-video-indexer
 description: "Video Indexer Official Samples"
 urlFragment: "https://www.videoindexer.ai/"

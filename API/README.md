@@ -4,7 +4,7 @@ languages:
 - C#
 - .Net
 products:
-- videoindexer
+- azure-video-indexer
 description: "Video Indexer API"
 ---
 

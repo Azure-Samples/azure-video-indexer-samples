@@ -1,0 +1,478 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "subscriptionId": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "storConnectionName": {
+            "type": "string"
+        },
+        "videoConnectionName": {
+            "type": "string"
+        },
+        "logicapp_name": {
+            "type": "string"
+        },
+        "storageAccountName": {
+            "type": "string"
+        },
+        "storageAccountKey": {
+            "type": "string"
+        },
+        "containerName": {
+            "type": "string"
+        },
+        "videoindexerregion": {
+            "type": "string"
+        },
+        "videoindexeraccount": {
+            "type": "string"
+        },
+        "videoindexerkey": {
+            "type": "string"
+        },
+        "videoindexerlanguage": {
+            "type": "string"
+        },
+        "zoommediatoken": {
+            "type": "string"
+        },
+        "zoommedialanguage": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Web/connections",
+            "name": "[parameters('storConnectionName')]",
+            "apiVersion": "2016-06-01",
+            "location": "[parameters('location')]",
+            "scale": null,
+            "properties": {
+                "displayName": "[parameters('storageAccountName')]",
+                "parameterValues": {
+                    "accountName": "[parameters('storageAccountName')]",
+                    "accessKey": "[parameters('storageAccountKey')]"
+                },
+                "api": {
+                    "id": "[concat('/subscriptions/', parameters('subscriptionId'), '/providers/Microsoft.Web/locations/', parameters('location'),'/managedApis/azureblob')]"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.Web/connections",
+            "name": "[parameters('videoConnectionName')]",
+            "apiVersion": "2016-06-01",
+            "location": "[parameters('location')]",
+            "scale": null,
+            "properties": {
+                "displayName": "[parameters('videoConnectionName')]",
+                "parameterValues": {
+                    "api_key": "[parameters('videoindexerkey')]"
+                },
+                "api": {
+                    "id": "[concat('/subscriptions/', parameters('subscriptionId'), '/providers/Microsoft.Web/locations/', parameters('location'),'/managedApis/videoindexer-v2')]"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.Logic/workflows",
+            "name": "[concat(parameters('logicapp_name'), '_1')]",
+            "apiVersion": "2017-07-01",
+            "location": "[parameters('location')]",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "When_a_blob_is_added_or_modified_(properties_only)": {
+                            "recurrence": {
+                                "frequency": "Minute",
+                                "interval": 1
+                            },
+                            "splitOn": "@triggerBody()",
+                            "metadata": {
+                                "[base64(concat('%2f', parameters('containerName')))]": "[concat('/', parameters('containerName'))]"
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "/datasets/default/triggers/batch/onupdatedfile",
+                                "queries": {
+                                    "folderId": "[base64(concat('%2f', parameters('containerName')))]",
+                                    "maxFileCount": 1
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "Create_SAS_URI_by_path": {
+                            "runAfter": {},
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "body": {
+                                    "ExpiryTime": "@{addHours(utcNow(), 6)}",
+                                    "Permissions": "Read"
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/datasets/default/CreateSharedLinkByPath",
+                                "queries": {
+                                    "path": "@triggerBody()?['Path']"
+                                }
+                            }
+                        },
+                        "Initialize_variable:_CallbackURL": {
+                            "runAfter": {
+                                "Create_SAS_URI_by_path": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "CallbackURL",
+                                        "type": "String",
+                                        "value": "[concat(listCallbackURL(concat(resourceId('Microsoft.Logic/workflows/', concat(parameters('logicapp_name'), '_2')), '/triggers/manual'), '2016-06-01').value, '&url=', '@{encodeUriComponent(body(''Create_SAS_URI_by_path'')?[''WebUrl''])}')]"
+                                    }
+                                ]
+                            }
+                        },
+                        "Get_Account_Access_Token": {
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['videoindexer-v2']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "[concat('/auth/', parameters('videoindexerregion'), '/Accounts/', parameters('videoindexeraccount'), '/AccessToken')]",
+                                "queries": {
+                                    "allowEdit": true
+                                }
+                            },
+                            "runAfter": {
+                                "Initialize_variable:_CallbackURL": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection"
+                        },
+                        "Upload_video_and_index": {
+                            "inputs": {
+                                "body": {
+                                    "$content-type": "multipart/form-data",
+                                    "$multipart": [
+                                        {
+                                            "body": "",
+                                            "headers": {
+                                                "Content-Disposition": "form-data; name=\"body\""
+                                            }
+                                        }
+                                    ]
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['videoindexer-v2']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "[concat('/', parameters('videoindexerregion'), '/Accounts/', parameters('videoindexeraccount'), '/Videos')]",
+                                "queries": {
+                                    "accessToken": "@body('Get_Account_Access_Token')",
+                                    "callbackUrl": "@variables('CallbackURL')",
+                                    "name": "@triggerBody()?['Name']",
+                                    "videoUrl": "@body('Create_SAS_URI_by_path')?['WebUrl']"
+                                }
+                            },
+                            "runAfter": {
+                                "Get_Account_Access_Token": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection"
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "azureblob": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('storConnectionName'))]",
+                                "connectionName": "[parameters('storConnectionName')]",
+                                "id": "[concat('/subscriptions/', parameters('subscriptionId'), '/providers/Microsoft.Web/locations/', parameters('location'), '/managedApis/azureblob')]"
+                            },
+                            "videoindexer-v2": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('videoConnectionName'))]",
+                                "connectionName": "[parameters('videoConnectionName')]",
+                                "id": "[concat('/subscriptions/', parameters('subscriptionId'), '/providers/Microsoft.Web/locations/', parameters('location'), '/managedApis/videoindexer-v2')]"
+                            }
+                        }
+                    }
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/connections', parameters('storConnectionName'))]",
+                "[resourceId('Microsoft.Web/connections', parameters('videoConnectionName'))]",
+                "[resourceId('Microsoft.Logic/workflows', concat(parameters('logicapp_name'), '_2'))]"                
+            ]
+        },
+        {
+            "type": "Microsoft.Logic/workflows",
+            "name": "[concat(parameters('logicapp_name'), '_2')]",
+            "apiVersion": "2017-07-01",
+            "location": "[parameters('location')]",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "triggers": {
+                        "manual": {
+                            "type": "Request",
+                            "kind": "Http",
+                            "inputs": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "actions": {
+                        "HTTP:_Create_session_at_ZoomMedia": {
+                            "runAfter": {
+                                "Initialize_variable:_CallbackURL": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Http",
+                            "inputs": {
+                                "body": {
+                                    "callback_format": "text/vtt",
+                                    "callback_headers": [
+                                        "Content-Type: text/plain",
+                                        "X-VideoId: @{variables('VideoID')}"
+                                    ],
+                                    "callback_method": "POST",
+                                    "callback_url": "@variables('CallbackURL')",
+                                    "language": "[parameters('zoommedialanguage')]",
+                                    "punctuation": true
+                                },
+                                "headers": {
+                                    "Content-Type": "application/json",
+                                    "X-Zoom-S2T-Token": "@variables('ZoomMediaKey')"
+                                },
+                                "method": "POST",
+                                "uri": "https://api.zoommedia.ai/api/v1/speech-to-text/session/"
+                            }
+                        },
+                        "HTTP:_Upload_file_to_ZoomMedia": {
+                            "runAfter": {
+                                "HTTP:_Create_session_at_ZoomMedia": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Http",
+                            "inputs": {
+                                "body": {
+                                    "video_url": "@variables('VideoURL')"
+                                },
+                                "headers": {
+                                    "Content-Type": "application/json",
+                                    "X-Zoom-S2T-Token": "@variables('ZoomMediaKey')"
+                                },
+                                "method": "POST",
+                                "uri": "https://api.zoommedia.ai/api/v1/speech-to-text/session/@{body('HTTP:_Create_session_at_ZoomMedia')['sessionId']}"
+                            }
+                        },
+                        "Initialize_variable:_CallbackURL": {
+                            "runAfter": {
+                                "Initialize_variable:_ZoomMediaKey": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "CallbackURL",
+                                        "type": "String",
+                                        "value": "[listCallbackURL(concat(resourceId('Microsoft.Logic/workflows/', concat(parameters('logicapp_name'), '_3')), '/triggers/manual'), '2016-06-01').value]"
+                                    }
+                                ]
+                            }
+                        },
+                        "Initialize_variable:_VideoID": {
+                            "runAfter": {},
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "VideoID",
+                                        "type": "String",
+                                        "value": "@{triggerOutputs()['queries']['id']}"
+                                    }
+                                ]
+                            }
+                        },
+                        "Initialize_variable:_VideoURL": {
+                            "runAfter": {
+                                "Initialize_variable:_VideoID": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "VideoURL",
+                                        "type": "String",
+                                        "value": "@{triggerOutputs()['queries']['url']}"
+                                    }
+                                ]
+                            }
+                        },
+                        "Initialize_variable:_ZoomMediaKey": {
+                            "runAfter": {
+                                "Initialize_variable:_VideoURL": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "ZoomMediaKey",
+                                        "type": "String",
+                                        "value": "[parameters('zoommediatoken')]"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {}
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Logic/workflows', concat(parameters('logicapp_name'), '_3'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Logic/workflows",
+            "name": "[concat(parameters('logicapp_name'), '_3')]",
+            "apiVersion": "2017-07-01",
+            "location": "[parameters('location')]",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "manual": {
+                            "type": "Request",
+                            "kind": "Http",
+                            "inputs": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "actions": {
+                        "Get_Account_Access_Token": {
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['videoindexer-v2']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "[concat('/auth/', parameters('videoindexerregion'), '/Accounts/', parameters('videoindexeraccount'), '/AccessToken')]",
+                                "queries": {
+                                    "allowEdit": true
+                                }
+                            },
+                            "runAfter": {},
+                            "type": "ApiConnection"
+                        },
+                        "Update_Video_Transcript": {
+                            "inputs": {
+                                "body": "@{triggerBody()}",
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['videoindexer-v2']['connectionId']"
+                                    }
+                                },
+                                "method": "put",
+                                "path": "[concat('/', parameters('videoindexerregion'), '/Accounts/', parameters('videoindexeraccount'), '/Videos/', '@{triggerOutputs()[''headers''][''X-VideoId'']}', '/Index/Transcript')]",
+                                "queries": {
+                                    "accessToken": "@body('Get_Account_Access_Token')",
+                                    "language": "[parameters('videoindexerlanguage')]",
+                                    "sendSuccessEmail": false,
+                                    "setAsSourceLanguage": true
+                                }
+                            },
+                            "runAfter": {
+                                "Get_Account_Access_Token": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection"
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "videoindexer-v2": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('videoConnectionName'))]",
+                                "connectionName": "[parameters('videoConnectionName')]",
+                                "id": "[concat('/subscriptions/', parameters('subscriptionId'), '/providers/Microsoft.Web/locations/', parameters('location'), '/managedApis/videoindexer-v2')]"
+                            }
+                        }
+                    }
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/connections', parameters('storConnectionName'))]",
+                "[resourceId('Microsoft.Web/connections', parameters('videoConnectionName'))]"               
+            ]
+        }
+    ]
+}

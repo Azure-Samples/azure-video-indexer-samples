@@ -1,0 +1,24 @@
+* {
+  font-family: "Arial";
+}
+input {
+  box-sizing: border-box;
+}
+iframe {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.sidebar {
+  padding:10px;
+  width: 700px;
+  background-color: #eee;
+  height: auto;
+  display: inline-block;
+}
+
+.iframes {
+  vertical-align: top;
+  height: 100vh;
+  display: inline-block;
+}

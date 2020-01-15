@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>video-indexer-widgets-url-generator</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h2>
+      Embedding both video indexer widgets and How to customize the widgets
+    </h2>
+
+    <div class="sidebar">
+      Video Id: <input type="text" value="4dc0aa32bf" id="videoId" /> Account
+      Id:
+      <input
+        type="text"
+        value="00000000-0000-0000-0000-000000000000"
+        id="accountId"
+      />
+      <h5>Insights Widgets Options:</h5>
+      Iframe Window Title (if embeded as window/tab) :
+      <input type="text" class="" name="title" id="title" value="" />
+      <div>
+        <p>Insights to render on the widget:</p>
+        <div>
+          <input
+            class=""
+            type="checkbox"
+            name="all"
+            id="all"
+            value="all"
+            checked
+          />
+          <label for="all">All Widgets</label>
+        </div>
+        <br />
+        <div>
+          <input
+            class="insights"
+            type="checkbox"
+            name="people"
+            id="people"
+            value="people"
+          />
+          <label for="people">People</label>
+        </div>
+        <div>
+          <input
+            class="insights"
+            type="checkbox"
+            name="people"
+            id="keywords"
+            value="keywords"
+          />
+          <label for="keywords">Keywords</label>
+        </div>
+        <div>
+          <input
+            class="insights"
+            type="checkbox"
+            name="people"
+            id="annotations"
+            value="annotations"
+          />
+          <label for="annotations">Annotations</label>
+        </div>
+        <div>
+          <input
+            class="insights"
+            type="checkbox"
+            name="brands"
+            id="brands"
+            value="brands"
+          />
+          <label for="brands">Brands</label>
+        </div>
+        <div>
+          <input
+            class="insights"
+            type="checkbox"
+            name="sentiments"
+            id="sentiments"
+            value="sentiments"
+          />
+          <label for="sentiments">Sentiments</label>
+        </div>
+        <div>
+          <input
+            class="insights"
+            type="checkbox"
+            name="sentiments"
+            id="transcript"
+            value="transcript"
+          />
+          <label for="transcript">Transcript</label>
+        </div>
+        <div>
+          <input
+            class="insights"
+            type="checkbox"
+            name="search"
+            id="search"
+            value="search"
+          />
+          <label for="search">Search</label>
+        </div>
+        <br />
+        <div>
+          Insights Iframe Embed URL: <br />
+          <input
+            type="text"
+            readonly
+            style="width:100%"
+            id="generatedInsightsUrl"
+            value="https://www.videoindexer.ai/embed/insights/00000000-0000-0000-0000-000000000000/9a296c6ec3"
+          />
+        </div>
+      </div>
+      <br />
+
+      <h5>Player Widget Options:</h5>
+      <div>
+        <input
+          type="checkbox"
+          checked
+          name="autoplay"
+          id="autoplay"
+          value="autoplay"
+        />
+        <label for="autoplay">Autoplay</label>
+      </div>
+      <div>
+        <input
+          type="checkbox"
+          name="captions"
+          id="captions"
+          value="showCaptions"
+        />
+        <label for="captions">Embed with captions toggled on</label>
+      </div>
+      <div>
+        <label for="lang">Default language:</label>
+        <select name="lang" id="lang">
+          <option value="Arabic">Arabic</option>
+          <option value="Chinese">Chinese</option>
+          <option value="English">English</option>
+          <option value="French">French</option>
+          <option value="German">German</option>
+          <option value="Italian">Italian</option>
+          <option value="Japanese">Japanese</option>
+          <option value="Portuguese">Portuguese</option>
+          <option value="Russian">Russian</option>
+          <option value="Spanish">Spanish</option>
+          <option value="Filipino">Filipino</option>
+          <option value="Afrikaans">Afrikaans</option>
+          <option value="Bangla">Bangla</option>
+          <option value="Bosnian">Bosnian</option>
+          <option value="Bulgarian">Bulgarian</option>
+          <option value="Catalan">Catalan</option>
+          <option value="Croatian">Croatian</option>
+          <option value="Czech">Czech</option>
+          <option value="Danish">Danish</option>
+          <option value="Dutch">Dutch</option>
+          <option value="Fijian">Fijian</option>
+          <option value="Samoan">Samoan</option>
+          <option value="Estonian">Estonian</option>
+          <option value="Finnish">Finnish</option>
+          <option value="Greek">Greek</option>
+          <option value="Haitian">Haitian</option>
+          <option value="Hebrew">Hebrew</option>
+          <option value="Hindi">Hindi</option>
+          <option value="Hungarian">Hungarian</option>
+          <option value="Indonesian">Indonesian</option>
+          <option value="Kiswahili">Kiswahili</option>
+          <option value="Korean">Korean</option>
+          <option value="Latvian">Latvian</option>
+          <option value="Lithuanian">Lithuanian</option>
+          <option value="Malagasy">Malagasy</option>
+          <option value="Malay">Malay</option>
+          <option value="Maltese">Maltese</option>
+          <option value="Norwegian">Norwegian</option>
+          <option value="Persian">Persian</option>
+          <option value="Polish">Polish</option>
+          <option value="Romanian">Romanian</option>
+          <option value="Serbian">Serbian</option>
+          <option value="Serbian">Serbian</option>
+          <option value="Slovak">Slovak</option>
+          <option value="Slovenian">Slovenian</option>
+          <option value="Swedish">Swedish</option>
+          <option value="Tamil">Tamil</option>
+          <option value="Thai">Thai</option>
+          <option value="Tongan">Tongan</option>
+          <option value="Turkish">Turkish</option>
+          <option value="Ukrainian">Ukrainian</option>
+          <option value="Urdu">Urdu</option>
+          <option value="Vietnamese">Vietnamese</option>
+          <option value="Chinese">Chinese</option>
+        </select>
+      </div>
+      <br />
+      <div>
+        Player Iframe Embed URL: <br />
+        <input
+          id="generatedPlayerUrl"
+          type="text"
+          readonly
+          style="width:100%"
+          value="https://www.videoindexer.ai/embed/player/00000000-0000-0000-0000-000000000000/4dc0aa32bf"
+        />
+      </div>
+    </div>
+
+    <!-- EMBEDDED IFRAMES -->
+    <div class="iframes">
+      <iframe
+        width="560"
+        height="315"
+        src="https://www.videoindexer.ai/embed/player/00000000-0000-0000-0000-000000000000/4dc0aa32bf"
+        frameborder="0"
+        allowfullscreen
+      ></iframe>
+      <iframe
+        width="680"
+        height="780"
+        src="https://www.videoindexer.ai/embed/insights/00000000-0000-0000-0000-000000000000/4dc0aa32bf"
+        frameborder="0"
+        allowfullscreen
+      ></iframe>
+
+      <!-- MEDIATOR - INCHARGE OF CROSS IFRAMES COMMUNICATIONS -->
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+      <script src="https://breakdown.blob.core.windows.net/public/vb.widgets.mediator.js"></script>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>

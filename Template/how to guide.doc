@@ -1,0 +1,25 @@
+Template for adding code to VI GitHub repo:
+
+This document is aimed for everyone who wish to add code to VI’s GitHub repo.
+The goal of this repo is to give our customers samples/examples of code, to make their life easier when they want to incorporate VI into their services.
+Some examples of such code are: how to embed VI’s widgets to your web page, what is the output json file they will receive, and every other code which they could find useful.
+An easy step by step guide for adding code to our repo:
+1.	Start with the main VI GitHub page (https://github.com/itayar/media-services-video-indexer).
+a.	Read the README file to get an idea of how it should look like.
+b.	Check the folders which currently exist and see if the code you want to add is relevant to one of them or should you open a new folder:
+i.	If you open a new folder, press the create “create new file” button and add a new folder name.
+1.	make sure the folder name is intuitive to its content.
+2.	Every new word in the folder’s name should start with a capital letter.
+3.	Add to the main page README file the folder name and a short description of its content. If you added a code written in a language which is not listed yet, add this language to the README file also.
+2.	In the folder in which you added your new code, make sure:
+a.	If it’s a new folder, it should contain a relevant README file as described below
+b.	If you add code to a folder which already exists, review the README file and check if there is content to be edited or added: 
+i.	Are there any prerequisites required in order to run the code?
+ii.	Is there any system setup need to be done in order to test the code locally? If so, how it should be done?
+iii.	Do you need to add new content description?
+3.	When adding your code, make sure:
+a.	The file is intuitive with relevant comments within the code that explain what is supposed to happen in each stage.
+b.	To mention any environment requirements that are needed to run code locally (i.e., specific browser, specific OS, etc.).
+c.	If there is any relevant documentation or blog related, add a link to it. The idea is to create an intuitive connection between different VI resources.
+** How to write an efficient README file: Microsoft has a very easy to read and detailed template of how a README file should look like (https://review.docs.microsoft.com/en-us/help/contribute/samples/concepts/readme-template?branch=master).
+As reference you can follow this documentation together with the already existing README files.

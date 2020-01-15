@@ -1,0 +1,31 @@
+input {
+  display: inline-block;
+  margin-bottom: 10px;
+  width: 100%;
+  max-width: 500px;
+  border:1px solid grey;
+  padding: 5px;
+  &[readonly]{
+    background: #f5f5f5;
+  }
+}
+
+iframe {
+  border: 1px solid grey;
+}
+label {
+  display: block;
+}
+
+body {
+  font-family: "Segoe UI";
+}
+
+.form-container, .iframe-container {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.form-container {
+  min-width: 600px;
+}

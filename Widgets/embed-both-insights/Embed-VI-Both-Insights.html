@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Video Indexer - Embed both VI Widgets</title>
+    <style>
+      iframe {
+        display: inline-block;
+        vertical-align: top;
+      }
+    </style>
+  </head>
+  <body>
+    <iframe
+      width="560"
+      height="315"
+      src="https://www.videoindexer.ai/embed/player/00000000-0000-0000-0000-000000000000/4dc0aa32bf"
+      frameborder="0"
+      allowfullscreen
+    ></iframe>
+    <iframe
+      width="680"
+      height="780"
+      src="https://www.videoindexer.ai/embed/insights/00000000-0000-0000-0000-000000000000/4dc0aa32bf"
+      frameborder="0"
+      allowfullscreen
+    ></iframe>
+    <!-- Add the VI mediator to communicate between both widgets -->
+    <script src="https://breakdown.blob.core.windows.net/public/vb.widgets.mediator.js"></script>
+  </body>
+</html>

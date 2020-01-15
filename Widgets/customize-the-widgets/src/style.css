@@ -1,0 +1,8 @@
+iframe {
+  display:inline-block;
+  vertical-align: top;
+}
+
+#insightsIframe {
+  display: none;
+}

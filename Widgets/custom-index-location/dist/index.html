@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>custom index location</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+      <h2>Embedding widgets with a different index & image location (Preview)</h2>
+      <div class="form-container">
+        <label for="indexLocation">Custom Index Location</label>
+        <input id="indexLocation" value="https://moriaresources.blob.core.windows.net/public/HistoryMovieJSON.json" type="text" placeholder="Enter external index location"/> 
+      <label for="imageLocation">Custom Images Location</label>
+        <input type="text" id="imagesLocation"
+        value="https://moriaresources.blob.core.windows.net/public">
+        <label for="iframeUrl">Iframe URL</label>
+        <input type="text" readonly id="iframeUrl" value="https://www.videoindexer.ai/embed/insights/00000000-0000-0000-0000-000000000000/c19ab92882">
+        <br>
+        <button id="loadBtn">Load external index</button>
+      </div>
+      
+      <div class="iframe-container">
+        <iframe id="insights" width="680" height="780" src="https://www.videoindexer.ai/embed/insights/00000000-0000-0000-0000-000000000000/c19ab92882" frameborder="0" allowfullscreen></iframe>
+      </div>
+      
+      <div class="iframe-container">
+        <iframe width="560" height="315" src="https://www.videoindexer.ai/embed/player/00000000-0000-0000-0000-000000000000/c19ab92882" frameborder="0" allowfullscreen></iframe>
+      </div>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <script src="script.js"></script>
+</body>
+</html>

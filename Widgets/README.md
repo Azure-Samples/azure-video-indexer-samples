@@ -5,7 +5,7 @@ languages:
 - javascript
 - CSS
 products:
-- videoindexer
+- azure-video-indexer
 description: "Video Indexer widgets"
 ---
 

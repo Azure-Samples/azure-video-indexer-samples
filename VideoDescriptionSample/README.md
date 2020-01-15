@@ -2,6 +2,11 @@
 
 This sample application displays an automatic description of Video Indexer thumbnails. The web app grabs the thumbnails from a video stored in Microsoft Video Indexer, calls Computer Vision to get a description and translates it to another language.
 
+Screen capture :
+
+![Screen capture 1](images/vd-img1.png?raw=true)
+![Screen capture 2](images/vd-img2.png?raw=true)
+
 ## Azure resources needed 
 Before running the app, you need to have or create :
 - a trial or production Video Indexer Account. Susbcribe to get the VI API Key from this [site](https://api-portal.videoindexer.ai/) (please connect using the option at top right). To get the key, please read this [article] (https://docs.microsoft.com/en-us/azure/media-services/video-indexer/video-indexer-use-apis#subscribe-to-the-api)

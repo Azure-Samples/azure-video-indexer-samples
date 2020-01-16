@@ -478,7 +478,9 @@ Steps
     back to the Library tab. Now, to edit the video, you can either:
 a.	Press the edit button at the bottom right corner of the video
 (it will appear when you’ll put the mouse cursor there).
+
 ![](media/image24.png)
+
 b.	Or, open the video player and then press *Open in editor*,
 beneath the video’s name.
  ![](media/image25.png)

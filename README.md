@@ -27,7 +27,7 @@ Welcome to the official Video Indexer (VI) Samples repo. Video indexer builds up
 
 ## Contents
 
-Contains samples code for Video Indexer API and Widgets
+Here you can find code samples and project examples of how to use Video Indexer, integrated it with your product, and expand our out-of-the-box offering by integrating with other products.
 
 | File/folder                 | Description                                           | Owner        |
 |-----------------------------|-------------------------------------------------------|--------------|

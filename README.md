@@ -1,14 +1,14 @@
 ---
 page_type: sample
 languages:
-- csharp
-- javascript
-- html
-- .NET
+  - csharp
+  - javascript
+  - html
+  - .NET
 products:
-- azure
-- azure-media-services
-- azure-video-indexer
+  - azure
+  - azure-media-services
+  - azure-video-indexer
 description: "Video Indexer Official Samples"
 urlFragment: "https://www.videoindexer.ai/"
 ---

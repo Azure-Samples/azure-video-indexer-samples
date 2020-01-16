@@ -155,11 +155,11 @@ Steps
 
 2.  Click "Sign in" in the top right corner
 
-    ![](pics/image1.png)
+    ![](media/image1.png)
 
 3.  Use your login option of choice
 
-    ![](pics/image2.png)
+    ![](media/image2.png)
 
 4.  **Welcome!** You now have access to the Video Indexer web
     experience. After logging in you will be dropped into the Video
@@ -167,7 +167,7 @@ Steps
     videos. From here you can search in all videos, upload new videos,
     see insights for each specific video and more.
 
-    ![](pics/image301.png)
+    ![](media/image301.png)
 
 Next. Search within existing files
 ===============================================
@@ -190,12 +190,12 @@ Steps
 
 1.  Click on the "Sample Videos" tab to see all sample videos
 
-    ![](pics/image302.png)
+    ![](media/image302.png)
 
 2.  On the search bar, search for **Build** in the 'Find topics' box and
     for **Satya** in the 'Find people'
     
-    ![](pics/image5.png)
+    ![](media/image5.png)
 
 3.  The videos in the gallery will be filtered according to your
     filtering you requested, and each video thumbnail will include a
@@ -205,14 +205,14 @@ Steps
     were found. Later in this workshop we will learn more about those
     insights.
 
-    ![](pics/image6.png)
+    ![](media/image6.png)
 
 4.  Click **Show more filters** to see more filtering options such as
     filtering by specific types of insights or specific languages.
 
 5.  Click **Clear search** to start over.
 
-    ![](pics/image62.png)
+    ![](media/image62.png)
 
 Next. Review insights in a file
 ============================================
@@ -248,38 +248,38 @@ participants)
 
 2.  Click **Play** to go into the video player page
 
-    ![](pics/image7.png)
+    ![](media/image7.png)
 
 3.  In the top of the cognitive insights pane (on the right of the
     screen), click on **Timeline** to see the video transcript. The
     transcript includes the voice to text identified by Video Indexer as
     well as OCRs, people found, sentiment indications and more.
 
-    ![](pics/image8.png)
+    ![](media/image8.png)
 
 4.  Enable the **Autoscroll** toggle on the right to have the transcript
     scroll as the video progresses and the current segment will be highlighted at
     any time
 
-    ![](pics/image9.png)
+    ![](media/image9.png)
 
     Fun note: you can also see the transcript directly in your layer by
     choosing to **closed captioning** and then **English** in your
     player actions.
 
-    ![](pics/image10.png)
+    ![](media/image10.png)
 
 5.  Now, let's explore some of the insights found on this specific
     video. Click on the **Insights** tab to go back to insights summary.
 
-    ![](pics/image11.png)
+    ![](media/image11.png)
 
 1.  **Celebrity Identification**: Video Indexer identified Satya in the
     video, you can see his name, role and biography, as well as how much
     time and when he made appearances in the video. Use the left and
     right arrows to jump between segments he appears in
 
-    ![](pics/image12.png)
+    ![](media/image12.png)
 
     Video indexer is able identify a large set of celebrities (like
     Satya in this example) out of the box and allows you custom train
@@ -299,7 +299,7 @@ You can read more about this model in our [blog post](https://azure.microsoft.co
     the full set of topics found and the right and left arrows to navigate to the specific
     location in the video where they appeared.
 
-    ![](pics/image13.png)
+    ![](media/image13.png)
 
 3.  **Label identification**: Labels are visual findings in the video,
     they can help you determine elements, scenes, and locations.
@@ -317,7 +317,7 @@ You can read more about this model in our [blog post](https://azure.microsoft.co
     huge space. However - looking at the labels still gives you a good
     idea of what this video is about.
 
-    ![](pics/image132.png)
+    ![](media/image132.png)
 
 4.  Video Indexer identified six **entities** in this video (three people and three brands),
     that Satya mentioned or appeared as OCR in his keynote. For example, "*Bill Gates*", 
@@ -327,7 +327,7 @@ You can read more about this model in our [blog post](https://azure.microsoft.co
     location in the video where they appeared and to use show
     description to see their Wikipedia abstract.
 
-    ![](pics/image14.png)
+    ![](media/image14.png)
 
 5.  **Emotions**: Video Indexer has also identified the different
     emotions that appear throughout the video. The model can identify four different emotions: anger, fear, joy, and sadness. It does so by using facial expressions, voice tonality, and speech content. It gives a better tuning for the basic sentiment analysis of positive and negative emotions. For further details follow this [link](https://azure.microsoft.com/en-us/blog/cross-channel-emotion-analysis-in-microsoft-video-indexer/).
@@ -335,7 +335,7 @@ You can read more about this model in our [blog post](https://azure.microsoft.co
     Click on each segment to see what actually happened in the video to drive that. you can see
     that overall (unsurprisingly) joy was the main emotions of Satya’s keynote.
 
-    ![](pics/image15.png)
+    ![](media/image15.png)
 
 As part of the default insights presented you can also see the different scenes detected in the video based on visual cues and keyframes extraction.
 
@@ -345,7 +345,7 @@ As part of the default insights presented you can also see the different scenes 
     bottom left of the video player. You can also download the transcript in different closed caption formats and other file types (SRT, VTT, TTML, TXT and CSV)
     and the artifacts as ZIP.
 
-    ![](pics/image16.png)
+    ![](media/image16.png)
 
 All this information that you can browse on the widgets comes from a
 JSON file that it's what the developers would need to work with, if
@@ -374,26 +374,26 @@ Steps
 1.  Go back to the video catalog by clicking the top right corner of the
     screen or by clicking back
 
-    ![](pics/image17.png)
+    ![](media/image17.png)
 
 2.  Click the **Upload** button on the top right of your catalog (under
     the search section)
 
-    ![](pics/image18.png)
+    ![](media/image18.png)
 
 3.  Select the **enter file URL** link and enter the following sample
     URL address: 
     
         https://aka.ms/VISampleVideo
 
-    ![](pics/image19.png)
+    ![](media/image19.png)
 
 4.  Select a 'video name' of your choice for your video and Click
     **Upload**.
 
     The video will start to upload...
 
-    ![](pics/image20.png)
+    ![](media/image20.png)
 
 -	**Important:** Using the “*Advanced options*” you can decide if the
 indexing would be Audio, Video, or both. You can control the streaming
@@ -407,7 +407,7 @@ quality, and more.
 6.  Once the video is uploaded it will be added to your catalog under the
     **Library** tab and start indexing
 
-    ![](pics/image21.png)
+    ![](media/image21.png)
 
 7.  **Done!** You have indexed your first video, you can now explore the
     insights found for this video in the portal as well as on a JSON
@@ -438,13 +438,13 @@ Steps
 
 2.  Click on *Embed* (**\</\>**) at the bottom of the video
 
-    ![](pics/image22.png)
+    ![](media/image22.png)
 
 3.  A 'share & embed' pop up appears, allowing to copy the iframe code
     to the web site. From here you can choose to create an embedded code
     for the cognitive insights, the video player or both.
 
-   ![](pics/image23.png)
+   ![](media/image23.png)
 
 4.  Optional: to test the iframe copy the 'src' part of the 'Copy embed
     code' section into a new tab in your browser (see highlighted part
@@ -478,43 +478,43 @@ Steps
     back to the Library tab. Now, to edit the video, you can either:
 a.	Press the edit button at the bottom right corner of the video
 (it will appear when you’ll put the mouse cursor there).
-![](pics/image24.png)
+![](media/image24.png)
 b.	Or, open the video player and then press *Open in editor*,
 beneath the video’s name.
- ![](pics/image25.png)
+ ![](media/image25.png)
     
 2.  In the editor you can change the project’s name, add more videos to edit under
     the same project and create a new video that is a combination of them all, choose which insights to see, search, add filters to edit, and more.
 
-    ![](pics/image252.png)
+    ![](media/image252.png)
 
 3.  In the filter pane on the left-hand side, you can add filters. For example, 
      add filter for Keywords = ***business transformation*** and People = 
      ***Satya Nadella*** to create a clip of Satya talking about business transformation
 
-    ![](pics/image26.png)
+    ![](media/image26.png)
 
 4.  The transcript will get filtered to show only captions that answer your
     search criteria. Hover on the relevant captions and click the ****
     action on the left side of the transcript to select the clip that
     was filtered
 
-    ![](pics/image27.png)
+    ![](media/image27.png)
 
 5.  You can look at player, under the **Preview** section on the right, to see your selection
     Result.
 
-    ![](pics/image28.png)
+    ![](media/image28.png)
 
 6.  Click on the **Save project** button to save your selection
     as a new video.
 
-    ![](pics/image29.png)
+    ![](media/image29.png)
 
 7.  Now, you have a saved project which you can keep on editing. When you are done with editing the project you should render it in order to make it an independent video.
-![](pics/image292.PNG)
+![](media/image292.PNG)
 After pressing render, a pop up will appear asking if you want to continue with rendering the project. In few minutes you’ll get an email with a link to the render video which you can download now.
-![](pics/image293.PNG)
+![](media/image293.PNG)
 8. A new video that contains a clip from the original video was added
     to your catalog and it’s ready to be played!
 
@@ -558,21 +558,21 @@ Steps
 3.  You are probably already logged in via SSO but if not, login with
     the same credentials you logged into the service in exercise \#1
 
-    ![](pics/image30.png)
+    ![](media/image30.png)
 
 4.  Select the **APIs** tab
 
-    ![](pics/image31.png)
+    ![](media/image31.png)
 
 5.  Choose **Authorization** to get the token to call the API operations
     with. Note that this token is valid for one hour, and you’ll need to ask
     for a new one when it expires.
 
-    ![](pics/image32.png)
+    ![](media/image32.png)
 
 6.  Select the **GetAccounts** API call on the left side of the screen
 
-    ![](pics/image33.png)
+    ![](media/image33.png)
 
 7.  click **Try It. **
 
@@ -581,17 +581,17 @@ Steps
     write any code. In this case, we are trying to get the account
     information in order to call other operations.
 
-    ![](pics/image33.png)
+    ![](media/image33.png)
 
 8.  Fill in the parameters: *location = **trial***,
     *generateAccessTokens=**true***, *allowEdit=**true ***to get access
     token to the account you used in this workshop
 
-    ![](pics/image34.png)
+    ![](media/image34.png)
 
 9.  Scroll to the bottom of the page and click **Send**
 
-    ![](pics/image35.png)
+    ![](media/image35.png)
 
 10. In the result you will get your **account id** and **access token**.
 
@@ -599,7 +599,7 @@ Steps
     a notepad file or keep the result page open as you will need them
     for later API calls in exercise \#8.**
 
-    ![](pics/image36.png)
+    ![](media/image36.png)
 
 Next. Invoke a sample service
 =========================================
@@ -620,7 +620,7 @@ Steps
 1.  Go to the **APIS** tab again and choose **Operations** to review all
     the REST API calls available to you in video indexer.
 
-    ![](pics/image37.png)
+    ![](media/image37.png)
 
     For this workshop, we will use the API to get insights on the same
     video we uploaded in previous exercise
@@ -628,13 +628,13 @@ Steps
 2.  Choose the **ListVideos** API call in the left side of the screen
     (tip: you can use the search bar on the top to find it)
 
-    ![](pics/image38.png)
+    ![](media/image38.png)
 
 3.  click **Try it** and fill in the parameters: *location = **trial**
     and **account id** and **account token** from the GetAccounts call
     from the previous exercise
 
-    ![](pics/image39.png)
+    ![](media/image39.png)
 
 4.  Scroll to the bottom of the page and click **Send**
 
@@ -645,11 +645,11 @@ Steps
     result) to notepad or keep the result page open as you will need
     them for later API calls in this exercise**
 
-    ![](pics/image40.png)
+    ![](media/image40.png)
 
 6.  Now choose the **GetVideoIndex** call in the left side of the screen
 
-    ![](pics/image41.png)
+    ![](media/image41.png)
 
 7.  click **Try it** and fill in the parameters:
 
@@ -661,7 +661,7 @@ Steps
 
     d.  **video Id** from *ListVideos call* result
 
-    ![](pics/image42.png)
+    ![](media/image42.png)
 
 8.  Scroll to the bottom of the page and click **Send**
 

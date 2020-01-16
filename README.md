@@ -36,8 +36,8 @@ Contains samples code for Video Indexer API and Widgets
 | `Widgets`                   | How to add Video Indexer widgets to your app          | oriziv       |
 | `VideoDescriptionSample`    | Display an automatic description of VI thumbnails     | xpouyat      |
 | `LiveStreamAnalysis`        | Using VI to create close to live stream analysis      | xpouyat      |
-| `IntegrationWithZoommedia`  | Integration with Zoommedia speech-to-text service     | victorp13    |
-| `pics`                      | Pictures used in the intro lab                        |              |
+| `Partners`                  | Examples for collaboration projects with partners     |              |
+| `media`                     | media used for md files                               |              |
 | `.gitignore`                | Define what to ignore at commit time                  |              |
 | `CHANGELOG.md`              | List of changes to the sample                         |              |
 | `CONTRIBUTING.md`           | Guidelines for contributing to the sample             |              |
@@ -49,7 +49,7 @@ We highly recommend you will follow our [blog posts](https://azure.microsoft.com
 ## Prerequisites
 You should have an active user to Video Indexer.
 
-Start by Sign-up to [Video Indexer API](https://api-portal.videoindexer.ai/) and get your api key.
+Start by Signing-up to [Video Indexer API](https://api-portal.videoindexer.ai/) and get your API key.
 
 We also recommend to start with our [short and basic introduction to Video Indexer](https://github.com/itayar/test/blob/master/labTest.md), if you are not familiar with VI.
 <!--

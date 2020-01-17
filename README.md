@@ -4,7 +4,7 @@ languages:
   - csharp
   - javascript
   - html
-  - .NET
+  - dotnet
 products:
   - azure
   - azure-media-services

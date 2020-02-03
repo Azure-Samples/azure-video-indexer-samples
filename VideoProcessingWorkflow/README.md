@@ -8,4 +8,4 @@ Guidance on onboarding samples to docs.microsoft.com/samples: https://review.doc
 Taxonomies for products and languages: https://review.docs.microsoft.com/new-hope/information-architecture/metadata/taxonomies?branch=master
 -->
 
-This [repository](https://github.com/azureforeducation/demo-videoprocessing) brings a implementation of a complete video processing workflow which takes advantage of AMS, Video Indexer, Azure Functions, and Logic Apps. 
+[This repository](https://github.com/azureforeducation/demo-videoprocessing) brings an implementation of a complete video processing workflow which takes advantage of AMS, Video Indexer, Azure Functions, and Logic Apps. 

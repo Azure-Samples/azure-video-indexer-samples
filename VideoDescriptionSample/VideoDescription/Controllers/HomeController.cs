@@ -18,6 +18,8 @@ using VideoDescription.Util;
 using Newtonsoft.Json.Linq;
 using VideoIndexerLibrary;
 using TranslatorLibrary;
+using System.Diagnostics;
+using System.Globalization;
 
 namespace VideoDescription.Controllers
 {
@@ -110,8 +112,9 @@ namespace VideoDescription.Controllers
                         blob.FetchAttributes(); // Get blob metadata
                         var description = blob.Metadata.ContainsKey("Description") ? blob.Metadata["Description"] : "(no description)";
                         var descriptionTranslated = blob.Metadata.ContainsKey("DescriptionTranslated") ? HttpUtility.HtmlDecode(blob.Metadata["DescriptionTranslated"]) : null;
-                        string confidence = blob.Metadata.ContainsKey("Confidence") ? Double.Parse(blob.Metadata["Confidence"]).ToString() + "%" : null;
-                        TimeSpan? adjustedStart = blob.Metadata.ContainsKey("AdjustedStart") ? (TimeSpan?)TimeSpan.Parse(blob.Metadata["AdjustedStart"]) : (TimeSpan?)null;
+                        string confidence = blob.Metadata.ContainsKey("Confidence") ? Double.Parse(blob.Metadata["Confidence"], CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture) + "%" : null;
+                        TimeSpan? adjustedStart = blob.Metadata.ContainsKey("AdjustedStart") ? (TimeSpan?)TimeSpan.Parse(blob.Metadata["AdjustedStart"], CultureInfo.InvariantCulture) : (TimeSpan?)null;
+                        int? index = blob.Metadata.ContainsKey("Index") ? (int?)(int.Parse(blob.Metadata["Index"], CultureInfo.InvariantCulture)) : null;
 
                         blobs.Add(new BlobInfo()
                         {
@@ -120,7 +123,8 @@ namespace VideoDescription.Controllers
                             Description = description,
                             DescriptionTranslated = descriptionTranslated != null ? Encoding.UTF8.GetString(Convert.FromBase64String(descriptionTranslated)) : null,
                             Confidence = confidence,
-                            AdjustedStart = adjustedStart
+                            AdjustedStart = adjustedStart,
+                            Index = index
                         });
                     }
                 }
@@ -142,7 +146,7 @@ namespace VideoDescription.Controllers
                             TimeSpan duration = new TimeSpan();
                             foreach (dynamic inst in speaker.instances)
                             {
-                                duration += DateTime.Parse((string)inst.end) - DateTime.Parse((string)inst.start);
+                                duration += DateTime.Parse((string)inst.end, CultureInfo.InvariantCulture) - DateTime.Parse((string)inst.start, CultureInfo.InvariantCulture);
                             }
                             SpeakersStatsBuilder.Add(new SpeakerStats() { Name = (string)speaker.name, Duration = duration });
                         }
@@ -155,7 +159,7 @@ namespace VideoDescription.Controllers
                 }
             }
 
-            ViewBag.Blobs = blobs.OrderBy(bl => bl.AdjustedStart).ToArray();
+            ViewBag.Blobs = blobs.OrderBy(bl => bl.Index).ToArray();
             ViewBag.VideoId = videoId;
 
             ViewBag.VideoIndexerAccountId = HttpContextProvider.Current.Session["VideoIndexerAccountId"];
@@ -302,7 +306,7 @@ namespace VideoDescription.Controllers
                     {
                         string thumbnailId = (string)instance.thumbnailId;
                         string thumbnailStartTime = (string)instance.adjustedStart;
-                        shotsTimingAndThumbnailsId.Add(TimeSpan.Parse(thumbnailStartTime), thumbnailId);
+                        shotsTimingAndThumbnailsId.Add(TimeSpan.Parse(thumbnailStartTime, CultureInfo.InvariantCulture), thumbnailId);
                     }
                 }
             }
@@ -313,7 +317,7 @@ namespace VideoDescription.Controllers
             {
                 foreach (var scene in scenes)
                 {
-                    TimeSpan start = TimeSpan.Parse((string)scene.instances[0].adjustedStart);
+                    TimeSpan start = TimeSpan.Parse((string)scene.instances[0].adjustedStart, CultureInfo.InvariantCulture);
                     var closestTime = listTimings.OrderBy(t => Math.Abs((t - start).Ticks))
                                        .First();
                     scenesTimingAndThumbnailId.Add(closestTime, shotsTimingAndThumbnailsId[closestTime]);
@@ -368,12 +372,13 @@ namespace VideoDescription.Controllers
 
                 // cleaning metadata on blobs
                 thumbnailHighResBlob.Metadata.Clear();
+                thumbnailHighResBlob.Metadata.Add("Index", index.ToString(CultureInfo.InvariantCulture));
 
                 // Record the image description and tags in blob metadata
                 if (result.Description.Captions.Count > 0)
                 {
                     thumbnailHighResBlob.Metadata.Add("Description", result.Description.Captions[0].Text);
-                    thumbnailHighResBlob.Metadata.Add("Confidence", (result.Description.Captions[0].Confidence * 100).ToString("F1"));
+                    thumbnailHighResBlob.Metadata.Add("Confidence", (result.Description.Captions[0].Confidence * 100).ToString("F1", CultureInfo.InvariantCulture));
 
                     if (!string.IsNullOrEmpty(translationLang))
                     {
@@ -397,7 +402,7 @@ namespace VideoDescription.Controllers
 
                 for (int i = 0; i < result.Description.Tags.Count; i++)
                 {
-                    string key = String.Format("Tag{0}", i);
+                    string key = String.Format(CultureInfo.InvariantCulture, "Tag{0}", i);
                     thumbnailHighResBlob.Metadata.Add(key, result.Description.Tags[i]);
                 }
 

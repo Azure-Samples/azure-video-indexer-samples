@@ -13,6 +13,6 @@ namespace VideoDescription.Models
         public string DescriptionTranslated { get; set; }
         public string Confidence { get; set; }
         public TimeSpan? AdjustedStart { get; set; }
-        
+        public int? Index { get; set; }
     }
 }

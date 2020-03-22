@@ -21,6 +21,8 @@ Taxonomies for products and languages: https://review.docs.microsoft.com/new-hop
 
 This folder contains the basic frontend code in order to embed Video Indexer's widgets in your own service and examples for the output json file you will recieve using our API.
 
+To watch a tutorial video of how to embed the widgtes please visit [this link](https://msit.microsoftstream.com/video/8c30a1ff-0400-aa75-bf5e-f1ea6c4179b0)
+
 The widgets are divided to player and insight widgets and their documentation and a way to embed them in your app can be found [here](https://docs.microsoft.com/en-us/azure/media-services/video-indexer/video-indexer-embed-widgets).
 
 For more detailed examples, please visit our [Codepen page](https://codepen.io/videoindexer/)

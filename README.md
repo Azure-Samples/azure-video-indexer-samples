@@ -31,9 +31,9 @@ Here you can find code samples and project examples of how to use Video Indexer,
 
 | File/folder                 | Description                                                          | Owner           |
 |-----------------------------|----------------------------------------------------------------------|-----------------|
-| `API`                       | Sample code of uploading and indexing video using API                | eldarsh         |
+| `Code samples for API usage`| Sample code of uploading and indexing video using API                | eldarsh         |
 | `IntroToVideoIndexer.md`    | An intro lab to Video Indexer with exercises                         | itayarb         |
-| `Widgets`                   | How to add Video Indexer widgets to your app                         | oriziv          |
+| `Embedding widgets`         | How to add Video Indexer widgets to your app                         | oriziv          |
 | `VideoDescriptionSample`    | Display an automatic description of VI thumbnails                    | xpouyat         |
 | `LiveStreamAnalysis`        | Using VI to create close to live stream analysis                     | xpouyat         |
 | `VideoProcessingWorkflow`   | Complete video processing workflow using VI, AF, and logic apps      | fabriciosanchez |

@@ -10,4 +10,4 @@ Taxonomies for products and languages: https://review.docs.microsoft.com/new-hop
 
 [This repository](https://github.com/azureforeducation/demo-videoprocessing) presents an implementation of a complete video processing workflow which takes advantage of AMS, Video Indexer, Azure Functions, and Logic Apps.
 
-You can also check [this external blog done by Fabricio Sanchez](https://fabriciosanchez-en.azurewebsites.net/creating-an-automated-video-processing-flow-in-azure/) in which he also presents an automated video processing flow in Azure
+You can also check [this external blog done by Fabricio Sanchez](https://fabriciosanchez-en.azurewebsites.net/creating-an-automated-video-processing-flow-in-azure/) in which he presents a more detailed version of the automated video processing flow. 

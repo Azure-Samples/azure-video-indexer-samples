@@ -188,13 +188,18 @@ Context
 Steps
 -----
 
-1.  Click on the "Sample Videos" tab to see all sample videos
+1.  Click on the "Samples" tab to see all sample videos
 
-    ![](media/image302.png)
+    ![](media/welcomePage.png)
+    ![](media/image302.png) // update welcomePage##############################################################
 
-2.  On the search bar, search for **Build** in the 'Find topics' box and
-    for **Satya** in the 'Find people'
+2.  Search for 'Satya' in the search bar
     
+    ![](media/SearchSatya.png) // need to upload##########################################################
+    
+    Another option is to ckick 'Filters' and search for 'satya' in the 'Insight type' under 'People'.
+    Notice that the results are abit different since it is now searching for 'Satya's' Face and not also in transcript as the first search.
+    ![](media/searchStayaFilter.png) // need to upload########################################################
     ![](media/image5.png)
 
 3.  The videos in the gallery will be filtered according to your
@@ -205,14 +210,15 @@ Steps
     were found. Later in this workshop we will learn more about those
     insights.
 
-    ![](media/image6.png)
+    ![](media/image6.png) // take out##################################################################################
 
-4.  Click **Show more filters** to see more filtering options such as
-    filtering by specific types of insights or specific languages.
+4.  Click **Filters** and use the drop-down bar to choose different filters. You can also click the '+' to add more filtering options such as
+    filtering by owner or specific languages.
 
 5.  Click **Clear search** to start over.
 
     ![](media/image62.png)
+    ![](media/.FilterClear.png) //upload########################################################################################################
 
 Next. Review insights in a file
 ============================================

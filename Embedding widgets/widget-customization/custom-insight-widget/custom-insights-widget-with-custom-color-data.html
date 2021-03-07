@@ -1,0 +1,92 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../style.css">
+  </head>
+  <body>
+    <script src="../viSDK.min.js"></script>
+    <h1>Customize insights widget</h1>
+    <div id="container" class="widget-container"></div>
+    <script>
+      const customColorElement = {
+        id: 1,
+        text: 'My Custom color element',
+        color: 'blue',
+        instances: [
+          {
+            adjustedEnd: '0:02:37.644',
+            adjustedStart: '0:00:00',
+            end: '0:02:37.644',
+            start: '0:00:00'
+          },
+          {
+            adjustedEnd: '0:04:01.497',
+            adjustedStart: '0:03:39.322',
+            end: '0:04:01.497',
+            start: '0:03:39.322'
+          },
+          {
+            adjustedEnd: '0:05:00.968',
+            adjustedStart: '0:04:36.6',
+            end: '0:05:00.968',
+            start: '0:04:36.6'
+          }
+        ]
+      };
+
+      const customColorElement2 = {
+        id: 2,
+        text: 'My Second color',
+        color: 'rgba(255,144,144,1)',
+        instances: [
+          {
+            adjustedEnd: '0:06:46.15',
+            adjustedStart: '0:06:42.086',
+            end: '0:06:46.15',
+            start: '0:06:42.086'
+          }
+        ]
+      };
+
+      const customColorElement3 = {
+        id: 3,
+        text: 'My last color',
+        color: '#FFFFF',
+        instances: [
+          {
+            adjustedEnd: '0:10:18.957',
+            adjustedStart: '0:09:59.306',
+            confidence: 0.8383,
+            end: '0:10:18.957',
+            start: '0:09:59.306'
+          }
+        ]
+      };
+
+      const customColorData = {
+        title: 'My custom color example',
+        key: 'myCustomColor',
+        presets: ['all', 'accessibility'],  // When clicking captioning accessibility / all, the custom data will be selected
+        type: 'color-map',
+        items: [customColorElement, customColorElement2, customColorElement3]
+      };
+
+      const insightsConfig = {
+        duration: 634,
+        rawInsightsData: [],
+        viInsightsKeys: [],
+        customData: [customColorData],
+      };
+
+      const customInsightsWidget = new VI.Widgets.CustomInsights(
+        'container',
+        {
+          width: 800,
+          height: 1000
+        },
+        insightsConfig
+      );
+
+      customInsightsWidget.render();
+    </script>
+  </body>
+</html>

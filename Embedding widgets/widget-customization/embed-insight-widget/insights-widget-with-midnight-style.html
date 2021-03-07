@@ -1,0 +1,72 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../style.css">
+  </head>
+  <body>
+    <script src="../viSDK.min.js"></script>
+    <h1>Video Indexer insights widget</h1>
+    <div id="container" class="widget-container"></div>
+    <script>
+      const midnightStyle = {
+        highlight: 'rgba(80,230,255,1)',
+        primary: 'rgba(80,230,255,1)',
+        primaryHover: 'rgba(67,214,238,1)',
+        primaryPress: 'rgba(64,199,222,1)',
+        primaryDisable: 'rgba(255,255,255,0.120)',
+        secondaryFill: 'rgba(8,18,34,1)',
+        secondaryFillHover: 'rgba(255,255,255,0.080)',
+        secondaryFillPress: 'rgba(255,255,255,0.120)',
+        secondaryStroke: 'rgba(255,255,255,0.540)',
+        componentFill: 'rgba(28,37,52,1)',
+        componentStroke: 'rgba(255,255,255,0.620)',
+        componentStrokeAlt: 'rgba(255,255,255,0.760)',
+        playStatus: 'rgba(80,230,255,0.250)',
+        playStatusAlt: 'rgba(80,230,255,1)',
+        headerActions: 'rgba(255,255,255,1)',
+        headerHovers: 'rgba(255,255,255,0.380)',
+        headerHoversAlt: 'rgba(255,255,255,0.760)',
+        headerBg: 'rgba(28,28,28,1)',
+        dividers: 'rgba(255,255,255,0.080)',
+        dividersAlt: 'rgba(255,255,255,0.120)',
+        dividersPanel: 'rgba(255,255,255,0.200)',
+        bgPrimary: 'rgba(8,18,34,1)',
+        bgSecondary: 'rgba(8,18,34,1)',
+        typePrimary: 'rgba(255,250,209,1)',
+        typeSecondary: 'rgba(255,250,209,0.760)',
+        typeDisabled: 'rgba(255,250,209,0.380)',
+        typeDisabledAlt: 'rgba(255,250,209,0.220)',
+        emotionJoy: 'rgba(242,195,74,1)',
+        emotionFear: 'rgba(192,125,255,1)',
+        emotionSadness: 'rgba(77,157,255,1)',
+        emotionAnger: 'rgba(255,107,107,1)',
+        sentimentPositive: 'rgba(80,230,255,1)',
+        sentimentNegative: 'rgba(255,107,107,1)',
+        videoMenuBg: 'rgba(0,0,0,0.800)',
+        videoShade: 'rgba(255,255,255,0.380)',
+        errorType: 'rgba(241,112,123,1)',
+        errorArea: 'rgba(208,46,0,1)',
+        errorAreaTint: 'rgba(62,29,34,1)',
+        warningArea: 'rgba(62,59,29,1)',
+        shadow: 'rgba(0,0,0,0.760)'
+      };
+
+      const config = {
+        accountId: '00000000-0000-0000-0000-000000000000',
+        videoId: 'd9d4860279',
+        style: {
+          customStyle: midnightStyle
+        }
+      };
+      let widget = new VI.Widgets.Insights(
+        'container',
+        {
+          height: 780,
+          width: 580
+        },
+        config
+      );
+
+      widget.render();
+    </script>
+  </body>
+</html>

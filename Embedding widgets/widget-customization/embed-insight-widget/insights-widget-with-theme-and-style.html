@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../style.css">
+  </head>
+  <body>
+    <script src="../viSDK.min.js"></script>
+    <h1>Video Indexer insights widget</h1>
+    <div id="container" class="widget-container"></div>
+    <script>
+      const insightsStyleConfig = {
+        primary: 'yellow',
+        dividers: 'rgba(134,28,173,1)',
+      };
+
+      const config = {
+        accountId: '00000000-0000-0000-0000-000000000000',
+        videoId: 'd9d4860279',
+        accessToken: '',
+        locale: 'es-es',
+        tab: 'timeline',
+        components: ['emotions', 'sentiments', 'transcript', 'keywords'],
+        style: {
+          customStyle: insightsStyleConfig,
+          theme: 'Dark'
+        }
+      };
+      let widget = new VI.Widgets.Insights(
+        'container',
+        {
+          height: 780,
+          width: 580
+        },
+        config
+      );
+
+      widget.render();
+    </script>
+  </body>
+</html>

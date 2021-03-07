@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../style.css">
+  </head>
+  <body>
+    <script src="../viSDK.min.js"></script>
+    <h1>Customize insights widget</h1>
+    <div id="container" class="widget-container"></div>
+    <script>
+      // Not sending any data
+      const insightsConfig = {
+        duration: 634,
+        rawInsightsData: [],
+        customData: [],
+        viInsightsKeys: []
+      };
+
+      let customInsightWidget = new VI.Widgets.CustomInsights(
+        'container',
+        {
+          width: 800,
+          height: 1000
+        },
+        insightsConfig
+      );
+
+      customInsightWidget.render();
+    </script>
+  </body>
+</html>

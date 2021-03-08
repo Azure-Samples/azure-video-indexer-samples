@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../style.css">
+  </head>
+  <body>
+    <script src="../viSDK.min.js"></script>
+    <h1>Video Indexer insights widget</h1>
+    <div id="container" class="widget-container"></div>
+    <script>
+      const config = {
+        accountId: '00000000-0000-0000-0000-000000000000',
+        videoId: 'd9d4860279',
+        language: 'de-DE', // Load insights in Danish
+        controls: ['download', 'search'], // Show only download option and search
+        components: ['namedEntities', 'shots', 'topics'] // Show namedEntities, shots and topics insights
+      };
+      let widget = new VI.Widgets.Insights(
+        'container',
+        {
+          height: 780,
+          width: 600
+        },
+        config
+      );
+
+      widget.render();
+    </script>
+  </body>
+</html>

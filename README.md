@@ -29,21 +29,22 @@ Welcome to the official Video Indexer (VI) Samples repo. Video indexer builds up
 
 Here you can find code samples and project examples of how to use Video Indexer, integrated it with your product, and expand our out-of-the-box offering by integrating with other products.
 
-| File/folder                 | Description                                                          | Owner           |
-|-----------------------------|----------------------------------------------------------------------|-----------------|
-| `Code samples for API usage`| Sample code of uploading and indexing video using API                | eldarsh         |
-| `IntroToVideoIndexer.md`    | An intro lab to Video Indexer with exercises                         | itayarb         |
-| `Embedding widgets`         | How to add Video Indexer widgets to your app                         | oriziv          |
-| `VideoDescriptionSample`    | Display an automatic description of VI thumbnails                    | xpouyat         |
-| `LiveStreamAnalysis`        | Using VI to create close to live stream analysis                     | xpouyat         |
-| `VideoProcessingWorkflow`   | Complete video processing workflow using VI, AF, and logic apps      | fabriciosanchez |
-| `Partners`                  | Examples for collaboration projects with partners                    |                 |
-| `media`                     | media used for md files                                              |                 |
-| `.gitignore`                | Define what to ignore at commit time                                 |                 |
-| `CHANGELOG.md`              | List of changes to the sample                                        |                 |
-| `CONTRIBUTING.md`           | Guidelines for contributing to the sample                            |                 |
-| `README.md`                 | This README file                                                     |                 |
-| `LICENSE`                   | The license for the sample                                           |                 |
+| File/folder                  | Description                                                  | Owner           |
+| ---------------------------- | ------------------------------------------------------------ | --------------- |
+| `Code samples for API usage` | Sample code of uploading and indexing video using API        | eldarsh         |
+| `IntroToVideoIndexer.md`     | An intro lab to Video Indexer with exercises                 | itayarb         |
+| `Embedding widgets`          | How to add Video Indexer widgets to your app                 | oriziv          |
+| `VideoDescriptionSample`     | Display an automatic description of VI thumbnails            | xpouyat         |
+| `LiveStreamAnalysis`         | Using VI to create close to live stream analysis             | xpouyat         |
+| `VideoProcessingWorkflow`    | Complete video processing workflow using VI, AF, and logic apps | fabriciosanchez |
+| `AIEnrichmentPipeline`       | Complete sample for processing file through text, image and video enrichment pipelines | martinkearn     |
+| `Partners`                   | Examples for collaboration projects with partners            |                 |
+| `media`                      | media used for md files                                      |                 |
+| `.gitignore`                 | Define what to ignore at commit time                         |                 |
+| `CHANGELOG.md`               | List of changes to the sample                                |                 |
+| `CONTRIBUTING.md`            | Guidelines for contributing to the sample                    |                 |
+| `README.md`                  | This README file                                             |                 |
+| `LICENSE`                    | The license for the sample                                   |                 |
 
 We highly recommend you will follow our [blog posts](https://azure.microsoft.com/en-us/blog/tag/video-indexer/) to get deeper insights and the most updated news.
 

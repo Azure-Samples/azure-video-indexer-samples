@@ -37,7 +37,7 @@ Here you can find code samples and project examples of how to use Video Indexer,
 | `VideoDescriptionSample`     | Display an automatic description of VI thumbnails            | xpouyat         |
 | `LiveStreamAnalysis`         | Using VI to create close to live stream analysis             | xpouyat         |
 | `VideoProcessingWorkflow`    | Complete video processing workflow using VI, AF, and logic apps | fabriciosanchez |
-| `AIEnrichmentPipeline`       | Complete sample for processing file through text, image and video enrichment pipelines | martinkearn     |
+| `AIEnrichmentPipeline`       | Complete sample for processing text, image and video files through a full enrichment pipeline with event grid, service bus, functions, logic apps, cognitive services and video indexer | martinkearn     |
 | `Partners`                   | Examples for collaboration projects with partners            |                 |
 | `media`                      | media used for md files                                      |                 |
 | `.gitignore`                 | Define what to ignore at commit time                         |                 |

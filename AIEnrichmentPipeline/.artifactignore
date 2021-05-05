@@ -1,0 +1,7 @@
+**/*
+!/infra/**/*
+!/scripts/**/*
+!/functions/releases/**/*
+!/logicapp/**/*
+!/*.ps1
+!/testdata/**/*

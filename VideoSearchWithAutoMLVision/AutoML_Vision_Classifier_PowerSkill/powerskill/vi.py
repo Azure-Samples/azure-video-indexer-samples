@@ -47,7 +47,7 @@ class VideoIndexerAPI():
         logging.info('Getting video thumbnail..')
 
         headers = {
-            'Ocp-Apim-Subscription-Key': self.vi_api_key
+            'accessToken': self.access_token
         }
 
         params = {
@@ -55,9 +55,7 @@ class VideoIndexerAPI():
             'accountId': self.vi_account_id,
             'videoId': video_id,
             'thumbnailId': thumbnail_id,
-            'format': 'Jpeg',
-            'accessToken': self.access_token
-
+            'format': 'Jpeg'
         }
 
         thumbnail_req = requests.get(
@@ -85,16 +83,14 @@ class VideoIndexerAPI():
         print('Getting video artifacts..')
 
         headers = {
-            'Ocp-Apim-Subscription-Key': self.vi_api_key
+            'accessToken': self.access_token
         }
 
         params = {
             'location': self.vi_location,
             'accountId': self.vi_account_id,
             'videoId': video_id,
-            'type': 'KeyframesThumbnails',
-            'accessToken': self.access_token
-
+            'type': 'KeyframesThumbnails'
         }
 
         artifacts_req = requests.get(
@@ -116,13 +112,12 @@ class VideoIndexerAPI():
         print('Getting videos..')
 
         headers = {
-            'Ocp-Apim-Subscription-Key': self.vi_api_key
+            'accessToken': self.access_token
         }
 
         params = {
             'location': self.vi_location,
-            'accountId': self.vi_account_id,
-            'accessToken': self.access_token
+            'accountId': self.vi_account_id
         }
 
         list_videos_req = requests.get(

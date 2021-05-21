@@ -65,6 +65,3 @@ RUN \
 # Install dotnet format
 RUN dotnet tool install -g dotnet-format
 ENV PATH="$PATH:/root/.dotnet/tools"
-
-# Add AzureDevops build agent script
-COPY ./buildagentstart.sh .

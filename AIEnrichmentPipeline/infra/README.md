@@ -38,9 +38,9 @@ This process will go through the steps of opening this repository in the Visual 
 
 1. Get the latest version of  [AZ CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) and make sure `az login` is successful
 
-1. Clone the `AI-Enrichment-Pipeline` repository locally
+1. Clone the repository locally
 
-1. Open the root folder of the `AI-Enrichment-Pipeline` repository in VSCode
+1. Open the root folder for the solution in VSCode. This could be the root of the repository but could also be in a sub-folder if the solution is in the repository with other artefacts. You should open at the level where `make.ps1` is housed.
 
 1. VSCode should prompt you to `Reopen in Container`, do that. If it doesn't, run `CTRL+SHIFT+P` -> `Reopen in container`
 

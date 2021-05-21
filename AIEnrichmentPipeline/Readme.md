@@ -1,6 +1,6 @@
 # AI Enrichment Pipeline
 
-This repository contains an AI enrichment pipline which triggers from the upload of binary file to an Azure Storage account. The pipeline will "enrich" the file with additional insights from various Azure Cognitive Services, custom ode and Video Indexer before submitting it to a Service Bus queue for further processing.
+This repository contains an AI enrichment pipline which triggers from the upload of binary file to an Azure Storage account. The pipeline will "enrich" the file with additional insights from various Azure Cognitive Services, custom code and Video Indexer before submitting it to a Service Bus queue for further processing.
 
 This solution determines which cognitive service to use based on the classification of the file into one of three file categories:
 

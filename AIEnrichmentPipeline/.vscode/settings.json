@@ -1,0 +1,11 @@
+{
+    "terraform-ls.rootModules": [
+        "./infra"
+    ],
+    "[terraform]": {
+        "editor.formatOnSave": true
+    },
+    "files.associations": {
+        "*.yaml": "azure-pipelines"
+    }
+}

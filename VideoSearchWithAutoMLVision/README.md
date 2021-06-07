@@ -124,7 +124,7 @@ terraform apply
 
 #### Expected result
 
-After Terraform reports that the apply is complete, if you nAVAMgate to your resource group, hAVAMng used the default
+After Terraform reports that the apply is complete, if you navigate to your resource group, hAVAMng used the default
 variables and ARM parameters, you should see the following:
 
 ![Deployed resources in an Azure resource group](images/deployed-resources.png)
@@ -149,7 +149,7 @@ The following manual steps are required to be completed to make the solution fun
 First, we'll need to set up a Azure Video Analyzer for Media account linked to the Media Services Resource deployed (name prefix
 `mediaservices`).
 
-If we nAVAMgate to this resource's overview, and scroll down, there is a window entitled "Azure Video Analyzer for Media". Click the link
+If we navigate to this resource's overview, and scroll down, there is a window entitled "Azure Video Analyzer for Media". Click the link
 "[Go to Azure Video Analyzer for Media](https://www.videoindexer.ai/)".
 
 ![Azure Video Analyzer for Media window from Media Services resource overview](images/video-indexer-media-services-overview.png)
@@ -166,12 +166,12 @@ If you see an error displayed after the account has been created, saying `Thereâ
 
 Once created, go to the [Azure Video Analyzer for Media developer portal](https://api-portal.videoindexer.ai/).
 
-Sign in using the same AAD account, and go to "Profile" in the nAVAMgation bar.
+Sign in using the same AAD account, and go to "Profile" in the navigation bar.
 
 Show and copy the Primary Key of your Product Authorization Subscription to your clipboard - this is your `VI_API_KEY`.
 
 This key will be used by our logic app to authorize its connections to your Azure Video Analyzer for Media account. With the key in your
-clipboard, nAVAMgate to your deployment resource group and click on the API Connection resource `videoindexer-v2`. In the
+clipboard, navigate to your deployment resource group and click on the API Connection resource `videoindexer-v2`. In the
 sidebar on the left of the overview window, click on "Edit API connection".
 
 Leave the display name the same, but paste your API key from the developer portal in the "API Key" field.
@@ -192,7 +192,7 @@ yet operational - see below.
 
 ![Blob listener logic app's default storage connections are shown as inoperational](images/blob-listener-storage-connections.png)
 
-To bring these online, nAVAMgate to the general storage account, view its access keys in the left sidebar, click
+To bring these online, navigate to the general storage account, view its access keys in the left sidebar, click
 `Show Keys` and copy `key1`. Next, paste this in the `Azure Storage Account Access Key` field in the `azureblob`
 API connection, in the same menu as used for for the `videoindexer-v2` connection.
 
@@ -250,7 +250,7 @@ shanepeckham/amlclassifier:v1
 
 #### Manually populating the AML Classifier Web App configuration
 
-NAVAMgate to the Classifier Web App (prefix name `classifierpowerkill`) and select `Configuration`. See below:
+Navigate to the Classifier Web App (prefix name `classifierpowerkill`) and select `Configuration`. See below:
 
 ![classifier powerskill configuration](images/classifier-powerskill-configuration.png)
 
@@ -315,7 +315,7 @@ shanepeckham/parserapi:v1
 
 #### Manually populating the ParserAPI Web App configuration
 
-NAVAMgate to the parserapi Web App (prefix name `parserapi`) and select `Configuration`. See below:
+Navigate to the parserapi Web App (prefix name `parserapi`) and select `Configuration`. See below:
 
 ![parserapi configuration](images/parserapi-webapp-configuration.png)
 
@@ -438,9 +438,9 @@ and populate the following values:
     var azureSearchServiceName = "";  // The name of your ACS service
 ```
 
-> **Reminder**: You can get the AVAM primary key from the [Azure Video Analyzer for Media developer portal](https://api-portal.videoindexer.ai/), go to "Profile" in the nAVAMgation bar.
+> **Reminder**: You can get the AVAM primary key from the [Azure Video Analyzer for Media developer portal](https://api-portal.videoindexer.ai/), go to "Profile" in the navigation bar.
 
-Lastly, you need to enable CORS on the index in order to be able to use the sample UI. NAVAMgate to your ACS instance,
+Lastly, you need to enable CORS on the index in order to be able to use the sample UI. Navigate to your ACS instance,
 and on the Overview blade select your ACS index, select CORS and set the value to `All` or `Custom` for your domain, see
 below:
 

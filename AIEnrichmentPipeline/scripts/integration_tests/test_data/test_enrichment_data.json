@@ -1,0 +1,69 @@
+{
+    "enrichment": {
+        "values": [
+            {
+                "recordId": "duplicatetextfile.txt",
+                "correlationId": "dd54ee94-4e7e-41fb-99a9-39f58ebcdbfd",
+                "translatedDocumentLocation": "",
+                "errors": "",
+                "data": [
+                    {
+                        "modelName": "Azure English Text Analytics",
+                        "language": "EN",
+                        "people": [],
+                        "organizations": [],
+                        "locations": []
+                    },
+                    {
+                        "modelName": "Azure English Text Analytics Translated",
+                        "language": "EN",
+                        "people": [],
+                        "organizations": [],
+                        "locations": []
+                    },
+                    {
+                        "modelName": "Farasa (Arabic only)",
+                        "language": "EN",
+                        "people": [],
+                        "organizations": [],
+                        "locations": []
+                    },
+                    {
+                        "modelName": "Farasa Translated",
+                        "language": "EN",
+                        "people": [],
+                        "organizations": [],
+                        "locations": []
+                    },
+                    {
+                        "modelName": "Custom Model (Arabic only)",
+                        "language": "EN",
+                        "people": [],
+                        "organizations": [],
+                        "locations": []
+                    },
+                    {
+                        "modelName": "Custom Model Translated",
+                        "language": "EN",
+                        "people": [],
+                        "organizations": [],
+                        "locations": []
+                    },
+                    {
+                        "modelName": "Azure English Text Analytics",
+                        "language": "EN",
+                        "people": [],
+                        "organizations": [],
+                        "locations": []
+                    },
+                    {
+                        "modelName": "Azure Translation",
+                        "language": "EN",
+                        "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eleifend ipsum id mollis rhoncus. Nullam tempus quam massa, mollis ullamcorper erat interdum eu. Morbi eget velit et odio imperdiet interdum sed at velit. Sed lacinia pulvinar arcu, id pulvinar enim blandit vel. Curabitur sit amet diam non turpis facilisis tristique sed at ligula. Vestibulum dolor ipsum, condimentum id lacus in, rutrum consectetur nisl. In hac habitasse platea dictumst. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla eget turpis lacus. Mauris vitae elit at purus placerat facilisis. Duis vitae tristique augue. Maecenas id condimentum felis. Praesent ut metus elit. Nulla ut nunc ut nisl bibendum tincidunt at vitae neque. Nullam at bibendum felis. In sit amet consequat elit. Aenean consequat metus et libero semper tincidunt at vel ex. Nunc efficitur, tortor sed vestibulum efficitur, lectus orci iaculis ex, in condimentum metus sem sit amet odio. Ut vestibulum sollicitudin malesuada. Donec eget nibh tellus. Sed id eros sed quam gravida lobortis id at turpis. Vestibulum interdum tortor metus, facilisis blandit tortor egestas sit amet. Nunc erat metus, elementum ac sapien ut, blandit dictum ex. Proin eleifend leo ante, et bibendum ante sollicitudin sit amet. Maecenas tristique dapibus pulvinar. Sed eu urna pellentesque, malesuada massa eu, malesuada erat. Phasellus nec est nec nisl pulvinar placerat in nec mauris. Proin laoreet mi quis rutrum tempus. Cras fermentum, odio id consectetur eleifend, felis purus tincidunt elit, tincidunt feugiat ante lacus sed mi. Aliquam erat volutpat. Vestibulum fringilla condimentum felis quis pharetra. Vestibulum cursus dui urna, vulputate gravida nisi lacinia a. Nunc mattis pretium est, ac sodales nunc varius ac. Praesent ullamcorper sagittis varius. Donec ac magna dolor. Cras eget augue sit amet ligula euismod fermentum in eget sem. Nam est ligula, molestie bibendum dolor ut, porttitor pretium dui. Cras eget fermentum eros, ut luctus nibh. Cras lobortis ac nisl sed blandit. Praesent sit amet finibus purus, eu tempor velit. Praesent sed efficitur nisl. Nullam eu massa et orci molestie lacinia. Suspendisse eu arcu quis nisi porttitor dapibus. Integer elementum lobortis lectus, ac fringilla massa sollicitudin eget. Praesent imperdiet purus nisl, sed vestibulum ante dapibus nec. Sed et dolor nulla. Nam malesuada, sapien non fermentum malesuada, lectus magna dignissim eros, quis vulputate leo elit vestibulum elit. Mauris ac dui et ex vehicula efficitur sed id ligula. Cras eget feugiat augue. Integer nibh justo, iaculis vitae rhoncus ac, tincidunt a enim.  "
+                    }
+                ]
+            }
+        ]
+    },
+    "textPathUri": "https://corestorivuot.blob.core.windows.net/input/uploads/WorkflowIntegrationTestBatchcb4c6317-26e7-42b1-ad26-707f1f51b565forceenrichment/Text%20Files/00/003/duplicatetextfile-extractedtext.txt?sv=2018-03-28&sr=b&sig=WsyLjc02xhz8zkYbAxF9VGs%2FfVK1libEox77DkEHXzc%3D&spr=https&se=2021-02-02T01%3A45%3A16Z&sp=r"
+}

@@ -12,7 +12,7 @@ class VideoIndexer:
     location: str = "TRIAL"  # change this if you have a paid subscription tied to a specific location
 
     @classmethod
-    def get_access_token(cls):
+    def get_account_access_token(cls):
         """
         Get an access token from the Video Indexer API. These expire every hour and are required in order to use the
         service.
@@ -46,7 +46,6 @@ class VideoIndexer:
         # Set request headers and url
         headers = {
             "Content-Type": "multipart/form-data",
-            "Ocp-Apim-Subscription-Key": cls.subscription_key,
         }
         video_indexer_url = (
             "https://api.videoindexer.ai/{}/Accounts/{}"
@@ -107,10 +106,7 @@ class VideoIndexer:
         :return video_indexer_json_output: JSON, analysed video data.
         """
 
-        # Set request headers and url
-        headers = {
-            "Ocp-Apim-Subscription-Key": cls.subscription_key,
-        }
+        # Set request url
         url = "https://api.videoindexer.ai/{}/Accounts/{}/Videos/{}/Index?accessToken={}".format(
             cls.location, cls.account_id, video_id, access_token
         )

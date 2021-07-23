@@ -61,7 +61,7 @@ class VideoIndexer:
         # If the access token has expired get a new one
         if response.status_code == 401:
             print("[*] Access token has expired, retrying with new token.")
-            access_token = cls.get_access_token()
+            access_token = cls.get_account_access_token()
             video_indexer_new_url = """https://api.videoindexer.ai/{}/Accounts/{}/Videos?name={}&privacy=Private&videoUrl={}&accessToken={}&sendSuccessEmail=True&streamingPreset=NoStreaming""".format(
                 cls.location,
                 cls.account_id,
@@ -120,7 +120,7 @@ class VideoIndexer:
         # If the access token has expired get a new one
         if response.status_code == 401:
             print("[*] Access token has expired, retrying with new token.")
-            access_token = cls.get_access_token()
+            access_token = cls.get_account_access_token()
             video_indexer_new_url = "https://api.videoindexer.ai/{}/Accounts/{}/Videos/{}/Index?accessToken={}".format(
                 cls.location, cls.account_id, video_id, access_token
             )
@@ -142,7 +142,7 @@ if __name__ == "__main__":
     vi = VideoIndexer()
 
     # To send videos
-    my_access_token = vi.get_access_token()
+    my_access_token = vi.get_account_access_token()
     response_id = vi.send_to_video_indexer(
         video_url="your public url goes here",
         video_id="your video name goes here",

@@ -112,7 +112,7 @@ class VideoIndexer:
         )
 
         # Make request and handle unauthorized error
-        response = requests.get(url=url, headers=headers)
+        response = requests.get(url=url)
         if response.status_code == 200:
             video_indexer_json_output = response.json()
             return video_indexer_json_output
@@ -124,7 +124,7 @@ class VideoIndexer:
             video_indexer_new_url = "https://api.videoindexer.ai/{}/Accounts/{}/Videos/{}/Index?accessToken={}".format(
                 cls.location, cls.account_id, video_id, access_token
             )
-            response = requests.post(url=video_indexer_new_url, headers=headers)
+            response = requests.post(url=video_indexer_new_url)
             if response.status_code == 200:
                 video_indexer_json_output = response.json()
                 return video_indexer_json_output

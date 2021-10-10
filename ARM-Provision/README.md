@@ -16,7 +16,7 @@ The resource will be deployed to your subscription and will create the 'AVAM' re
 
 ### Option 1 : Click the "Deploy To Azure Button", and fill in the missing parameters
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fazure-quickstart-templates%2Fmaster%2Fquickstarts%2Fmicrosoft.storage%2Fstorage-account-create%2Fazuredeploy.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fmedia-services-video-indexer%2Ffeature%2Ftshaiman%2Farm-demo%2FARM-Provision%2Favam.template.json)
 
 ### Option 2 : Deploy using Power Shell Script
 * Open The avam.template.json file and inspect its content.

@@ -1,0 +1,51 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+         "name": {
+            "type": "string",
+            "defaultValue": "first-avam-resource"
+        },
+        "classicAccountId": {
+            "type": "string",
+            "defaultValue" :""
+        },
+        "managedIdentityId": {
+            "type": "string",
+            "defaultValue": "/subscriptions/24237b72-8546-4da5-b204-8c3cb76dd930/resourcegroups/ben-prod-wus2/providers/Microsoft.ManagedIdentity/userAssignedIdentities/ben-avam-prod-mi"
+        },
+        "mediaServicesAccountId": {
+            "type": "string",
+            "defaultValue" : "/subscriptions/24237b72-8546-4da5-b204-8c3cb76dd930/resourceGroups/ben-prod-wus2/providers/Microsoft.Media/mediaservices/benavamprodwus2"
+        },
+       
+        "tags": {
+            "type": "object",
+            "defaultValue": {
+                "team" : "backend",
+                "sku": "standard"
+            }
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.VideoIndexer/accounts",
+            "apiVersion": "2021-08-16-preview",
+            "name": "[parameters('name')]",
+            "location": "[resourceGroup().location]",
+            "tags": "[parameters('tags')]",
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "[parameters('managedIdentityId')]": {}
+                }
+            },
+            "properties": {
+                "mediaServices": {
+                    "resourceId": "[parameters('mediaServicesAccountId')]",
+                    "userAssignedIdentity": "[parameters('managedIdentityId')]"
+                }
+            }
+        }
+    ]
+}

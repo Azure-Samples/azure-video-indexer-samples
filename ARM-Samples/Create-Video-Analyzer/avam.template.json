@@ -4,23 +4,38 @@
     "parameters": {
          "name": {
             "type": "string",
-            "defaultValue": "first-avam-resource"
+            "metadata" : {
+                "description" : "The name of the AVAM resource"
+            },
+            "defaultValue": "avam-account"
         },
         "classicAccountId": {
             "type": "string",
-            "defaultValue" :""
+            "metadata" : {
+                "description" : "When migrating from Classic Account to Arm accout this value indicates what is the classic Account reource Id."
+            },
+            "defaultValue" : null
         },
         "managedIdentityId": {
             "type": "string",
-            "defaultValue": "/subscriptions/24237b72-8546-4da5-b204-8c3cb76dd930/resourcegroups/ben-prod-wus2/providers/Microsoft.ManagedIdentity/userAssignedIdentities/ben-avam-prod-mi"
+            "metadata" : {
+                "description" : "The managed identity used to grant access to the Azure Media Service (AMS) account"
+            },
+            "defaultValue": "/subscriptions/<subscriptionId>/resourcegroups/<AVAMResourceGroup>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/<MIName>"
         },
-        "mediaServicesAccountId": {
+        "mediaServiceAccountResourceId": {
             "type": "string",
-            "defaultValue" : "/subscriptions/24237b72-8546-4da5-b204-8c3cb76dd930/resourceGroups/ben-prod-wus2/providers/Microsoft.Media/mediaservices/benavamprodwus2"
+            "metadata" : {
+                "description" : "The media Service Account Id. The Account needs to be created prior to the creation of this template"
+            },
+            "defaultValue" : "/subscriptions/<subscriptionId>/resourceGroups/<AMSResourceGroup>/providers/Microsoft.Media/mediaservices/<mediaServiceAccountName>"
         },
        
         "tags": {
             "type": "object",
+            "metadata" : {
+                "description" : "Arm Template Tags"
+            },
             "defaultValue": {
                 "team" : "backend",
                 "sku": "standard"
@@ -30,8 +45,9 @@
     "resources": [
         {
             "type": "Microsoft.VideoIndexer/accounts",
-            "apiVersion": "2021-08-16-preview",
+            "apiVersion": "2021-09-01-preview",
             "name": "[parameters('name')]",
+            
             "location": "[resourceGroup().location]",
             "tags": "[parameters('tags')]",
             "identity": {
@@ -42,7 +58,7 @@
             },
             "properties": {
                 "mediaServices": {
-                    "resourceId": "[parameters('mediaServicesAccountId')]",
+                    "resourceId": "[parameters('mediaServiceAccountResourceId')]",
                     "userAssignedIdentity": "[parameters('managedIdentityId')]"
                 }
             }

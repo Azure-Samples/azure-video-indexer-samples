@@ -1,12 +1,13 @@
 
 # Overview
 
-In this Quick-Start you will create an Azure Analyzer for Media (a.k.a "AVAM") resource by using Arm Template.
-The resource will be deployed to your subscription and will create the 'AVAM' resource based on parametrers presented on the avam.template file.
+In this Quick-Start you will create an Azure Analyzer for Media (a.k.a "AVAM") account by using Arm Template (PREVIEW)
+The resource will be deployed to your subscription and will create the 'AVAM' resource based on parametrers define in the avam.template file.
 
 > **Note:**
 > this sample is *not* for migrating an existing AVAM account to an ARM-Based AVAM account.
 > For a full documentation on AVAM API, visit the [AVAM Developer Portal](https://aka.ms/avam-dev-portal) page.
+> The current API Version is "2021-09-01-preview". Check this Repo from time to time to get updates on new API Versions.
 
 ## Prerequisites
 
@@ -15,11 +16,13 @@ The resource will be deployed to your subscription and will create the 'AVAM' re
 ## Deploy the sample
 
 ----
+
 ### Option 1 : Click the "Deploy To Azure Button", and fill in the missing parameters
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fmedia-services-video-indexer%2Ffeature%2Ftshaiman%2Farm-demo%2FARM-Samples%2Favam.template.json)  
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fmedia-services-video-indexer%2master%2FARM-Samples%2FCreate-Video-Analyzer%2Favam.template.json)  
 
 ----
+
 ### Option 2 : Deploy using Power Shell Script
 
 1. Open The [Template File](avam.template.json) file and inspect its content.
@@ -53,23 +56,23 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 * required: false
 
 > **Note:**
-> You need to deploy Your Azure Video Analyzer For Media Account in the same region as the Azure Media Services account exists.
+> You need to deploy Your Azure Video Analyzer For Media Account in the same region as where the Azure Media Services account exists.
 
-### mediaServicesAccountId
+### mediaServiceAccountResourceId
 
 * type: string
-* description: The Resource Id of the Azure Media Service Account. 
+* description: The Resource Id of the Azure Media Service Account.
 * required: true
 
 ### managedIdentityId
 
 * type: string
-* description: The Application Id Of the Managed Identity used to grant access between AVAM resource and the Azure Media Service Account resource
-* required: false
+* description: The Resource Id Of the Managed Identity used to grant access between AVAM resource and the Azure Media Service Account resource
+* required: true
 
 ### tags
 
-* type: array
+* type: object
 * description: Array of Objects that represents custom user tags on the AVAM resource
  required: false
 
@@ -81,11 +84,9 @@ If you're new to Video Analyzer, see :
 
 * [Azure Video Analyzer for Media Documentation](https://aka.ms/vi-docs)
 * [Azure Video Analyzer Developer Portal](https://aka.ms/vi-docs)
+* After completing this tutorial, head to other Azure Video Analyzer for media Samples, described on [README.md](../../README.md)
 
 If you're new to template deployment, see:
 
 * [Azure Resource Manager documentation](https://docs.microsoft.com/azure/azure-resource-manager/)
 * [Deploy Resources with ARM Template](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-powershell)
-
-
-`Tags: AzureAnalyzerForMedia, AzureMediaServices, Beginner`

@@ -6,7 +6,8 @@ The resource will be deployed to your subscription and will create the 'AVAM' re
 
 > **Note:**
 > this sample is *not* for migrating an existing AVAM account to an ARM-Based AVAM account.
-> For a full documentation on AVAM SDK, visit the [AVAM SDK](https://docs.microsoft.com/azure/cognitive-services/speech-service/speech-devices-sdk) page.
+> For a full documentation on AVAM API, visit the [AVAM Developer Portal](https://aka.ms/avam-dev-portal) page.
+
 
 ## Prerequisites
 
@@ -16,7 +17,7 @@ The resource will be deployed to your subscription and will create the 'AVAM' re
 
 ### Option 1 : Click the "Deploy To Azure Button", and fill in the missing parameters
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fmedia-services-video-indexer%2Ffeature%2Ftshaiman%2Farm-demo%2FARM-Provision%2Favam.template.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fmedia-services-video-indexer%2Ffeature%2Ftshaiman%2Farm-demo%2FARM-Samples%2Favam.template.json)
 
 ### Option 2 : Deploy using Power Shell Script
 * Open The avam.template.json file and inspect its content.
@@ -32,6 +33,9 @@ The resource will be deployed to your subscription and will create the 'AVAM' re
 - type: string
 - description: Specifies the Azure location where the AVAM resource should be created.
 - required: false
+
+> **Note:**
+> You need to deploy Your Azure Video Analyzer For Media Account in the same region as the Azure Media Services account exists.
 
 ### mediaServicesAccountId
 - type: string
@@ -50,16 +54,16 @@ The resource will be deployed to your subscription and will create the 'AVAM' re
 
 ### Notes
 
-
 ## Reference Documentation
 
-If you're new to Video Analyzer SDK, see:
+If you're new to Video Analyzer, see :
 
-- [Azure Video Analyzer for Media Documentation](https://azure.microsoft.com/services/app-configuration/)
+- [Azure Video Analyzer for Media Documentation](https://aka.ms/vi-docs)
+- [Azure Video Analyzer Developer Portal](https://aka.ms/vi-docs)
+
 
 If you're new to template deployment, see:
-
 - [Azure Resource Manager documentation](https://docs.microsoft.com/azure/azure-resource-manager/)
-- [Quickstart: Create an Azure App Configuration store by using an ARM template](https://docs.microsoft.com/azure/azure-app-configuration/quickstart-resource-manager)
+
 
 `Tags: AzureAnalyzerForMedia, AzureMediaServices, Beginner`

@@ -35,7 +35,7 @@ The resource will be deployed to your subscription and will create the 'AVAM' re
 New-AzResourceGroup -Name myResourceGroup -Location eastus
 ```
 
-* Deploy the template to the resoruce group:
+* Deploy the template to the resoruce group using the [New-AzResourceGroupDeployment](https://docs.microsoft.com/en-us/powershell/module/az.resources/new-azresourcegroupdeployment) cmdlet.
 
 ```powershell
 New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile ./avam.template.json

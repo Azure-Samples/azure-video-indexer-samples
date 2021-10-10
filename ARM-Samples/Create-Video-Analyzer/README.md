@@ -8,25 +8,34 @@ The resource will be deployed to your subscription and will create the 'AVAM' re
 > this sample is *not* for migrating an existing AVAM account to an ARM-Based AVAM account.
 > For a full documentation on AVAM API, visit the [AVAM Developer Portal](https://aka.ms/avam-dev-portal) page.
 
-
 ## Prerequisites
 
 * An Azure Media Service (AMS) account. You can get one for free through the [Create AMS Account](https://docs.microsoft.com/en-us/azure/media-services/latest/account-create-how-to).
 
 ## Deploy the sample
 
+----
 ### Option 1 : Click the "Deploy To Azure Button", and fill in the missing parameters
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fmedia-services-video-indexer%2Ffeature%2Ftshaiman%2Farm-demo%2FARM-Samples%2Favam.template.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fmedia-services-video-indexer%2Ffeature%2Ftshaiman%2Farm-demo%2FARM-Samples%2Favam.template.json)  
 
+----
 ### Option 2 : Deploy using Power Shell Script
 
-* Open The [Template File](avam.template.json) file and inspect its content.
-* Fill in the required parameters (see below)
-* Run the Following Power Shell command:
+1. Open The [Template File](avam.template.json) file and inspect its content.
+2. Fill in the required parameters (see below)
+3. Run the Following Power Shell commands:
+
+* create new Resource group on the same location as your Azure Media Service account, using the [New-AzResourceGroup](https://docs.microsoft.com/en-us/powershell/module/az.resources/new-azresourcegroup) cmdlet.
 
 ```powershell
-New-AzResourceGroupDeployment -ResourceGroupName <resource-group-name> -TemplateFile ./avam.template.json
+New-AzResourceGroup -Name myResourceGroup -Location eastus
+```
+
+* Deploy the template to the resoruce group:
+
+```powershell
+New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile ./avam.template.json
 ```
 
 ## Parameters

@@ -29,8 +29,7 @@
             "metadata" : {
                 "description" : "Arm Template Tags"
             },
-            "defaultValue": {
-            }
+            "defaultValue": null
         }
     },
     "resources": [

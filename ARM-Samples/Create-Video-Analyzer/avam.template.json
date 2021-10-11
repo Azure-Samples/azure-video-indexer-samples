@@ -37,8 +37,6 @@
                 "description" : "Arm Template Tags"
             },
             "defaultValue": {
-                "team" : "backend",
-                "sku": "standard"
             }
         }
     },

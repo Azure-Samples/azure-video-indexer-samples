@@ -51,6 +51,7 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 ### name
 
+
 * Type: string
 
 * Description: Specifies the name of the new Video Analyzer for Media Resource.
@@ -59,14 +60,17 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 ### location
 
+
 * Type: string
 
 * Description: Specifies the Azure location where the AVAM resource should be created.
 
 * Required: false
 
+
 > **Note:**
 > You need to deploy Your Azure Video Analyzer for Media Account in the same location (region) as the associated Azure Video Analyzer for Media account exists.
+
 
 ### mediaServiceAccountResourceId
 
@@ -76,6 +80,7 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 * Required: true
 
+
 ### managedIdentityId
 
 * Type: string
@@ -84,13 +89,16 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 * Required: true
 
+
 ### tags
+
 
 * Type: object
 
 * Description: Array of Objects that represents custom user tags on the AVAM resource
 
  Required: false
+
 
 ### Notes
 

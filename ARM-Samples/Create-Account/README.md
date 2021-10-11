@@ -1,6 +1,8 @@
 
 # Quickstart: Deploy Azure Video Analyzer for Media with ARM Template 
 
+## Overview
+
 In this Quick-Start you will create an Azure Video Analyzer for Media (formerly Video Indexer) account by using ARM template (PREVIEW)
 
 The resource will be deployed to your subscription and will create the Azure Video Analyzer for Media resource based on parameters defined in the avam.template file.

@@ -21,14 +21,14 @@
             "metadata" : {
                 "description" : "The managed identity used to grant access to the Azure Media Service (AMS) account"
             },
-            "defaultValue": "/subscriptions/<subscriptionId>/resourcegroups/<AVAMResourceGroup>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/<MIName>"
+            "defaultValue": ""
         },
         "mediaServiceAccountResourceId": {
             "type": "string",
             "metadata" : {
                 "description" : "The media Service Account Id. The Account needs to be created prior to the creation of this template"
             },
-            "defaultValue" : "/subscriptions/<subscriptionId>/resourceGroups/<AMSResourceGroup>/providers/Microsoft.Media/mediaservices/<mediaServiceAccountName>"
+            "defaultValue" : ""
         },
        
         "tags": {

@@ -15,7 +15,7 @@ The resource will be deployed to your subscription and will create the Azure Vid
 
 ## Prerequisites
 
-* An Azure Media Service (AMS) account. You can get one for free through the [Create AMS Account](https://docs.microsoft.com/en-us/azure/media-services/latest/account-create-how-to).
+* An Azure Video Analyzer for Media (AMS) account. You can get one for free through the [Create AMS Account](https://docs.microsoft.com/en-us/azure/media-services/latest/account-create-how-to).
 
 ## Deploy the sample
 
@@ -34,7 +34,7 @@ The resource will be deployed to your subscription and will create the Azure Vid
 2. Fill in the required parameters (see below)
 3. Run the Following Power Shell commands:
 
-* Create a new Resource group on the same location as your Azure Media Service account, using the [New-AzResourceGroup](https://docs.microsoft.com/en-us/powershell/module/az.resources/new-azresourcegroup) cmdlet.
+* Create a new Resource group on the same location as your Azure Video Analyzer for Media account, using the [New-AzResourceGroup](https://docs.microsoft.com/en-us/powershell/module/az.resources/new-azresourcegroup) cmdlet.
 
 
 ```powershell
@@ -69,14 +69,14 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 
 > **Note:**
-> You need to deploy Your Azure Video Analyzer for Media Account in the same location (region) as the associated Azure Media Services account exists.
+> You need to deploy Your Azure Video Analyzer for Media Account in the same location (region) as the associated Azure Video Analyzer for Media account exists.
 
 
 ### mediaServiceAccountResourceId
 
 * Type: string
 
-* Description: The Resource Id of the Azure Media Service Account.
+* Description: The Resource ID of the Azure Video Analyzer for Media Account.
 
 * Required: true
 
@@ -85,7 +85,7 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 * Type: string
 
-* Description: The Resource Id Of the Managed Identity used to grant access between AVAM resource and the Azure Media Service Account resource
+* Description: The Resource ID Of the Managed Identity used to grant access between AVAM resource and the Azure Video Analyzer for Media Account resource
 
 * Required: true
 

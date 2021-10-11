@@ -1,12 +1,16 @@
 
 # Overview
 
-In this Quick-Start you will create an Azure Analyzer for Media (a.k.a "AVAM") account by using Arm Template (PREVIEW)
-The resource will be deployed to your subscription and will create the 'AVAM' resource based on parametrers define in the avam.template file.
+In this Quick-Start you will create an Azure Video Analyzer for Media (formerly Video Indexer) account by using ARM template (PREVIEW)
+
+The resource will be deployed to your subscription and will create the Azure Video Analyzer for Media resource based on parameters defined in the avam.template file.
+
 
 > **Note:**
-> this sample is *not* for migrating an existing AVAM account to an ARM-Based AVAM account.
-> For a full documentation on AVAM API, visit the [AVAM Developer Portal](https://aka.ms/avam-dev-portal) page.
+> this sample is *not* for connecting an existing Azure Video Analyzer for Media classic account to an ARM-Based Video Analyzer for Media account.
+
+> For full documentation on Azure Video Analyzer for Media API, visit the [Developer Portal](https://aka.ms/avam-dev-portal) page.
+
 > The current API Version is "2021-09-01-preview". Check this Repo from time to time to get updates on new API Versions.
 
 ## Prerequisites
@@ -17,7 +21,8 @@ The resource will be deployed to your subscription and will create the 'AVAM' re
 
 ----
 
-### Option 1 : Click the "Deploy To Azure Button", and fill in the missing parameters
+### Option 1: Click the "Deploy To Azure Button", and fill in the missing parameters
+
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fmedia-services-video-indexer%2master%2FARM-Samples%2FCreate-Video-Analyzer%2Favam.template.json)  
 
@@ -29,7 +34,8 @@ The resource will be deployed to your subscription and will create the 'AVAM' re
 2. Fill in the required parameters (see below)
 3. Run the Following Power Shell commands:
 
-* create new Resource group on the same location as your Azure Media Service account, using the [New-AzResourceGroup](https://docs.microsoft.com/en-us/powershell/module/az.resources/new-azresourcegroup) cmdlet.
+* Create a new Resource group on the same location as your Azure Media Service account, using the [New-AzResourceGroup](https://docs.microsoft.com/en-us/powershell/module/az.resources/new-azresourcegroup) cmdlet.
+
 
 ```powershell
 New-AzResourceGroup -Name myResourceGroup -Location eastus
@@ -43,47 +49,67 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 ## Parameters
 
-### name
+### Name
 
-* type: string
-* description: Specifies the name of the new Azure Analyzer for Media Resource.
+
+* Type: string
+
+* Description: Specifies the name of the new Video Analyzer for Media Resource.
+
 * required: true
 
-### location
+### Location
 
-* type: string
-* description: Specifies the Azure location where the AVAM resource should be created.
-* required: false
+
+* Type: string
+
+* Description: Specifies the Azure location where the AVAM resource should be created.
+
+* Required: false
+
 
 > **Note:**
-> You need to deploy Your Azure Video Analyzer For Media Account in the same region as where the Azure Media Services account exists.
+> You need to deploy Your Azure Video Analyzer for Media Account in the same location (region) as the associated Azure Media Services account exists.
+
 
 ### mediaServiceAccountResourceId
 
-* type: string
-* description: The Resource Id of the Azure Media Service Account.
-* required: true
+* Type: string
+
+* Description: The Resource Id of the Azure Media Service Account.
+
+* Required: true
+
 
 ### managedIdentityId
 
-* type: string
-* description: The Resource Id Of the Managed Identity used to grant access between AVAM resource and the Azure Media Service Account resource
-* required: true
+* Type: string
 
-### tags
+* Description: The Resource Id Of the Managed Identity used to grant access between AVAM resource and the Azure Media Service Account resource
 
-* type: object
-* description: Array of Objects that represents custom user tags on the AVAM resource
- required: false
+* Required: true
+
+
+### Tags
+
+
+* Type: object
+
+* Description: Array of Objects that represents custom user tags on the AVAM resource
+
+ Required: false
+
 
 ### Notes
 
 ## Reference Documentation
 
-If you're new to Video Analyzer, see :
+If you're new to Azure Video Analyzer for Media (formerly Video Indexer), see :
+
 
 * [Azure Video Analyzer for Media Documentation](https://aka.ms/vi-docs)
-* [Azure Video Analyzer Developer Portal](https://aka.ms/vi-docs)
+* [Azure Video Analyzer for Media Developer Portal](https://aka.ms/vi-docs)
+
 * After completing this tutorial, head to other Azure Video Analyzer for media Samples, described on [README.md](../../README.md)
 
 If you're new to template deployment, see:

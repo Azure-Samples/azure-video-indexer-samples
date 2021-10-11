@@ -9,13 +9,6 @@
             },
             "defaultValue": "avam-account"
         },
-        "classicAccountId": {
-            "type": "string",
-            "metadata" : {
-                "description" : "When migrating from Classic Account to Arm accout this value indicates what is the classic Account reource Id."
-            },
-            "defaultValue" : null
-        },
         "managedIdentityId": {
             "type": "string",
             "metadata" : {

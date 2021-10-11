@@ -1,5 +1,5 @@
 
-# Overview
+# Quickstart: Deploy Azure Video Analyzer for Media with ARM Template 
 
 In this Quick-Start you will create an Azure Video Analyzer for Media (formerly Video Indexer) account by using ARM template (PREVIEW)
 

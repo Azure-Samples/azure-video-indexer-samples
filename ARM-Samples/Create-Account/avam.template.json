@@ -29,7 +29,7 @@
             "metadata" : {
                 "description" : "Arm Template Tags"
             },
-            "defaultValue": null
+            "defaultValue": {}
         }
     },
     "resources": [

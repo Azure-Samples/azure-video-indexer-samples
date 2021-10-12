@@ -17,7 +17,7 @@ The resource will be deployed to your subscription and will create the Azure Vid
 
 ## Prerequisites
 
-* An Azure Video Analyzer for Media (AMS) account. You can get one for free through the [Create AMS Account](https://docs.microsoft.com/en-us/azure/media-services/latest/account-create-how-to).
+* An Azure Media Services (AMS) account. You can get one for free through the [Create AMS Account](https://docs.microsoft.com/en-us/azure/media-services/latest/account-create-how-to).
 
 ## Deploy the sample
 
@@ -71,14 +71,14 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 
 > **Note:**
-> You need to deploy Your Azure Video Analyzer for Media Account in the same location (region) as the associated Azure Video Analyzer for Media account exists.
+> You need to deploy Your Azure Video Analyzer for Media Account in the same location (region) as the associated Azure Media Services(AMS) account exists.
 
 
 ### mediaServiceAccountResourceId
 
 * Type: string
 
-* Description: The Resource ID of the Azure Video Analyzer for Media Account.
+* Description: The Resource ID of the Azure Media Services(ANS) resource.
 
 * Required: true
 
@@ -87,7 +87,7 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 * Type: string
 
-* Description: The Resource ID Of the Managed Identity used to grant access between AVAM resource and the Azure Video Analyzer for Media Account resource
+* Description: The Resource ID of the Managed Identity used to grant access between Azure Media Services(AMS) resource and the Azure Video Analyzer for Media account.
 
 * Required: true
 
@@ -97,7 +97,7 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 * Type: object
 
-* Description: Array of Objects that represents custom user tags on the AVAM resource
+* Description: Array of Objects that represents custom user tags on the Azure Video Analyzer for Media resource
 
  Required: false
 

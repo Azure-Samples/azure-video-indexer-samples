@@ -1,5 +1,7 @@
 
-# Overview
+# Quickstart: Deploy Azure Video Analyzer for Media with ARM Template 
+
+## Overview
 
 In this Quick-Start you will create an Azure Video Analyzer for Media (formerly Video Indexer) account by using ARM template (PREVIEW)
 
@@ -49,7 +51,7 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 ## Parameters
 
-### Name
+### name
 
 
 * Type: string
@@ -58,7 +60,7 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 * required: true
 
-### Location
+### location
 
 
 * Type: string
@@ -90,7 +92,7 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 * Required: true
 
 
-### Tags
+### tags
 
 
 * Type: object

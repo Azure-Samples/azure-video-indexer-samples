@@ -106,7 +106,7 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 ## Reference Documentation
 
-If you're new to Azure Video Analyzer for Media (formerly Video Indexer), see :
+If you're new to Azure Video Analyzer for Media (formerly Video Indexer), see:
 
 
 * [Azure Video Analyzer for Media Documentation](https://aka.ms/vi-docs)

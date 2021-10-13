@@ -17,7 +17,7 @@ The resource will be deployed to your subscription and will create the Azure Vid
 
 ## Prerequisites
 
-* An Azure Media Services (AMS) account. You can get one for free through the [Create AMS Account](https://docs.microsoft.com/en-us/azure/media-services/latest/account-create-how-to).
+* An Azure Media Services (AMS) account. You can create one for free through the [Create AMS Account](https://docs.microsoft.com/en-us/azure/media-services/latest/account-create-how-to).
 
 ## Deploy the sample
 
@@ -56,7 +56,7 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 * Type: string
 
-* Description: Specifies the name of the new Video Analyzer for Media Resource.
+* Description: Specifies the name of the new Azure Video Analyzer for Media account.
 
 * required: true
 
@@ -65,20 +65,20 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 * Type: string
 
-* Description: Specifies the Azure location where the AVAM resource should be created.
+* Description: Specifies the Azure location where the Azure Video Analyzer for Media account should be created.
 
 * Required: false
 
 
 > **Note:**
-> You need to deploy Your Azure Video Analyzer for Media Account in the same location (region) as the associated Azure Media Services(AMS) account exists.
+> You need to deploy Your Azure Video Analyzer for Media account in the same location (region) as the associated Azure Media Services(AMS) resource exists.
 
 
 ### mediaServiceAccountResourceId
 
 * Type: string
 
-* Description: The Resource ID of the Azure Media Services(ANS) resource.
+* Description: The Resource ID of the Azure Media Services(AMS) resource.
 
 * Required: true
 
@@ -97,7 +97,7 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 * Type: object
 
-* Description: Array of Objects that represents custom user tags on the Azure Video Analyzer for Media resource
+* Description: Array of objects that represents custom user tags on the Azure Video Analyzer for Media account
 
  Required: false
 

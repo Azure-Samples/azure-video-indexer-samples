@@ -1,72 +1,77 @@
 <html>
   <head>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../style.css" />
   </head>
   <body>
-    <script src="../viSDK.min.js"></script>
     <h1>Video Indexer insights widget</h1>
     <div id="container" class="widget-container"></div>
     <script>
-      const royalBlue = {
-        highlight: 'rgba(209,0,209,1)',
-        primary: 'rgba(209,0,209,1)',
-        primaryHover: 'rgba(192,7,192,1)',
-        primaryPress: 'rgba(180,13,180,1)',
-        primaryDisable: 'rgba(110,150,181,0.200)',
-        secondaryFill: 'rgba(241,249,255,1)',
-        secondaryFillHover: 'rgba(209,234,255,0.500)',
-        secondaryFillPress: 'rgba(209,234,255,0.700)',
-        secondaryStroke: 'rgba(33,72,209,0.700)',
-        componentFill: 'rgba(250,245,245,1)',
-        componentStroke: 'rgba(33,72,209,0.800)',
-        componentStrokeAlt: 'rgba(33,72,209,0.900)',
-        playStatus: 'rgba(192,7,192,0.100)',
-        playStatusAlt: 'rgba(192,7,192,0.600)',
-        headerActions: 'rgba(255,255,255,1)',
-        headerHovers: 'rgba(255,255,255,0.380)',
-        headerHoversAlt: 'rgba(255,255,255,0.760)',
-        headerBg: 'rgba(28,28,28,1)',
-        dividers: 'rgba(37,151,255,0.100)',
-        dividersAlt: 'rgba(37,151,255,0.200)',
-        dividersPanel: 'rgba(37,151,255,0.200)',
-        bgPrimary: 'rgba(255,255,255,1)',
-        bgSecondary: 'rgba(248,248,248,1)',
-        typePrimary: 'rgba(0,57,255,1)',
-        typeSecondary: 'rgba(33,72,209,0.800)',
-        typeDisabled: 'rgba(33,72,209,0.500)',
-        typeDisabledAlt: 'rgba(33,72,209,0.250)',
-        emotionJoy: 'rgba(242,97,12,1)',
-        emotionFear: 'rgba(166,8,148,1)',
-        emotionSadness: 'rgba(0,120,212,1)',
-        emotionAnger: 'rgba(227,0,140,1)',
-        sentimentPositive: 'rgba(8,170,136,1)',
-        sentimentNegative: 'rgba(227,0,140,1)',
-        videoMenuBg: 'rgba(33,72,209,0.800)',
-        videoShade: 'rgba(33,72,209,0.400)',
-        errorType: 'rgba(203,14,14,1)',
-        errorArea: 'rgba(222,75,33,1)',
-        errorAreaTint: 'rgba(248,219,211,1)',
-        warningArea: 'rgba(255,241,191,1)',
-        shadow: 'rgba(122,137,188,0.200)'
-      };
+      function onPackageLoad() {
+        const royalBlue = {
+          highlight: "rgba(209,0,209,1)",
+          primary: "rgba(209,0,209,1)",
+          primaryHover: "rgba(192,7,192,1)",
+          primaryPress: "rgba(180,13,180,1)",
+          primaryDisable: "rgba(110,150,181,0.200)",
+          secondaryFill: "rgba(241,249,255,1)",
+          secondaryFillHover: "rgba(209,234,255,0.500)",
+          secondaryFillPress: "rgba(209,234,255,0.700)",
+          secondaryStroke: "rgba(33,72,209,0.700)",
+          componentFill: "rgba(250,245,245,1)",
+          componentStroke: "rgba(33,72,209,0.800)",
+          componentStrokeAlt: "rgba(33,72,209,0.900)",
+          playStatus: "rgba(192,7,192,0.100)",
+          playStatusAlt: "rgba(192,7,192,0.600)",
+          headerActions: "rgba(255,255,255,1)",
+          headerHovers: "rgba(255,255,255,0.380)",
+          headerHoversAlt: "rgba(255,255,255,0.760)",
+          headerBg: "rgba(28,28,28,1)",
+          dividers: "rgba(37,151,255,0.100)",
+          dividersAlt: "rgba(37,151,255,0.200)",
+          dividersPanel: "rgba(37,151,255,0.200)",
+          bgPrimary: "rgba(255,255,255,1)",
+          bgSecondary: "rgba(248,248,248,1)",
+          typePrimary: "rgba(0,57,255,1)",
+          typeSecondary: "rgba(33,72,209,0.800)",
+          typeDisabled: "rgba(33,72,209,0.500)",
+          typeDisabledAlt: "rgba(33,72,209,0.250)",
+          emotionJoy: "rgba(242,97,12,1)",
+          emotionFear: "rgba(166,8,148,1)",
+          emotionSadness: "rgba(0,120,212,1)",
+          emotionAnger: "rgba(227,0,140,1)",
+          sentimentPositive: "rgba(8,170,136,1)",
+          sentimentNegative: "rgba(227,0,140,1)",
+          videoMenuBg: "rgba(33,72,209,0.800)",
+          videoShade: "rgba(33,72,209,0.400)",
+          errorType: "rgba(203,14,14,1)",
+          errorArea: "rgba(222,75,33,1)",
+          errorAreaTint: "rgba(248,219,211,1)",
+          warningArea: "rgba(255,241,191,1)",
+          shadow: "rgba(122,137,188,0.200)",
+        };
 
-      const config = {
-        accountId: '00000000-0000-0000-0000-000000000000',
-        videoId: 'd9d4860279',
-        style: {
-          customStyle: royalBlue
-        }
-      };
-      let widget = new VI.Widgets.Insights(
-        'container',
-        {
-          height: 780,
-          width: 580
-        },
-        config
-      );
+        const config = {
+          accountId: "00000000-0000-0000-0000-000000000000",
+          videoId: "d9d4860279",
+          style: {
+            customStyle: royalBlue,
+          },
+        };
+        let widget = new window.avam.widgets.Insights(
+          "container",
+          {
+            height: 780,
+            width: 580,
+          },
+          config
+        );
 
-      widget.render();
+        widget.render();
+      }
     </script>
+    <script
+      src="https://unpkg.com/@azure/video-analyzer-for-media-widgets@latest/dist/global.min.js"
+      onload="onPackageLoad()"
+    ></script>
   </body>
 </html>

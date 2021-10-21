@@ -1,29 +1,35 @@
 <html>
   <head>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../style.css" />
   </head>
   <body>
-    <script src="../viSDK.min.js"></script>
     <h1>Video Indexer insights widget</h1>
     <div id="container" class="widget-container"></div>
     <script>
-      const config = {
-        accountId: '00000000-0000-0000-0000-000000000000',
-        videoId: 'd9d4860279',
-        language: 'de-DE', // Load insights in Danish
-        controls: ['download', 'search'], // Show only download option and search
-        components: ['namedEntities', 'shots', 'topics'] // Show namedEntities, shots and topics insights
-      };
-      let widget = new VI.Widgets.Insights(
-        'container',
-        {
-          height: 780,
-          width: 600
-        },
-        config
-      );
+      function onPackageLoad() {
+        // Create widget config
+        const config = {
+          accountId: "00000000-0000-0000-0000-000000000000",
+          videoId: "d9d4860279",
+          language: "de-DE", // Load insights in Danish
+          controls: ["download", "search"], // Show only download option and search
+          components: ["namedEntities", "shots", "topics"], // Show namedEntities, shots and topics insights
+        };
+        let widget = new window.avam.widgets.Insights(
+          "container",
+          {
+            height: 780,
+            width: 580,
+          },
+          config
+        );
 
-      widget.render();
+        widget.render();
+      }
     </script>
+    <script
+      src="https://unpkg.com/@azure/video-analyzer-for-media-widgets@latest/dist/global.min.js"
+      onload="onPackageLoad()"
+    ></script>
   </body>
 </html>

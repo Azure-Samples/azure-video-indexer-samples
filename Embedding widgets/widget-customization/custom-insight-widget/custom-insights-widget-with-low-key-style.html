@@ -1,108 +1,113 @@
 <html>
   <head>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../style.css" />
   </head>
   <body>
-    <script src="../viSDK.min.js"></script>
-    <h1>Customize insights widget</h1>
+    <h1>Video Indexer insights widget</h1>
     <div id="container" class="widget-container"></div>
     <script>
-      const lowKeyStyle = {
-        highlight: 'rgba(14,182,255,1)',
-        primary: 'rgba(13,11,0,1)',
-        primaryHover: 'rgba(64,55,55,1)',
-        primaryPress: 'rgba(91,78,78,1)',
-        primaryDisable: 'rgba(0,0,0,0.050)',
-        secondaryFill: 'rgba(0,0,0,0.050)',
-        secondaryFillHover: 'rgba(0,0,0,0.080)',
-        secondaryFillPress: 'rgba(91,78,78,0.2)',
-        secondaryStroke: 'rgba(91,78,78,0.6)',
-        componentFill: 'rgba(238,237,235,1)',
-        componentStroke: 'rgba(91,78,78,0.6)',
-        componentStrokeAlt: 'rgba(91,78,78,0.8)',
-        playStatus: 'rgba(13,167,234,0.200)',
-        playStatusAlt: 'rgba(14,182,255,0.750)',
-        headerActions: 'rgba(255,255,255,1)',
-        headerHovers: 'rgba(255,255,255,0.380)',
-        headerHoversAlt: 'rgba(255,255,255,0.760)',
-        headerBg: 'rgba(28,28,28,1)',
-        dividers: 'rgba(91,78,78,0.1)',
-        dividersAlt: 'rgba(91,78,78,0.1)',
-        dividersPanel: 'rgba(91,78,78,0.2)',
-        bgPrimary: 'rgba(250,249,247,1)',
-        bgSecondary: 'rgba(246,245,243,1)',
-        typePrimary: 'rgba(64,55,55,1)',
-        typeSecondary: 'rgba(64,55,55,0.700)',
-        typeDisabled: 'rgba(64,55,55,0.420)',
-        typeDisabledAlt: 'rgba(64,55,55,0.300)',
-        emotionJoy: 'rgba(242,97,12,1)',
-        emotionFear: 'rgba(166,8,148,1)',
-        emotionSadness: 'rgba(0,120,212,1)',
-        emotionAnger: 'rgba(227,0,140,1)',
-        sentimentPositive: 'rgba(39,171,17,1)',
-        sentimentNegative: 'rgba(235,0,27,1)',
-        videoMenuBg: 'rgba(0,0,0,0.800)',
-        videoShade: 'rgba(255,255,255,0.380)',
-        errorType: 'rgba(168,0,0,1)',
-        errorArea: 'rgba(208,46,0,1)',
-        errorAreaTint: 'rgba(253,231,233,1)',
-        warningArea: 'rgba(255,244,206,1)',
-        shadow: 'rgba(64,55,55,0.140)'
-      };
+      function onPackageLoad() {
+        const lowKeyStyle = {
+          highlight: "rgba(14,182,255,1)",
+          primary: "rgba(13,11,0,1)",
+          primaryHover: "rgba(64,55,55,1)",
+          primaryPress: "rgba(91,78,78,1)",
+          primaryDisable: "rgba(0,0,0,0.050)",
+          secondaryFill: "rgba(0,0,0,0.050)",
+          secondaryFillHover: "rgba(0,0,0,0.080)",
+          secondaryFillPress: "rgba(91,78,78,0.2)",
+          secondaryStroke: "rgba(91,78,78,0.6)",
+          componentFill: "rgba(238,237,235,1)",
+          componentStroke: "rgba(91,78,78,0.6)",
+          componentStrokeAlt: "rgba(91,78,78,0.8)",
+          playStatus: "rgba(13,167,234,0.200)",
+          playStatusAlt: "rgba(14,182,255,0.750)",
+          headerActions: "rgba(255,255,255,1)",
+          headerHovers: "rgba(255,255,255,0.380)",
+          headerHoversAlt: "rgba(255,255,255,0.760)",
+          headerBg: "rgba(28,28,28,1)",
+          dividers: "rgba(91,78,78,0.1)",
+          dividersAlt: "rgba(91,78,78,0.1)",
+          dividersPanel: "rgba(91,78,78,0.2)",
+          bgPrimary: "rgba(250,249,247,1)",
+          bgSecondary: "rgba(246,245,243,1)",
+          typePrimary: "rgba(64,55,55,1)",
+          typeSecondary: "rgba(64,55,55,0.700)",
+          typeDisabled: "rgba(64,55,55,0.420)",
+          typeDisabledAlt: "rgba(64,55,55,0.300)",
+          emotionJoy: "rgba(242,97,12,1)",
+          emotionFear: "rgba(166,8,148,1)",
+          emotionSadness: "rgba(0,120,212,1)",
+          emotionAnger: "rgba(227,0,140,1)",
+          sentimentPositive: "rgba(39,171,17,1)",
+          sentimentNegative: "rgba(235,0,27,1)",
+          videoMenuBg: "rgba(0,0,0,0.800)",
+          videoShade: "rgba(255,255,255,0.380)",
+          errorType: "rgba(168,0,0,1)",
+          errorArea: "rgba(208,46,0,1)",
+          errorAreaTint: "rgba(253,231,233,1)",
+          warningArea: "rgba(255,244,206,1)",
+          shadow: "rgba(64,55,55,0.140)",
+        };
 
-      const customElement = {
-        id: 1,
-        text: 'Custom Element',
-        instances: [
-          {
-            adjustedEnd: '0:02:37.644',
-            adjustedStart: '0:00:00',
-            end: '0:02:37.644',
-            start: '0:00:00'
+        const customElement = {
+          id: 1,
+          text: "Custom Element",
+          instances: [
+            {
+              adjustedEnd: "0:02:37.644",
+              adjustedStart: "0:00:00",
+              end: "0:02:37.644",
+              start: "0:00:00",
+            },
+            {
+              adjustedEnd: "0:04:01.497",
+              adjustedStart: "0:03:39.322",
+              end: "0:04:01.497",
+              start: "0:03:39.322",
+            },
+            {
+              adjustedEnd: "0:05:00.968",
+              adjustedStart: "0:04:36.6",
+              end: "0:05:00.968",
+              start: "0:04:36.6",
+            },
+          ],
+        };
+
+        const customData = {
+          title: "My Data Example",
+          key: "myData",
+          presets: ["all", "captioning"], // When clicking captioning preset / all, the custom data will be selected
+          type: "capsule",
+          items: [customElement],
+        };
+
+        const insightsConfig = {
+          duration: 634,
+          rawInsightsData: [],
+          customData: [customData],
+          viInsightsKeys: [],
+          style: {
+            customStyle: lowKeyStyle,
           },
+        };
+
+        let customInsightWidget = new CustomInsightsWidget(
+          "container",
           {
-            adjustedEnd: '0:04:01.497',
-            adjustedStart: '0:03:39.322',
-            end: '0:04:01.497',
-            start: '0:03:39.322'
+            width: 800,
+            height: 1000,
           },
-          {
-            adjustedEnd: '0:05:00.968',
-            adjustedStart: '0:04:36.6',
-            end: '0:05:00.968',
-            start: '0:04:36.6'
-          }
-        ]
-      };
+          insightsConfig
+        );
 
-      const customData = {
-        title: 'My Data Example',
-        key: 'myData',
-        presets: ['all', 'captioning'], // When clicking captioning preset / all, the custom data will be selected
-        type: 'capsule',
-        items: [customElement]
-      };
-
-      const insightsConfig = {
-        duration: 634,
-        rawInsightsData: [],
-        customData: [customData],
-        viInsightsKeys: [],
-        style: {
-          customStyle: lowKeyStyle
-        }
-      };
-
-      let customInsights = new VI.Widgets.CustomInsights(
-        'container',
-        {
-          height: 780,
-          width: 580
-        },
-        insightsConfig
-      );
-
-      customInsights.render();
+        customInsightWidget.render();
+      }
     </script>
+    <script
+      src="https://unpkg.com/@azure/video-analyzer-for-media-widgets"
+      onload="onPackageLoad()"
+    ></script>
   </body>
 </html>

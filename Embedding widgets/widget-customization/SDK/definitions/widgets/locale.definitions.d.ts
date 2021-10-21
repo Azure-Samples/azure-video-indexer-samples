@@ -1,1 +1,0 @@
-export declare type Locale = 'en-us' | 'en-nz' | 'en-ca' | 'en-au' | 'en-ph' | 'en-uk' | 'de-de' | 'zh-cn' | 'zh-hans' | 'fr-fr' | 'fr-ca' | 'tr-tr' | 'ja-jp' | 'hi-in' | 'ru-ru' | 'es-es' | 'it-it' | 'pt-br' | 'ko-kr' | 'nl-nl' | 'cs-cz' | 'pl-pl' | 'sv-se' | 'hu-hu';

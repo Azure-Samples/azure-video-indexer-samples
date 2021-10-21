@@ -3,11 +3,11 @@
     <link rel="stylesheet" href="../style.css">
   </head>
   <body>
-    <script src="../viSDK.min.js"></script>
     <h1>Video Indexer insights widget</h1>
     <div id="container" class="widget-container"></div>
     <script>
-      const insightsStyleConfig = {
+      function onPackageLoad() {
+        const insightsStyleConfig = {
         primary: 'yellow',
         dividers: 'rgba(134,28,173,1)',
       };
@@ -24,16 +24,18 @@
           theme: 'Dark'
         }
       };
-      let widget = new VI.Widgets.Insights(
-        'container',
-        {
-          height: 780,
-          width: 580
-        },
-        config
-      );
-
-      widget.render();
+          let widget = new window.avam.widgets.Insights(
+              'container',
+              {
+                  height: 780,
+                  width: 580
+              },
+              config
+          );
+  
+          widget.render();
+      }
     </script>
+    <script src="https://unpkg.com/@azure/video-analyzer-for-media-widgets@latest/dist/global.min.js" onload="onPackageLoad()"></script>
   </body>
 </html>

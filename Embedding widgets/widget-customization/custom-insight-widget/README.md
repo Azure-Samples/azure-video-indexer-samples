@@ -1,10 +1,10 @@
-# Embed custom insight widget samples
+# Embed Azure Video Analyzer for Media customizable insights widget
 
-Embed Video Indexer's insights widget with Video Indexer data, combined with your own custom data and raw Video Indexer data. 
+Embed Azure Video Analyzer for Media insights widget with original data from the embedded video, combined with your own custom data and raw Azure Video Analyzer for Media data.
 
 ## Contents
 
-Contains samples code for Video Indexer insights widget
+Contains samples code for Azure Video Analyzer for Media customizable insights widget
 
 | File/folder                                                          | Description                                                                                 |
 |----------------------------------------------------------------------|---------------------------------------------------------------------------------------------|

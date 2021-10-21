@@ -3,16 +3,20 @@
     <link rel="stylesheet" href="../style.css" />
   </head>
   <body>
-    <h1>Video Indexer insights widget</h1>
+    <h1>Embed both insights and player widgets</h1>
     <div id="container" class="widget-container"></div>
+    <iframe
+      width="1280"
+      height="720"
+      src="https://www.videoindexer.ai/embed/player/00000000-0000-0000-0000-000000000000/b073f41919/?&locale=en"
+      frameborder="0"
+      allowfullscreen
+    ></iframe>
     <script>
       function onPackageLoad() {
         const config = {
           accountId: "00000000-0000-0000-0000-000000000000",
-          videoId: "d9d4860279",
-          locale: "es-es", // Spanish locale
-          tab: "timeline", // Select timeline tab by default
-          components: ["topics", "sentiments", "transcript", "keywords"], // Show topics, sentiments, transcript and keywords insights
+          videoId: "b073f41919",
         };
         let widget = new window.avam.widgets.Insights(
           "container",
@@ -26,6 +30,9 @@
         widget.render();
       }
     </script>
+    <script
+    src="https://unpkg.com/@azure/video-analyzer-for-media-widgets@latest/dist/assets/mediator.js"
+  ></script>
     <script
       src="https://unpkg.com/@azure/video-analyzer-for-media-widgets@latest/dist/global.min.js"
       onload="onPackageLoad()"

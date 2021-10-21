@@ -1,191 +1,198 @@
 <html>
   <head>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../style.css" />
   </head>
   <body>
-    <script src="../viSDK.min.js"></script>
-    <h1>Customize insights widget</h1>
+    <h1>Video Indexer insights widget</h1>
     <div id="container" class="widget-container"></div>
     <script>
-      // Create raw vi data
-      const emotions = [
-        {
-          id: 1,
-          type: 'Joy',
-          instances: [
-            {
-              adjustedEnd: '0:06:46.15',
-              adjustedStart: '0:06:42.086',
-              confidence: 0.6808,
-              end: '0:06:46.15',
-              start: '0:06:42.086'
-            }
-          ]
-        },
-        {
-          id: 2,
-          type: 'Sad',
-          instances: [
-            {
-              adjustedEnd: '0:10:18.957',
-              adjustedStart: '0:09:59.306',
-              confidence: 0.8383,
-              end: '0:10:18.957',
-              start: '0:09:59.306'
-            }
-          ]
-        }
-      ];
-
-      const sentiments = [
-        {
-          averageScore: 0.5,
-          id: 1,
-          sentimentType: 'Neutral',
-          instances: [
-            {
-              adjustedEnd: '0:06:42.086',
-              adjustedStart: '0:00:00',
-              end: '0:06:42.086',
-              start: '0:00:00'
-            }
-          ]
-        },
-        {
-          id: 2,
-          sentimentType: 'Positive',
-          averageScore: 0.9521,
-          instances: [
-            {
-              adjustedEnd: '0:06:46.15',
-              adjustedStart: '0:06:42.086',
-              end: '0:06:46.15',
-              start: '0:06:42.086'
-            }
-          ]
-        },
-        {
-          id: 3,
-          sentimentType: 'Negative',
-          averageScore: 0.1677,
-          instances: [
-            {
-              adjustedEnd: '0:10:18.957',
-              adjustedStart: '0:09:59.306',
-              end: '0:10:18.957',
-              start: '0:09:59.306'
-            }
-          ]
-        }
-      ];
-
-      const topics = [
-        {
-          confidence: 0.7577,
-          id: 1,
-          name: 'Brand Audit',
-          referenceId: 'Brand Audit',
-          language: 'en-US',
-          instances: [
-            {
-              adjustedEnd: '0:01:52.838',
-              adjustedStart: '0:00:13.712',
-              end: '0:01:52.838',
-              start: '0:00:13.712'
-            },
-            {
-              adjustedEnd: '0:03:16.21',
-              adjustedStart: '0:02:08.093',
-              end: '0:03:16.21',
-              start: '0:02:08.093'
-            }
-          ]
-        },
-        {
-          confidence: 0.4893,
-          iabName: 'News and Politics',
-          id: 23,
-          instances: [
-            {
-              adjustedEnd: '0:02:59.015',
-              adjustedStart: '0:00:08.421',
-              end: '0:02:59.015',
-              start: '0:00:08.421'
-            }
-          ],
-          iptcName: 'Politics/election',
-          language: 'en-US',
-          name: 'Political Campaigns and Elections',
-          referenceId: 'Politics and Government/Political Campaigns and Elections',
-          referenceType: 'VideoIndexer'
-        },
-        {
-          confidence: 0.6453,
-          iabName: 'Business and Finance',
-          id: 14,
-          instances: [
-            {
-              adjustedEnd: '0:02:37.644',
-              adjustedStart: '0:00:00',
-              end: '0:02:37.644',
-              start: '0:00:00'
-            },
-            {
-              adjustedEnd: '0:04:01.497',
-              adjustedStart: '0:03:39.322',
-              end: '0:04:01.497',
-              start: '0:03:39.322'
-            },
-            {
-              adjustedEnd: '0:05:00.968',
-              adjustedStart: '0:04:36.6',
-              end: '0:05:00.968',
-              start: '0:04:36.6'
-            }
-          ],
-          iptcName: 'Economy, Business and Finance/business (general)',
-          language: 'en-US',
-          name: 'Brand Strategy',
-          referenceId: 'Business/Product Development/Brand Strategy',
-          referenceType: 'VideoIndexer'
-        }
-      ];
-
-      const insightsConfig = {
-        duration: 634,
-        rawInsightsData: [ // Render emotions, sentiments and topics
+      function onPackageLoad() {
+        // Create raw vi data
+        const emotions = [
           {
-            rawInsightsKey: 'emotions',
-            insightsItems: emotions
+            id: 1,
+            type: "Joy",
+            instances: [
+              {
+                adjustedEnd: "0:06:46.15",
+                adjustedStart: "0:06:42.086",
+                confidence: 0.6808,
+                end: "0:06:46.15",
+                start: "0:06:42.086",
+              },
+            ],
           },
           {
-            rawInsightsKey: 'sentiments',
-            insightsItems: sentiments
+            id: 2,
+            type: "Sad",
+            instances: [
+              {
+                adjustedEnd: "0:10:18.957",
+                adjustedStart: "0:09:59.306",
+                confidence: 0.8383,
+                end: "0:10:18.957",
+                start: "0:09:59.306",
+              },
+            ],
+          },
+        ];
+
+        const sentiments = [
+          {
+            averageScore: 0.5,
+            id: 1,
+            sentimentType: "Neutral",
+            instances: [
+              {
+                adjustedEnd: "0:06:42.086",
+                adjustedStart: "0:00:00",
+                end: "0:06:42.086",
+                start: "0:00:00",
+              },
+            ],
           },
           {
-            rawInsightsKey: 'topics',
-            insightsItems: topics
-          }
-        ],
-        customData: [],
-        viInsightsKeys: ['brands', 'keywords', 'scenes', 'blocks'], // Take brands, keywords, scenes and blocks from video indexer
-        accountId: '00000000-0000-0000-0000-000000000000',
-        videoId: 'd9d4860279',
-        accessToken: '', // add access token if video is private
-        preset: 'all', // select preset 'All'
-        tab: 'timeline'
-      };
+            id: 2,
+            sentimentType: "Positive",
+            averageScore: 0.9521,
+            instances: [
+              {
+                adjustedEnd: "0:06:46.15",
+                adjustedStart: "0:06:42.086",
+                end: "0:06:46.15",
+                start: "0:06:42.086",
+              },
+            ],
+          },
+          {
+            id: 3,
+            sentimentType: "Negative",
+            averageScore: 0.1677,
+            instances: [
+              {
+                adjustedEnd: "0:10:18.957",
+                adjustedStart: "0:09:59.306",
+                end: "0:10:18.957",
+                start: "0:09:59.306",
+              },
+            ],
+          },
+        ];
 
-      const customInsightsWidget = new VI.Widgets.CustomInsights(
-        'container',
-        {
-          width: 800,
-          height: 1000
-        },
-        insightsConfig
-      );
+        const topics = [
+          {
+            confidence: 0.7577,
+            id: 1,
+            name: "Brand Audit",
+            referenceId: "Brand Audit",
+            language: "en-US",
+            instances: [
+              {
+                adjustedEnd: "0:01:52.838",
+                adjustedStart: "0:00:13.712",
+                end: "0:01:52.838",
+                start: "0:00:13.712",
+              },
+              {
+                adjustedEnd: "0:03:16.21",
+                adjustedStart: "0:02:08.093",
+                end: "0:03:16.21",
+                start: "0:02:08.093",
+              },
+            ],
+          },
+          {
+            confidence: 0.4893,
+            iabName: "News and Politics",
+            id: 23,
+            instances: [
+              {
+                adjustedEnd: "0:02:59.015",
+                adjustedStart: "0:00:08.421",
+                end: "0:02:59.015",
+                start: "0:00:08.421",
+              },
+            ],
+            iptcName: "Politics/election",
+            language: "en-US",
+            name: "Political Campaigns and Elections",
+            referenceId:
+              "Politics and Government/Political Campaigns and Elections",
+            referenceType: "VideoIndexer",
+          },
+          {
+            confidence: 0.6453,
+            iabName: "Business and Finance",
+            id: 14,
+            instances: [
+              {
+                adjustedEnd: "0:02:37.644",
+                adjustedStart: "0:00:00",
+                end: "0:02:37.644",
+                start: "0:00:00",
+              },
+              {
+                adjustedEnd: "0:04:01.497",
+                adjustedStart: "0:03:39.322",
+                end: "0:04:01.497",
+                start: "0:03:39.322",
+              },
+              {
+                adjustedEnd: "0:05:00.968",
+                adjustedStart: "0:04:36.6",
+                end: "0:05:00.968",
+                start: "0:04:36.6",
+              },
+            ],
+            iptcName: "Economy, Business and Finance/business (general)",
+            language: "en-US",
+            name: "Brand Strategy",
+            referenceId: "Business/Product Development/Brand Strategy",
+            referenceType: "VideoIndexer",
+          },
+        ];
 
-      customInsightsWidget.render();
+        const insightsConfig = {
+          duration: 634,
+          rawInsightsData: [
+            // Render emotions, sentiments and topics
+            {
+              rawInsightsKey: "emotions",
+              insightsItems: emotions,
+            },
+            {
+              rawInsightsKey: "sentiments",
+              insightsItems: sentiments,
+            },
+            {
+              rawInsightsKey: "topics",
+              insightsItems: topics,
+            },
+          ],
+          customData: [],
+          viInsightsKeys: ["brands", "keywords", "scenes", "blocks"], // Take brands, keywords, scenes and blocks from video indexer
+          accountId: "00000000-0000-0000-0000-000000000000",
+          videoId: "d9d4860279",
+          accessToken: "", // add access token if video is private
+          preset: "all", // select preset 'All'
+          tab: "timeline",
+        };
+
+        let customInsightWidget = new CustomInsightsWidget(
+          "container",
+          {
+            width: 800,
+            height: 1000,
+          },
+          insightsConfig
+        );
+
+        customInsightWidget.render();
+      }
     </script>
+    <script
+      src="https://unpkg.com/@azure/video-analyzer-for-media-widgets"
+      onload="onPackageLoad()"
+    ></script>
   </body>
 </html>

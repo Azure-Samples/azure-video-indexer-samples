@@ -35,7 +35,7 @@
     "resources": [
         {
             "type": "Microsoft.VideoIndexer/accounts",
-            "apiVersion": "2021-09-01-preview",
+            "apiVersion": "2021-10-27-preview",
             "name": "[parameters('name')]",
             
             "location": "[resourceGroup().location]",

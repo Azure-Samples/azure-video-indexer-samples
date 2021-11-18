@@ -13,7 +13,7 @@ The resource will be deployed to your subscription and will create the Azure Vid
 
 > For full documentation on Azure Video Analyzer for Media API, visit the [Developer Portal](https://aka.ms/avam-dev-portal) page.
 
-> The current API Version is "2021-09-01-preview". Check this Repo from time to time to get updates on new API Versions.
+> The current API Version is "2021-10-27-preview". Check this Repo from time to time to get updates on new API Versions.
 
 ## Prerequisites
 
@@ -48,6 +48,9 @@ New-AzResourceGroup -Name myResourceGroup -Location eastus
 ```powershell
 New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile ./avam.template.json
 ```
+
+> **Note:**
+> If you would like to work with bicep format, inspect the [bicep file](avam.template.bicep) on this repo.
 
 ## Parameters
 
@@ -118,3 +121,4 @@ If you're new to template deployment, see:
 
 * [Azure Resource Manager documentation](https://docs.microsoft.com/azure/azure-resource-manager/)
 * [Deploy Resources with ARM Template](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-powershell)
+* [Deploy Resources with Bicep and Azure CLI](https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/deploy-cli)

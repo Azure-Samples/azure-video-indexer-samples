@@ -50,8 +50,7 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 ```
 
 > **Note:**
-> If you would like to work with bicep format, inspect the [bicep file](avam.template.bicep) on this repo
-
+> If you would like to work with bicep format, inspect the [bicep file](avam.template.bicep) on this repo.
 
 ## Parameters
 
@@ -122,3 +121,4 @@ If you're new to template deployment, see:
 
 * [Azure Resource Manager documentation](https://docs.microsoft.com/azure/azure-resource-manager/)
 * [Deploy Resources with ARM Template](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-powershell)
+* [Deploy Resources with Bicep and Azure CLI](https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/deploy-cli)

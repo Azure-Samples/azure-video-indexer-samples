@@ -50,7 +50,7 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 ```
 
 > **Note:**
-> If you would like to work with bicep format, inspect the [bicep file](avam.template.json) on this repo
+> If you would like to work with bicep format, inspect the [bicep file](avam.template.bicep) on this repo
 
 
 ## Parameters

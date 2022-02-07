@@ -16,7 +16,7 @@ namespace VideoIndexerArm
     {
         private const string ApiVersion = "2021-11-10-preview";
         private const string AzureResourceManager = "https://management.azure.com";
-        private const string SubscriptionId = "<Your SubscriptionId>"; 
+        private const string SubscriptionId = "<Your SubscriptionId>";
         private const string ResourceGroup = "<Your Resource Group>";
         private const string AccountName = "<Your Acocunt Name>";
         private const string VideoUrl = "<Your Video Url>";
@@ -180,6 +180,7 @@ namespace VideoIndexerArm
             {
                 var insightsWidgetRequestResult = await client.GetAsync($"{apiUrl}/{accountLocation}/Accounts/{accountId}/Videos/{videoId}/InsightsWidget?{queryParams}");
                 var insightsWidgetLink = insightsWidgetRequestResult.Headers.Location;
+                Console.WriteLine("");
                 Console.WriteLine("Insights Widget url:");
                 Console.WriteLine(insightsWidgetLink);
             }
@@ -270,6 +271,11 @@ namespace VideoIndexerArm
                     var client = new HttpClient(new HttpClientHandler());
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", armAaccessToken);
                     var result = await client.PostAsync(requestUri, httpContent);
+                    if (result.StatusCode != System.Net.HttpStatusCode.OK)
+                    {
+                        Console.WriteLine(result.ToString());
+                        throw new Exception(result.ReasonPhrase);
+                    }
                     var jsonResponseBody = await result.Content.ReadAsStringAsync();
                     return JsonSerializer.Deserialize<GenerateAccessTokenResponse>(jsonResponseBody).AccessToken;
                 }
@@ -294,7 +300,7 @@ namespace VideoIndexerArm
                     var result = await client.GetAsync(requestUri);
                     if (result.StatusCode != System.Net.HttpStatusCode.OK)
                     {
-                        Console.WriteLine(result.ReasonPhrase);
+                        Console.WriteLine(result.ToString());
                         throw new Exception(result.ReasonPhrase);
                     }
                     var jsonResponseBody = await result.Content.ReadAsStringAsync();

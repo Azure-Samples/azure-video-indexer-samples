@@ -18,7 +18,7 @@ Guidance on onboarding samples to docs.microsoft.com/samples: https://review.doc
 Taxonomies for products and languages: https://review.docs.microsoft.com/new-hope/information-architecture/metadata/taxonomies?branch=master
 -->
 
-This folder contains the basic ways to address Video Analyzer for Media's API in order to allow full engagment with the product: Get Access token through ARM API, upload a video, polling on status/waiting, and indexing the video. 
+This folder contains the basic ways to address Video Analyzer for Media's API in order to allow full engagment with the product: Get Account, Get Access token through ARM API, upload a video, polling on status/waiting, and indexing the video. 
 It is highly recommend to first read the more detailed documntation which can be found [here](https://aka.ms/avam-arm-docs).
 
 For more API abilities, please visit our [API documentation](https://api-portal.videoindexer.ai/)
@@ -37,9 +37,8 @@ Instructions:
 3. Go to Program.cs and populate `AccountName` with your account name
 4. Go to Program.cs and populate `VideoUrl` with your video url
 5. make sure dotnet 6.0 is installed. if not, please install https://dotnet.microsoft.com/download/dotnet/6.0
-6. login to azure `az login --use-device`
-7. Open your terminal and navigate to VideoIndexerArm folder
-8. Run dotnet build
+6. Open your terminal and navigate to "media-services-video-indexer\ApiUsage\ArmBased" folder
+7. Run dotnet build
 
 For more information visit [here](https://docs.microsoft.com/en-us/azure/media-services/video-indexer/video-indexer-use-apis)
 <!--

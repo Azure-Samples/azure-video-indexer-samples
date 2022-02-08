@@ -72,9 +72,8 @@ namespace VideoIndexerArm
 
         private static async Task<string> UploadVideo(string accountId, string accountLocation, string acountAccessToken, string apiUrl, HttpClient client)
         {
-            var content = new MultipartFormDataContent();
             Console.WriteLine($"Video for account {accountId} is starting to upload.");
-
+            var content = new MultipartFormDataContent();
             try
             {
                 // Get the video from URL
@@ -115,6 +114,7 @@ namespace VideoIndexerArm
 
         private static async Task WaitForIndex(string accountId, string accountLocation, string acountAccessToken, string apiUrl, HttpClient client, string videoId)
         {
+            Console.WriteLine($"\nWaiting for video {videoId} to finish indexing");
             string queryParams;
             while (true)
             {
@@ -152,6 +152,7 @@ namespace VideoIndexerArm
 
         private static async Task GetVideo(string accountId, string accountLocation, string apiUrl, HttpClient client, string videoId, string videoAccessToken)
         {
+            Console.WriteLine($"\nSearching videos in account {AccountName} for video ID {videoId}.");
             var queryParams = CreateQueryString(
                 new Dictionary<string, string>()
                 {
@@ -166,7 +167,7 @@ namespace VideoIndexerArm
 
                 VerifyStatus(searchRequestResult, System.Net.HttpStatusCode.OK);
                 var searchResult = await searchRequestResult.Content.ReadAsStringAsync();
-                Console.WriteLine($"\nSearched videos in account {AccountName} for video ID {videoId}. Here are the search results: \n{searchResult}");
+                Console.WriteLine($"Here are the search results: \n{searchResult}");
             }
             catch (Exception ex)
             {
@@ -176,6 +177,7 @@ namespace VideoIndexerArm
 
         private static async Task GetInsightsWidgetUrl(string accountId, string accountLocation, string apiUrl, HttpClient client, string videoId, string videoAccessToken)
         {
+            Console.WriteLine($"\nGetting the insights widget URL for video {videoId}");
             var queryParams = CreateQueryString(
                 new Dictionary<string, string>()
                 {
@@ -190,7 +192,7 @@ namespace VideoIndexerArm
 
                 VerifyStatus(insightsWidgetRequestResult, System.Net.HttpStatusCode.MovedPermanently);
                 var insightsWidgetLink = insightsWidgetRequestResult.Headers.Location;
-                Console.WriteLine($"\nThe insights widget URL for video {videoId}: \n{insightsWidgetLink}");
+                Console.WriteLine($"Got the insights widget URL: \n{insightsWidgetLink}");
             }
             catch (Exception ex)
             {
@@ -200,6 +202,7 @@ namespace VideoIndexerArm
 
         private static async Task GetPlayerWidgetUrl(string accountId, string accountLocation, string apiUrl, HttpClient client, string videoId, string videoAccessToken)
         {
+            Console.WriteLine($"\nGetting the player widget URL for video {videoId}");
             var queryParams = CreateQueryString(
                 new Dictionary<string, string>()
                 {
@@ -213,13 +216,12 @@ namespace VideoIndexerArm
 
                 var playerWidgetLink = playerWidgetRequestResult.Headers.Location;
                 VerifyStatus(playerWidgetRequestResult, System.Net.HttpStatusCode.MovedPermanently);
-                Console.WriteLine($"\nThe player widget URL for video {videoId}: \n{playerWidgetLink}");
+                Console.WriteLine($"Got the player widget URL: \n{playerWidgetLink}");
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
-
         }
 
         static string CreateQueryString(IDictionary<string, string> parameters)
@@ -250,6 +252,8 @@ namespace VideoIndexerArm
 
             public async Task<string> GetAccessToken(ArmAccessTokenPermission permission, ArmAccessTokenScope scope, string videoId = null, string projectId = null)
             {
+                Console.WriteLine($"\nGetting access token: {JsonSerializer.Serialize(accessTokenRequest)}");
+
                 var accessTokenRequest = new AccessTokenRequest
                 {
                     PermissionType = permission,
@@ -257,8 +261,6 @@ namespace VideoIndexerArm
                     VideoId = videoId,
                     ProjectId = projectId
                 };
-
-                Console.WriteLine($"\nGetting access token: {JsonSerializer.Serialize(accessTokenRequest)}");
 
                 // Set the generateAccessToken (from video indexer) http request content
                 try

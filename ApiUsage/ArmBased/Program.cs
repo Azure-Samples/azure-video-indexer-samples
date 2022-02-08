@@ -70,6 +70,15 @@ namespace VideoIndexerArm
             }
         }
 
+        /// <summary>
+        /// Uploads a video and starts the video index. Calls the uploadVideo API (https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Upload-Video)
+        /// </summary>
+        /// <param name="accountId"> The account ID</param>
+        /// <param name="accountLocation"> The account location </param>
+        /// <param name="acountAccessToken"> The access token </param>
+        /// <param name="apiUrl"> The video indexer api url </param>
+        /// <param name="client"> The http client </param>
+        /// <returns> Video Id of the video being indexed, otherwise throws excpetion</returns>
         private static async Task<string> UploadVideo(string accountId, string accountLocation, string acountAccessToken, string apiUrl, HttpClient client)
         {
             Console.WriteLine($"Video for account {accountId} is starting to upload.");
@@ -95,7 +104,6 @@ namespace VideoIndexerArm
                 // video.Read(buffer, 0, buffer.Length);
                 // content.Add(new ByteArrayContent(buffer));
 
-                // For more info on this API see API portal (https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Upload-Video)
                 var uploadRequestResult = await client.PostAsync($"{apiUrl}/{accountLocation}/Accounts/{accountId}/Videos?{queryParams}", content);
                 VerifyStatus(uploadRequestResult, System.Net.HttpStatusCode.OK);
                 var uploadResult = await uploadRequestResult.Content.ReadAsStringAsync();
@@ -112,9 +120,19 @@ namespace VideoIndexerArm
             }
         }
 
+        /// <summary>
+        /// Calls getVideoIndex API in 10 second intervals until the indexing state is 'processed'(https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Get-Video-Index)
+        /// </summary>
+        /// <param name="accountId"> The account ID</param>
+        /// <param name="accountLocation"> The account location </param>
+        /// <param name="acountAccessToken"> The access token </param>
+        /// <param name="apiUrl"> The video indexer api url </param>
+        /// <param name="client"> The http client </param>
+        /// <param name="videoId"> The video id </param>
+        /// <returns> Prints video index when the index is complete, otherwise throws exception </returns>
         private static async Task WaitForIndex(string accountId, string accountLocation, string acountAccessToken, string apiUrl, HttpClient client, string videoId)
         {
-            Console.WriteLine($"\nWaiting for video {videoId} to finish indexing");
+            Console.WriteLine($"\nWaiting for video {videoId} to finish indexing.");
             string queryParams;
             while (true)
             {
@@ -125,7 +143,6 @@ namespace VideoIndexerArm
                             {"language", "English"},
                     });
 
-                // For more info on this API see API portal (https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Get-Video-Index)
                 var videoGetIndexRequestResult = await client.GetAsync($"{apiUrl}/{accountLocation}/Accounts/{accountId}/Videos/{videoId}/Index?{queryParams}");
 
                 VerifyStatus(videoGetIndexRequestResult, System.Net.HttpStatusCode.OK);
@@ -135,7 +152,7 @@ namespace VideoIndexerArm
                 // If job is finished
                 if (processingState == ProcessingState.Processed.ToString())
                 {
-                    Console.WriteLine($"\nThe video index has completed. Here is the full JSON of the index for video ID {videoId}: \n{videoGetIndexResult}");
+                    Console.WriteLine($"The video index has completed. Here is the full JSON of the index for video ID {videoId}: \n{videoGetIndexResult}");
                     return;
                 }
                 else if (processingState == ProcessingState.Failed.ToString())
@@ -150,7 +167,17 @@ namespace VideoIndexerArm
             }
         }
 
-        private static async Task GetVideo(string accountId, string accountLocation, string apiUrl, HttpClient client, string videoId, string videoAccessToken)
+        /// <summary>
+        /// Searches for the video in the account. Calls the searchVideo API (https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Search-Videos)
+        /// </summary>
+        /// <param name="accountId"> The account ID</param>
+        /// <param name="accountLocation"> The account location </param>
+        /// <param name="videoAccessToken"> The access token </param>
+        /// <param name="apiUrl"> The video indexer api url </param>
+        /// <param name="client"> The http client </param>
+        /// <param name="videoId"> The video id </param>
+        /// <returns> Prints the video metadata, otherwise throws excpetion</returns>
+        private static async Task GetVideo(string accountId, string accountLocation, string videoAccessToken, string apiUrl, HttpClient client, string videoId)
         {
             Console.WriteLine($"\nSearching videos in account {AccountName} for video ID {videoId}.");
             var queryParams = CreateQueryString(
@@ -162,7 +189,6 @@ namespace VideoIndexerArm
 
             try
             {
-                // For more info on this API see API portal (https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Search-Videos)
                 var searchRequestResult = await client.GetAsync($"{apiUrl}/{accountLocation}/Accounts/{accountId}/Videos/Search?{queryParams}");
 
                 VerifyStatus(searchRequestResult, System.Net.HttpStatusCode.OK);
@@ -175,7 +201,17 @@ namespace VideoIndexerArm
             }
         }
 
-        private static async Task GetInsightsWidgetUrl(string accountId, string accountLocation, string apiUrl, HttpClient client, string videoId, string videoAccessToken)
+        /// <summary>
+        /// Calls the getVideoInsightsWidget API (https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Get-Video-Insights-Widget)
+        /// </summary>
+        /// <param name="accountId"> The account ID</param>
+        /// <param name="accountLocation"> The account location </param>
+        /// <param name="videoAccessToken"> The access token </param>
+        /// <param name="apiUrl"> The video indexer api url </param>
+        /// <param name="client"> The http client </param>
+        /// <param name="videoId"> The video id </param>
+        /// <returns> Prints the VideoInsightsWidget URL, otherwise throws exception</returns>
+        private static async Task GetInsightsWidgetUrl(string accountId, string accountLocation, , string videoAccessToken, string apiUrl, HttpClient client, string videoId)
         {
             Console.WriteLine($"\nGetting the insights widget URL for video {videoId}");
             var queryParams = CreateQueryString(
@@ -187,7 +223,6 @@ namespace VideoIndexerArm
                 });
             try
             {
-                // For more info on this API see API portal (https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Get-Video-Insights-Widget)
                 var insightsWidgetRequestResult = await client.GetAsync($"{apiUrl}/{accountLocation}/Accounts/{accountId}/Videos/{videoId}/InsightsWidget?{queryParams}");
 
                 VerifyStatus(insightsWidgetRequestResult, System.Net.HttpStatusCode.MovedPermanently);
@@ -200,7 +235,17 @@ namespace VideoIndexerArm
             }
         }
 
-        private static async Task GetPlayerWidgetUrl(string accountId, string accountLocation, string apiUrl, HttpClient client, string videoId, string videoAccessToken)
+        /// <summary>
+        /// Calls the getVideoPlayerWidget API (https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Get-Video-Player-Widget)
+        /// </summary>
+        /// <param name="accountId"> The account ID</param>
+        /// <param name="accountLocation"> The account location </param>
+        /// <param name="videoAccessToken"> The access token </param>
+        /// <param name="apiUrl"> The video indexer api url </param>
+        /// <param name="client"> The http client </param>
+        /// <param name="videoId"> The video id </param>
+        /// <returns> Prints the VideoPlayerWidget URL, otherwise throws exception</returns>
+        private static async Task GetPlayerWidgetUrl(string accountId, string accountLocation, string videoAccessToken, string apiUrl, HttpClient client, string videoId)
         {
             Console.WriteLine($"\nGetting the player widget URL for video {videoId}");
             var queryParams = CreateQueryString(
@@ -211,7 +256,6 @@ namespace VideoIndexerArm
 
             try
             {
-                // For more info on this API see API portal (https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Get-Video-Player-Widget)
                 var playerWidgetRequestResult = await client.GetAsync($"{apiUrl}/{accountLocation}/Accounts/{accountId}/Videos/{videoId}/PlayerWidget?{queryParams}");
 
                 var playerWidgetLink = playerWidgetRequestResult.Headers.Location;
@@ -250,10 +294,16 @@ namespace VideoIndexerArm
                 this.armAccessToken = armAaccessToken;
             }
 
+            /// <summary>
+            /// Generates an access token. Calls the generateAccessToken API  (https://github.com/Azure/azure-rest-api-specs/blob/main/specification/vi/resource-manager/Microsoft.VideoIndexer/preview/2021-11-10-preview/vi.json#:~:text=%22/subscriptions/%7BsubscriptionId%7D/resourceGroups/%7BresourceGroupName%7D/providers/Microsoft.VideoIndexer/accounts/%7BaccountName%7D/generateAccessToken%22%3A%20%7B)
+            /// </summary>
+            /// <param name="permission"> The permission for the access token</param>
+            /// <param name="scope"> The scope of the access token </param>
+            /// <param name="videoId"> if the scope is video, this is the video Id </param>
+            /// <param name="projectId"> If the scope is project, this is the project Id </param>
+            /// <returns> The access token, otherwise throws an exception</returns>
             public async Task<string> GetAccessToken(ArmAccessTokenPermission permission, ArmAccessTokenScope scope, string videoId = null, string projectId = null)
             {
-                Console.WriteLine($"\nGetting access token: {JsonSerializer.Serialize(accessTokenRequest)}");
-
                 var accessTokenRequest = new AccessTokenRequest
                 {
                     PermissionType = permission,
@@ -261,6 +311,8 @@ namespace VideoIndexerArm
                     VideoId = videoId,
                     ProjectId = projectId
                 };
+
+                Console.WriteLine($"\nGetting access token: {JsonSerializer.Serialize(accessTokenRequest)}");
 
                 // Set the generateAccessToken (from video indexer) http request content
                 try
@@ -273,7 +325,6 @@ namespace VideoIndexerArm
                     var client = new HttpClient(new HttpClientHandler());
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", armAccessToken);
 
-                    //Generate ARM access token - for more info on this API see https://github.com/Azure/azure-rest-api-specs/blob/main/specification/vi/resource-manager/Microsoft.VideoIndexer/preview/2021-11-10-preview/vi.json#:~:text=%22/subscriptions/%7BsubscriptionId%7D/resourceGroups/%7BresourceGroupName%7D/providers/Microsoft.VideoIndexer/accounts/%7BaccountName%7D/generateAccessToken%22%3A%20%7B
                     var result = await client.PostAsync(requestUri, httpContent);
 
                     VerifyStatus(result, System.Net.HttpStatusCode.OK);
@@ -288,6 +339,10 @@ namespace VideoIndexerArm
                 }
             }
 
+            /// <summary>
+            /// Gets an account. Calls the getAccount API (https://github.com/Azure/azure-rest-api-specs/blob/main/specification/vi/resource-manager/Microsoft.VideoIndexer/preview/2021-11-10-preview/vi.json#:~:text=%22/subscriptions/%7BsubscriptionId%7D/resourceGroups/%7BresourceGroupName%7D/providers/Microsoft.VideoIndexer/accounts/%7BaccountName%7D%22%3A%20%7B)
+            /// </summary>
+            /// <returns> The Account, otherwise throws an exception</returns>
             public async Task<Account> GetAccount()
             {
                 Console.WriteLine($"Getting account {AccountName}.");
@@ -299,7 +354,6 @@ namespace VideoIndexerArm
                     var client = new HttpClient(new HttpClientHandler());
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", armAccessToken);
 
-                    //Get ARM account - for more info on this API see https://github.com/Azure/azure-rest-api-specs/blob/main/specification/vi/resource-manager/Microsoft.VideoIndexer/preview/2021-11-10-preview/vi.json#:~:text=%22/subscriptions/%7BsubscriptionId%7D/resourceGroups/%7BresourceGroupName%7D/providers/Microsoft.VideoIndexer/accounts/%7BaccountName%7D%22%3A%20%7B
                     var result = await client.GetAsync(requestUri);
 
                     VerifyStatus(result, System.Net.HttpStatusCode.OK);

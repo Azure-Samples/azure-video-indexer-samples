@@ -54,13 +54,13 @@ namespace VideoIndexerArm
             var videoAccessToken = await videoIndexerResourceProviderClient.GetAccessToken(ArmAccessTokenPermission.Contributor, ArmAccessTokenScope.Video, videoId);
 
             // Search for the video
-            await GetVideo(accountId, accountLocation, ApiUrl, client, videoId, videoAccessToken);
+            await GetVideo(accountId, accountLocation, ApiUrl, videoAccessToken, client, videoId);
 
             // Get insights widget url
-            await GetInsightsWidgetUrl(accountId, accountLocation, ApiUrl, client, videoId, videoAccessToken);
+            await GetInsightsWidgetUrl(accountId, accountLocation, ApiUrl, videoAccessToken, client, videoId);
 
             // Get player widget url
-            await GetPlayerWidgetUrl(accountId, accountLocation, ApiUrl, client, videoId, videoAccessToken);
+            await GetPlayerWidgetUrl(accountId, accountLocation, ApiUrl, videoAccessToken, client, videoId);
 
             Console.WriteLine("\nPress Enter to exit...");
             String line = Console.ReadLine();
@@ -211,7 +211,7 @@ namespace VideoIndexerArm
         /// <param name="client"> The http client </param>
         /// <param name="videoId"> The video id </param>
         /// <returns> Prints the VideoInsightsWidget URL, otherwise throws exception</returns>
-        private static async Task GetInsightsWidgetUrl(string accountId, string accountLocation, , string videoAccessToken, string apiUrl, HttpClient client, string videoId)
+        private static async Task GetInsightsWidgetUrl(string accountId, string accountLocation, string videoAccessToken, string apiUrl, HttpClient client, string videoId)
         {
             Console.WriteLine($"\nGetting the insights widget URL for video {videoId}");
             var queryParams = CreateQueryString(

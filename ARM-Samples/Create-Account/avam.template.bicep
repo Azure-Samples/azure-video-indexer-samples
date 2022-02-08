@@ -11,7 +11,7 @@ param managedIdentityResourceId string
 param mediaServiceAccountResourceId string 
 
 @description('The AVAM Template')
-resource avamAccount 'Microsoft.VideoIndexer/accounts@2021-10-27-preview' = {
+resource avamAccount 'Microsoft.VideoIndexer/accounts@2021-11-10-preview' = {
   name: accountName
   location: location
   identity:{

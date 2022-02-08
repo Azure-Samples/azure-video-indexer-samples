@@ -23,6 +23,7 @@ namespace VideoIndexerArm
 
         public static async Task Main(string[] args)
         {
+            Console.WriteLine($"getting account data for {AccountName} {Environment.NewLine} hi");
             // Build Azure Video Analyzer for Media resource provider client that has access token throuhg ARM
             var videoIndexerResourceProviderClient = await VideoIndexerResourceProviderClient.BuildVideoIndexerResourceProviderClient();
 

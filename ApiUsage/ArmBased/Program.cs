@@ -258,7 +258,7 @@ namespace VideoIndexerArm
                     ProjectId = projectId
                 };
 
-                Console.WriteLine($"Getting access token: {JsonSerializer.Serialize(accessTokenRequest)}");
+                Console.WriteLine($"\nGetting access token: {JsonSerializer.Serialize(accessTokenRequest)}");
 
                 // Set the generateAccessToken (from video indexer) http request content
                 try

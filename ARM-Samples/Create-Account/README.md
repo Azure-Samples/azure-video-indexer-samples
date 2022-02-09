@@ -13,7 +13,7 @@ The resource will be deployed to your subscription and will create the Azure Vid
 
 > For full documentation on Azure Video Analyzer for Media API, visit the [Developer Portal](https://aka.ms/avam-dev-portal) page.
 
-> The current API Version is "2021-10-27-preview". Check this Repo from time to time to get updates on new API Versions.
+> The current API Version is "2021-11-10-preview". Check this Repo from time to time to get updates on new API Versions.
 
 ## Prerequisites
 

@@ -1,10 +1,10 @@
-# Embed standard Azure Video Analyzer for Media insights widget samples
+# Embed standard Video Indexer insights widget samples
 
 Instead of adding an iframe element to embed the insight widget, this package allows you to embed using JS code.
 
 ## Contents
 
-Contains samples code for Azure Video Analyzer for Media insights widget
+Contains samples code for Video Indexer insights widget
 
 | File/folder                                         | Description                                                          |
 |-----------------------------------------------------|----------------------------------------------------------------------|

@@ -1,16 +1,16 @@
 ---
 page_type: How to use AVAM API
 languages:
-- C#
-- .Net
+  - C#
+  - .Net
 products:
-- azure-video-analyzer-for-media
+  - azure-video-analyzer-for-media
 description: "Video Analyzer for Media API"
 ---
 
 # Official Applied AI services| Video Analyzer for Media API page
 
-<!-- 
+<!--
 Guidelines on README format: https://review.docs.microsoft.com/help/onboard/admin/samples/concepts/readme-template?branch=master
 
 Guidance on onboarding samples to docs.microsoft.com/samples: https://review.docs.microsoft.com/help/onboard/admin/samples/process/onboarding?branch=master
@@ -18,8 +18,8 @@ Guidance on onboarding samples to docs.microsoft.com/samples: https://review.doc
 Taxonomies for products and languages: https://review.docs.microsoft.com/new-hope/information-architecture/metadata/taxonomies?branch=master
 -->
 
-This folder contains the basic ways to address Video Analyzer for Media's API in order to allow full engagment with the product: Get Account, Get Access token through ARM API, upload a video, polling on status/waiting, and indexing the video. 
-It is highly recommend to first read the more detailed documntation which can be found [here](https://aka.ms/avam-arm-docs).
+This folder contains the basic ways to address Video Analyzer for Media's API in order to allow full engagment with the product: Get Account, Get Access token through ARM API, upload a video, polling on status/waiting, and indexing the video.
+It is highly recommend to first read the more detailed documentation which can be found [here](https://aka.ms/avam-arm-docs).
 
 For more API abilities, please visit our [API documentation](https://api-portal.videoindexer.ai/)
 
@@ -32,6 +32,7 @@ Make sure to read the inline comments and notice our best practices advices.
 ## Prerequisites
 
 Instructions:
+
 1. Go to Program.cs and populate `SubscriptionId` with your subscription id
 2. Go to Program.cs and populate `ResourceGroup` with your resource group
 3. Go to Program.cs and populate `AccountName` with your account name
@@ -41,9 +42,11 @@ Instructions:
 7. Run dotnet build
 
 For more information visit [here](https://docs.microsoft.com/en-us/azure/media-services/video-indexer/video-indexer-use-apis)
+
 <!--
-Outline the required components and tools that a user might need to have on their machine in order to run the sample. This can be anything from frameworks, SDKs, OS versions or IDE releases. 
+Outline the required components and tools that a user might need to have on their machine in order to run the sample. This can be anything from frameworks, SDKs, OS versions or IDE releases.
 -->
 
 ## Usage
+
 Run dotnet run

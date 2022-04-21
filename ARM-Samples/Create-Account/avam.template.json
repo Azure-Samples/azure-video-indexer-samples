@@ -9,17 +9,17 @@
             },
             "defaultValue": "avam-account"
         },
-        "managedIdentityId": {
+        "managedIdentityResourceId": {
             "type": "string",
             "metadata" : {
-                "description" : "The managed identity used to grant access to the Azure Media Service (AMS) account"
+                "description" : "The managed identity Resource Id used to grant access to the Azure Media Service (AMS) account"
             },
             "defaultValue": ""
         },
         "mediaServiceAccountResourceId": {
             "type": "string",
             "metadata" : {
-                "description" : "The media Service Account Id. The Account needs to be created prior to the creation of this template"
+                "description" : "The media Service Account Resource Id. The Account needs to be created prior to the creation of this template"
             },
             "defaultValue" : ""
         },
@@ -35,7 +35,7 @@
     "resources": [
         {
             "type": "Microsoft.VideoIndexer/accounts",
-            "apiVersion": "2021-09-01-preview",
+            "apiVersion": "2021-11-10-preview",
             "name": "[parameters('name')]",
             
             "location": "[resourceGroup().location]",
@@ -43,13 +43,13 @@
             "identity": {
                 "type": "UserAssigned",
                 "userAssignedIdentities": {
-                    "[parameters('managedIdentityId')]": {}
+                    "[parameters('managedIdentityResourceId')]": {}
                 }
             },
             "properties": {
                 "mediaServices": {
                     "resourceId": "[parameters('mediaServiceAccountResourceId')]",
-                    "userAssignedIdentity": "[parameters('managedIdentityId')]"
+                    "userAssignedIdentity": "[parameters('managedIdentityResourceId')]"
                 }
             }
         }

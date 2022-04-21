@@ -14,11 +14,13 @@ namespace VideoIndexerArm
 {
     public class Program
     {
+        private const string ApiVersion = "2021-11-10-preview";
         private const string AzureResourceManager = "https://management.azure.com";
-        private const string SubscriptionId = ""; // Your azure subscription
-        private const string ResourceGroup = ""; // Your resource group
-        private const string AccountName = ""; // Your account name
-        private const string VideoUrl = ""; // The video url you would like to index
+        private const string SubscriptionId = "<Your SubscriptionId>";
+        private const string ResourceGroup = "<Your Resource Group>";
+        private const string AccountName = "<Your Acocunt Name>";
+        private const string VideoUrl = "<Your Video Url>";
+        private const string ApiUrl = "https://api.videoindexer.ai";
 
         public static async Task Main(string[] args)
         {
@@ -27,135 +29,243 @@ namespace VideoIndexerArm
 
             // Get account details
             var account = await videoIndexerResourceProviderClient.GetAccount();
-            var accountId = account.Properties.Id;
             var accountLocation = account.Location;
-            Console.WriteLine($"account id: {accountId}");
-            Console.WriteLine($"account location: {accountLocation}");
+            var accountId = account.Properties.Id;
 
             // Get account level access token for Azure Video Analyzer for Media 
-            var accessTokenRequest = new AccessTokenRequest
-            {
-                PermissionType = AccessTokenPermission.Contributor,
-                Scope = ArmAccessTokenScope.Account
-            };
+            var accountAccessToken = await videoIndexerResourceProviderClient.GetAccessToken(ArmAccessTokenPermission.Contributor, ArmAccessTokenScope.Account);
 
-            var accessToken = await videoIndexerResourceProviderClient.GetAccessToken(accessTokenRequest);
-            var apiUrl = "https://api.videoindexer.ai";
             System.Net.ServicePointManager.SecurityProtocol = System.Net.ServicePointManager.SecurityProtocol | System.Net.SecurityProtocolType.Tls12;
 
-
             // Create the http client
-            var handler = new HttpClientHandler();
-            handler.AllowAutoRedirect = false;
+            var handler = new HttpClientHandler
+            {
+                AllowAutoRedirect = false
+            };
             var client = new HttpClient(handler);
 
             // Upload a video
-            var content = new MultipartFormDataContent();
-            Console.WriteLine("Uploading...");
-            // Get the video from URL
-
-            // As an alternative to specifying video URL, you can upload a file.
-            // Remove the videoUrl parameter from the query params below and add the following lines:
-            // FileStream video =File.OpenRead(Globals.VIDEOFILE_PATH);
-            // byte[] buffer =new byte[video.Length];
-            // video.Read(buffer, 0, buffer.Length);
-            // content.Add(new ByteArrayContent(buffer));
-
-            var queryParams = CreateQueryString(
-                new Dictionary<string, string>()
-                {
-            {"accessToken", accessToken},
-            {"name", "video sample"},
-            {"description", "video_description"},
-            {"privacy", "private"},
-            {"partition", "partition"},
-            {"videoUrl", VideoUrl},
-                });
-            var uploadRequestResult = await client.PostAsync($"{apiUrl}/{accountLocation}/Accounts/{accountId}/Videos?{queryParams}", content);
-            var uploadResult = await uploadRequestResult.Content.ReadAsStringAsync();
-
-            // Get the video ID from the upload result
-            string videoId = JsonSerializer.Deserialize<Video>(uploadResult).Id;
-            Console.WriteLine("Uploaded");
-            Console.WriteLine("Video ID:");
-            Console.WriteLine(videoId);
+            var videoId = await UploadVideo(accountId, accountLocation, accountAccessToken, ApiUrl, client);
 
             // Wait for the video index to finish
-            while (true)
-            {
-                await Task.Delay(10000);
+            await WaitForIndex(accountId, accountLocation, accountAccessToken, ApiUrl, client, videoId);
 
-                queryParams = CreateQueryString(
-                    new Dictionary<string, string>()
-                    {
-                {"accessToken", accessToken},
-                {"language", "English"},
-                    });
-
-                var videoGetIndexRequestResult = await client.GetAsync($"{apiUrl}/{accountLocation}/Accounts/{accountId}/Videos/{videoId}/Index?{queryParams}");
-                var videoGetIndexResult = await videoGetIndexRequestResult.Content.ReadAsStringAsync();
-
-                string processingState = JsonSerializer.Deserialize<Video>(videoGetIndexResult).State;
-
-                Console.WriteLine("");
-                Console.WriteLine("State:");
-                Console.WriteLine(processingState);
-
-                // Job is finished
-                if (processingState != "Uploaded" && processingState != "Processing")
-                {
-                    Console.WriteLine("");
-                    Console.WriteLine("Full JSON:");
-                    Console.WriteLine(videoGetIndexResult);
-                    break;
-                }
-            }
+            // Get video level access token for Azure Video Analyzer for Media 
+            var videoAccessToken = await videoIndexerResourceProviderClient.GetAccessToken(ArmAccessTokenPermission.Contributor, ArmAccessTokenScope.Video, videoId);
 
             // Search for the video
-            queryParams = CreateQueryString(
-                new Dictionary<string, string>()
-                {
-            {"accessToken", accessToken},
-            {"id", videoId},
-                });
-
-            var searchRequestResult = await client.GetAsync($"{apiUrl}/{accountLocation}/Accounts/{accountId}/Videos/Search?{queryParams}");
-            var searchResult = await searchRequestResult.Content.ReadAsStringAsync();
-            Console.WriteLine("");
-            Console.WriteLine("Search:");
-            Console.WriteLine(searchResult);
+            await GetVideo(accountId, accountLocation, ApiUrl, videoAccessToken, client, videoId);
 
             // Get insights widget url
-            queryParams = CreateQueryString(
-                new Dictionary<string, string>()
-                {
-            {"accessToken", accessToken},
-            {"widgetType", "Keywords"},
-            {"allowEdit", "true"},
-                });
-            var insightsWidgetRequestResult = await client.GetAsync($"{apiUrl}/{accountLocation}/Accounts/{accountId}/Videos/{videoId}/InsightsWidget?{queryParams}");
-            var insightsWidgetLink = insightsWidgetRequestResult.Headers.Location;
-            Console.WriteLine("Insights Widget url:");
-            Console.WriteLine(insightsWidgetLink);
+            await GetInsightsWidgetUrl(accountId, accountLocation, ApiUrl, videoAccessToken, client, videoId);
 
             // Get player widget url
-            queryParams = CreateQueryString(
-                new Dictionary<string, string>()
-                {
-            {"accessToken", accessToken},
-                });
-            var playerWidgetRequestResult = await client.GetAsync($"{apiUrl}/{accountLocation}/Accounts/{accountId}/Videos/{videoId}/PlayerWidget?{queryParams}");
-            var playerWidgetLink = playerWidgetRequestResult.Headers.Location;
-            Console.WriteLine("");
-            Console.WriteLine("Player Widget url:");
-            Console.WriteLine(playerWidgetLink);
+            await GetPlayerWidgetUrl(accountId, accountLocation, ApiUrl, videoAccessToken, client, videoId);
+
             Console.WriteLine("\nPress Enter to exit...");
             String line = Console.ReadLine();
             if (line == "enter")
             {
                 System.Environment.Exit(0);
             }
+        }
 
+        /// <summary>
+        /// Uploads a video and starts the video index. Calls the uploadVideo API (https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Upload-Video)
+        /// </summary>
+        /// <param name="accountId"> The account ID</param>
+        /// <param name="accountLocation"> The account location </param>
+        /// <param name="acountAccessToken"> The access token </param>
+        /// <param name="apiUrl"> The video indexer api url </param>
+        /// <param name="client"> The http client </param>
+        /// <returns> Video Id of the video being indexed, otherwise throws excpetion</returns>
+        private static async Task<string> UploadVideo(string accountId, string accountLocation, string acountAccessToken, string apiUrl, HttpClient client)
+        {
+            Console.WriteLine($"Video for account {accountId} is starting to upload.");
+            var content = new MultipartFormDataContent();
+            try
+            {
+                // Get the video from URL
+                var queryParams = CreateQueryString(
+                new Dictionary<string, string>()
+                {
+                    {"accessToken", acountAccessToken},
+                    {"name", "video sample"},
+                    {"description", "video_description"},
+                    {"privacy", "private"},
+                    {"partition", "partition"},
+                    {"videoUrl", VideoUrl},
+                });
+
+                // As an alternative to specifying video URL, you can upload a file.
+                // Remove the videoUrl parameter from the query params below and add the following lines:
+                // FileStream video =File.OpenRead(Globals.VIDEOFILE_PATH);
+                // byte[] buffer =new byte[video.Length];
+                // video.Read(buffer, 0, buffer.Length);
+                // content.Add(new ByteArrayContent(buffer));
+
+                var uploadRequestResult = await client.PostAsync($"{apiUrl}/{accountLocation}/Accounts/{accountId}/Videos?{queryParams}", content);
+                VerifyStatus(uploadRequestResult, System.Net.HttpStatusCode.OK);
+                var uploadResult = await uploadRequestResult.Content.ReadAsStringAsync();
+
+                // Get the video ID from the upload result
+                var videoId = JsonSerializer.Deserialize<Video>(uploadResult).Id;
+                Console.WriteLine($"\nVideo ID {videoId} was uploaded successfully");
+                return videoId;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Calls getVideoIndex API in 10 second intervals until the indexing state is 'processed'(https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Get-Video-Index)
+        /// </summary>
+        /// <param name="accountId"> The account ID</param>
+        /// <param name="accountLocation"> The account location </param>
+        /// <param name="acountAccessToken"> The access token </param>
+        /// <param name="apiUrl"> The video indexer api url </param>
+        /// <param name="client"> The http client </param>
+        /// <param name="videoId"> The video id </param>
+        /// <returns> Prints video index when the index is complete, otherwise throws exception </returns>
+        private static async Task WaitForIndex(string accountId, string accountLocation, string acountAccessToken, string apiUrl, HttpClient client, string videoId)
+        {
+            Console.WriteLine($"\nWaiting for video {videoId} to finish indexing.");
+            string queryParams;
+            while (true)
+            {
+                queryParams = CreateQueryString(
+                    new Dictionary<string, string>()
+                    {
+                            {"accessToken", acountAccessToken},
+                            {"language", "English"},
+                    });
+
+                var videoGetIndexRequestResult = await client.GetAsync($"{apiUrl}/{accountLocation}/Accounts/{accountId}/Videos/{videoId}/Index?{queryParams}");
+
+                VerifyStatus(videoGetIndexRequestResult, System.Net.HttpStatusCode.OK);
+                var videoGetIndexResult = await videoGetIndexRequestResult.Content.ReadAsStringAsync();
+                string processingState = JsonSerializer.Deserialize<Video>(videoGetIndexResult).State;
+
+                // If job is finished
+                if (processingState == ProcessingState.Processed.ToString())
+                {
+                    Console.WriteLine($"The video index has completed. Here is the full JSON of the index for video ID {videoId}: \n{videoGetIndexResult}");
+                    return;
+                }
+                else if (processingState == ProcessingState.Failed.ToString())
+                {
+                    Console.WriteLine($"\nThe video index failed for video ID {videoId}.");
+                    throw new Exception(videoGetIndexResult);
+                }
+
+                // Job hasn't finished
+                Console.WriteLine($"\nThe video index state is {processingState}");
+                await Task.Delay(10000);
+            }
+        }
+
+        /// <summary>
+        /// Searches for the video in the account. Calls the searchVideo API (https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Search-Videos)
+        /// </summary>
+        /// <param name="accountId"> The account ID</param>
+        /// <param name="accountLocation"> The account location </param>
+        /// <param name="videoAccessToken"> The access token </param>
+        /// <param name="apiUrl"> The video indexer api url </param>
+        /// <param name="client"> The http client </param>
+        /// <param name="videoId"> The video id </param>
+        /// <returns> Prints the video metadata, otherwise throws excpetion</returns>
+        private static async Task GetVideo(string accountId, string accountLocation, string videoAccessToken, string apiUrl, HttpClient client, string videoId)
+        {
+            Console.WriteLine($"\nSearching videos in account {AccountName} for video ID {videoId}.");
+            var queryParams = CreateQueryString(
+                new Dictionary<string, string>()
+                {
+                        {"accessToken", videoAccessToken},
+                        {"id", videoId},
+                });
+
+            try
+            {
+                var searchRequestResult = await client.GetAsync($"{apiUrl}/{accountLocation}/Accounts/{accountId}/Videos/Search?{queryParams}");
+
+                VerifyStatus(searchRequestResult, System.Net.HttpStatusCode.OK);
+                var searchResult = await searchRequestResult.Content.ReadAsStringAsync();
+                Console.WriteLine($"Here are the search results: \n{searchResult}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Calls the getVideoInsightsWidget API (https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Get-Video-Insights-Widget)
+        /// </summary>
+        /// <param name="accountId"> The account ID</param>
+        /// <param name="accountLocation"> The account location </param>
+        /// <param name="videoAccessToken"> The access token </param>
+        /// <param name="apiUrl"> The video indexer api url </param>
+        /// <param name="client"> The http client </param>
+        /// <param name="videoId"> The video id </param>
+        /// <returns> Prints the VideoInsightsWidget URL, otherwise throws exception</returns>
+        private static async Task GetInsightsWidgetUrl(string accountId, string accountLocation, string videoAccessToken, string apiUrl, HttpClient client, string videoId)
+        {
+            Console.WriteLine($"\nGetting the insights widget URL for video {videoId}");
+            var queryParams = CreateQueryString(
+                new Dictionary<string, string>()
+                {
+                    {"accessToken", videoAccessToken},
+                    {"widgetType", "Keywords"},
+                    {"allowEdit", "true"},
+                });
+            try
+            {
+                var insightsWidgetRequestResult = await client.GetAsync($"{apiUrl}/{accountLocation}/Accounts/{accountId}/Videos/{videoId}/InsightsWidget?{queryParams}");
+
+                VerifyStatus(insightsWidgetRequestResult, System.Net.HttpStatusCode.MovedPermanently);
+                var insightsWidgetLink = insightsWidgetRequestResult.Headers.Location;
+                Console.WriteLine($"Got the insights widget URL: \n{insightsWidgetLink}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Calls the getVideoPlayerWidget API (https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Get-Video-Player-Widget)
+        /// </summary>
+        /// <param name="accountId"> The account ID</param>
+        /// <param name="accountLocation"> The account location </param>
+        /// <param name="videoAccessToken"> The access token </param>
+        /// <param name="apiUrl"> The video indexer api url </param>
+        /// <param name="client"> The http client </param>
+        /// <param name="videoId"> The video id </param>
+        /// <returns> Prints the VideoPlayerWidget URL, otherwise throws exception</returns>
+        private static async Task GetPlayerWidgetUrl(string accountId, string accountLocation, string videoAccessToken, string apiUrl, HttpClient client, string videoId)
+        {
+            Console.WriteLine($"\nGetting the player widget URL for video {videoId}");
+            var queryParams = CreateQueryString(
+                new Dictionary<string, string>()
+                {
+                    {"accessToken", videoAccessToken},
+                });
+
+            try
+            {
+                var playerWidgetRequestResult = await client.GetAsync($"{apiUrl}/{accountLocation}/Accounts/{accountId}/Videos/{videoId}/PlayerWidget?{queryParams}");
+
+                var playerWidgetLink = playerWidgetRequestResult.Headers.Location;
+                VerifyStatus(playerWidgetRequestResult, System.Net.HttpStatusCode.MovedPermanently);
+                Console.WriteLine($"Got the player widget URL: \n{playerWidgetLink}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
 
         static string CreateQueryString(IDictionary<string, string> parameters)
@@ -171,7 +281,7 @@ namespace VideoIndexerArm
 
         public class VideoIndexerResourceProviderClient
         {
-            private readonly string armAaccessToken;
+            private readonly string armAccessToken;
 
             async public static Task<VideoIndexerResourceProviderClient> BuildVideoIndexerResourceProviderClient()
             {
@@ -181,60 +291,113 @@ namespace VideoIndexerArm
             }
             public VideoIndexerResourceProviderClient(string armAaccessToken)
             {
-                this.armAaccessToken = armAaccessToken;
+                this.armAccessToken = armAaccessToken;
             }
 
-            public async Task<string> GetAccessToken(AccessTokenRequest accessTokenRequest)
+            /// <summary>
+            /// Generates an access token. Calls the generateAccessToken API  (https://github.com/Azure/azure-rest-api-specs/blob/main/specification/vi/resource-manager/Microsoft.VideoIndexer/preview/2021-11-10-preview/vi.json#:~:text=%22/subscriptions/%7BsubscriptionId%7D/resourceGroups/%7BresourceGroupName%7D/providers/Microsoft.VideoIndexer/accounts/%7BaccountName%7D/generateAccessToken%22%3A%20%7B)
+            /// </summary>
+            /// <param name="permission"> The permission for the access token</param>
+            /// <param name="scope"> The scope of the access token </param>
+            /// <param name="videoId"> if the scope is video, this is the video Id </param>
+            /// <param name="projectId"> If the scope is project, this is the project Id </param>
+            /// <returns> The access token, otherwise throws an exception</returns>
+            public async Task<string> GetAccessToken(ArmAccessTokenPermission permission, ArmAccessTokenScope scope, string videoId = null, string projectId = null)
             {
-                Console.WriteLine($"Getting access token. {JsonSerializer.Serialize(accessTokenRequest)}");
+                var accessTokenRequest = new AccessTokenRequest
+                {
+                    PermissionType = permission,
+                    Scope = scope,
+                    VideoId = videoId,
+                    ProjectId = projectId
+                };
+
+                Console.WriteLine($"\nGetting access token: {JsonSerializer.Serialize(accessTokenRequest)}");
+
                 // Set the generateAccessToken (from video indexer) http request content
-                var jsonRequestBody = JsonSerializer.Serialize(accessTokenRequest);
-                var httpContent = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");
+                try
+                {
+                    var jsonRequestBody = JsonSerializer.Serialize(accessTokenRequest);
+                    var httpContent = new StringContent(jsonRequestBody, System.Text.Encoding.UTF8, "application/json");
 
-                // Set request uri
-                var requestUri = $"{AzureResourceManager}/subscriptions/{SubscriptionId}/resourcegroups/{ResourceGroup}/providers/Microsoft.VideoIndexer/accounts/{AccountName}/generateAccessToken?api-version=2021-08-16-preview";
+                    // Set request uri
+                    var requestUri = $"{AzureResourceManager}/subscriptions/{SubscriptionId}/resourcegroups/{ResourceGroup}/providers/Microsoft.VideoIndexer/accounts/{AccountName}/generateAccessToken?api-version={ApiVersion}";
+                    var client = new HttpClient(new HttpClientHandler());
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", armAccessToken);
 
-                // Generate access token from video indexer
-                var client = new HttpClient(new HttpClientHandler());
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", armAaccessToken);
-                var result = await client.PostAsync(requestUri, httpContent);
-                var jsonResponseBody = await result.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<GenerateAccessTokenResponse>(jsonResponseBody).AccessToken;
+                    var result = await client.PostAsync(requestUri, httpContent);
+
+                    VerifyStatus(result, System.Net.HttpStatusCode.OK);
+                    var jsonResponseBody = await result.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Got access token: {scope} {videoId}, {permission}");
+                    return JsonSerializer.Deserialize<GenerateAccessTokenResponse>(jsonResponseBody).AccessToken;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                    throw;
+                }
             }
 
+            /// <summary>
+            /// Gets an account. Calls the getAccount API (https://github.com/Azure/azure-rest-api-specs/blob/main/specification/vi/resource-manager/Microsoft.VideoIndexer/preview/2021-11-10-preview/vi.json#:~:text=%22/subscriptions/%7BsubscriptionId%7D/resourceGroups/%7BresourceGroupName%7D/providers/Microsoft.VideoIndexer/accounts/%7BaccountName%7D%22%3A%20%7B)
+            /// </summary>
+            /// <returns> The Account, otherwise throws an exception</returns>
             public async Task<Account> GetAccount()
             {
+                Console.WriteLine($"Getting account {AccountName}.");
+                Account account;
+                try
+                {
+                    // Set request uri
+                    var requestUri = $"{AzureResourceManager}/subscriptions/{SubscriptionId}/resourcegroups/{ResourceGroup}/providers/Microsoft.VideoIndexer/accounts/{AccountName}?api-version={ApiVersion}";
+                    var client = new HttpClient(new HttpClientHandler());
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", armAccessToken);
 
-                Console.WriteLine($"Getting account.");
-                // Set request uri
-                var requestUri = $"{AzureResourceManager}/subscriptions/{SubscriptionId}/resourcegroups/{ResourceGroup}/providers/Microsoft.VideoIndexer/accounts/{AccountName}/?api-version=2021-08-16-preview";
+                    var result = await client.GetAsync(requestUri);
 
-                // Get account
-                var client = new HttpClient(new HttpClientHandler());
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", armAaccessToken);
-                var result = await client.GetAsync(requestUri);
-                var jsonResponseBody = await result.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<Account>(jsonResponseBody);
+                    VerifyStatus(result, System.Net.HttpStatusCode.OK);
+                    var jsonResponseBody = await result.Content.ReadAsStringAsync();
+                    account = JsonSerializer.Deserialize<Account>(jsonResponseBody);
+                    VerifyValidAccount(account);
+                    Console.WriteLine($"The account ID is {account.Properties.Id}");
+                    Console.WriteLine($"The account location is {account.Location}");
+                    return account;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                    throw;
+                }
+            }
+
+            private static void VerifyValidAccount(Account account)
+            {
+                if (string.IsNullOrWhiteSpace(account.Location) || account.Properties == null || string.IsNullOrWhiteSpace(account.Properties.Id))
+                {
+                    Console.WriteLine($"{nameof(AccountName)} {AccountName} not found. Check {nameof(SubscriptionId)}, {nameof(ResourceGroup)}, {nameof(AccountName)} ar valid.");
+                    throw new Exception($"Account {AccountName} not found.");
+                }
             }
         }
 
         public class AccessTokenRequest
         {
             [JsonPropertyName("permissionType")]
-            public AccessTokenPermission PermissionType { get; set; }
+            public ArmAccessTokenPermission PermissionType { get; set; }
 
             [JsonPropertyName("scope")]
             public ArmAccessTokenScope Scope { get; set; }
 
             [JsonPropertyName("projectId")]
             public string ProjectId { get; set; }
-            
+
             [JsonPropertyName("videoId")]
             public string VideoId { get; set; }
         }
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
-        public enum AccessTokenPermission
+        public enum ArmAccessTokenPermission
         {
             Reader,
             Contributor,
@@ -254,8 +417,8 @@ namespace VideoIndexerArm
         {
             [JsonPropertyName("accessToken")]
             public string AccessToken { get; set; }
-
         }
+
         public class AccountProperties
         {
             [JsonPropertyName("accountId")]
@@ -269,7 +432,6 @@ namespace VideoIndexerArm
 
             [JsonPropertyName("location")]
             public string Location { get; set; }
-
         }
 
         public class Video
@@ -279,6 +441,22 @@ namespace VideoIndexerArm
 
             [JsonPropertyName("state")]
             public string State { get; set; }
+        }
+
+        public enum ProcessingState
+        {
+            Uploaded,
+            Processing,
+            Processed,
+            Failed
+        }
+
+        public static void VerifyStatus(HttpResponseMessage response, System.Net.HttpStatusCode excpectedStatusCode)
+        {
+            if (response.StatusCode != excpectedStatusCode)
+            {
+                throw new Exception(response.ToString());
+            }
         }
     }
 }

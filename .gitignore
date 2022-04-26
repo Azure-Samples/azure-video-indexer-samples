@@ -9,6 +9,13 @@
 *.userosscache
 *.sln.docstates
 
+#terraform 
+.terraform/
+.terraform.*
+terraform.tfstate
+terraform.tfstate.backup
+
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

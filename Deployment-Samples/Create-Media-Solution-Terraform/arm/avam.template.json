@@ -21,7 +21,7 @@
             "metadata" : {
                 "description" : "The media Service Account Resource Id. The Account needs to be created prior to the creation of this template"
             },
-            "defaultValue" : ""
+            "defaultValue": ""
         },
        
         "tags": {
@@ -53,5 +53,11 @@
                 }
             }
         }
-    ]
+    ],
+     "outputs": {
+        "avam_account_id": {
+            "value": "[resourceId('Microsoft.VideoIndexer/accounts',parameters('name'))]",
+            "type": "string"
+        }
+    }
 }

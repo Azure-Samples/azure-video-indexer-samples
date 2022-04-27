@@ -387,7 +387,10 @@ Note that the number of runs will be the same as the number of videos uploaded. 
 Once all of the components have been provisioned and a few videos have successfully run through the solution, we can
 create the ACS data source, the index and the indexer respectively.
 
-Open the [Azure Search Utilities](notebooks/Azure%20Search%20Utilities.ipynb) jupyter notebook and run through the following steps to create our ACS components (Note: pip packages required are in [./notebooks/requirements.txt](notebooks/requirements.txt) - requires <= Python 3.7):
+Open the [Azure Search Utilities](notebooks/Azure%20Search%20Utilities.ipynb) jupyter notebook and run through the following steps to create our ACS components (Note: pip packages required are in [./notebooks/requirements.txt](notebooks/requirements.txt) - requires <= Python 3.8.1).
+
+> **Alternatively**: If you want to use ML Studio, select the Python 3.8 - AzureML kernel.
+
 
 #### Create the Data Source
 

@@ -81,4 +81,4 @@ For each folder you will find a README file which will specify the relevant auth
 See also the list of [contributors](https://github.com/itayar/VI-samples-local/graphs/contributors) who participated in this project.
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details

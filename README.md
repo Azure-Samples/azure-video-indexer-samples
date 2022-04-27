@@ -32,6 +32,7 @@ Here you can find code samples and project examples of how to use Video Indexer,
 | File/folder                  | Description                                                  | Owner           |
 | ---------------------------- | ------------------------------------------------------------ | --------------- |
 | `ARM-Quick Start`   | Quick-Start tutorial to create Azure Video Analyzer for Media Account| tshaiman        |
+| `Terraform Deploy`   | Quick-Start tutorial to create Azure Video Analyzer for Media and all its resource dependencies with Terraform| tshaiman        |
 | `Code samples for API usage` | Sample code of uploading and indexing video using API        | eldarsh         |
 | `IntroToVideoIndexer.md`     | An intro lab to Video Indexer with exercises                 | itayarb         |
 | `Embedding widgets`          | How to add Video Indexer widgets to your app                 | oriziv          |

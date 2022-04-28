@@ -19,6 +19,8 @@ The resource will be deployed to your subscription and will create the Azure Vid
 
 * An Azure Media Services (AMS) account. You can create one for free through the [Create AMS Account](https://docs.microsoft.com/en-us/azure/media-services/latest/account-create-how-to).
 
+* In case you are interested in creating the Full End-To-End Media Solution that Creates Azure Media Service Accounnt, Storage Account with all the permissions correctly wired, please chaeck the [Create Media Solution - Terraform](../Create-Media-Solution-Terraform/) Demo. 
+
 ## Deploy the sample
 
 ----
@@ -26,7 +28,7 @@ The resource will be deployed to your subscription and will create the Azure Vid
 ### Option 1: Click the "Deploy To Azure Button", and fill in the missing parameters
 
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fmedia-services-video-indexer%2Fmaster%2FARM-Samples%2FCreate-Account%2Favam.template.json)  
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fmedia-services-video-indexer%2Fmaster%2FARM-Quick-Start%2Favam.template.json)  
 
 ----
 

@@ -56,7 +56,7 @@ in order to install required dependencies and libraries.
 2. Next run the `plan` command in order to view the changes that are about to be deployed to Azure.
 
 ```powershell
-terraform init
+terraform plan
 ```
 
 3. Run the apply command, and approve it when terraform CLI asks for confirmation.

@@ -19,7 +19,7 @@ The resource will be deployed to your subscription and will create the Azure Vid
 
 * An Azure Media Services (AMS) account. You can create one for free through the [Create AMS Account](https://docs.microsoft.com/en-us/azure/media-services/latest/account-create-how-to).
 
-* In case you are interested in creating the Full End-To-End Media Solution that Creates Azure Media Service Accounnt, Storage Account with all the permissions correctly wired, please chaeck the [Create Media Solution - Terraform](../Create-Media-Solution-Terraform/) Demo. 
+* In case you are interested in creating the Full End-To-End Media Solution that Creates Azure Media Service Account, Storage Account with all the permissions correctly wired, please check the [Create Media Solution - Terraform](../Create-Media-Solution-Terraform/) Demo. 
 
 ## Deploy the sample
 

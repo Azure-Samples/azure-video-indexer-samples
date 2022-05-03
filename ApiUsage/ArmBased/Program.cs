@@ -24,7 +24,7 @@ namespace VideoIndexerArm
 
         public static async Task Main(string[] args)
         {
-            // Build Azure Video Analyzer for Media resource provider client that has access token throuhg ARM
+            // Build Azure Video Indexer resource provider client that has access token throuhg ARM
             var videoIndexerResourceProviderClient = await VideoIndexerResourceProviderClient.BuildVideoIndexerResourceProviderClient();
 
             // Get account details
@@ -32,7 +32,7 @@ namespace VideoIndexerArm
             var accountLocation = account.Location;
             var accountId = account.Properties.Id;
 
-            // Get account level access token for Azure Video Analyzer for Media 
+            // Get account level access token for Azure Video Indexer 
             var accountAccessToken = await videoIndexerResourceProviderClient.GetAccessToken(ArmAccessTokenPermission.Contributor, ArmAccessTokenScope.Account);
 
             System.Net.ServicePointManager.SecurityProtocol = System.Net.ServicePointManager.SecurityProtocol | System.Net.SecurityProtocolType.Tls12;
@@ -50,7 +50,7 @@ namespace VideoIndexerArm
             // Wait for the video index to finish
             await WaitForIndex(accountId, accountLocation, accountAccessToken, ApiUrl, client, videoId);
 
-            // Get video level access token for Azure Video Analyzer for Media 
+            // Get video level access token for Azure Video Indexer 
             var videoAccessToken = await videoIndexerResourceProviderClient.GetAccessToken(ArmAccessTokenPermission.Contributor, ArmAccessTokenScope.Video, videoId);
 
             // Search for the video

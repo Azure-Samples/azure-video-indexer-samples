@@ -31,15 +31,15 @@ Here you can find code samples and project examples of how to use Video Indexer,
 
 | File/folder                  | Description                                                  | Owner           |
 | ---------------------------- | ------------------------------------------------------------ | --------------- |
-| `ARM-Quick Start`   | Quick-Start tutorial to create Azure Video Analyzer for Media Account| tshaiman        |
-| `Terraform Deploy`   | Quick-Start tutorial to create Azure Video Analyzer for Media and all its resource dependencies with Terraform| tshaiman        |
+| `ARM-Quick Start`   | Quick-Start tutorial to create Azure Video Indexer Account| tshaiman        |
+| `Terraform Deploy`   | Quick-Start tutorial to create Azure Video Indexer and all its resource dependencies with Terraform| tshaiman        |
 | `Code samples for API usage` | Sample code of uploading and indexing video using API        | eldarsh         |
 | `IntroToVideoIndexer.md`     | An intro lab to Video Indexer with exercises                 | itayarb         |
 | `Embedding widgets`          | How to add Video Indexer widgets to your app                 | oriziv          |
 | `VideoDescriptionSample`     | Display an automatic description of VI thumbnails            | xpouyat         |
 | `LiveStreamAnalysis`         | Using VI to create close to live stream analysis             | xpouyat         |
 | `VideoProcessingWorkflow`    | Complete video processing workflow using VI, AF, and logic apps | fabriciosanchez |
-| `VideoTranscriptClassification`    | Process video/audio files in Azure Video Analyzer for Media to extract transcripts and build text classification model to classify videos/audio | karzak |
+| `VideoTranscriptClassification`    | Process video/audio files in Azure Video Indexer to extract transcripts and build text classification model to classify videos/audio | karzak |
 | `AIEnrichmentPipeline`       | Complete sample for processing text, image and video files through a full enrichment pipeline with event grid, service bus, functions, logic apps, cognitive services and video indexer | martinkearn     |
 | `Partners`                   | Examples for collaboration projects with partners            |                 |
 | `media`                      | media used for md files                                      |                 |

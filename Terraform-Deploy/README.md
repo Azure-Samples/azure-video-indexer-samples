@@ -1,9 +1,9 @@
 
-# Quickstart: Deploy Azure Video Analyzer for Media with ARM Template 
+# Quickstart: Deploy Azure Video Indexer with ARM Template 
 
 ## Overview
 
-In this Tutorial you will create an Azure Video Analyzer for Media with all its dependent Azure resources.
+In this Tutorial you will create an Azure Video Indexer with all its dependent Azure resources.
 
 The resource will be deployed to your subscription and will create the following resources: 
 
@@ -11,11 +11,11 @@ The resource will be deployed to your subscription and will create the following
 - Managed Identity
 - Storage Account
 - Azure Media Services Account
-- Azure Video Analyzer for Media.
+- Azure Video Indexer.
 <br>
 
 > **Notes:**
-> - this sample is *not* for connecting an existing Azure Video Analyzer for Media classic account to an ARM-Based Video Analyzer for Media account.
+> - this sample is *not* for connecting an existing Azure Video Indexer classic account to an ARM-Based Video Analyzer for Media account.
 > - this sample does not cover the usage of Terraform and its various CLI options. <br> for more information about Terraform please visit https://www.terraform.io/intro
 
 
@@ -77,13 +77,13 @@ terraform apply -auto-approve
 
 ## Reference Documentation
 
-If you're new to Azure Video Analyzer for Media (formerly Video Indexer), see:
+If you're new to Azure Video Indexer (formerly Video Indexer), see:
 
 
-* [Azure Video Analyzer for Media Documentation](https://aka.ms/vi-docs)
-* [Azure Video Analyzer for Media Developer Portal](https://aka.ms/vi-docs)
+* [Azure Video Indexer Documentation](https://aka.ms/vi-docs)
+* [Azure Video Indexer Developer Portal](https://aka.ms/vi-docs)
 
-* After completing this tutorial, head to other Azure Video Analyzer for media Samples, described on [README.md](../../README.md)
+* After completing this tutorial, head to other Azure Video Indexer Samples, described on [README.md](../../README.md)
 
 If you're new to template deployment, see:
 

@@ -21,7 +21,7 @@ Taxonomies for products and languages: https://review.docs.microsoft.com/new-hop
 This folder contains the basic ways to address Video Indexer's API in order to allow full engagment with the product: upload a video, polling on status/waiting for url callback, and indexing the video.
 It is highly recommend to first read the more detailed documentation which can be found [here](https://docs.microsoft.com/azure/azure-video-indexer/video-indexer-use-apis).
 
-For more API abilities, please visit our [API documentation](https://api-portal.videoindexer.ai/docs/services/)
+For more API abilities, please visit our [API documentation](https://aka.ms/avam-dev-portal)
 
 ## Contents
 

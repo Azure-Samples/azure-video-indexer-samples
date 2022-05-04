@@ -5,10 +5,10 @@ languages:
   - .Net
 products:
   - azure-video-analyzer-for-media
-description: "Video Analyzer for Media API"
+description: "Video Indexer API"
 ---
 
-# Official Applied AI services| Video Analyzer for Media API page
+# Official Applied AI services| Video Indexer API page
 
 <!--
 Guidelines on README format: https://review.docs.microsoft.com/help/onboard/admin/samples/concepts/readme-template?branch=master
@@ -18,7 +18,7 @@ Guidance on onboarding samples to docs.microsoft.com/samples: https://review.doc
 Taxonomies for products and languages: https://review.docs.microsoft.com/new-hope/information-architecture/metadata/taxonomies?branch=master
 -->
 
-This folder contains the basic ways to address Video Analyzer for Media's API in order to allow full engagment with the product: Get Account, Get Access token through ARM API, upload a video, polling on status/waiting, and indexing the video.
+This folder contains the basic ways to address Video Indexer's API in order to allow full engagment with the product: Get Account, Get Access token through ARM API, upload a video, polling on status/waiting, and indexing the video.
 It is highly recommend to first read the more detailed documentation which can be found [here](https://aka.ms/avam-arm-docs).
 
 For more API abilities, please visit our [API documentation](https://api-portal.videoindexer.ai/)

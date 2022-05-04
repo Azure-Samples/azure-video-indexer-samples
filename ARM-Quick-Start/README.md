@@ -3,13 +3,13 @@
 
 ## Overview
 
-In this Quick-Start you will create an Azure Video Indexer (formerly Video Indexer) account by using ARM template (PREVIEW)
+In this Quick-Start you will create an Azure Video Indexer  account by using ARM template (PREVIEW)
 
 The resource will be deployed to your subscription and will create the Azure Video Indexer resource based on parameters defined in the avam.template file.
 
 
 > **Note:**
-> this sample is *not* for connecting an existing Azure Video Indexer classic account to an ARM-Based Video Analyzer for Media account.
+> this sample is *not* for connecting an existing Azure Video Indexer classic account to an ARM-Based Video Indexer account.
 
 > For full documentation on Azure Video Indexer API, visit the [Developer Portal](https://aka.ms/avam-dev-portal) page.
 
@@ -111,7 +111,7 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 ## Reference Documentation
 
-If you're new to Azure Video Indexer (formerly Video Indexer), see:
+If you're new to Azure Video Indexer , see:
 
 
 * [Azure Video Indexer Documentation](https://aka.ms/vi-docs)

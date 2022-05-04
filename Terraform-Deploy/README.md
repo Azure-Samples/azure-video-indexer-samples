@@ -15,7 +15,7 @@ The resource will be deployed to your subscription and will create the following
 <br>
 
 > **Notes:**
-> - this sample is *not* for connecting an existing Azure Video Indexer classic account to an ARM-Based Video Analyzer for Media account.
+> - this sample is *not* for connecting an existing Azure Video Indexer classic account to an ARM-Based Video Indexer account.
 > - this sample does not cover the usage of Terraform and its various CLI options. <br> for more information about Terraform please visit https://www.terraform.io/intro
 
 
@@ -77,7 +77,7 @@ terraform apply -auto-approve
 
 ## Reference Documentation
 
-If you're new to Azure Video Indexer (formerly Video Indexer), see:
+If you're new to Azure Video Indexer , see:
 
 
 * [Azure Video Indexer Documentation](https://aka.ms/vi-docs)

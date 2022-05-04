@@ -1,6 +1,6 @@
 # Building a custom video search experience using Azure Video Indexer, Azure Machine Learning and Azure Cognitive Search
 
-[Azure Video Indexer](https://docs.microsoft.com/en-us/azure/media-services/video-indexer/) (AVAM) is an Azure service
+[Azure Video Indexer](https://docs.microsoft.com/en-us/azure/media-services/video-indexer/) is an Azure service
 designed to extract deep insights from video and audio files, including items such as transcripts, identifying faces and
 people, recognizing brands and image captioning amongst others. The output of Azure Video Indexer can then
 be indexed by [Azure Cognitive Search](https://azure.microsoft.com/en-us/services/search/) (ACS) to provide a rich
@@ -164,7 +164,7 @@ used in the resource deployment.
 
 If you see an error displayed after the account has been created, saying `There’s a problem with your connection to Azure Media Services. Update connection.`, ignore it.
 
-Once created, go to the [Azure Video Indexer developer portal](https://api-portal.videoindexer.ai/).
+Once created, go to the [Azure Video Indexer developer portal](https://aka.ms/avam-dev-portal).
 
 Sign in using the same AAD account, and go to "Profile" in the navigation bar.
 

@@ -115,7 +115,7 @@ If you're new to Azure Video Indexer , see:
 
 
 * [Azure Video Indexer Documentation](https://aka.ms/vi-docs)
-* [Azure Video Indexer Developer Portal](https://aka.ms/vi-docs)
+* [Azure Video Indexer Developer Portal]https://aka.ms/avam-dev-portal)
 
 * After completing this tutorial, head to other Azure Video Indexer Samples, described on [README.md](../../README.md)
 

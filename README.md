@@ -56,7 +56,7 @@ You should have an active user to Video Indexer.
 
 Start by Signing-up to [Video Indexer API](https://api-portal.videoindexer.ai/) and get your API key.
 
-We also recommend to start with our [short and basic introduction to Video Indexer](https://github.com/itayar/test/blob/master/labTest.md), if you are not familiar with VI.
+We also recommend to start with our [short and basic introduction to Video Indexer]([https://github.com/itayar/test/blob/master/labTest.md](https://github.com/Azure-Samples/media-services-video-indexer/blob/master/IntroToVideoIndexer.md)), if you are not familiar with VI.
 <!--
 Outline the required components and tools that a user might need to have on their machine in order to run the sample. This can be anything from frameworks, SDKs, OS versions or IDE releases. 
 -->

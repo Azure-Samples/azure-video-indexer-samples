@@ -10,7 +10,9 @@ resource "random_string" "random" {
 
 # create locals
 locals {
-  arm_file_path = "./arm/vi.template.json"
+  arm_file_path            = "./arm/vi.template.json"
+  resource_version         = "${var.environment}-${random_string.random.id}"
+  resource_version_compact = "${var.environment}${random_string.random.id}"
   required_tags = {
     name        = var.name
     environment = var.environment
@@ -19,9 +21,10 @@ locals {
 }
 
 # create resource group
-resource "azurerm_resource_group" "vi-rg" {
-  name     = var.resource_group_name
+resource "azurerm_resource_group" "rg" {
+  name     = "${var.name}-${local.resource_version}-rg"
   location = var.location
+  tags     = local.required_tags
 }
 
 

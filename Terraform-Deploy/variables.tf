@@ -21,12 +21,13 @@ resource "random_string" "random" {
 }
 
 variable "tenant_id" {
+  description = "The tenant id which should be used."
   type = string
-  default = "<Your_Tenant_ID>"
 }
+
 variable "subscription_id" {
+  description = "The subscription id which should be used."
   type = string
-  default = "<Your_Subscription_ID>"
 }
 
 variable "tags" {

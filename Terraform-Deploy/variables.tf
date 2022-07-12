@@ -1,39 +1,29 @@
-variable "resource_group_name" {
-  type = string
-  default = "vi-dev-mediastore-rg"
+variable "name" {
+  description = "The application name, used to name all resources."
+  type        = string
+}
+
+variable "environment" {
+  description = "The environment name, used to name all resources."
+  type        = string
+
+  validation {
+    condition     = contains(["dev", "stg", "int", "prd"], var.environment)
+    error_message = "Invalid input for \"environment\", options: \"dev\", \"stg\", \"int\" and \"prd\"."
+  }
 }
 
 variable "location" {
-  type = string
-  default = "west Us 2"
-}
-
-variable "prefix" {
-  type = string
-  default = "vimediastore"
-}
-
-resource "random_string" "random" {
-  length  = 4
-  special = false
-  upper   = false
-  number  = false
+  description = "The location of all resources."
+  type        = string
 }
 
 variable "tenant_id" {
-  description = "The tenant id which should be used."
-  type = string
+  description = "The tenant id which should be used to deploy resources."
+  type        = string
 }
 
 variable "subscription_id" {
-  description = "The subscription id which should be used."
-  type = string
-}
-
-variable "tags" {
-  type = map
-  default = {
-    "env" : "development",
-    "author" : "me@email.com"
-  }
+  description = "The subscription id which should be used to deploy resources."
+  type        = string
 }

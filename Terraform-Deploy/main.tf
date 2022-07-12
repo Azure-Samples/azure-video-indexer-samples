@@ -10,7 +10,7 @@ resource "random_string" "random" {
 
 # create locals
 locals {
-  arm_file_path = "./arm/avam.template.json"
+  arm_file_path = "./arm/vi.template.json"
   required_tags = {
     name        = var.name
     environment = var.environment

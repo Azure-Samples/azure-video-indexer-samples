@@ -1,7 +1,7 @@
 # create random string
 resource "random_string" "random" {
   length      = 4
-  number      = true
+  numeric     = true
   lower       = true
   upper       = false
   special     = false
@@ -89,7 +89,7 @@ resource "azurerm_resource_group_template_deployment" "vi" {
     "tags"                          = { value = local.required_tags }
   })
 
-  template_content = templatefile(local.arm_file_path)
+  template_content = templatefile(local.arm_file_path, {})
 
   # The filemd5 forces this to run when the file is changed
   # this ensures the keys are up-to-date

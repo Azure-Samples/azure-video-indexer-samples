@@ -1,5 +1,21 @@
+# create random string
+resource "random_string" "random" {
+  length      = 4
+  number      = true
+  lower       = true
+  upper       = false
+  special     = false
+  min_numeric = 1
+}
+
+# create locals
 locals {
   arm_file_path = "./arm/avam.template.json"
+  required_tags = {
+    name        = var.name
+    environment = var.environment
+    uid         = random_string.random.id
+  }
 }
 
 # create resource group
@@ -78,7 +94,7 @@ resource "azurerm_resource_group_template_deployment" "vi" {
   # this ensures the keys are up-to-date
   name            = "avam-${filemd5(local.arm_file_path)}"
   deployment_mode = "Incremental"
-   depends_on = [
+  depends_on = [
     azurerm_media_services_account.media,
     azurerm_user_assigned_identity.vi,
     azurerm_role_assignment.vi_mediaservices_access

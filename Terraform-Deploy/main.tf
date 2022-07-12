@@ -2,22 +2,14 @@ locals {
   arm_file_path = "./arm/avam.template.json"
 }
 
+# create resource group
 resource "azurerm_resource_group" "vi-rg" {
   name     = var.resource_group_name
   location = var.location
 }
 
-#User Assigned Identities
-resource "azurerm_user_assigned_identity" "vi" {
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  name                = "${var.prefix}-${random_string.random.result}-mi"
-  depends_on = [
-    azurerm_resource_group.vi-rg,
-  ]
-}
 
-# Create a media services instance
+# create storage for media services
 resource "azurerm_storage_account" "media_storage" {
   location            = azurerm_resource_group.vi-rg.location
   resource_group_name = azurerm_resource_group.vi-rg.name
@@ -32,6 +24,7 @@ resource "azurerm_storage_account" "media_storage" {
   ]
 }
 
+# create media services
 resource "azurerm_media_services_account" "media" {
   location            = azurerm_resource_group.vi-rg.location
   resource_group_name = azurerm_resource_group.vi-rg.name
@@ -46,6 +39,16 @@ resource "azurerm_media_services_account" "media" {
   ]
 }
 
+# create user assigned managed identity
+resource "azurerm_user_assigned_identity" "vi" {
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  name                = "${var.prefix}-${random_string.random.result}-mi"
+  depends_on = [
+    azurerm_resource_group.vi-rg,
+  ]
+}
+
 resource "azurerm_role_assignment" "vi_mediaservices_access" {
   scope                = azurerm_media_services_account.media.id
   role_definition_name = "Contributor"
@@ -55,12 +58,11 @@ resource "azurerm_role_assignment" "vi_mediaservices_access" {
   ]
 }
 
-# Create the VI instance via ARM Template
 data "template_file" "workflow" {
   template = file(local.arm_file_path)
 }
 
-
+# deploy video indexer (arm template)
 resource "azurerm_resource_group_template_deployment" "vi" {
   resource_group_name = var.resource_group_name
   parameters_content = jsonencode({

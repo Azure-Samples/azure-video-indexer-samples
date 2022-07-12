@@ -5,25 +5,25 @@
         "name": {
             "type": "string",
             "metadata": {
-                "description": "The name of the AVAM resource"
+                "description": "The name of the video indexer resource."
             }
         },
         "managedIdentityResourceId": {
             "type": "string",
             "metadata": {
-                "description": "The managed identity Resource Id used to grant access to the Azure Media Service (AMS) account"
+                "description": "The managed identity resource Id used to grant access to the azure media service (AMS) account."
             }
         },
         "mediaServiceAccountResourceId": {
             "type": "string",
             "metadata": {
-                "description": "The media Service Account Resource Id. The Account needs to be created prior to the creation of this template"
+                "description": "The media service account resource Id. The account needs to be created prior to the creation of this template."
             }
         },
         "tags": {
             "type": "object",
             "metadata": {
-                "description": "Arm Template Tags"
+                "description": "Tags which should be assigned to video indexer resource."
             },
             "defaultValue": {}
         }

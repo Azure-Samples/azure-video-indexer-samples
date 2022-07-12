@@ -22,84 +22,82 @@ locals {
 
 # create resource group
 resource "azurerm_resource_group" "rg" {
-  name     = "${var.name}-${local.resource_version}-rg"
+  name     = "rg-${var.name}-${local.resource_version}"
   location = var.location
   tags     = local.required_tags
 }
 
+#--------------------------------------------------------------
+# Media Services
+#--------------------------------------------------------------
 
 # create storage for media services
 resource "azurerm_storage_account" "media_storage" {
-  location            = azurerm_resource_group.vi-rg.location
-  resource_group_name = azurerm_resource_group.vi-rg.name
-  tags                = var.tags
-
+  name                      = "mediastorage${local.resource_version_compact}"
+  resource_group_name       = azurerm_resource_group.rg.name
+  location                  = azurerm_resource_group.rg.location
   account_tier              = "Standard"
   account_replication_type  = "LRS"
-  name                      = "${var.prefix}${random_string.random.result}"
   enable_https_traffic_only = true
-  depends_on = [
-    azurerm_resource_group.vi-rg,
-  ]
+  tags                      = local.required_tags
 }
 
 # create media services
-resource "azurerm_media_services_account" "media" {
-  location            = azurerm_resource_group.vi-rg.location
-  resource_group_name = azurerm_resource_group.vi-rg.name
-  tags                = var.tags
-  name                = "${var.prefix}${random_string.random.result}"
+resource "azurerm_media_services_account" "media_services" {
+  name                        = "mediaservices${local.resource_version_compact}"
+  resource_group_name         = azurerm_resource_group.rg.name
+  location                    = azurerm_resource_group.rg.location
+  storage_authentication_type = "System"
+  tags                        = local.required_tags
+
   storage_account {
     id         = azurerm_storage_account.media_storage.id
     is_primary = true
   }
-  depends_on = [
-    azurerm_storage_account.media_storage,
-  ]
+
+  identity {
+    type = "SystemAssigned"
+  }
 }
+
+#--------------------------------------------------------------
+# Video Indexer
+#--------------------------------------------------------------
 
 # create user assigned managed identity
-resource "azurerm_user_assigned_identity" "vi" {
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  name                = "${var.prefix}-${random_string.random.result}-mi"
-  depends_on = [
-    azurerm_resource_group.vi-rg,
-  ]
+resource "azurerm_user_assigned_identity" "vi_uami" {
+  name                = "vi-uami-${local.resource_version}"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  tags                = local.required_tags
 }
 
-resource "azurerm_role_assignment" "vi_mediaservices_access" {
-  scope                = azurerm_media_services_account.media.id
+# create role assignement
+resource "azurerm_role_assignment" "vi_media_services_access" {
+  scope                = azurerm_media_services_account.media_services.id
   role_definition_name = "Contributor"
-  principal_id         = azurerm_user_assigned_identity.vi.principal_id
-  depends_on = [
-    azurerm_media_services_account.media,
-  ]
+  principal_id         = azurerm_user_assigned_identity.vi_uami.principal_id
 }
 
-data "template_file" "workflow" {
-  template = file(local.arm_file_path)
-}
-
-# deploy video indexer (arm template)
+# deploy video indexer (using arm template)
 resource "azurerm_resource_group_template_deployment" "vi" {
-  resource_group_name = var.resource_group_name
+  resource_group_name = azurerm_resource_group.rg.name
   parameters_content = jsonencode({
-    "name"                          = { value = "${var.prefix}${random_string.random.result}" },
-    "managedIdentityResourceId"     = { value = azurerm_user_assigned_identity.vi.id },
-    "mediaServiceAccountResourceId" = { value = azurerm_media_services_account.media.id }
-    "tags"                          = { value = var.tags }
+    "name"                          = { value = "vi-${local.resource_version}" },
+    "managedIdentityResourceId"     = { value = azurerm_user_assigned_identity.vi_uami.id },
+    "mediaServiceAccountResourceId" = { value = azurerm_media_services_account.media_services.id }
+    "tags"                          = { value = local.required_tags }
   })
 
-  template_content = data.template_file.workflow.template
+  template_content = templatefile(local.arm_file_path)
 
   # The filemd5 forces this to run when the file is changed
   # this ensures the keys are up-to-date
-  name            = "avam-${filemd5(local.arm_file_path)}"
+  name            = "vi-${filemd5(local.arm_file_path)}"
   deployment_mode = "Incremental"
   depends_on = [
-    azurerm_media_services_account.media,
-    azurerm_user_assigned_identity.vi,
-    azurerm_role_assignment.vi_mediaservices_access
+    azurerm_media_services_account.media_services,
+    azurerm_user_assigned_identity.vi_uami,
+    azurerm_role_assignment.vi_media_services_access
   ]
 }

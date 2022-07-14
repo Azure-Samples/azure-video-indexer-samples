@@ -5,10 +5,10 @@ languages:
 - javascript
 products:
 - azure-video-indexer
-description: "Video Indexer widgets"
+description: "Azure Video Indexer widgets"
 ---
 
-#  Video Indexer widgets
+#  Azure Video Indexer widgets
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](https://www.typescriptlang.org/)
@@ -16,29 +16,29 @@ description: "Video Indexer widgets"
 
 ![vi_widgets_banner_github.png](https://user-images.githubusercontent.com/51399662/135491488-10ec3d7a-e573-4ddf-898a-337412a63150.gif)
 
-This repo contains the Video Indexer widgets package. Below you can find documentation and examples on how to use these pieces.
+This repo contains the Azure Video Indexer widgets package. Below you can find documentation and examples on how to use these pieces.
 
 ## Introduction
 
-[Video Indexer](https://aka.ms/vi-about-doc) is a cloud application, part of Azure Applied AI Services, built on Azure Media Services and Azure Cognitive Services (such as the Face, Translator, Computer Vision, and Speech). It enables you to extract the insights from your videos using Video Indexer video and audio models.
+[Video Indexer](https://docs.microsoft.com/en-us/azure/azure-video-analyzer/video-analyzer-for-media-docs)  is a cloud application, part of Azure Applied AI Services, built on Azure Media Services and Azure Cognitive Services (such as the Face, Translator, Computer Vision, and Speech). It enables you to extract the insights from your videos using Video Indexer video and audio models.
 
-The material in this repository is designed to help in embedding Video Indexer widgets in your own service and customize its style and data.
+The material in this repository is designed to help in embedding Azure Video Indexer widgets in your own service and customize its style and data.
 
 The package supports two types of insights widgets:
 
-- Standard Video Indexer widget
+- Standard Azure Video Indexer widget
 - Customizable insights widget - allowing you full flexibility and customization to meet your business needs.
 
 Below you'll find sections on:
 
--   [Installing the Video Indexer widgets package](#installing-the-video-indexer-widgets-package)
--   [Embed standard Video Indexer insights widget](#embed-standard-video-indexer-insights-widget)
--   [Embed Video Indexer customizable insights widget](#embed-video-indexer-customizable-insights-widget)
--   [Enable custom styling to meet your application look and feel](#enable-custom-styling-to-meet-your-application-look-and-feel)
--   [Using Video Indexer widgets schema](#using-video-indexer-widgets-schema)
+-   [Installing the Azure Video Indexer widgets package](#installing-the-azure-video-analyzer-for-media-widgets-package)
+-   [Embed standard Azure Video Indexer insights widget](#embed-standard-azure-video-analyzer-for-media-insights-widget)
+-   [Embed Azure Video Indexer customizable insights widget](#embed-azure-video-analyzer-for-media-customizable-insights-widget)
+-   [Embed Azure Video Indexer customizable insights widget](#embed-azure-video-analyzer-for-media-customizable-insights-widget)
+-   [Using Azure Video Indexer widgets schema](#using-azure-video-analyzer-for-media-widgets-schema)
 -   [Using mediator to communicate between insights and player widgets](#using-mediator-to-communicate-between-insights-and-player-widgets)
 
-## Installing the Video Indexer widgets package
+## Installing the Azure Video Indexer widgets package
 
 The widgets are distributed as an NPM package. There are a couple ways to install the library:
 
@@ -67,7 +67,7 @@ The widgets are distributed as an NPM package. There are a couple ways to instal
 
 You can also check our [NPM page!](https://www.npmjs.com/package/@azure/video-indexer-widgets)
 
-## Embed standard Video Indexer insights widget
+## Embed standard Azure Video Indexer insights widget
 
 Instead of adding an iframe element to embed the insight widget, this package allows you to embed using JS code. The section below details:
 
@@ -169,9 +169,9 @@ In the following example, we create an insight widget, with Spanish localization
     insightsWidget.render();
 ```
 
-## Embed Video Indexer customizable insights widget
+## Embed Azure Video Indexer customizable insights widget
 
-Embed Video Indexer insights widget with original data from the embedded video, combined with your own custom data and raw Video Indexer data.
+Embed Azure Video Indexer insights widget with original data from the embedded video, combined with your own custom data and raw Azure Video Indexer data.
 The below section shows a few details:
 
 -   How to add a custom insight widget to your application
@@ -216,8 +216,8 @@ The custom insight widget has a few methods you can use in your code. These can 
 ### <u>Adding your own custom insights data</u>:
 
 Custom insight widget supports 3 types of insights data, to be used individually or mixed:
-1. Data from Video Indexer video: the option to bring data from a specific Video Indexer video.
-2. Raw Video Indexer insights: the option to add your own raw Video Indexer insights data, without providing account ID, video ID or an access token.
+1. Data from Azure Video Indexer video: the option to bring data from a specific Azure Video Indexer video.
+2. Raw Azure Video Indexer insights: the option to add your own raw Azure Video Indexer insights data, without providing account ID, video ID or an access token.
 3. Custom insight data: the option to add your own custom data and use our UI. You can render your data only with capsule or color map components.
 
 To understand how to customize your widget, we should look at ```ICustomInsightsWidgetConfig``` interface:
@@ -263,8 +263,8 @@ To understand how to customize your widget, we should look at ```ICustomInsights
 
     export interface ICustomInsightsWidgetConfig extends IInsightsConfig {
         /**
-         * Video Indexer account Id.
-         * Should be provided if you want to extract data from VI
+         * Azure Video Indexer account Id.
+         * Should be provided if you want to extract data from AVAM
          */
         accountId?: string;
         /**
@@ -287,11 +287,11 @@ To understand how to customize your widget, we should look at ```ICustomInsights
          */
         duration: number;
         /**
-         * Video Indexer insights component key list, each insight from this list will be taken from VI.
+         * Azure Video Indexer insights component key list, each insight from this list will be taken from AVAM.
          */
         viInsightsKeys: VIInsightsKey[];
         /**
-         * Video Indexer insights raw data. Use VI insights component with your own data
+         * Azure Video Indexer insights raw data. Use AVAM insights component with your own data
          */
         rawInsightsData: IVRawIInsightsData[];
         /**
@@ -301,16 +301,16 @@ To understand how to customize your widget, we should look at ```ICustomInsights
     }
 ```
 
-#### <u>Data from Video Indexer video</u>:
-Custom insight widget supports the option to bring data from a specific Video Indexer video.
+#### <u>Data from Azure Video Indexer video</u>:
+Custom insight widget supports the option to bring data from a specific Azure Video Indexer video.
 For that you should add 3 parameters to your config: ```viInsightsKeys, accountId and videoId. accessToken parameter is optional```.
 
 Account ID and video ID must be provided for specifying the video.
 Access token is optional, and should be added if you want to extract data from a private video.
 
-viInsightsKeys is a Video Indexer insights component key list, each insight from this list will be taken from Video Indexer.
+viInsightsKeys is a Azure Video Indexer insights component key list, each insight from this list will be taken from Azure Video Indexer.
 
-If you don't want to use any data from Video Indexer, you can send an empty array. 
+If you don't want to use any data from Azure Video Indexer, you can send an empty array. 
 
 Please find the type definition here:
 
@@ -338,8 +338,8 @@ Please find the type definition here:
     | 'observedPeople';
  ```
 
-#### <u>Raw Video Indexer insights</u>:
-Custom insight widget support the option to add your own raw Video Indexer insights data, without providing account ID, video ID or an access token.
+#### <u>Raw Azure Video Indexer insights</u>:
+Custom insight widget support the option to add your own raw Azure Video Indexer insights data, without providing account ID, video ID or an access token.
 
 For that you should send ```rawInsightsData``` parameter.
 Please note that the raw insights key list is not containing faces, keyframes, animated characters, shots, scenes or observed people.
@@ -494,7 +494,7 @@ This code shows how to create a custom insight widget at runtime with typescript
 In the following example, we create a custom insight widget at runtime using all the data types the widget supports.
 
 1. Video duration is 634 seconds
-2. The widget will show brands, keywords, scenes and blocks provided from Video Indexer video (according to the account + video id provided). Video is public since no access token is provided.
+2. The widget will show brands, keywords, scenes and blocks provided from Azure Video Indexer video (according to the account + video id provided). Video is public since no access token is provided.
 3. The widget will have 2 raw insights data. emotions and topics.
 4. Widget will have 2 custom data components. One as capsule and the other color map.
 
@@ -513,7 +513,7 @@ In the following example, we create a custom insight widget at runtime using all
     } from '@azure/video-indexer-widgets';
 
     /**
-    *    Using data from Video Indexer video parameters
+    *    Using data from Azure Video Indexer video parameters
     **/
     // VI account ID
     const viAccountID = '00000000-0000-0000-0000-000000000000'
@@ -524,7 +524,7 @@ In the following example, we create a custom insight widget at runtime using all
 
 
     /**
-    *    Using raw Video Indexer insights parameters
+    *    Using raw Azure Video Indexer insights parameters
     **/
    // Using raw emotions data, with two emotions - one is Joy and other is Sad.
    const emotionsList: IEmotion[] [
@@ -926,7 +926,7 @@ The following typescript example creates a insight widget with 'Dark' theme, and
     this.insightsWidget.render();
 ```
 
-## Using Video Indexer widgets schema
+## Using Azure Video Indexer widgets schema
 If you don't want to use package definition files, you can use our package schemes. The schema is a reflection of each widget configuration.
 
 To import them from assets folder:

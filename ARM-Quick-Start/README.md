@@ -1,17 +1,17 @@
 
-# Quickstart: Deploy Azure Video Analyzer for Media with ARM Template 
+# Quickstart: Deploy Azure Video Indexer with ARM Template 
 
 ## Overview
 
-In this Quick-Start you will create an Azure Video Analyzer for Media (formerly Video Indexer) account by using ARM template (PREVIEW)
+In this Quick-Start you will create an Azure Video Indexer  account by using ARM template (PREVIEW)
 
-The resource will be deployed to your subscription and will create the Azure Video Analyzer for Media resource based on parameters defined in the avam.template file.
+The resource will be deployed to your subscription and will create the Azure Video Indexer resource based on parameters defined in the avam.template file.
 
 
 > **Note:**
-> this sample is *not* for connecting an existing Azure Video Analyzer for Media classic account to an ARM-Based Video Analyzer for Media account.
+> this sample is *not* for connecting an existing Azure Video Indexer classic account to an ARM-Based Video Indexer account.
 
-> For full documentation on Azure Video Analyzer for Media API, visit the [Developer Portal](https://aka.ms/avam-dev-portal) page.
+> For full documentation on Azure Video Indexer API, visit the [Developer Portal](https://aka.ms/avam-dev-portal) page.
 
 > The current API Version is "2021-11-10-preview". Check this Repo from time to time to get updates on new API Versions.
 
@@ -38,7 +38,7 @@ The resource will be deployed to your subscription and will create the Azure Vid
 2. Fill in the required parameters (see below)
 3. Run the Following Power Shell commands:
 
-* Create a new Resource group on the same location as your Azure Video Analyzer for Media account, using the [New-AzResourceGroup](https://docs.microsoft.com/en-us/powershell/module/az.resources/new-azresourcegroup) cmdlet.
+* Create a new Resource group on the same location as your Azure Video Indexer account, using the [New-AzResourceGroup](https://docs.microsoft.com/en-us/powershell/module/az.resources/new-azresourcegroup) cmdlet.
 
 
 ```powershell
@@ -61,7 +61,7 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 * Type: string
 
-* Description: Specifies the name of the new Azure Video Analyzer for Media account.
+* Description: Specifies the name of the new Azure Video Indexer account.
 
 * required: true
 
@@ -70,13 +70,13 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 * Type: string
 
-* Description: Specifies the Azure location where the Azure Video Analyzer for Media account should be created.
+* Description: Specifies the Azure location where the Azure Video Indexer account should be created.
 
 * Required: false
 
 
 > **Note:**
-> You need to deploy Your Azure Video Analyzer for Media account in the same location (region) as the associated Azure Media Services(AMS) resource exists.
+> You need to deploy Your Azure Video Indexer account in the same location (region) as the associated Azure Media Services(AMS) resource exists.
 
 
 ### mediaServiceAccountResourceId
@@ -92,7 +92,7 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 * Type: string
 
-* Description: The Resource ID of the Managed Identity used to grant access between Azure Media Services(AMS) resource and the Azure Video Analyzer for Media account.
+* Description: The Resource ID of the Managed Identity used to grant access between Azure Media Services(AMS) resource and the Azure Video Indexer account.
 
 * Required: true
 
@@ -102,7 +102,7 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 * Type: object
 
-* Description: Array of objects that represents custom user tags on the Azure Video Analyzer for Media account
+* Description: Array of objects that represents custom user tags on the Azure Video Indexer account
 
  Required: false
 
@@ -111,13 +111,13 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 ## Reference Documentation
 
-If you're new to Azure Video Analyzer for Media (formerly Video Indexer), see:
+If you're new to Azure Video Indexer , see:
 
 
-* [Azure Video Analyzer for Media Documentation](https://aka.ms/vi-docs)
-* [Azure Video Analyzer for Media Developer Portal](https://aka.ms/vi-docs)
+* [Azure Video Indexer Documentation](https://aka.ms/vi-docs)
+* [Azure Video Indexer Developer Portal]https://aka.ms/avam-dev-portal)
 
-* After completing this tutorial, head to other Azure Video Analyzer for media Samples, described on [README.md](../../README.md)
+* After completing this tutorial, head to other Azure Video Indexer Samples, described on [README.md](../../README.md)
 
 If you're new to template deployment, see:
 

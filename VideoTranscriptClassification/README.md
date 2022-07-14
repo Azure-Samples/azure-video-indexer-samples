@@ -1,4 +1,4 @@
-## Video classification based on audio transcripts extracted with Azure Video Analyzer for Media
+## Video classification based on audio transcripts extracted with Azure Video Indexer
 
 Authors and contributors: Karol Żak, Chris Hughes, Lena Labzina, Shane Peckham
 
@@ -6,7 +6,7 @@ For video classification tasks it sometimes happens that visual features of vide
 
 Prerequisites:  
 - [Azure Subscription](https://azure.microsoft.com/en-us/free)
-- [Azure Video Analyzer for Media account](https://docs.microsoft.com/en-us/azure/azure-video-analyzer/video-analyzer-for-media-docs/connect-to-azure#create-a-new-account-on-azure)
+- [Azure Video Indexer account](https://docs.microsoft.com/en-us/azure/azure-video-analyzer/video-analyzer-for-media-docs/connect-to-azure#create-a-new-account-on-azure)
 - [Azure Machine Learning Workspace](https://docs.microsoft.com/en-us/azure/machine-learning/quickstart-create-resources#create-the-workspace)
   
 Solution steps:  

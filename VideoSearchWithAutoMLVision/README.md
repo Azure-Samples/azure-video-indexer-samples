@@ -1,8 +1,8 @@
-# Building a custom video search experience using Azure Video Analyzer for Media, Azure Machine Learning and Azure Cognitive Search
+# Building a custom video search experience using Azure Video Indexer, Azure Machine Learning and Azure Cognitive Search
 
-[Azure Video Analyzer for Media](https://docs.microsoft.com/en-us/azure/media-services/video-indexer/) (AVAM) is an Azure service
+[Azure Video Indexer](https://docs.microsoft.com/en-us/azure/media-services/video-indexer/) is an Azure service
 designed to extract deep insights from video and audio files, including items such as transcripts, identifying faces and
-people, recognizing brands and image captioning amongst others. The output of Azure Video Analyzer for Media can then
+people, recognizing brands and image captioning amongst others. The output of Azure Video Indexer can then
 be indexed by [Azure Cognitive Search](https://azure.microsoft.com/en-us/services/search/) (ACS) to provide a rich
 search experience to allow users to quickly find items of interest within the videos.
 
@@ -50,19 +50,19 @@ This solution will deploy the following components:
 * Resource group - all resources are deployed to a resource group whose name is provided as a variable at runtime.
 * Search service - this will house the search index used to search over your video content, based on insights from Video
 Indexer and the augmentation services deployed.
-* Storage accounts and logic apps - one storage account to back your Azure Video Analyzer for Media workspace (name prefix
-`videoindexerstorage`), another to contain input media and Azure Video Analyzer for Media outputs (name prefix `generalstorage`). The
+* Storage accounts and logic apps - one storage account to back your Azure Video Indexer workspace (name prefix
+`videoindexerstorage`), another to contain input media and Azure Video Indexer outputs (name prefix `generalstorage`). The
 logic apps are at this stage placeholder resources whose workflow is defined by a later ARM deployment. The logic apps
 deployed include:
   * An "Orchestrator" logic app provides the option of listening to a storage container (default name `media`) for input
   media and automatically running new videos through the indexing process.
-  * An "Indexer" logic app implements the main insights extraction process using Azure Video Analyzer for Media, converting the results
+  * An "Indexer" logic app implements the main insights extraction process using Azure Video Indexer, converting the results
   for use as an Azure Cognitive Search index.
   * A "Classifier" logic app runs keyframe classification using a [Power Skill](https://github.com/Azure-Samples/azure-search-power-skills)
-  to enrich the search index with more detailed information for content highlighted by Azure Video Analyzer for Media.
-* Storage containers - one for input media, one for insights from Azure Video Analyzer for Media, one for the output of processing from
+  to enrich the search index with more detailed information for content highlighted by Azure Video Indexer.
+* Storage containers - one for input media, one for insights from Azure Video Indexer, one for the output of processing from
 which we generate a search index (default name `scenes`).
-* Media Services - from here we'll create a Azure Video Analyzer for Media account, and connect this to the other resources.
+* Media Services - from here we'll create a Azure Video Indexer account, and connect this to the other resources.
 * ARM deployment - this deploys the resources described by `template.json`, which contains internal configuration
 details for the logic apps, storage accounts, and API connections used for the resources to communicate.
 * An [Azure Web App](https://azure.microsoft.com/en-gb/services/app-service/web/) `AMLClassifier` that runs a docker
@@ -144,41 +144,41 @@ used.
 
 The following manual steps are required to be completed to make the solution functional.
 
-#### *Azure Video Analyzer for Media Account*
+#### *Azure Video Indexer Account*
 
-First, we'll need to set up a Azure Video Analyzer for Media account linked to the Media Services Resource deployed (name prefix
+First, we'll need to set up a Azure Video Indexer account linked to the Media Services Resource deployed (name prefix
 `mediaservices`).
 
-If we navigate to this resource's overview, and scroll down, there is a window entitled "Azure Video Analyzer for Media". Click the link
-"[Go to Azure Video Analyzer for Media](https://www.videoindexer.ai/)".
+If we navigate to this resource's overview, and scroll down, there is a window entitled "Azure Video Indexer". Click the link
+"[Go to Azure Video Indexer](https://www.videoindexer.ai/)".
 
-![Azure Video Analyzer for Media window from Media Services resource overview](images/video-indexer-media-services-overview.png)
+![Azure Video Indexer window from Media Services resource overview](images/video-indexer-media-services-overview.png)
 
-Once logged into the Azure Video Analyzer for Media portal, create a new unlimited account using the option in the user accounts sidebar,
+Once logged into the Azure Video Indexer portal, create a new unlimited account using the option in the user accounts sidebar,
 which can be opened using the leftmost button in the top right of the portal.
 
-![Creating a new account in Azure Video Analyzer for Media](images/video-indexer-create-new-account.png)
+![Creating a new account in Azure Video Indexer](images/video-indexer-create-new-account.png)
 
 When creating the new account, select the Azure subscription and Media Services account (name prefix `mediaservices`)
 used in the resource deployment.
 
 If you see an error displayed after the account has been created, saying `There’s a problem with your connection to Azure Media Services. Update connection.`, ignore it.
 
-Once created, go to the [Azure Video Analyzer for Media developer portal](https://api-portal.videoindexer.ai/).
+Once created, go to the [Azure Video Indexer developer portal](https://aka.ms/avam-dev-portal).
 
 Sign in using the same AAD account, and go to "Profile" in the navigation bar.
 
 Show and copy the Primary Key of your Product Authorization Subscription to your clipboard - this is your `VI_API_KEY`.
 
-This key will be used by our logic app to authorize its connections to your Azure Video Analyzer for Media account. With the key in your
+This key will be used by our logic app to authorize its connections to your Azure Video Indexer account. With the key in your
 clipboard, navigate to your deployment resource group and click on the API Connection resource `videoindexer-v2`. In the
 sidebar on the left of the overview window, click on "Edit API connection".
 
 Leave the display name the same, but paste your API key from the developer portal in the "API Key" field.
 
-![Edit API connection window of the Azure Video Analyzer for Media API connection resource](images/edit-api-connection.png)
+![Edit API connection window of the Azure Video Indexer API connection resource](images/edit-api-connection.png)
 
-Click "save", and you should see that the Azure Video Analyzer for Media interactions in the Indexer Logic App (name prefix
+Click "save", and you should see that the Azure Video Indexer interactions in the Indexer Logic App (name prefix
 `indexerlogicapp`) are now fixed and configurable.
 
 #### *General Storage Account*
@@ -268,7 +268,7 @@ GET_LATEST_MODEL True                                      # If true, the latest
                                                            # from AML
 KEY [your secret key]                                      # This is a secret key - only requests with this key will
                                                            # be allowed   
-VI_ACCOUNT_ID  [your AVAM account id]                       # Your Azure Video Analyzer for Media Account Id
+VI_ACCOUNT_ID  [your AVAM account id]                       # Your Azure Video Indexer Account Id
 VI_API_KEY     [your AVAM API key]                          # The Primary Key from your AVAM API subscription
 VI_LOCATION    [your AVAM location]                         # The region your AVAM service is deployed to
 WEBSITES_PORT   5000                                       # The port the API runs on - 5000
@@ -348,7 +348,7 @@ parserUrl # This is the URL value you copied from the Overview blade in the Web 
 #  e.g. https://parserapixxxxx.azurewebsites.net/api/parse where xxxxx is the randomstring generated
 #  for your implementation
 webappkey # This is the KEY value you set in the configuration for the parserapi Web App
-AccountID # Your Azure Video Analyzer for Media Account Id
+AccountID # Your Azure Video Indexer Account Id
 Location # Ignore this parameter 
 augmentationURL # Ignore this parameter
 ```
@@ -431,7 +431,7 @@ This solution ships with a sample UI to search your videos, open the file [AzSea
 and populate the following values:
 
 ```javascript
-    // set the Azure Video Analyzer for Media variables here
+    // set the Azure Video Indexer variables here
     var viLocation = "";   // The region your AVAM service is deployed to
     var viAccountId = "";  // The AccountId of your AVAM service
     var viKey = "";        // The Primary Key from your AVAM API subscription
@@ -441,7 +441,7 @@ and populate the following values:
     var azureSearchServiceName = "";  // The name of your ACS service
 ```
 
-> **Reminder**: You can get the AVAM primary key from the [Azure Video Analyzer for Media developer portal](https://api-portal.videoindexer.ai/), go to "Profile" in the navigation bar.
+> **Reminder**: You can get the AVAM primary key from the [Azure Video Indexer developer portal](https://api-portal.videoindexer.ai/), go to "Profile" in the navigation bar.
 
 Lastly, you need to enable CORS on the index in order to be able to use the sample UI. Navigate to your ACS instance,
 and on the Overview blade select your ACS index, select CORS and set the value to `All` or `Custom` for your domain, see

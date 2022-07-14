@@ -1,0 +1,78 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the video indexer resource."
+            }
+        },
+        "managedIdentityResourceId": {
+            "type": "string",
+            "metadata": {
+                "description": "The managed identity resource Id used to grant access to the azure media service (AMS) account."
+            }
+        },
+        "mediaServiceAccountResourceId": {
+            "type": "string",
+            "metadata": {
+                "description": "The media service account resource Id. The account needs to be created prior to the creation of this template."
+            }
+        },
+        "tags": {
+            "type": "object",
+            "metadata": {
+                "description": "Tags which should be assigned to video indexer resource."
+            },
+            "defaultValue": {}
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.VideoIndexer/accounts",
+            "apiVersion": "2021-11-10-preview",
+            "name": "[parameters('name')]",
+            "location": "[resourceGroup().location]",
+            "tags": "[parameters('tags')]",
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "[parameters('managedIdentityResourceId')]": {}
+                }
+            },
+            "properties": {
+                "mediaServices": {
+                    "resourceId": "[parameters('mediaServiceAccountResourceId')]",
+                    "userAssignedIdentity": "[parameters('managedIdentityResourceId')]"
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "resourceId": {
+            "value": "[resourceId('Microsoft.VideoIndexer/accounts',parameters('name'))]",
+            "type": "string"
+        },
+        "accountName": {
+            "value": "[parameters('name')]",
+            "type": "string"
+        },
+        "accountId": {
+            "value": "[reference(resourceId('Microsoft.VideoIndexer/accounts',parameters('name')), '2021-11-10-preview', 'Full').properties.accountId]",
+            "type": "string"
+        },
+        "location": {
+            "value": "[reference(resourceId('Microsoft.VideoIndexer/accounts',parameters('name')), '2021-11-10-preview', 'Full').location]",
+            "type": "string"
+        },
+        "resourceGroup": {
+            "value": "[reference(resourceId('Microsoft.VideoIndexer/accounts',parameters('name')), '2021-11-10-preview', 'Full').resourceGroupName]",
+            "type": "string"
+        },
+        "subscriptionId": {
+            "value": "[reference(resourceId('Microsoft.VideoIndexer/accounts',parameters('name')), '2021-11-10-preview', 'Full').subscriptionId]",
+            "type": "string"
+        }
+    }
+}

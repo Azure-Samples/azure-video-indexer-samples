@@ -12,7 +12,7 @@ import {
     IInsightsWidgetConfig,
     IWidgetStyle,
     InsightsWidget
-} from '@azure/video-analyzer-for-media-widgets';
+} from '@azure/video-indexer-widgets';
 
 @Component({
     selector: 'app-root',
@@ -306,16 +306,20 @@ export class AppComponent {
         };
 
         const customColorData: ICustomData = {
-            title: 'Nofar Color',
-            key: 'nofarColor',
+            title: 'My Color',
+            key: 'myColor',
             presets: ['all', 'accessibility'],
             type: 'color-map',
+            sortedBy: {
+                order: 'desc',
+                property: 'name'
+            },
             items: [customColorElement, customColorElement2, customColorElement3]
         };
 
         const customData: ICustomData = {
-            title: 'Nofar Data',
-            key: 'nofar',
+            title: 'My Data',
+            key: 'myData',
             presets: ['all', 'captioning'],
             type: 'capsule',
             items: [customElement, customElement2]

@@ -14,7 +14,7 @@ description: "Azure Video Indexer widgets"
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](https://www.typescriptlang.org/)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-f8bc45.svg)](https://github.com/prettier/prettier)
 
-![avam_widgets_banner_github.png](https://user-images.githubusercontent.com/51399662/135491488-10ec3d7a-e573-4ddf-898a-337412a63150.gif)
+![vi_widgets_banner_github.png](https://user-images.githubusercontent.com/51399662/135491488-10ec3d7a-e573-4ddf-898a-337412a63150.gif)
 
 This repo contains the Azure Video Indexer widgets package. Below you can find documentation and examples on how to use these pieces.
 
@@ -44,13 +44,13 @@ The widgets are distributed as an NPM package. There are a couple ways to instal
 
 -   **Installation using NPM** - For consuming the NPM package directly, you can install it using the npm command.
     ```
-    npm install @azure/video-analyzer-for-media-widgets
+    npm install @azure/video-indexer-widgets
     ```
 -   **Importing using CDN** - You can import the latest version of the widget directly into your HTML file by using following snipper -
 
     ```html
             ...
-            <script type="module" src="https://unpkg.com/@azure/video-analyzer-for-media-widgets"></script>
+            <script type="module" src="https://unpkg.com/@azure/video-indexer-widgets"></script>
         </body>
     </html>
     ```
@@ -58,14 +58,14 @@ The widgets are distributed as an NPM package. There are a couple ways to instal
 -   If you want expose the widget code on the window, you can import the latest version by using the following snippet -
     ```html
             ...
-            <script src="https://unpkg.com/@azure/video-analyzer-for-media-widgets@latest/dist/global.min.js"></script>
+            <script src="https://unpkg.com/@azure/video-indexer-widgets@latest/dist/global.min.js"></script>
         </body>
     </html>
     ```
 
 <br>
 
-You can also check our [NPM page!](https://www.npmjs.com/package/@azure/video-analyzer-for-media-widgets)
+You can also check our [NPM page!](https://www.npmjs.com/package/@azure/video-indexer-widgets)
 
 ## Embed standard Azure Video Indexer insights widget
 
@@ -81,7 +81,7 @@ The insight widget is created at runtime. The widget will be created based on a 
 
 Creating at runtime using the package:
  ```typescript
-    const widget = new window.avam.widgets.Insights(
+    const widget = new window.vi.widgets.Insights(
         '<container-id>',
         <widget-option-object>,
         <widget-configuration>
@@ -120,7 +120,7 @@ This code shows how to create a widget at runtime with Javascript code.
             videoId: '<VIDEO-ID>',
             accessToken: '' // Add access token only if your video is private
         };
-        let widget = new window.avam.widgets.Insights(
+        let widget = new window.vi.widgets.Insights(
             'widget-container',
             {
                 height: 780,
@@ -132,7 +132,7 @@ This code shows how to create a widget at runtime with Javascript code.
         widget.render();
     }
 </script>
-<script src="https://unpkg.com/@azure/video-analyzer-for-media-widgets@latest/dist/global.min.js" onload="onPackageLoad()"></script>
+<script src="https://unpkg.com/@azure/video-indexer-widgets@latest/dist/global.min.js" onload="onPackageLoad()"></script>
 <body>
     <div id="widget-container"></div>
 </body>
@@ -146,7 +146,7 @@ In the following example, we create an insight widget, with Spanish localization
     import {
         IInsightsWidgetConfig,
         InsightsWidget
-    } from '@azure/video-analyzer-for-media-widgets';
+    } from '@azure/video-indexer-widgets';
 
     const config: IInsightsWidgetConfig = {
         accountId: '<ACCOUNT-ID>',
@@ -187,7 +187,7 @@ The custom insight widget is created at runtime.
 
 Creating at runtime using the package:
  ```typescript
-    const widget = new window.avam.widgets.CustomInsights(
+    const widget = new window.vi.widgets.CustomInsights(
         '<container-id>',
         <widget-option>,
         <widget-configuration>
@@ -248,6 +248,14 @@ To understand how to customize your widget, we should look at ```ICustomInsights
          */
         controls?: ControlsParamOption[];
         /**
+         * Controls the initial search term
+         */
+        search?: string;
+        /**
+         * Controls sortable components option
+         */
+        sort?: ISortedComponent;
+        /**
          * Controls widget style
          */
         style?: IInsightsStyle;
@@ -261,17 +269,17 @@ To understand how to customize your widget, we should look at ```ICustomInsights
         accountId?: string;
         /**
          * Embedded video ID
-         * Should be provided if you want to extract data from AVAM
+         * Should be provided if you want to extract data from VI
          */
         videoId?: string;
         /**
          * Embedded video access token.
-         * Should be provided if you want to extract data from private video in AVAM
+         * Should be provided if you want to extract data from private video in VI
          */
         accessToken?: string;
         /**
          * Location indicates account's location.
-         * Should be provided if you want to extract data from AVAM
+         * Should be provided if you want to extract data from VI
          */
         location?: AccountLocation;
         /**
@@ -390,12 +398,12 @@ Custom insight widget support the option to add your own custom data and use our
 
 Using capsule example: 
 
-![avam_widgets_capsule.png](https://user-images.githubusercontent.com/51399662/135491676-7d1cab30-6e78-44a2-8537-2d7f4f96aaba.PNG)
+![vi_widgets_capsule.png](https://user-images.githubusercontent.com/51399662/135491676-7d1cab30-6e78-44a2-8537-2d7f4f96aaba.PNG)
 
 
 Using color map example:
 
-![avam_widgets_color_map.png](https://user-images.githubusercontent.com/51399662/135491746-a93719be-247f-472c-8170-1dda6b576ca9.PNG)
+![vi_widgets_color_map.png](https://user-images.githubusercontent.com/51399662/135491746-a93719be-247f-472c-8170-1dda6b576ca9.PNG)
 
 For that you should send ```customData``` array parameter.
 
@@ -425,6 +433,10 @@ export interface ICustomData {
      * Custom data items.
      */
     items: ICustomItemElement[];
+    /**
+     * Sorted by
+     */
+    sortedBy?: IInsightsSortedBy;
 }
 
 export type insightsType = 'capsule' | 'color-map';
@@ -451,13 +463,13 @@ This code shows how to create a generic custom insight widget at runtime with Ja
         // Create widget config
         const config = {
             duration: <duration>, 
-            accountId: '<AVAM-ACCOUNT-ID>',
-            videoId: '<AVAM-VIDEO-ID>',
+            accountId: '<VI-ACCOUNT-ID>',
+            videoId: '<VI-VIDEO-ID>',
             viInsightsKeys: <insights-key-list-array>,
             rawInsightsData: <raw-insights-data-array>,
             customData: <custom-data-array>
         };
-        let widget = new window.avam.widgets.CustomInsights(
+        let widget = new window.vi.widgets.CustomInsights(
             'widget-container',
             {
                 height: 780,
@@ -469,7 +481,7 @@ This code shows how to create a generic custom insight widget at runtime with Ja
         widget.render();
     }
 </script>
-<script src="https://unpkg.com/@azure/video-analyzer-for-media-widgets@latest/dist/global.min.js" onload="onPackageLoad()"></script>
+<script src="https://unpkg.com/@azure/video-indexer-widgets@latest/dist/global.min.js" onload="onPackageLoad()"></script>
 <body>
     <div id="widget-container"></div>
 </body>
@@ -498,16 +510,16 @@ In the following example, we create a custom insight widget at runtime using all
         ICustomElement,
         ICustomData,
         ICustomColorElement
-    } from '@azure/video-analyzer-for-media-widgets';
+    } from '@azure/video-indexer-widgets';
 
     /**
     *    Using data from Azure Video Indexer video parameters
     **/
-    // AVAM account ID
-    const avamAccountID = '00000000-0000-0000-0000-000000000000'
-    // AVAM video ID
-    const avamVideoID = 'd9d4860279'
-    // AVAM insights key list.
+    // VI account ID
+    const viAccountID = '00000000-0000-0000-0000-000000000000'
+    // VI video ID
+    const viVideoID = 'd9d4860279'
+    // VI insights key list.
     const viInsightsKeys : VIInsightsKey[] =  ['brands', 'keywords', 'scenes', 'blocks'];
 
 
@@ -617,7 +629,7 @@ In the following example, we create a custom insight widget at runtime using all
             }
     ];
 
-    // Raw AVAM insights array.
+    // Raw VI insights array.
     const rawInsightsData: IVRawIInsightsData[] = [
         {
             rawInsightsKey: 'emotions',
@@ -760,11 +772,16 @@ In the following example, we create a custom insight widget at runtime using all
       };
 
     // Create the custom data element, with title 'My color', controlled by all and accessibility presets, from type color-map, with 3 elements.
+    // The custom data element will be sorted by the provided name, desc. 
     const customColorData : ICustomData = {
         title: 'My Color',
         key: 'myColor',
         presets: ['all', 'accessibility'],
         type: 'color-map',
+        sortedBy: {
+            order: 'desc',
+            property: 'name'
+        },
         items: [customColorElement, customColorElement2, customColorElement3]
       };
 
@@ -772,10 +789,10 @@ In the following example, we create a custom insight widget at runtime using all
 
     const config : ICustomInsightsWidgetConfig = {
         duration: 634, // Video duration - mandatory parameter
-        accountId: avamAccountID, // AVAM account ID. Should be provided only if using data from AVAM.
-        videoId: avamVideoID,  // AVAM video ID. Should be provided only if using data from AVAM.
-        viInsightsKeys: viInsightsKeys, // AVAM insights key list. Mandatory parameter. If you don't want to use data from AVAM, send an empty array.
-        rawInsightsData: rawInsightsData, // raw AVAM insights array. Mandatory parameter. If you don't want to use raw data, send an empty array.
+        accountId: viAccountID, // VI account ID. Should be provided only if using data from VI.
+        videoId: viVideoID,  // VI video ID. Should be provided only if using data from VI.
+        viInsightsKeys: viInsightsKeys, // VI insights key list. Mandatory parameter. If you don't want to use data from VI, send an empty array.
+        rawInsightsData: rawInsightsData, // raw VI insights array. Mandatory parameter. If you don't want to use raw data, send an empty array.
         customData: customDataList,  // custom data array. Mandatory parameter. If you don't want to use custom data, send an empty array.
         preset: 'all' // select preset 'All'
     };
@@ -794,16 +811,16 @@ In the following example, we create a custom insight widget at runtime using all
 
 The final insight will be look like this:
 <br>
-![avam_widgets_custom_widget.png](https://user-images.githubusercontent.com/51399662/135498863-4ae5b4ed-ba4a-462e-9805-70adbe178b6b.png)
+![vi_widgets_custom_widget.png](https://user-images.githubusercontent.com/51399662/135498863-4ae5b4ed-ba4a-462e-9805-70adbe178b6b.png)
 
 <br>
 
 ## Enable custom styling to meet your application look and feel
 
-![avam_widgets_custom_color.png](https://user-images.githubusercontent.com/51399662/135491477-f9d5ee1d-803b-4693-873b-0a003c3a0a13.jpg)
+![vi_widgets_custom_color.png](https://user-images.githubusercontent.com/51399662/135491477-f9d5ee1d-803b-4693-873b-0a003c3a0a13.jpg)
 
 Both widgets supports customizing the UI color.
-You can send your own color palette, select one of AVAM theme, or select a default theme and customize part of the colors.
+You can send your own color palette, select one of VI theme, or select a default theme and customize part of the colors.
 
 To implement that you should send as part of the configuration object a ```style``` object of type ```IInsightsStyle```.
 
@@ -877,7 +894,7 @@ The following typescript example creates a insight widget with 'Dark' theme, and
         InsightsWidget,
         IBaseStyleConfig,
         IWidgetStyle
-    } from '@azure/video-analyzer-for-media-widgets';
+    } from '@azure/video-indexer-widgets';
 
     // Change two colors of the base style config
     const insightsStyleConfig : IBaseStyleConfig = {
@@ -916,16 +933,16 @@ To import them from assets folder:
 
  ```typescript
     // Importing custom insight widget schema
-    import '@azure/video-analyzer-for-media-widgets/dist/assets/custom-insights-config.schema.json';
+    import '@azure/video-indexer-widgets/dist/assets/custom-insights-config.schema.json';
 
     // Importing standard insights widget schema
-    import '@azure/video-analyzer-for-media-widgets/dist/assets/vi-widget-config.schema';
+    import '@azure/video-indexer-widgets/dist/assets/vi-widget-config.schema';
 ```
 
 You can also use this direct links to download the schemes:
 
-[Custom insight config schema](https://unpkg.com/@azure/video-analyzer-for-media-widgets/dist/assets/custom-insights-config.schema.json) &
-[Standard insight widget schema](https://unpkg.com/@azure/video-analyzer-for-media-widgets/dist/assets/vi-widget-config.schema.json)
+[Custom insight config schema](https://unpkg.com/@azure/video-indexer-widgets/dist/assets/custom-insights-config.schema.json) &
+[Standard insight widget schema](https://unpkg.com/@azure/video-indexer-widgets/dist/assets/vi-widget-config.schema.json)
 
 
 ## Using mediator to communicate between insights and player widgets
@@ -933,7 +950,7 @@ If you want to handle the communication between the insights and player widgets,
 
 ```html
             ...
-            <script type="module" src="https://unpkg.com/@azure/video-analyzer-for-media-widgets/dist/assets/mediator.js"></script>
+            <script type="module" src="https://unpkg.com/@azure/video-indexer-widgets/dist/assets/mediator.js"></script>
         </body>
     </html>
 ```

@@ -1,0 +1,21 @@
+{
+  "scriptFile": "__init__.py",
+  "bindings": [
+    {
+      "authLevel": "function",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "get", "post"
+      ]
+    },
+    {
+      "name": "$return",
+      "type": "blob",
+      "direction": "out",
+      "connection": "videoknowledgemining_STORAGE",
+      "path": "video-knowledge-mining/{id}.json"
+    }
+  ]
+}

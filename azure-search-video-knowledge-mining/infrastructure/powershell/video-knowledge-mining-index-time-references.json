@@ -1,0 +1,31 @@
+{
+  "fields": [
+    {
+      "name": "id",
+      "type": "Edm.String",
+      "facetable": false,
+      "filterable": true,
+      "key": true,
+      "retrievable": true,
+      "searchable": false,
+      "sortable": false,
+      "analyzer": null,
+      "indexAnalyzer": null,
+      "searchAnalyzer": null,
+      "synonymMaps": [],
+      "fields": []
+    },
+        { "name": "video_id", "type": "Edm.String", "filterable": true, "facetable": true, "searchable": false },
+        { "name": "entity", "type": "Edm.String", "filterable": true, "facetable": true, "searchable": true },
+        { "name": "text", "type": "Edm.String", "searchable": true, "filterable": true, "facetable": true },
+        { "name": "startTime", "type": "Edm.Int32", "searchable": false, "filterable": true, "facetable": false }
+  ],
+  "suggesters": [],
+  "scoringProfiles": [],
+  "defaultScoringProfile": "",
+  "corsOptions": null,
+  "analyzers": [],
+  "charFilters": [],
+  "tokenFilters": [],
+  "tokenizers": []
+}

@@ -1,0 +1,17 @@
+{
+  "name": "video-knowledge-mining-ds",
+  "description": null,
+  "type": "azureblob",
+  "subtype": null,
+  "credentials": {
+    "connectionString": "DefaultEndpointsProtocol=https;AccountName=x;AccountKey=..."
+  },
+  "container": {
+    "name": "docs",
+    "query": null
+  },
+  "dataChangeDetectionPolicy": null,
+  "dataDeletionDetectionPolicy": null,
+  "encryptionKey": null,
+  "identity": null
+}

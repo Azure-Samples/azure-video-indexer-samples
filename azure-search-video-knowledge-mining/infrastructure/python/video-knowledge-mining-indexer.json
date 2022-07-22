@@ -1,0 +1,54 @@
+{
+  "name": "video-knowledge-mining-indexer.json",
+  "description": "Indexer for our docs, PPTs, JPEGs, etc",
+  "dataSourceName": "docsds",
+  "skillsetName": "docsskillset",
+  "targetIndexName": "insights",
+  "disabled": null,
+  "schedule": null,
+  "parameters": {
+    "batchSize": null,
+    "maxFailedItems": 0,
+    "maxFailedItemsPerBatch": 0,
+    "base64EncodeKeys": null,
+    "configuration": {
+      "dataToExtract": "contentAndMetadata",
+      "parsingMode": "default",
+      "imageAction": "generateNormalizedImages"
+    }
+  },
+  "fieldMappings": [
+    {
+      "sourceFieldName": "metadata_storage_path",
+      "targetFieldName": "metadata_storage_path",
+      "mappingFunction": {
+        "name": "base64Encode",
+        "parameters": null
+      }
+    }
+  ],
+  "outputFieldMappings": [
+    {
+      "sourceFieldName": "/document/language",
+      "targetFieldName": "language"
+    },
+    {
+      "sourceFieldName": "/document/merged_content/keyphrases",
+      "targetFieldName": "keywords"
+    },
+    {
+      "sourceFieldName": "/document/normalized_images/*/brands/*/name",
+      "targetFieldName": "brands"
+    },
+    {
+      "sourceFieldName": "/document/normalized_images/*/categories/*/detail/celebrities/*/name",
+      "targetFieldName": "faces"
+    },
+    {
+      "sourceFieldName": "/document/merged_content",
+      "targetFieldName": "merged_content"
+    }
+  ],
+  "cache": null,
+  "encryptionKey": null
+}

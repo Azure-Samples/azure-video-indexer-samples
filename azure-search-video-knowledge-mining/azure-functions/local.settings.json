@@ -1,0 +1,24 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "FUNCTION_BLOB_STORAGE_CONNECTION_STRING",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "blob_container" : "BLOB_CONTAINER",
+    "blob_account" : "BLOB_ACCOUNT",
+    "blob_key" : "BLOB_KEY",
+    "blob_container_source" : "BLOB_CONTAINER_VIDEO_DROP",
+    "DEBUG" : false,
+    "entities" : "LIST_OF_ENTITIES_TO_EXTRACT",
+    "function_url" : "CALLBACK_URL_VIDEO_INDEXER_PROCESSING",
+    "search_account" : "SEARCH_ACCOUNT",
+    "search_index" : "SEARCH_INDEX",
+    "search_api_key" : "SEARCH_API_KEY",
+    "search_api_version" : "2019-05-06",
+    "video_indexer_account_id" : "VIDEO_INDEXER_ACCOUNT_ID",
+    "video_indexer_api_key" : "VIDEO_INDEXER_API_KEY",
+    "video_indexer_endpoint" : "VIDEO_INDEXER_ENDPOINT",
+    "video_indexer_location" : "VIDEO_INDEXER_LOCATION",
+    "video_indexer_location_url_prefix": "VIDEO_INDEXER_LOCATION_URL_PREFIX",
+    "videoknowledgemining_STORAGE": "BLOB_STORAGE_CONNECTION_STRING_VIDEO_DROP"
+  }
+}

@@ -57,8 +57,8 @@ resource "azurerm_storage_container" "deployments" {
 data "azurerm_storage_account_sas" "sas" {
   connection_string = azurerm_storage_account.releases.primary_connection_string
   https_only        = true
-  start             = "2019-01-01"
-  expiry            = "2021-12-31"
+  start             = join("-", [formatdate("YYYY", timestamp()), "01", "01"])
+  expiry            = join("-", [formatdate("YYYY", timestamp()) + 1, "12", "31"])
   resource_types {
     object    = true
     container = false

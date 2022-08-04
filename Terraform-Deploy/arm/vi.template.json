@@ -31,7 +31,7 @@
     "resources": [
         {
             "type": "Microsoft.VideoIndexer/accounts",
-            "apiVersion": "2021-11-10-preview",
+            "apiVersion": "2022-08-01",
             "name": "[parameters('name')]",
             "location": "[resourceGroup().location]",
             "tags": "[parameters('tags')]",
@@ -59,19 +59,19 @@
             "type": "string"
         },
         "accountId": {
-            "value": "[reference(resourceId('Microsoft.VideoIndexer/accounts',parameters('name')), '2021-11-10-preview', 'Full').properties.accountId]",
+            "value": "[reference(resourceId('Microsoft.VideoIndexer/accounts',parameters('name')), '2022-08-01', 'Full').properties.accountId]",
             "type": "string"
         },
         "location": {
-            "value": "[reference(resourceId('Microsoft.VideoIndexer/accounts',parameters('name')), '2021-11-10-preview', 'Full').location]",
+            "value": "[reference(resourceId('Microsoft.VideoIndexer/accounts',parameters('name')), '2022-08-01', 'Full').location]",
             "type": "string"
         },
         "resourceGroup": {
-            "value": "[reference(resourceId('Microsoft.VideoIndexer/accounts',parameters('name')), '2021-11-10-preview', 'Full').resourceGroupName]",
+            "value": "[reference(resourceId('Microsoft.VideoIndexer/accounts',parameters('name')), '2022-08-01', 'Full').resourceGroupName]",
             "type": "string"
         },
         "subscriptionId": {
-            "value": "[reference(resourceId('Microsoft.VideoIndexer/accounts',parameters('name')), '2021-11-10-preview', 'Full').subscriptionId]",
+            "value": "[reference(resourceId('Microsoft.VideoIndexer/accounts',parameters('name')), '2022-08-01', 'Full').subscriptionId]",
             "type": "string"
         }
     }

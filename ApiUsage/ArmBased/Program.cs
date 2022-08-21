@@ -14,7 +14,7 @@ namespace VideoIndexerArm
 {
     public class Program
     {
-        private const string ApiVersion = "2021-11-10-preview";
+        private const string ApiVersion = "2022-08-01";
         private const string AzureResourceManager = "https://management.azure.com";
         private const string SubscriptionId = "<Your SubscriptionId>";
         private const string ResourceGroup = "<Your Resource Group>";
@@ -54,13 +54,13 @@ namespace VideoIndexerArm
             var videoAccessToken = await videoIndexerResourceProviderClient.GetAccessToken(ArmAccessTokenPermission.Contributor, ArmAccessTokenScope.Video, videoId);
 
             // Search for the video
-            await GetVideo(accountId, accountLocation, ApiUrl, videoAccessToken, client, videoId);
+            await GetVideo(accountId, accountLocation, videoAccessToken, ApiUrl, client, videoId);
 
             // Get insights widget url
-            await GetInsightsWidgetUrl(accountId, accountLocation, ApiUrl, videoAccessToken, client, videoId);
+            await GetInsightsWidgetUrl(accountId, accountLocation, videoAccessToken, ApiUrl, client, videoId);
 
             // Get player widget url
-            await GetPlayerWidgetUrl(accountId, accountLocation, ApiUrl, videoAccessToken, client, videoId);
+            await GetPlayerWidgetUrl(accountId, accountLocation, videoAccessToken, ApiUrl, client, videoId);
 
             Console.WriteLine("\nPress Enter to exit...");
             String line = Console.ReadLine();
@@ -295,7 +295,7 @@ namespace VideoIndexerArm
             }
 
             /// <summary>
-            /// Generates an access token. Calls the generateAccessToken API  (https://github.com/Azure/azure-rest-api-specs/blob/main/specification/vi/resource-manager/Microsoft.VideoIndexer/preview/2021-11-10-preview/vi.json#:~:text=%22/subscriptions/%7BsubscriptionId%7D/resourceGroups/%7BresourceGroupName%7D/providers/Microsoft.VideoIndexer/accounts/%7BaccountName%7D/generateAccessToken%22%3A%20%7B)
+            /// Generates an access token. Calls the generateAccessToken API  (https://github.com/Azure/azure-rest-api-specs/blob/main/specification/vi/resource-manager/Microsoft.VideoIndexer/stable/2022-08-01/vi.json#:~:text=%22/subscriptions/%7BsubscriptionId%7D/resourceGroups/%7BresourceGroupName%7D/providers/Microsoft.VideoIndexer/accounts/%7BaccountName%7D/generateAccessToken%22%3A%20%7B)
             /// </summary>
             /// <param name="permission"> The permission for the access token</param>
             /// <param name="scope"> The scope of the access token </param>
@@ -340,7 +340,7 @@ namespace VideoIndexerArm
             }
 
             /// <summary>
-            /// Gets an account. Calls the getAccount API (https://github.com/Azure/azure-rest-api-specs/blob/main/specification/vi/resource-manager/Microsoft.VideoIndexer/preview/2021-11-10-preview/vi.json#:~:text=%22/subscriptions/%7BsubscriptionId%7D/resourceGroups/%7BresourceGroupName%7D/providers/Microsoft.VideoIndexer/accounts/%7BaccountName%7D%22%3A%20%7B)
+            /// Gets an account. Calls the getAccount API (https://github.com/Azure/azure-rest-api-specs/blob/main/specification/vi/resource-manager/Microsoft.VideoIndexer/stable/2022-08-01/vi.json#:~:text=%22/subscriptions/%7BsubscriptionId%7D/resourceGroups/%7BresourceGroupName%7D/providers/Microsoft.VideoIndexer/accounts/%7BaccountName%7D%22%3A%20%7B)
             /// </summary>
             /// <returns> The Account, otherwise throws an exception</returns>
             public async Task<Account> GetAccount()

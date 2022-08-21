@@ -54,13 +54,13 @@ namespace VideoIndexerArm
             var videoAccessToken = await videoIndexerResourceProviderClient.GetAccessToken(ArmAccessTokenPermission.Contributor, ArmAccessTokenScope.Video, videoId);
 
             // Search for the video
-            await GetVideo(accountId, accountLocation, ApiUrl, videoAccessToken, client, videoId);
+            await GetVideo(accountId, accountLocation, videoAccessToken, ApiUrl, client, videoId);
 
             // Get insights widget url
-            await GetInsightsWidgetUrl(accountId, accountLocation, ApiUrl, videoAccessToken, client, videoId);
+            await GetInsightsWidgetUrl(accountId, accountLocation, videoAccessToken, ApiUrl, client, videoId);
 
             // Get player widget url
-            await GetPlayerWidgetUrl(accountId, accountLocation, ApiUrl, videoAccessToken, client, videoId);
+            await GetPlayerWidgetUrl(accountId, accountLocation, videoAccessToken, ApiUrl, client, videoId);
 
             Console.WriteLine("\nPress Enter to exit...");
             String line = Console.ReadLine();

@@ -6,11 +6,11 @@ For video classification tasks it sometimes happens that visual features of vide
 
 Prerequisites:  
 - [Azure Subscription](https://azure.microsoft.com/en-us/free)
-- [Azure Video Indexer account](https://docs.microsoft.com/en-us/azure/azure-video-analyzer/video-analyzer-for-media-docs/connect-to-azure#create-a-new-account-on-azure)
+- [Azure Video Indexer account](https://learn.microsoft.com/azure/azure-video-indexer/connect-to-azure#create-a-new-account-on-azure)
 - [Azure Machine Learning Workspace](https://docs.microsoft.com/en-us/azure/machine-learning/quickstart-create-resources#create-the-workspace)
   
 Solution steps:  
-- preprocess videos with AVAM to extract transcripts and other insights
+- preprocess videos with Azure Video Indexer to extract transcripts and other insights
 - create a dataset which consists of extracted transcripts + ground truth label column
 - train and evaluate DistilBERT model on prepared data using Azure Machine Learning pipeline
 
@@ -20,4 +20,3 @@ This example highly depends on AML Pipeline defined under `training` directory w
 ![](docs/aml_files.png)
 
 ![](docs/aml_pipeline_graph.png)
-

@@ -4,7 +4,7 @@ languages:
   - C#
   - .Net
 products:
-  - azure-video-analyzer-for-media
+  - azure-video-indexer
 description: "Video Indexer API"
 ---
 
@@ -21,7 +21,7 @@ Taxonomies for products and languages: https://review.docs.microsoft.com/new-hop
 This folder contains the basic ways to address Video Indexer's API in order to allow full engagment with the product: Get Account, Get Access token through ARM API, upload a video, polling on status/waiting, and indexing the video.
 It is highly recommend to first read the more detailed documentation which can be found [here](https://aka.ms/avam-arm-docs).
 
-For more API abilities, please visit our [API documentation](https://api-portal.videoindexer.ai/)
+For more API abilities, please visit our [REST API for ARM](https://learn.microsoft.com/rest/api/videoindexer/) and our  [Data plane API documentation](https://api-portal.videoindexer.ai/)
 
 ## Contents
 
@@ -41,7 +41,6 @@ Instructions:
 6. Open your terminal and navigate to "ApiUsage\ArmBased" folder
 7. Run dotnet build
 
-For more information visit [here](https://docs.microsoft.com/en-us/azure/media-services/video-indexer/video-indexer-use-apis)
 
 <!--
 Outline the required components and tools that a user might need to have on their machine in order to run the sample. This can be anything from frameworks, SDKs, OS versions or IDE releases.

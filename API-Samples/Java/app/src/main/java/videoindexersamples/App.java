@@ -9,7 +9,7 @@ import videoindexersamples.authentication.ArmAccessTokenScope;
 
 public class App {
 
-    private static final String VideoUrl = "https://vimaptestfilessa.blob.core.windows.net/benchmark-tests/all-complex-long.mp4?sv=2021-10-04&st=2023-02-12T11%3A06%3A14Z&se=2023-04-13T10%3A06%3A00Z&sr=b&sp=r&sig=DBVuvHTc37cM3nApRGsuiP0dbhSARpRIsr55U%2FWL7Qk%3D";
+    private static final String VideoUrl = "";
 
     public static void main(String[] args) {
 

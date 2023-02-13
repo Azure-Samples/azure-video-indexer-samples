@@ -25,9 +25,9 @@ import java.util.Objects;
 
 public class VideoIndexerClient {
     private static final String AzureResourceManager = "https://management.azure.com";
-    private static final String SubscriptionId = "24237b72-8546-4da5-b204-8c3cb76dd930";
-    private static final String ResourceGroup = "einav-weu-rg";
-    private static final String AccountName = "einav-sea-vi";
+    private static final String SubscriptionId = "<Your_Subscription_Id>";
+    private static final String ResourceGroup = "<Your_Resource_Group>";
+    private static final String AccountName = "<Your_VideoIndexer_Account>";
     private static final String ApiVersion = "2022-08-01";
     private static final String ApiUrl = "https://api.videoindexer.ai";
 

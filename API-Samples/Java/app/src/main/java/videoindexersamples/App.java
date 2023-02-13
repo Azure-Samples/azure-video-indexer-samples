@@ -32,8 +32,8 @@ public class App {
         System.out.printf("The account ID is %s\n", account.properties.accountId);
         System.out.printf("The account Location is %s\n", account.location);
 
-        //Upload Video + Polling for Completion Event
-        var videoId = videoIndexerClient.uploadVideo(VideoUrl, "video345");
+        //4. Upload Video
+        var videoId = videoIndexerClient.uploadVideo(VideoUrl, "video-345-sample");
         System.out.printf("Successfully uploaded video with Id: %s\n", videoId);
 
         // 5 . Wait For Completion
@@ -42,14 +42,8 @@ public class App {
         var waitResult = videoIndexerClient.waitForIndex(videoId);
         System.out.println("wait result  = " + waitResult);
 
-        //Get Index Insights
-        // Get video level access token for Azure Video Indexer
-        System.out.println("Creating Second Video Indexer Client Instance");
-        var readerVideoClient = VideoIndexerClient
-                                .create()
-                                .getAccountAccessToken(ArmAccessTokenPermission.Contributor, ArmAccessTokenScope.Video, videoId, null);
-
-        var videoMetadata = readerVideoClient.getVideo(videoId);
+        //6. Get Index Insights
+        var videoMetadata = videoIndexerClient.getVideo(videoId);
         System.out.printf("Video Metadata : \n%s\n", videoMetadata);
     }
 

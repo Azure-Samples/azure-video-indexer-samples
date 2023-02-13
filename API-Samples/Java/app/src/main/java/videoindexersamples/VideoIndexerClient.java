@@ -25,9 +25,9 @@ import static videoindexersamples.HttpUtils.Utils.httpStringResponse;
 
 public class VideoIndexerClient {
     private static final String AzureResourceManager = "https://management.azure.com";
-    private static final String SubscriptionId = "24237b72-8546-4da5-b204-8c3cb76dd930";
-    private static final String ResourceGroup = "arm-demo-rg";
-    private static final String AccountName = "arm-demo-account";
+    private static final String SubscriptionId = "<Your_Subscription_Id_here>";
+    private static final String ResourceGroup = "<Your_Resource_Group_here>";
+    private static final String AccountName = "<Your_Account_Name_Here>";
     private static final String ApiVersion = "2022-08-01";
     private static final String ApiUrl = "https://api.videoindexer.ai";
     private final String armAccessToken;

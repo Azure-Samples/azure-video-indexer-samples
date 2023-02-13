@@ -12,6 +12,7 @@ import java.util.Map;
 
 public class Utils {
     public static final int HTTP_OK = 200;
+    public static final int NO_CONTENT = 204;
 
     public static String toQueryParamString(Map<String, String> map) {
         return map.entrySet().stream()
@@ -36,15 +37,14 @@ public class Utils {
                        .newBuilder()
                        .build()
                        .send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        VerifyStatus(response);
+        VerifyStatus(response,HTTP_OK);
         return response;
     }
 
-    public static boolean VerifyStatus(HttpResponse response) {
-        if (response.statusCode() != HTTP_OK) {
+    public static void VerifyStatus(HttpResponse response,int expectedResult ) {
+        if (response.statusCode() != expectedResult) {
             throw new RuntimeException(response.toString());
         }
-        return true;
     }
 
 }

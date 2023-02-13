@@ -15,13 +15,15 @@ import videoindexersamples.authentication.ArmAccessTokenScope;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 import static java.lang.Thread.sleep;
-import static videoindexersamples.HttpUtils.Utils.httpStringResponse;
+import static videoindexersamples.HttpUtils.Utils.*;
 
 public class VideoIndexerClient {
     private static final String AzureResourceManager = "https://management.azure.com";
@@ -88,6 +90,7 @@ public class VideoIndexerClient {
 
     /**
      * Uploads a video and starts the video index. Calls the uploadVideo API (<a href="https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Upload-Video">...</a>)
+     *
      * @param videoUrl : the video Url to upload
      * @return Video Id of the video being indexed, otherwise throws exception
      */
@@ -125,6 +128,7 @@ public class VideoIndexerClient {
 
     /**
      * Searches for the video in the account. Calls the searchVideo API (<a href="https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Search-Videos">...</a>)
+     *
      * @param videoId The video id
      * @return Video Metadata
      */
@@ -146,10 +150,11 @@ public class VideoIndexerClient {
 
     /**
      * Gets an account. Calls the getAccount API (<a href="https://github.com/Azure/azure-rest-api-specs/blob/main/specification/vi/resource-manager/Microsoft.VideoIndexer/stable/2022-08-01/vi.json#:~:text=%22/subscriptions/%7BsubscriptionId%7D/resourceGroups/%7BresourceGroupName%7D/providers/Microsoft.VideoIndexer/accounts/%7BaccountName%7D%22%3A%20%7B">...</a>)
+     *
      * @return : The Account Info ( accountId and Location) if successful, otherwise throws an exception</returns>
      */
     public Account getAccount() {
-        if (account != null){
+        if (account != null) {
             return account;
         }
         System.out.println("Getting Account Data");
@@ -173,7 +178,7 @@ public class VideoIndexerClient {
     }
 
     /**
-     * Wait for index Operation to finish - pulling method
+     * Calls getVideoIndex API in 10 second intervals until the indexing state is 'processed'(<a href="https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Get-Video-Index">...</a>)
      *
      * @param videoId - the Id of the video being uploaded
      * @return : true if the wait operation succedded , false otherwise
@@ -208,6 +213,34 @@ public class VideoIndexerClient {
             } catch (URISyntaxException | IOException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    /**
+     * Deletes the specified video and all related insights created from when the video was indexed
+     * @param videoId
+     */
+    public void deleteVideo(String videoId) {
+
+        Map<String, String> map = new HashMap<>();
+        map.put("accessToken", this.accountAccessToken);
+        var queryParam = Utils.toQueryParamString(map);
+        var requestUri = String.format("%s/%s/Accounts/%s/Videos/%s?%s", ApiUrl, account.location, account.properties.accountId, videoId, queryParam);
+
+        try {
+            var httpRequest = HttpRequest.newBuilder()
+                    .uri(new URI(requestUri))
+                    .headers("Content-Type", "application/json;charset=UTF-8")
+                    .DELETE()
+                    .build();
+            var response = HttpClient
+                    .newBuilder()
+                    .build()
+                    .send(httpRequest, HttpResponse.BodyHandlers.discarding());
+            VerifyStatus(response, NO_CONTENT);
+
+        } catch (URISyntaxException | IOException | InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 }

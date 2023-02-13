@@ -34,7 +34,8 @@ public class App {
         System.out.printf("The account Location is %s\n", account.location);
 
         //Upload Video
-        var videoId = videoIndexerClient.uploadVideo(VideoUrl);
+        var videoId = videoIndexerClient.uploadVideo(VideoUrl,"video345");
+        System.out.printf("Successfully uploaded video with Id: %s\n",videoId);
         var waitResult = videoIndexerClient.waitForIndex(videoId);
         System.out.println("wait result  = " + waitResult);
 

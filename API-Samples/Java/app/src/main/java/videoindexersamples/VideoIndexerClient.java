@@ -93,11 +93,11 @@ public class VideoIndexerClient {
      * @param videoUrl : the video Url to upload
      * @return the Video Id
      */
-    public String uploadVideo(String videoUrl) {
+    public String uploadVideo(String videoUrl,String videoName) {
 
         Map<String, String> map = new HashMap<>();
         map.put("accessToken", this.accountAccessToken);
-        map.put("name", "part2-video");
+        map.put("name", videoName);
         map.put("description", "video_description");
         map.put("privacy", "private");
         map.put("partition", "partition");

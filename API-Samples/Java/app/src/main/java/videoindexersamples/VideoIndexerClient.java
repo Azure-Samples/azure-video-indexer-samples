@@ -218,6 +218,7 @@ public class VideoIndexerClient {
 
     /**
      * Deletes the specified video and all related insights created from when the video was indexed
+     *
      * @param videoId
      */
     public void deleteVideo(String videoId) {

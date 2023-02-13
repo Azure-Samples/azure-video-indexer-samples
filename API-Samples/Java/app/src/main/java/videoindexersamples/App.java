@@ -6,7 +6,7 @@ import videoindexersamples.authentication.ArmAccessTokenScope;
 
 public class App {
 
-    private static final String VideoUrl = "";
+    private static final String VideoUrl = "<Place_Your_Video_URL_HERE>";
 
     public static void main(String[] args) {
 
@@ -23,9 +23,8 @@ public class App {
         // The Token is valid for 1 hour
         System.out.println("Get Account Access Token");
         videoIndexerClient.getAccountAccessToken(ArmAccessTokenPermission.Contributor, ArmAccessTokenScope.Account, null, null);
-
         //3. Get Account Information
-        Account account = videoIndexerClient.getAccount();
+        Account account = videoIndexerClient.getAccountInfo();
         System.out.printf("The account ID is %s\n", account.properties.accountId);
         System.out.printf("The account Location is %s\n", account.location);
 
@@ -39,9 +38,13 @@ public class App {
         var waitResult = videoIndexerClient.waitForIndex(videoId);
         System.out.println("wait result  = " + waitResult);
 
-        //6. Get Index Insights
+        //6. Search Video
         var videoMetadata = videoIndexerClient.getVideo(videoId);
         System.out.printf("Video Metadata : \n%s\n", videoMetadata);
+
+        //7. Delete Video
+        System.out.printf("Deleting Video %s.\n",videoId);
+        videoIndexerClient.deleteVideo(videoId);
     }
 
 }

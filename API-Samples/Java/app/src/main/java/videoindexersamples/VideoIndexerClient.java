@@ -62,9 +62,8 @@ public class VideoIndexerClient {
      * @param scope      - The scope of the Access token
      * @param videoId    - the Video ID
      * @param projectId  - the Project ID
-     * @return The Video Indexer Account Access Token. Valid for one hour for sequential API Operations
      */
-    public VideoIndexerClient getAccountAccessToken(ArmAccessTokenPermission permission, ArmAccessTokenScope scope, String videoId, String projectId) {
+    public void getAccountAccessToken(ArmAccessTokenPermission permission, ArmAccessTokenScope scope, String videoId, String projectId) {
         var accessTokenRequest = new AccessTokenRequest(projectId, videoId, permission, scope);
         var accessTokenRequestStr = gson.toJson(accessTokenRequest);
 
@@ -79,10 +78,7 @@ public class VideoIndexerClient {
 
             var response = httpStringResponse(request);
             AccessTokenResponse accessTokenResponse = gson.fromJson(response.body(), AccessTokenResponse.class);
-
             this.accountAccessToken = accessTokenResponse.accessToken;
-            this.account = getAccount();
-            return this;
         } catch (URISyntaxException | IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -153,11 +149,8 @@ public class VideoIndexerClient {
      *
      * @return : The Account Info ( accountId and Location) if successful, otherwise throws an exception</returns>
      */
-    public Account getAccount() {
-        if (account != null) {
-            return account;
-        }
-        System.out.println("Getting Account Data");
+    public Account getAccountInfo() {
+        System.out.println("Getting Account Info ( Location/AccountId)");
         try {
             var requestUri = String.format("%s/subscriptions/%s/resourcegroups/%s/providers/Microsoft.VideoIndexer/accounts/%s?api-version=%s", AzureResourceManager, SubscriptionId, ResourceGroup, AccountName, ApiVersion);
             try {
@@ -171,10 +164,10 @@ public class VideoIndexerClient {
             } catch (URISyntaxException | IOException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            return account;
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
+        return this.account;
     }
 
     /**
@@ -218,8 +211,7 @@ public class VideoIndexerClient {
 
     /**
      * Deletes the specified video and all related insights created from when the video was indexed
-     *
-     * @param videoId
+     * @param videoId The Video Id
      */
     public void deleteVideo(String videoId) {
 

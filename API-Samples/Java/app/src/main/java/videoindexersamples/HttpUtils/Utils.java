@@ -1,9 +1,5 @@
 package videoindexersamples.HttpUtils;
 
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.internal.Primitives;
-import com.google.gson.reflect.TypeToken;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -15,8 +11,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class Utils {
+    public static final int HTTP_OK = 200;
 
-    public static String toQueryParamString(Map<String,String> map){
+    public static String toQueryParamString(Map<String, String> map) {
         return map.entrySet().stream()
                 .map(p -> urlEncodeUTF8(p.getKey()) + "=" + urlEncodeUTF8(p.getValue()))
                 .reduce((p1, p2) -> p1 + "&" + p2).orElse("");
@@ -35,10 +32,19 @@ public class Utils {
     }
 
     public static HttpResponse<String> httpStringResponse(HttpRequest httpRequest) throws IOException, InterruptedException {
-        return HttpClient.
-                newBuilder().
-                build().
-                send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        var response = HttpClient
+                       .newBuilder()
+                       .build()
+                       .send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        VerifyStatus(response);
+        return response;
+    }
+
+    public static boolean VerifyStatus(HttpResponse response) {
+        if (response.statusCode() != HTTP_OK) {
+            throw new RuntimeException(response.toString());
+        }
+        return true;
     }
 
 }

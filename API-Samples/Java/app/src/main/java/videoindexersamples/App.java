@@ -27,19 +27,20 @@ public class App {
             return;
         }
 
-
         //Get Account Information
         Account account = videoIndexerClient.getAccount();
         System.out.printf("The account ID is %s\n", account.properties.accountId);
         System.out.printf("The account Location is %s\n", account.location);
 
-        //Upload Video
+        //Upload Video + Polling for Completion Event
         var videoId = videoIndexerClient.uploadVideo(VideoUrl,"video345");
         System.out.printf("Successfully uploaded video with Id: %s\n",videoId);
         var waitResult = videoIndexerClient.waitForIndex(videoId);
         System.out.println("wait result  = " + waitResult);
 
-
+        //Get Index Insights
+        var videoMetadata = videoIndexerClient.getVideo(videoId);
+        System.out.printf("Video Metadata : \n%s\n",videoMetadata);
     }
 
 }

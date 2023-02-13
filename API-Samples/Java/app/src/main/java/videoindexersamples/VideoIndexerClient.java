@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static java.lang.Thread.sleep;
+
 public class VideoIndexerClient {
     private static final String AzureResourceManager = "https://management.azure.com";
     private static final String SubscriptionId = "24237b72-8546-4da5-b204-8c3cb76dd930";
@@ -88,12 +90,11 @@ public class VideoIndexerClient {
     }
 
     /**
-     * Upload a Viode to the Video Indexer Account and Start indexing it.
-     *
+     * Uploads a video and starts the video index. Calls the uploadVideo API (<a href="https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Upload-Video">...</a>)
      * @param videoUrl : the video Url to upload
-     * @return the Video Id
+     * @return Video Id of the video being indexed, otherwise throws exception
      */
-    public String uploadVideo(String videoUrl,String videoName) {
+    public String uploadVideo(String videoUrl, String videoName) {
 
         Map<String, String> map = new HashMap<>();
         map.put("accessToken", this.accountAccessToken);
@@ -126,10 +127,31 @@ public class VideoIndexerClient {
         }
     }
 
+
     /**
-     * Get Account info - Retreive the account info such as Account Id and Location
-     *
-     * @return : The Account Info ( accountId and Location)
+     * Searches for the video in the account. Calls the searchVideo API (<a href="https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Search-Videos">...</a>)
+     * @param videoId The video id
+     * @return Video Metadata
+     */
+    public String getVideo(String videoId) {
+        System.out.printf("Searching videos in account %s for video ID %s.\n", account.properties.accountId, videoId);
+
+        Map<String, String> map = new HashMap<>();
+        map.put("accessToken", this.accountAccessToken);
+        map.put("id", videoId);
+
+        var queryParam = Utils.toQueryParamString(map);
+        try {
+            var requestUri = String.format("%s/%s/Accounts/%s/Videos/Search?%s", ApiUrl, account.location, account.properties.accountId, queryParam);
+            return Utils.httpStringResponse(Utils.httpGetRequest(requestUri)).body();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    /**
+     * Gets an account. Calls the getAccount API (<a href="https://github.com/Azure/azure-rest-api-specs/blob/main/specification/vi/resource-manager/Microsoft.VideoIndexer/stable/2022-08-01/vi.json#:~:text=%22/subscriptions/%7BsubscriptionId%7D/resourceGroups/%7BresourceGroupName%7D/providers/Microsoft.VideoIndexer/accounts/%7BaccountName%7D%22%3A%20%7B">...</a>)
+     * @return : The Account Info ( accountId and Location) if successful, otherwise throws an exception</returns>
      */
     public Account getAccount() {
         System.out.println("Getting Account Data");
@@ -159,7 +181,8 @@ public class VideoIndexerClient {
     }
 
     /**
-     *  Wait for index Operation to finish - pulling method
+     * Wait for index Operation to finish - pulling method
+     *
      * @param videoId - the Id of the video being uploaded
      * @return : true if the wait operation succedded , false otherwise
      */
@@ -170,40 +193,29 @@ public class VideoIndexerClient {
         map.put("accessToken", this.accountAccessToken);
         map.put("language", "English");
         var queryParam = Utils.toQueryParamString(map);
-        int count = 0;
-        while (count < 360) {
-            var requestUri = String.format("%s/%s/Accounts/%s/Videos/%s/index?%s", ApiUrl, account.location, account.properties.accountId, videoId, queryParam);
-
-            HttpRequest request = null;
+        var requestUri = String.format("%s/%s/Accounts/%s/Videos/%s/index?%s", ApiUrl, account.location, account.properties.accountId, videoId, queryParam);
+        while (true) { //
             try {
-                request = HttpRequest.newBuilder()
-                        .uri(new URI(requestUri))
-                        .headers("Content-Type", "application/json;charset=UTF-8")
-                        .GET()
-                        .build();
 
-            HttpResponse<String> response = HttpClient.
-                    newBuilder().
-                    build().
-                    send(request, HttpResponse.BodyHandlers.ofString());
+                var request = Utils.httpGetRequest(requestUri);
+                var response = Utils.httpStringResponse(request);
+                Video prorcessedVideo = gson.fromJson(response.body(), Video.class);
+                String processingState = prorcessedVideo.state;
 
-            String processingState = gson.fromJson(response.body(), Video.class).state;
-            // If job is finished
-            if (Objects.equals(processingState, ProcessingState.Processed.toString())) {
-                System.out.printf("The video index has completed. Here is the full JSON of the index for video ID %s: \n%s\n", videoId, response.body());
-                return true;
-            } else if (Objects.equals(processingState, ProcessingState.Failed.toString())) {
-                System.out.printf("The video index failed for video ID %s.\n", videoId);
-                return false;
-            }
-            // Job hasn't finished
-            System.out.printf("The video index state is %s\n", processingState);
-            Thread.sleep(10000);
-            count++;
+                // If job is finished
+                if (Objects.equals(processingState, ProcessingState.Processed.toString())) {
+                    System.out.printf("The video index has completed. Here is the full JSON of the index for video ID %s: \n%s\n", videoId, response.body());
+                    return true;
+                } else if (Objects.equals(processingState, ProcessingState.Failed.toString())) {
+                    System.out.printf("The video index failed for video ID %s.\n", videoId);
+                    return false;
+                }
+                // Job hasn't finished
+                System.out.printf("The video index state is %s\n", processingState);
+                sleep(10000);
             } catch (URISyntaxException | IOException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
-        return false;
     }
 }

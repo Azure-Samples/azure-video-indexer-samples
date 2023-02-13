@@ -22,7 +22,10 @@ public class App {
         // You can use the account Access Token for subsequent requests , in this demo it is stored inside the VideoIndexer Client.
         // The Token is valid for 1 hour
         System.out.println("Get Account Access Token");
-        videoIndexerClient.getAccountAccessToken(ArmAccessTokenPermission.Contributor, ArmAccessTokenScope.Account, null, null);
+        if (!videoIndexerClient.getAccountAccessToken(ArmAccessTokenPermission.Contributor, ArmAccessTokenScope.Account, null, null)) {
+            System.out.println("Could not retreive Account Access Token. check result code");
+            return;
+        }
 
 
         //Get Account Information
@@ -31,8 +34,9 @@ public class App {
         System.out.printf("The account Location is %s\n", account.location);
 
         //Upload Video
-        var response = videoIndexerClient.uploadVideo(VideoUrl);
-        System.out.println(response);
+        var videoId = videoIndexerClient.uploadVideo(VideoUrl);
+        var waitResult = videoIndexerClient.waitForIndex(videoId);
+        System.out.println("wait result  = " + waitResult);
 
 
     }

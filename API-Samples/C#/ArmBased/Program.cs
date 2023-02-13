@@ -35,7 +35,7 @@ namespace VideoIndexerArm
             // Get account level access token for Azure Video Indexer 
             var accountAccessToken = await videoIndexerResourceProviderClient.GetAccessToken(ArmAccessTokenPermission.Contributor, ArmAccessTokenScope.Account);
 
-            System.Net.ServicePointManager.SecurityProtocol = System.Net.ServicePointManager.SecurityProtocol | System.Net.SecurityProtocolType.Tls12;
+            System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12;
 
             // Create the http client
             var handler = new HttpClientHandler
@@ -83,6 +83,7 @@ namespace VideoIndexerArm
         {
             Console.WriteLine($"Video for account {accountId} is starting to upload.");
             var content = new MultipartFormDataContent();
+
             try
             {
                 // Get the video from URL
@@ -92,7 +93,7 @@ namespace VideoIndexerArm
                     {"accessToken", acountAccessToken},
                     {"name", "video sample"},
                     {"description", "video_description"},
-                    {"privacy", "private"},
+                    {"privacy", "private"},     
                     {"partition", "partition"},
                     {"videoUrl", VideoUrl},
                 });

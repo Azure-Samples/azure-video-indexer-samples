@@ -16,10 +16,10 @@ namespace VideoIndexerArm
     {
         private const string ApiVersion = "2022-08-01";
         private const string AzureResourceManager = "https://management.azure.com";
-        private const string SubscriptionId = "<Your SubscriptionId>";
-        private const string ResourceGroup = "<Your Resource Group>";
-        private const string AccountName = "<Your Acocunt Name>";
-        private const string VideoUrl = "<Your Video Url>";
+        private const string SubscriptionId = "<Your Subscription Id Here>";
+        private const string ResourceGroup = "<Your Resource Gropup Name Here>";
+        private const string AccountName = "<Your Video Indexer Account Name Here>";
+        private const string VideoUrl = "<Your Video Url Here>";
         private const string ApiUrl = "https://api.videoindexer.ai";
 
         public static async Task Main(string[] args)
@@ -35,7 +35,7 @@ namespace VideoIndexerArm
             // Get account level access token for Azure Video Indexer 
             var accountAccessToken = await videoIndexerResourceProviderClient.GetAccessToken(ArmAccessTokenPermission.Contributor, ArmAccessTokenScope.Account);
 
-            System.Net.ServicePointManager.SecurityProtocol = System.Net.ServicePointManager.SecurityProtocol | System.Net.SecurityProtocolType.Tls12;
+            System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12 | System.Net.SecurityProtocolType.Tls13;
 
             // Create the http client
             var handler = new HttpClientHandler
@@ -83,6 +83,7 @@ namespace VideoIndexerArm
         {
             Console.WriteLine($"Video for account {accountId} is starting to upload.");
             var content = new MultipartFormDataContent();
+
             try
             {
                 // Get the video from URL
@@ -92,7 +93,7 @@ namespace VideoIndexerArm
                     {"accessToken", acountAccessToken},
                     {"name", "video sample"},
                     {"description", "video_description"},
-                    {"privacy", "private"},
+                    {"privacy", "private"},     
                     {"partition", "partition"},
                     {"videoUrl", VideoUrl},
                 });

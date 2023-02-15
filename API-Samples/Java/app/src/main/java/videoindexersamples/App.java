@@ -43,7 +43,7 @@ public class App {
         System.out.printf("Video Metadata : \n%s\n", videoMetadata);
 
         //7. Delete Video
-        System.out.printf("Deleting Video %s.\n",videoId);
+        System.out.printf("Deleting Video %s.\n", videoId);
         videoIndexerClient.deleteVideo(videoId);
     }
 

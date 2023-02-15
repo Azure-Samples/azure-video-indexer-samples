@@ -34,17 +34,16 @@ public class Utils {
 
     public static HttpResponse<String> httpStringResponse(HttpRequest httpRequest) throws IOException, InterruptedException {
         var response = HttpClient
-                       .newBuilder()
-                       .build()
-                       .send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        VerifyStatus(response,HTTP_OK);
+                .newBuilder()
+                .build()
+                .send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        VerifyStatus(response, HTTP_OK);
         return response;
     }
 
-    public static void VerifyStatus(HttpResponse response,int expectedResult ) {
+    public static void VerifyStatus(HttpResponse response, int expectedResult) {
         if (response.statusCode() != expectedResult) {
             throw new RuntimeException(response.toString());
         }
     }
-
 }

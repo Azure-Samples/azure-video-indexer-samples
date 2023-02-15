@@ -16,10 +16,10 @@ namespace VideoIndexerArm
     {
         private const string ApiVersion = "2022-08-01";
         private const string AzureResourceManager = "https://management.azure.com";
-        private const string SubscriptionId = "24237b72-8546-4da5-b204-8c3cb76dd930";
-        private const string ResourceGroup = "arm-demo-rg";
-        private const string AccountName = "arm-demo-account";
-        private const string VideoUrl = "https://vimaptestfilessa.blob.core.windows.net/benchmark-tests/all-complex-long.mp4?sv=2021-10-04&st=2023-02-12T11%3A06%3A14Z&se=2023-04-13T10%3A06%3A00Z&sr=b&sp=r&sig=DBVuvHTc37cM3nApRGsuiP0dbhSARpRIsr55U%2FWL7Qk%3D";
+        private const string SubscriptionId = "<Your Subscription Id Here>";
+        private const string ResourceGroup = "<Your Resource Gropup Name Here>";
+        private const string AccountName = "<Your Video Indexer Account Name Here>";
+        private const string VideoUrl = "<Your Video Url Here>";
         private const string ApiUrl = "https://api.videoindexer.ai";
 
         public static async Task Main(string[] args)

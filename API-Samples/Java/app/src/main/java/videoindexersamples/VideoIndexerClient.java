@@ -79,8 +79,8 @@ public class VideoIndexerClient {
             var response = httpStringResponse(request);
             AccessTokenResponse accessTokenResponse = gson.fromJson(response.body(), AccessTokenResponse.class);
             this.accountAccessToken = accessTokenResponse.accessToken;
-        } catch (URISyntaxException | IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (URISyntaxException | IOException | InterruptedException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
@@ -116,8 +116,8 @@ public class VideoIndexerClient {
             String videoId = upoloadedVideo.id;
             System.out.printf("Video ID %s was uploaded successfully.\n", videoId);
             return videoId;
-        } catch (URISyntaxException | IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (URISyntaxException | IOException | InterruptedException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
@@ -161,8 +161,8 @@ public class VideoIndexerClient {
                         .build();
                 var responseBodyJson = httpStringResponse(request).body();
                 this.account = gson.fromJson(responseBodyJson, Account.class);
-            } catch (URISyntaxException | IOException | InterruptedException e) {
-                throw new RuntimeException(e);
+            } catch (URISyntaxException | IOException | InterruptedException ex) {
+                throw new RuntimeException(ex);
             }
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -203,8 +203,8 @@ public class VideoIndexerClient {
                 // Job hasn't finished
                 System.out.printf("The video index state is %s\n", processingState);
                 sleep(10000);
-            } catch (URISyntaxException | IOException | InterruptedException e) {
-                throw new RuntimeException(e);
+            } catch (URISyntaxException | IOException | InterruptedException ex) {
+                throw new RuntimeException(ex);
             }
         }
     }
@@ -233,8 +233,8 @@ public class VideoIndexerClient {
                     .send(httpRequest, HttpResponse.BodyHandlers.discarding());
             VerifyStatus(response, NO_CONTENT);
 
-        } catch (URISyntaxException | IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (URISyntaxException | IOException | InterruptedException ex) {
+            throw new RuntimeException(ex);
         }
     }
 }

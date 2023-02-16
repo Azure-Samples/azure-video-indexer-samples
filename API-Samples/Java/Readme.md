@@ -68,7 +68,7 @@ expedites the completion of the indexing.
 
 The sample uses Busy Wait loop to Poll on completion status of the indexed videos .
 
-#### Consuming Video Indexer Events from Event Hubs
+### Consuming Video Indexer Events from Event Hubs
 
 Developers can consume the Video Indexer Operations from an Event-Hub integration by following the pattern described on the 
 [Collection and Route][vi_collection_route] Section of Video Indexer Documentation.
@@ -85,7 +85,7 @@ The following events from the Indexing Logs Category are available:
 ```java indexing-logs-category
     String UPLOAD_STARTED = "UploadStarted";
     String UPLOAD_FINISHED = "UploadFinished";
-    String INDEXING_STARTED = "IndexingStarted";
+    String INDEXING_STARTED = "IndexingStarted";  
     String INDEXING_FINISHED = "IndexingFinished";
     String REINDEX_STARTED = "ReindexingStarted";
     String REINDEX_FINISHED = "ReindexingFinished";

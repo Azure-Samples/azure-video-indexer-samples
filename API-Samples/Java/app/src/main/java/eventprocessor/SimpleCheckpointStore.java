@@ -47,7 +47,7 @@ public class SimpleCheckpointStore implements CheckpointStore {
         String prefix = prefixBuilder(fullyQualifiedNamespace, eventHubName, consumerGroup, OWNERSHIP);
         return Flux.fromIterable(partitionOwnershipMap.keySet())
                 .filter(key -> key.startsWith(prefix))
-                .map(key -> partitionOwnershipMap.get(key));
+                .map(partitionOwnershipMap::get);
     }
 
     private String prefixBuilder(String fullyQualifiedNamespace, String eventHubName, String consumerGroup,
@@ -117,7 +117,7 @@ public class SimpleCheckpointStore implements CheckpointStore {
         String prefix = prefixBuilder(fullyQualifiedNamespace, eventHubName, consumerGroup, CHECKPOINT);
         return Flux.fromIterable(checkpointsMap.keySet())
                 .filter(key -> key.startsWith(prefix))
-                .map(key -> checkpointsMap.get(key));
+                .map(checkpointsMap::get);
     }
 
     /**

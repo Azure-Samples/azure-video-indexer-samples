@@ -1,16 +1,16 @@
-package videoindexersamples;
+package apisamples;
 
 import com.azure.core.credential.TokenRequestContext;
 import com.azure.identity.DefaultAzureCredential;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import videoindexersamples.Account.Account;
-import videoindexersamples.HttpUtils.Utils;
-import videoindexersamples.authentication.AccessTokenRequest;
-import videoindexersamples.authentication.AccessTokenResponse;
-import videoindexersamples.authentication.ArmAccessTokenPermission;
-import videoindexersamples.authentication.ArmAccessTokenScope;
+import apisamples.Account.Account;
+import apisamples.HttpUtils.Utils;
+import apisamples.authentication.AccessTokenRequest;
+import apisamples.authentication.AccessTokenResponse;
+import apisamples.authentication.ArmAccessTokenPermission;
+import apisamples.authentication.ArmAccessTokenScope;
 
 import java.io.IOException;
 import java.net.URI;
@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static java.lang.Thread.sleep;
-import static videoindexersamples.HttpUtils.Utils.*;
+import static apisamples.HttpUtils.Utils.*;
 
 public class VideoIndexerClient {
     private static final String AzureResourceManager = "https://management.azure.com";
@@ -101,9 +101,10 @@ public class VideoIndexerClient {
         map.put("privacy", "private");
         map.put("partition", "partition");
         map.put("videoUrl", videoUrl);
+        map.put("streamingPreset","NoStreaming");
         var queryParam = Utils.toQueryParamString(map);
 
-        var requestUri = String.format("%s/%s/Accounts/%s/Videos?%s", ApiUrl, account.location, account.properties.accountId, queryParam);
+        var requestUri = MessageFormat.format("{0}/{1}/Accounts/{2}/Videos?{3}", ApiUrl, account.location, account.properties.accountId, queryParam);
 
         try {
             HttpRequest request = HttpRequest.newBuilder()

@@ -1,8 +1,8 @@
-package videoindexersamples;
+package apisamples;
 
-import videoindexersamples.Account.Account;
-import videoindexersamples.authentication.ArmAccessTokenPermission;
-import videoindexersamples.authentication.ArmAccessTokenScope;
+import apisamples.Account.Account;
+import apisamples.authentication.ArmAccessTokenPermission;
+import apisamples.authentication.ArmAccessTokenScope;
 
 public class App {
 
@@ -29,7 +29,7 @@ public class App {
         System.out.printf("The account Location is %s\n", account.location);
 
         //4. Upload Video
-        var videoId = videoIndexerClient.uploadVideo(VideoUrl, "video-345-sample");
+        var videoId = videoIndexerClient.uplo   adVideo(VideoUrl, "video-345-sample");
         System.out.printf("Successfully uploaded video with Id: %s\n", videoId);
 
         // 5 . Wait For Completion

@@ -1,4 +1,4 @@
-package videoindexersamples;
+package apisamples;
 
 public class Video {
     public String id;

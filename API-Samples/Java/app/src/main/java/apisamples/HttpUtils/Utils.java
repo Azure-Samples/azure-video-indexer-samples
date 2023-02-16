@@ -1,4 +1,4 @@
-package videoindexersamples.HttpUtils;
+package apisamples.HttpUtils;
 
 import java.io.IOException;
 import java.net.URI;

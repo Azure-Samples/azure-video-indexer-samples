@@ -1,4 +1,4 @@
-package videoindexersamples.Account;
+package apisamples.Account;
 
 /**
  * For Full Properties List

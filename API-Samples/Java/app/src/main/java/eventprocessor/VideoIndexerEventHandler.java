@@ -30,7 +30,6 @@ public class VideoIndexerEventHandler {
     private static final String REINDEX_FINISHED = "ReindexingFinished";
 
 
-
     private final Gson gson;
 
     public VideoIndexerEventHandler() {
@@ -53,7 +52,7 @@ public class VideoIndexerEventHandler {
 
             //Fetch only events that are "Indexing Logs" for this demo purposes
             Arrays.stream(indexEvent.records)
-                    .filter(x-> Objects.equals(x.category, INDEXING_LOGS_CATEGORY))
+                    .filter(x -> Objects.equals(x.category, INDEXING_LOGS_CATEGORY))
                     .forEach(evt -> {
                         var videoId = evt.properties.videoId;
                         var fileName = evt.properties.indexing.Filename;

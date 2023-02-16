@@ -15,9 +15,9 @@ import java.util.concurrent.TimeUnit;
 public class VideoIndexerEventProcessorApp {
     // The fully qualified namespace for the Event Hubs instance. This is likely to be similar to:
     // {your-namespace}.servicebus.windows.net
-    private static final String eventHubsFqns = "<Your_Event_Hubs_Namespace_Here>";
-    private static final String eventHubName = "<Your_Event_Hub_Name_Here>";
-    private static final String ConsumerGroupName = "events";
+    private static final String EVENT_HUBS_NAMESPACE = "<Your_Event_Hubs_Namespace_Here>";
+    private static final String EVENT_HUB_NAME = "<Your_Event_Hub_Name_Here>";
+    private static final String CONSUMER_GROUP_NAME = "events";
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -36,12 +36,12 @@ public class VideoIndexerEventProcessorApp {
                 .addLast(cliCredential).build();
 
         VideoIndexerEventHandler handler = new VideoIndexerEventHandler();
-        System.out.println("Create Event Processor Client on namespace " + eventHubsFqns);
+        System.out.println("Create Event Processor Client on namespace " + EVENT_HUBS_NAMESPACE);
 
         /// Creating Event Processor Client using DefaultAzureCredentials
         EventProcessorClient eventProcessorClient = new EventProcessorClientBuilder()
-                .consumerGroup(ConsumerGroupName)
-                .credential(eventHubsFqns, eventHubName, credential)
+                .consumerGroup(CONSUMER_GROUP_NAME)
+                .credential(EVENT_HUBS_NAMESPACE, EVENT_HUB_NAME, credential)
                 .checkpointStore(new SimpleCheckpointStore())
                 .processEvent(handler::onEvent)
                 .processError(handler::onError)
@@ -58,9 +58,6 @@ public class VideoIndexerEventProcessorApp {
         System.out.println("Stopping Event Processor");
 // This will stop processing events.
         eventProcessorClient.stop();
-
     }
-
 }
-
 

@@ -5,5 +5,4 @@ public class IndexEventRecord {
     public String category;
     public String resultType;
     public IndexEventProperties properties;
-
 }

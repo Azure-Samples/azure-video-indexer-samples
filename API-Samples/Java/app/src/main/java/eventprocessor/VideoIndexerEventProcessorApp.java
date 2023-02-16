@@ -15,14 +15,15 @@ import java.util.concurrent.TimeUnit;
 public class VideoIndexerEventProcessorApp {
     // The fully qualified namespace for the Event Hubs instance. This is likely to be similar to:
     // {your-namespace}.servicebus.windows.net
-    private static final String eventHubsFqns = "ts-poc-eh.servicebus.windows.net";
-    private static final String eventHubName = "indexing-events";
+    private static final String eventHubsFqns = "<Your_Event_Hubs_Namespace_Here>";
+    private static final String eventHubName = "<Your_Event_Hub_Name_Here>";
     private static final String ConsumerGroupName = "events";
 
     public static void main(String[] args) throws InterruptedException {
 
         System.out.println("Video Indexer Event Processor Sample");
         System.out.println("=====================================");
+
 
         Semaphore semaphore = new Semaphore(0);
         ManagedIdentityCredential managedIdentityCredential = new ManagedIdentityCredentialBuilder().build();

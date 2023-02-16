@@ -32,7 +32,7 @@ Demonstrates the usage of Event hubs processor mechanism to retreive indexing ev
 #### Library Dependencies
 The samples depends on the following [maven repository libraries][maven_repo]
 
-```json
+```java
     dependencies {
         implementation 'com.google.guava:guava:31.1-jre'
         implementation 'com.google.code.gson:gson:2.10.1'
@@ -47,7 +47,7 @@ The samples depends on the following [maven repository libraries][maven_repo]
 
 ### API Rest Samples
 
-The Samples contains a [`VideoIndexerClient`] which is a REST wrapper to perform the http calls.
+The Samples contains a [`VideoIndexerClient`][VideoIndexerClient] which is a REST wrapper to perform the http calls.
 It uses an Azure ARM Token and then uses that token to retreive the Video Indexer Account Token which is valid for 1 hour
 to perform Video Indexer API Calls. The caller is responsible to refresh that token after it times out. 
 To Upload Video The Client uses the Upload Video URL, with the following url Parameters: 
@@ -77,20 +77,21 @@ Video Indexer Diagnostic Settings allows developer to consume the following Even
 - Audit Events
 - Indexing Log Events
 
-The sample uses [`EventProcessorClient`] that process incoming events from the Event Hub and handles them according to the Operation Name field.
+The sample uses [`EventProcessorClient`][EventProcessorClient] that process incoming events from the Event Hub and handles them according to the Operation Name field.
 Event that was configured at the Diagnostic Settings of the Video Indexer Account.
 
 The following events from the Indexing Logs Category are available:
 
 ```java indexing-logs-category
-    private static final String UPLOAD_STARTED = "UploadStarted";
-    private static final String UPLOAD_FINISHED = "UploadFinished";
-    private static final String INDEXING_STARTED = "IndexingStarted";
-    private static final String INDEXING_FINISHED = "IndexingFinished";
-    private static final String REINDEX_STARTED = "ReindexingStarted";
-    private static final String REINDEX_FINISHED = "ReindexingFinished";
+    String UPLOAD_STARTED = "UploadStarted";
+    String UPLOAD_FINISHED = "UploadFinished";
+    String INDEXING_STARTED = "IndexingStarted";
+    String INDEXING_FINISHED = "IndexingFinished";
+    String REINDEX_STARTED = "ReindexingStarted";
+    String REINDEX_FINISHED = "ReindexingFinished";
 ```
 
+The sample also contains an example on the [event schema][vi_eh_schema] for the Video Indexing /Audit Logs
 
 ## Next steps
 
@@ -111,4 +112,4 @@ The following events from the Indexing Logs Category are available:
 [maven_repo]: https://mvnrepository.com/
 [vi_api]: https://api-portal.videoindexer.ai/
 [vi_deploy]: https://github.com/Azure-Samples/media-services-video-indexer/tree/master/Deploy-Samples
-
+[vi_eh_schema]: https://github.com/Azure-Samples/media-services-video-indexer/blob/master/API-Samples/Java/app/src/main/java/eventprocessor/sample/sample.json

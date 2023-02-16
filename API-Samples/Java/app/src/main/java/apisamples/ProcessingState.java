@@ -1,4 +1,4 @@
-package videoindexersamples;
+package apisamples;
 
 public enum ProcessingState {
     Uploaded,

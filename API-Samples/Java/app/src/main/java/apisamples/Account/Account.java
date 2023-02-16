@@ -1,4 +1,4 @@
-package videoindexersamples.Account;
+package apisamples.Account;
 
 public class Account {
     public AccountProperties properties;

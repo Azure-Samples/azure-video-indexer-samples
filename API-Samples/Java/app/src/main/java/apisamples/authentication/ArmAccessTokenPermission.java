@@ -1,4 +1,4 @@
-package videoindexersamples.authentication;
+package apisamples.authentication;
 
 public enum ArmAccessTokenPermission
 {

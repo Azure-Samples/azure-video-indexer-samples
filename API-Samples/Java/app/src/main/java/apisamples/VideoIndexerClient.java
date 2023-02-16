@@ -1,16 +1,16 @@
-package videoindexersamples;
+package apisamples;
 
 import com.azure.core.credential.TokenRequestContext;
 import com.azure.identity.DefaultAzureCredential;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import videoindexersamples.Account.Account;
-import videoindexersamples.HttpUtils.Utils;
-import videoindexersamples.authentication.AccessTokenRequest;
-import videoindexersamples.authentication.AccessTokenResponse;
-import videoindexersamples.authentication.ArmAccessTokenPermission;
-import videoindexersamples.authentication.ArmAccessTokenScope;
+import apisamples.Account.Account;
+import apisamples.HttpUtils.Utils;
+import apisamples.authentication.AccessTokenRequest;
+import apisamples.authentication.AccessTokenResponse;
+import apisamples.authentication.ArmAccessTokenPermission;
+import apisamples.authentication.ArmAccessTokenScope;
 
 import java.io.IOException;
 import java.net.URI;
@@ -18,12 +18,13 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 import static java.lang.Thread.sleep;
-import static videoindexersamples.HttpUtils.Utils.*;
+import static apisamples.HttpUtils.Utils.*;
 
 public class VideoIndexerClient {
     private static final String AzureResourceManager = "https://management.azure.com";
@@ -67,12 +68,13 @@ public class VideoIndexerClient {
         var accessTokenRequest = new AccessTokenRequest(projectId, videoId, permission, scope);
         var accessTokenRequestStr = gson.toJson(accessTokenRequest);
 
-        var requestUri = String.format("%s/subscriptions/%s/resourcegroups/%s/providers/Microsoft.VideoIndexer/accounts/%s/generateAccessToken?api-version=%s", AzureResourceManager, SubscriptionId, ResourceGroup, AccountName, ApiVersion);
+        var requestUri = MessageFormat.format("{0}/subscriptions/{1}/resourcegroups/{2}/providers/Microsoft.VideoIndexer/accounts/{3}/generateAccessToken?api-version={4}",
+                                              AzureResourceManager, SubscriptionId, ResourceGroup, AccountName, ApiVersion);
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(new URI(requestUri))
                     .headers("Content-Type", "application/json;charset=UTF-8")
-                    .headers("Authorization", String.format("Bearer %s", this.armAccessToken))
+                    .headers("Authorization", "Bearer " + this.armAccessToken)
                     .POST(HttpRequest.BodyPublishers.ofString(accessTokenRequestStr))
                     .build();
 
@@ -99,9 +101,10 @@ public class VideoIndexerClient {
         map.put("privacy", "private");
         map.put("partition", "partition");
         map.put("videoUrl", videoUrl);
+        map.put("streamingPreset","NoStreaming");
         var queryParam = Utils.toQueryParamString(map);
 
-        var requestUri = String.format("%s/%s/Accounts/%s/Videos?%s", ApiUrl, account.location, account.properties.accountId, queryParam);
+        var requestUri = MessageFormat.format("{0}/{1}/Accounts/{2}/Videos?{3}", ApiUrl, account.location, account.properties.accountId, queryParam);
 
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -114,7 +117,7 @@ public class VideoIndexerClient {
             Video upoloadedVideo = gson.fromJson(response.body(), Video.class);
 
             String videoId = upoloadedVideo.id;
-            System.out.printf("Video ID %s was uploaded successfully.\n", videoId);
+            System.out.println(MessageFormat.format("Video ID {0} was uploaded successfully", videoId));
             return videoId;
         } catch (URISyntaxException | IOException | InterruptedException ex) {
             throw new RuntimeException(ex);
@@ -129,7 +132,7 @@ public class VideoIndexerClient {
      * @return Video Metadata
      */
     public String getVideo(String videoId) {
-        System.out.printf("Searching videos in account %s for video ID %s.\n", account.properties.accountId, videoId);
+        System.out.println(MessageFormat.format("Searching videos in account {0} for video Id {1}.", account.properties.accountId, videoId));
 
         Map<String, String> map = new HashMap<>();
         map.put("accessToken", this.accountAccessToken);
@@ -137,8 +140,10 @@ public class VideoIndexerClient {
         var queryParam = Utils.toQueryParamString(map);
 
         try {
-            var requestUri = String.format("%s/%s/Accounts/%s/Videos/Search?%s", ApiUrl, account.location, account.properties.accountId, queryParam);
-            return httpStringResponse(Utils.httpGetRequest(requestUri)).body();
+            var requestUri = MessageFormat.format("{0}/{1}/Accounts/{2}/Videos/Search?{3}", ApiUrl, account.location, account.properties.accountId, queryParam);
+            var httpRequest = Utils.httpGetRequest(requestUri);
+            var httpResponse = Utils.httpStringResponse(httpRequest);
+            return httpResponse.body();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -152,13 +157,10 @@ public class VideoIndexerClient {
     public Account getAccountInfo() {
         System.out.println("Getting Account Info ( Location/AccountId)");
         try {
-            var requestUri = String.format("%s/subscriptions/%s/resourcegroups/%s/providers/Microsoft.VideoIndexer/accounts/%s?api-version=%s", AzureResourceManager, SubscriptionId, ResourceGroup, AccountName, ApiVersion);
+            var requestUri = MessageFormat.format("%{0}/subscriptions/%{1}/resourcegroups/%{2}/providers/Microsoft.VideoIndexer/accounts/{3}?api-version={4}",
+                    AzureResourceManager, SubscriptionId, ResourceGroup, AccountName, ApiVersion);
             try {
-                HttpRequest request = HttpRequest.newBuilder().uri(new URI(requestUri))
-                        .headers("Content-Type", "application/json;charset=UTF-8")
-                        .headers("Authorization", String.format("Bearer %s", this.armAccessToken))
-                        .GET()
-                        .build();
+                HttpRequest request = httpGetRequest(requestUri);
                 var responseBodyJson = httpStringResponse(request).body();
                 this.account = gson.fromJson(responseBodyJson, Account.class);
             } catch (URISyntaxException | IOException | InterruptedException ex) {
@@ -181,10 +183,16 @@ public class VideoIndexerClient {
 
         Map<String, String> map = new HashMap<>();
         map.put("accessToken", this.accountAccessToken);
+        //Setting Language is optional, if not set - default language will be used.
         map.put("language", "English");
+
         var queryParam = Utils.toQueryParamString(map);
-        var requestUri = String.format("%s/%s/Accounts/%s/Videos/%s/index?%s", ApiUrl, account.location, account.properties.accountId, videoId, queryParam);
-        while (true) { //
+        var requestUri = MessageFormat.format("{0}/{1}/Accounts/{1}/Videos/{3}/index?{4}",
+                ApiUrl, account.location, account.properties.accountId, videoId, queryParam);
+
+        // Sample Polling to retrieve completion.
+        // Refer to the VideoIndexerEventProcessor class to use event Hubs processing of Video Indexer events.
+        while (true) {
             try {
 
                 var request = Utils.httpGetRequest(requestUri);
@@ -194,14 +202,16 @@ public class VideoIndexerClient {
 
                 // If job is finished
                 if (Objects.equals(processingState, ProcessingState.Processed.toString())) {
-                    System.out.printf("The video index has completed. Here is the full JSON of the index for video ID %s: \n%s\n", videoId, response.body());
+                    System.out.println(
+                            MessageFormat.format("The video index has completed. " +
+                                    "Here is the full JSON of the index for video ID {0}: \n{1}\n", videoId, response.body()));
                     return true;
                 } else if (Objects.equals(processingState, ProcessingState.Failed.toString())) {
-                    System.out.printf("The video index failed for video ID %s.\n", videoId);
+                    System.out.println(MessageFormat.format("The video index failed for video Id {0}", videoId));
                     return false;
                 }
                 // Job hasn't finished
-                System.out.printf("The video index state is %s\n", processingState);
+                System.out.println(MessageFormat.format("The video index state is {0}", processingState));
                 sleep(10000);
             } catch (URISyntaxException | IOException | InterruptedException ex) {
                 throw new RuntimeException(ex);
@@ -219,7 +229,8 @@ public class VideoIndexerClient {
         Map<String, String> map = new HashMap<>();
         map.put("accessToken", this.accountAccessToken);
         var queryParam = Utils.toQueryParamString(map);
-        var requestUri = String.format("%s/%s/Accounts/%s/Videos/%s?%s", ApiUrl, account.location, account.properties.accountId, videoId, queryParam);
+        var requestUri = MessageFormat.format("{0}/{1}/Accounts/{2}/Videos/{3}?{4}",
+                ApiUrl, account.location, account.properties.accountId, videoId, queryParam);
 
         try {
             var httpRequest = HttpRequest.newBuilder()

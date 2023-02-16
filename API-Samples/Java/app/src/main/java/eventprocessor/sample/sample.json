@@ -1,0 +1,80 @@
+{
+  "records": [
+    {
+      "time": "2023-02-16T12:49:13.7976237Z",
+      "resourceId": "/SUBSCRIPTIONS/some-subscription-id/RESOURCEGROUPS/some-resource-group/PROVIDERS/MICROSOFT.VIDEOINDEXER/ACCOUNTS/some-vi-account-name",
+      "operationName": "UploadStarted",
+      "category": "IndexingLogs",
+      "correlationId": "00000000-0000-0000-0000-000000000000",
+      "resultType": "Success",
+      "location": "westus2",
+      "operationVersion": "2.0",
+      "durationMs": "0",
+      "identity": {
+        "upn": "user@microsoft.com",
+        "claims": null
+      },
+      "properties": {
+        "accountName": "some-vi-account-name",
+        "accountId": "11111111-1111-1111-1111-111111111111",
+        "videoId": "0000000001",
+        "indexing": {
+          "Language": "en-US",
+          "Privacy": "Private",
+          "Partition": null,
+          "PersonModelId": null,
+          "LinguisticModelId": null,
+          "LogoGroupId": null,
+          "AssetId": null,
+          "IndexingPreset": "Default",
+          "StreamingPreset": "Default",
+          "Description": null,
+          "Priority": null,
+          "ExternalId": null,
+          "Filename": "video.mp4",
+          "AnimationModelId": null,
+          "BrandsCategories": null,
+          "CustomLanguages": null
+        }
+      }
+    },
+    {
+      "time": "2023-02-16T12:49:17.9361613Z",
+      "resourceId": "/SUBSCRIPTIONS/some-subscription-id/RESOURCEGROUPS/some-resource-group/PROVIDERS/MICROSOFT.VIDEOINDEXER/ACCOUNTS/some-vi-account-name",
+      "operationName": "UploadFinished",
+      "category": "IndexingLogs",
+      "correlationId": "00000000-0000-0000-0000-000000000000",
+      "resultType": "Success",
+      "location": "westus2",
+      "operationVersion": "2.0",
+      "durationMs": "4141",
+      "identity": {
+        "upn": "user@microsoft.com",
+        "claims": null
+      },
+      "properties": {
+        "accountName": "some-vi-account-name",
+        "accountId": "11111111-1111-1111-1111-111111111111",
+        "videoId": "0000000001",
+        "indexing": {
+          "Language": "en-US",
+          "Privacy": "Private",
+          "Partition": null,
+          "PersonModelId": null,
+          "LinguisticModelId": null,
+          "LogoGroupId": null,
+          "AssetId": null,
+          "IndexingPreset": "Default",
+          "StreamingPreset": "Default",
+          "Description": null,
+          "Priority": null,
+          "ExternalId": null,
+          "Filename": "video.mp4",
+          "AnimationModelId": null,
+          "BrandsCategories": null,
+          "CustomLanguages": null
+        }
+      }
+    }
+  ]
+}

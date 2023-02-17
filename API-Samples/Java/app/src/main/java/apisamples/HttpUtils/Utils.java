@@ -31,6 +31,14 @@ public class Utils {
                 .GET()
                 .build();
     }
+    public static HttpRequest httpGetRequestWithBearer(String uriRequest,String token) throws URISyntaxException {
+        return HttpRequest.newBuilder()
+                .uri(new URI(uriRequest))
+                .headers("Content-Type", "application/json;charset=UTF-8")
+                .headers("Authorization", "Bearer " + token)
+                .GET()
+                .build();
+    }
 
     public static HttpResponse<String> httpStringResponse(HttpRequest httpRequest) throws IOException, InterruptedException {
         var response = HttpClient

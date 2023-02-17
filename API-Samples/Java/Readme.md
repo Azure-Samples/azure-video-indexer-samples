@@ -1,19 +1,19 @@
 # Video Indexer API Samples For Java
 
-The Java Samples contains 2 Java Console Application folder, located under the src/main/java folder
+This Azure Video Indexer Java Samples document contains 2 Java Console Application folders, located under the src/main/java folder. These are:
 
 1. apisamples: 
 
-Demonstrates the VideoIndexer API calls to perform the following  
-  - Get Account Access Token
+It demonstrates the VideoIndexer API calls to perform the following:  
+  - Get Video Indexer Account Access Token
   - Upload a video ( with/without streaming capabilities)
   - Wait For an Index operation to finish using Polling Mechanism
   - Get Video Results 
-  - Delete a Video and all its related assets.
+  - Delete a Video and all its related assets
 
 2. eventProcessor: 
 
-Demonstrates the usage of Event hubs processor mechanism to retreive indexing events and to be notified without polling on index completion events.
+It demonstrates the usage of Event Hub messaging to retreive indexing events and to be notified without polling on index completion events.
 
 ## Getting started
 
@@ -32,7 +32,7 @@ Demonstrates the usage of Event hubs processor mechanism to retreive indexing ev
 #### Library Dependencies
 The samples depends on the following [maven repository libraries][maven_repo]
 
-```json
+```java
     dependencies {
         implementation 'com.google.guava:guava:31.1-jre'
         implementation 'com.google.code.gson:gson:2.10.1'
@@ -47,10 +47,10 @@ The samples depends on the following [maven repository libraries][maven_repo]
 
 ### API Rest Samples
 
-The Samples contains a [`VideoIndexerClient`] which is a REST wrapper to perform the http calls.
-It uses an Azure ARM Token and then uses that token to retreive the Video Indexer Account Token which is valid for 1 hour
+The Samples contain a [`VideoIndexerClient`][VideoIndexerClient] which is a REST wrapper to perform the http calls.
+It uses an Azure ARM Token to retreive the Video Indexer Account Token which is valid for 1 hour
 to perform Video Indexer API Calls. The caller is responsible to refresh that token after it times out. 
-To Upload Video The Client uses the Upload Video URL, with the following url Parameters: 
+To upload Video, the Client uses the Upload Video URL, with the following url Parameters: 
 
 ```java readme-sample-publishEvents
         Map<String, String> map = new HashMap<>();
@@ -63,34 +63,34 @@ To Upload Video The Client uses the Upload Video URL, with the following url Par
         map.put("streamingPreset","NoStreaming");
 ```
 
-Note that when `streamingPreset` is the to `NoStreaming` the index operation skips the Azure Media Services Streaming endpoint, which
-expedites the completion of the indexing.
+Note that when `streamingPreset` is set to `NoStreaming` the index operation skips the Azure Media Services encoding and creation of a new file for streaming, which expedites the completion of the indexing.
 
-The sample uses Busy Wait loop to Poll on completion status of the indexed videos .
+The sample uses Busy Wait loop to Poll on completion status of the indexed videos.
 
 #### Consuming Video Indexer Events from Event Hubs
 
-Developers can consume the Video Indexer Operations from an Event-Hub integration by following the pattern described on the 
+Developers can consume the Video Indexer Operations from an Event Hubs integration by following the pattern described on the 
 [Collection and Route][vi_collection_route] Section of Video Indexer Documentation.
 
 Video Indexer Diagnostic Settings allows developer to consume the following Event Types:
 - Audit Events
 - Indexing Log Events
 
-The sample uses [`EventProcessorClient`] that process incoming events from the Event Hub and handles them according to the Operation Name field.
+The sample uses [`EventProcessorClient`][EventProcessorClient] that process incoming events from the Event Hub and handles them according to the Operation Name field.
 Event that was configured at the Diagnostic Settings of the Video Indexer Account.
 
 The following events from the Indexing Logs Category are available:
 
 ```java indexing-logs-category
-    private static final String UPLOAD_STARTED = "UploadStarted";
-    private static final String UPLOAD_FINISHED = "UploadFinished";
-    private static final String INDEXING_STARTED = "IndexingStarted";
-    private static final String INDEXING_FINISHED = "IndexingFinished";
-    private static final String REINDEX_STARTED = "ReindexingStarted";
-    private static final String REINDEX_FINISHED = "ReindexingFinished";
+    String UPLOAD_STARTED = "UploadStarted";
+    String UPLOAD_FINISHED = "UploadFinished";
+    String INDEXING_STARTED = "IndexingStarted";
+    String INDEXING_FINISHED = "IndexingFinished";
+    String REINDEX_STARTED = "ReindexingStarted";
+    String REINDEX_FINISHED = "ReindexingFinished";
 ```
 
+The sample also contains an example on the [event schema][vi_eh_schema] for the Video Indexing /Audit Logs.
 
 ## Next steps
 
@@ -111,4 +111,4 @@ The following events from the Indexing Logs Category are available:
 [maven_repo]: https://mvnrepository.com/
 [vi_api]: https://api-portal.videoindexer.ai/
 [vi_deploy]: https://github.com/Azure-Samples/media-services-video-indexer/tree/master/Deploy-Samples
-
+[vi_eh_schema]: https://github.com/Azure-Samples/media-services-video-indexer/blob/master/API-Samples/Java/app/src/main/java/eventprocessor/sample/sample.json

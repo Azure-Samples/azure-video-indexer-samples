@@ -131,7 +131,7 @@ public class VideoIndexerClient {
      * @param videoId The video id
      * @return Video Metadata
      */
-    public String getVideo(String videoId) {
+    public String searchVideo(String videoId) {
         System.out.println(MessageFormat.format("Searching videos in account {0} for video Id {1}.", account.properties.accountId, videoId));
 
         Map<String, String> map = new HashMap<>();
@@ -140,7 +140,7 @@ public class VideoIndexerClient {
         var queryParam = Utils.toQueryParamString(map);
 
         try {
-            var requestUri = MessageFormat.format("{0}/{1}/Accounts/{2}/Videos/Search?{3}", ApiUrl, account.location, account.properties.accountId, queryParam);
+            var requestUri = MessageFormat.format("{0}/{1}/Accounts/{2}/Videos/Search?{3}", ApiUrl, account.location, account.properties.accountId,queryParam);
             var httpRequest = Utils.httpGetRequest(requestUri);
             var httpResponse = Utils.httpStringResponse(httpRequest);
             return httpResponse.body();
@@ -156,11 +156,12 @@ public class VideoIndexerClient {
      */
     public Account getAccountInfo() {
         System.out.println("Getting Account Info ( Location/AccountId)");
+
         try {
-            var requestUri = MessageFormat.format("%{0}/subscriptions/%{1}/resourcegroups/%{2}/providers/Microsoft.VideoIndexer/accounts/{3}?api-version={4}",
+            var requestUri = MessageFormat.format("{0}/subscriptions/{1}/resourcegroups/{2}/providers/Microsoft.VideoIndexer/accounts/{3}?api-version={4}",
                     AzureResourceManager, SubscriptionId, ResourceGroup, AccountName, ApiVersion);
             try {
-                HttpRequest request = httpGetRequest(requestUri);
+                HttpRequest request = Utils.httpGetRequestWithBearer(requestUri,this.armAccessToken);
                 var responseBodyJson = httpStringResponse(request).body();
                 this.account = gson.fromJson(responseBodyJson, Account.class);
             } catch (URISyntaxException | IOException | InterruptedException ex) {
@@ -187,7 +188,7 @@ public class VideoIndexerClient {
         map.put("language", "English");
 
         var queryParam = Utils.toQueryParamString(map);
-        var requestUri = MessageFormat.format("{0}/{1}/Accounts/{1}/Videos/{3}/index?{4}",
+        var requestUri = MessageFormat.format("{0}/{1}/Accounts/{2}/Videos/{3}/index?{4}",
                 ApiUrl, account.location, account.properties.accountId, videoId, queryParam);
 
         // Sample Polling to retrieve completion.

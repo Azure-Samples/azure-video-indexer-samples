@@ -1,11 +1,11 @@
 # Video Indexer API Samples For Java
 
-This Azure Video Indexer Java Samples document contains 2 Java Console Application folders, located under the src/main/java folder. They are:
+This Azure Video Indexer Java Samples document contains 2 Java Console Application folders, located under the src/main/java folder. These are:
 
 1. apisamples: 
 
 It demonstrates the VideoIndexer API calls to perform the following:  
-  - Get Account Access Token
+  - Get Video Indexer Account Access Token
   - Upload a video ( with/without streaming capabilities)
   - Wait For an Index operation to finish using Polling Mechanism
   - Get Video Results 
@@ -13,7 +13,7 @@ It demonstrates the VideoIndexer API calls to perform the following:
 
 2. eventProcessor: 
 
-It demonstrates the usage of Event Hubs processor mechanism to retreive indexing events and to be notified without polling on index completion events.
+It demonstrates the usage of Event Hub messaging to retreive indexing events and to be notified without polling on index completion events.
 
 ## Getting started
 
@@ -50,7 +50,7 @@ The samples depends on the following [maven repository libraries][maven_repo]
 The Samples contain a [`VideoIndexerClient`][VideoIndexerClient] which is a REST wrapper to perform the http calls.
 It uses an Azure ARM Token to retreive the Video Indexer Account Token which is valid for 1 hour
 to perform Video Indexer API Calls. The caller is responsible to refresh that token after it times out. 
-To Upload Video, the Client uses the Upload Video URL, with the following url Parameters: 
+To upload Video, the Client uses the Upload Video URL, with the following url Parameters: 
 
 ```java readme-sample-publishEvents
         Map<String, String> map = new HashMap<>();
@@ -63,8 +63,7 @@ To Upload Video, the Client uses the Upload Video URL, with the following url Pa
         map.put("streamingPreset","NoStreaming");
 ```
 
-Note that when `streamingPreset` is the to `NoStreaming` the index operation skips the Azure Media Services Streaming endpoint, which
-expedites the completion of the indexing.
+Note that when `streamingPreset` is set to `NoStreaming` the index operation skips the Azure Media Services encoding and creation of a new file for streaming, which expedites the completion of the indexing.
 
 The sample uses Busy Wait loop to Poll on completion status of the indexed videos.
 

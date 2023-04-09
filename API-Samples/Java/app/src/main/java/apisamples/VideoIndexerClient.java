@@ -33,7 +33,11 @@ public class VideoIndexerClient {
     private static final String AccountName = "<Your_Account_Name_Here>";
     private static final String ApiVersion = "2022-08-01";
     private static final String ApiUrl = "https://api.videoindexer.ai";
+    
     //If you want to be notified with POST events on your web site
+    //The callback URL can contain additional query parameters for example adding the externalId field
+    //Or any Custom Field.
+    //Example Callback with custom Parameters : https://webhook.site/#!/0000/?externalId=1234&customField=MyCustomField
     private static final String CallbackUrl ="" ; 
     
     private final String armAccessToken;

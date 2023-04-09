@@ -34,11 +34,11 @@ public class VideoIndexerClient {
     private static final String ApiVersion = "2022-08-01";
     private static final String ApiUrl = "https://api.videoindexer.ai";
     
-    //If you want to be notified with POST events on your web site
+    //If you want to be notified with POST events to your web site
     //The callback URL can contain additional query parameters for example adding the externalId field
     //Or any Custom Field.
     //Example Callback with custom Parameters : https://webhook.site/#!/0000/?externalId=1234&customField=MyCustomField
-    private static final String CallbackUrl ="" ; 
+    private static final String CallbackUrl =""; 
     
     private final String armAccessToken;
     private final Gson gson;
@@ -101,20 +101,21 @@ public class VideoIndexerClient {
      */
     public String uploadVideo(String videoUrl, String videoName) {
 
+        String encodedCallbackUrl = URLEncoder.encode(originalUrl, StandardCharsets.UTF_8);
         Map<String, String> map = new HashMap<>();
         map.put("accessToken", this.accountAccessToken);
         map.put("name", videoName);
         map.put("description", "video_description");
         map.put("privacy", "private");
         map.put("partition", "partition");
-        map.put("videoUrl", videoUrl);
+        map.put("videoUrl", URLEncoder.encode(videoUrl, StandardCharsets.UTF_8));
         // For API Based Scenarios it is advised to set "NoStream" for faster indexing. 
         map.put("streamingPreset","NoStreaming");
         //Retention Period of Video in days. Default is No retention. Max Allowed value is 7.
         map.put("retentionPeriod","1");
         // Use Callback URL to get notified on Video Indexing Events ( Start/ End Processing)
         if (!CallbackUrl.isBlank()) {
-            map.put("callbackUrl", CallbackUrl);
+            map.put("callbackUrl", URLEncoder.encode(CallbackUrl, StandardCharsets.UTF_8));
         }
 
         var queryParam = Utils.toQueryParamString(map);

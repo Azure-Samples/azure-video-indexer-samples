@@ -33,6 +33,9 @@ public class VideoIndexerClient {
     private static final String AccountName = "<Your_Account_Name_Here>";
     private static final String ApiVersion = "2022-08-01";
     private static final String ApiUrl = "https://api.videoindexer.ai";
+    //If you want to be notified with POST events on your web site
+    private static final String CallbackUrl ="" ; 
+    
     private final String armAccessToken;
     private final Gson gson;
     private String accountAccessToken;
@@ -88,7 +91,7 @@ public class VideoIndexerClient {
 
     /**
      * Uploads a video and starts the video index. Calls the uploadVideo API (<a href="https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Upload-Video">...</a>)
-     *
+     * 
      * @param videoUrl : the video Url to upload
      * @return Video Id of the video being indexed, otherwise throws exception
      */
@@ -101,7 +104,15 @@ public class VideoIndexerClient {
         map.put("privacy", "private");
         map.put("partition", "partition");
         map.put("videoUrl", videoUrl);
+        // For API Based Scenarios it is advised to set "NoStream" for faster indexing. 
         map.put("streamingPreset","NoStreaming");
+        //Retention Period of Video in days. Default is No retention. Max Allowed value is 7.
+        map.put("retentionPeriod","1");
+        // Use Callback URL to get notified on Video Indexing Events ( Start/ End Processing)
+        if (!CallbackUrl.isBlank()) {
+            map.put("callbackUrl", CallbackUrl);
+        }
+
         var queryParam = Utils.toQueryParamString(map);
 
         var requestUri = MessageFormat.format("{0}/{1}/Accounts/{2}/Videos?{3}", ApiUrl, account.location, account.properties.accountId, queryParam);

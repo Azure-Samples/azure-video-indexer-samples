@@ -40,7 +40,7 @@ public class VideoIndexerClient {
     //The callback URL can contain additional query parameters for example adding the externalId field
     //Or any Custom Field.
     //Example Callback with custom Parameters : https://webhook.site/#!/0000/?externalId=1234&customField=MyCustomField
-    private static final String CallbackUrl =""; 
+    private static final String CallbackUrl = ""; 
     
     private final String armAccessToken;
     private final Gson gson;

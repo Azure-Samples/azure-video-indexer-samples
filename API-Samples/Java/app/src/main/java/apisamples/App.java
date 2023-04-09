@@ -43,9 +43,12 @@ public class App {
         var videoMetadata = videoIndexerClient.searchVideo(videoId);
         System.out.printf("Video Metadata : \n%s\n", videoMetadata);
 
-        //7. Delete Video
-        System.out.printf("Deleting Video %s.\n", videoId);
-        videoIndexerClient.deleteVideo(videoId);
+        //7. Delete Video : marked out as we chose to use retention parameter
+        // The video and all related media assets wil be removed after 1 day.
+        // You can still look at videoIndexerClient.deleteVideo to see how the delete API works
+
+        //  System.out.printf("Deleting Video %s.\n", videoId);
+        //  videoIndexerClient.deleteVideo(videoId);
     }
 
 }

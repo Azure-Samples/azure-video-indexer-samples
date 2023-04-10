@@ -15,9 +15,11 @@ import apisamples.authentication.ArmAccessTokenScope;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,11 +36,11 @@ public class VideoIndexerClient {
     private static final String ApiVersion = "2022-08-01";
     private static final String ApiUrl = "https://api.videoindexer.ai";
     
-    //If you want to be notified with POST events to your web site
+    //If you want to be notified with POST events to your website
     //The callback URL can contain additional query parameters for example adding the externalId field
     //Or any Custom Field.
     //Example Callback with custom Parameters : https://webhook.site/#!/0000/?externalId=1234&customField=MyCustomField
-    private static final String CallbackUrl =""; 
+    private static final String CallbackUrl = ""; 
     
     private final String armAccessToken;
     private final Gson gson;
@@ -97,11 +99,10 @@ public class VideoIndexerClient {
      * Uploads a video and starts the video index. Calls the uploadVideo API (<a href="https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Upload-Video">...</a>)
      * 
      * @param videoUrl : the video Url to upload
-     * @return Video Id of the video being indexed, otherwise throws exception
+     * @return Video ID of the video being indexed, otherwise throws exception
      */
     public String uploadVideo(String videoUrl, String videoName) {
 
-        String encodedCallbackUrl = URLEncoder.encode(originalUrl, StandardCharsets.UTF_8);
         Map<String, String> map = new HashMap<>();
         map.put("accessToken", this.accountAccessToken);
         map.put("name", videoName);
@@ -220,8 +221,10 @@ public class VideoIndexerClient {
                 // If job is finished
                 if (Objects.equals(processingState, ProcessingState.Processed.toString())) {
                     System.out.println(
-                            MessageFormat.format("The video index has completed. " +
-                                    "Here is the full JSON of the index for video ID {0}: \n{1}\n", videoId, response.body()));
+                            MessageFormat.format("""
+                                    The video index has completed. Here is the full JSON of the index for video ID {0}:\s
+                                    {1}
+                                    """, videoId, response.body()));
                     return true;
                 } else if (Objects.equals(processingState, ProcessingState.Failed.toString())) {
                     System.out.println(MessageFormat.format("The video index failed for video Id {0}", videoId));

@@ -6,10 +6,10 @@ This Azure Video Indexer Java Samples document contains 2 Java Console Applicati
 
 It demonstrates the VideoIndexer API calls to perform the following:  
   - Get Video Indexer Account Access Token
-  - Upload a video ( with/without streaming capabilities)
+  - Upload a video ( without streaming capabilities , with retention Period of 1 day , with callback URL )
   - Wait For an Index operation to finish using Polling Mechanism
   - Get Video Results 
-  - Delete a Video and all its related assets
+  - Delete a Video and all its related assets (code presented as reference since retentionPeriod parameter outcast the need to delete the video.)
 
 2. eventProcessor: 
 

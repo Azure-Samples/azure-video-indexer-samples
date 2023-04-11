@@ -111,7 +111,7 @@ public class VideoIndexerClient {
         map.put("description", "video_description");
         map.put("privacy", "private");
         map.put("partition", "partition");
-        map.put("videoUrl", URLEncoder.encode(videoUrl, StandardCharsets.UTF_8));
+        map.put("videoUrl", videoUrl);
         // For API Based Scenarios it is advised to set "NoStream" for faster indexing. 
         map.put("streamingPreset","NoStreaming");
         //Retention Period of Video in days. Default is No retention. Max Allowed value is 7.

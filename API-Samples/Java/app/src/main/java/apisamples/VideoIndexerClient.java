@@ -11,6 +11,7 @@ import apisamples.authentication.AccessTokenRequest;
 import apisamples.authentication.AccessTokenResponse;
 import apisamples.authentication.ArmAccessTokenPermission;
 import apisamples.authentication.ArmAccessTokenScope;
+import com.sun.jna.platform.win32.Guid;
 
 import java.io.IOException;
 import java.net.URI;
@@ -27,6 +28,7 @@ import java.util.Objects;
 
 import static java.lang.Thread.sleep;
 import static apisamples.HttpUtils.Utils.*;
+import static java.util.UUID.*;
 
 public class VideoIndexerClient {
     private static final String AzureResourceManager = "https://management.azure.com";
@@ -109,11 +111,14 @@ public class VideoIndexerClient {
         map.put("description", "video_description");
         map.put("privacy", "private");
         map.put("partition", "partition");
-        map.put("videoUrl", URLEncoder.encode(videoUrl, StandardCharsets.UTF_8));
+        map.put("videoUrl", videoUrl);
         // For API Based Scenarios it is advised to set "NoStream" for faster indexing. 
         map.put("streamingPreset","NoStreaming");
         //Retention Period of Video in days. Default is No retention. Max Allowed value is 7.
         map.put("retentionPeriod","1");
+        //Add externalId field in order to eventually  this is useful for external correlation Ids.
+        //the field will then be present on the event hub processor.
+        map.put("externalId", randomUUID().toString());
         // Use Callback URL to get notified on Video Indexing Events ( Start/ End Processing)
         if (!CallbackUrl.isBlank()) {
             map.put("callbackUrl", URLEncoder.encode(CallbackUrl, StandardCharsets.UTF_8));

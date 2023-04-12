@@ -52,6 +52,7 @@ public class VideoIndexerEventHandler {
     /**
      * Dummy Event Processor Logic - only prints the fields received from Event Hubs
      * @param evt - IndexEventRecord
+     * Reference: <a href="https://learn.microsoft.com/en-us/azure/azure-video-indexer/monitor-video-indexer-data-reference">...</a>
      */
     private void processEvent(IndexEventRecord evt)
     {
@@ -65,7 +66,12 @@ public class VideoIndexerEventHandler {
         //Possible Operation Name Values: [ UploadStarted, UploadFinished, IndexingStarted , IndexingFinished, ReindexingStarted, ReindexingFinished ]
 
         System.out.println(MessageFormat.format("Index Video Event Received. Operation: {0}, VideoId: {1}, File: {2}, ExternalId: {3}, RetentionInDays: {4}, Result: {5}",
-                operationName,videoId,fileName,externalId,retentionInDays,resultType));
+                operationName,
+                videoId,
+                fileName,
+                externalId,
+                retentionInDays,
+                resultType));
     }
 
     /**

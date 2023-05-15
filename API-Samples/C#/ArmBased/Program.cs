@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -93,17 +94,18 @@ namespace VideoIndexerArm
                     {"accessToken", acountAccessToken},
                     {"name", "video sample"},
                     {"description", "video_description"},
-                    {"privacy", "private"},     
+                    {"privacy", "private"},
                     {"partition", "partition"},
-                    {"videoUrl", VideoUrl},
+                    {"videoUrl", VideoUrl}, // Do not Include VideoURL when uploading Video using StreamContent
                 });
 
                 // As an alternative to specifying video URL, you can upload a file.
                 // Remove the videoUrl parameter from the query params below and add the following lines:
-                // FileStream video =File.OpenRead(Globals.VIDEOFILE_PATH);
-                // byte[] buffer =new byte[video.Length];
-                // video.Read(buffer, 0, buffer.Length);
-                // content.Add(new ByteArrayContent(buffer));
+                //FileStream video = File.OpenRead(VideoFilePath);
+                //var streamContent = new StreamContent(video);
+                //streamContent.Headers.Add("Content-Type", "application/octet-stream");
+                //streamContent.Headers.Add("Content-Length", video.Length.ToString());
+                //content.Add(streamContent, "video", Path.GetFileName(VideoFilePath));
 
                 var uploadRequestResult = await client.PostAsync($"{apiUrl}/{accountLocation}/Accounts/{accountId}/Videos?{queryParams}", content);
                 VerifyStatus(uploadRequestResult, System.Net.HttpStatusCode.OK);

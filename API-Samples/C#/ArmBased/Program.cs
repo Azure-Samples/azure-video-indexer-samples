@@ -20,7 +20,7 @@ namespace VideoIndexerArm
         private const string ResourceGroup = "<Your Resource Gropup Name Here>";
         private const string AccountName = "<Your Video Indexer Account Name Here>";
         private const string VideoUrl = "<Your Video Url Here>";
-        private const string ApiUrl = "https://api.videoindexer.ai";
+        private const string ExcludedAI = "<Enter here a list seperated by a comma of the AIs you would like to exclude Faces,Labels,Emotions,ObservedPeople>";
 
         public static async Task Main(string[] args)
         {
@@ -93,10 +93,12 @@ namespace VideoIndexerArm
                     {"accessToken", acountAccessToken},
                     {"name", "video sample"},
                     {"description", "video_description"},
-                    {"privacy", "private"},     
+                    {"privacy", "private"},
                     {"partition", "partition"},
                     {"videoUrl", VideoUrl},
                 });
+
+                queryParams += AddExcludedAIs(ExcludedAI);
 
                 // As an alternative to specifying video URL, you can upload a file.
                 // Remove the videoUrl parameter from the query params below and add the following lines:
@@ -278,6 +280,17 @@ namespace VideoIndexerArm
             }
 
             return queryParameters.ToString();
+        }
+
+        static string AddExcludedAIs(string excludedAI)
+        {
+            var list = excludedAI.Split(',');
+            var result = "";
+            foreach (var item in list)
+            {
+                result += "&excludedAI=" + item;
+            }
+            return result;
         }
 
         public class VideoIndexerResourceProviderClient

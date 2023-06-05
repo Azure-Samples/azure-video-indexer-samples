@@ -284,6 +284,10 @@ namespace VideoIndexerArm
 
         static string AddExcludedAIs(string excludedAI)
         {
+            if (excludedAI == null || excludedAI == "")
+            {
+                return "";
+            }
             var list = excludedAI.Split(',');
             var result = "";
             foreach (var item in list)

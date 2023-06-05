@@ -20,7 +20,7 @@ namespace VideoIndexerArm
         private const string ResourceGroup = "<Your Resource Gropup Name Here>";
         private const string AccountName = "<Your Video Indexer Account Name Here>";
         private const string VideoUrl = "<Your Video Url Here>";
-        private const string ExcludedAI = "<Enter here a list seperated by a comma of the AIs you would like to exclude Faces,Labels,Emotions,ObservedPeople>";
+        private const string ExcludedAI = "" // Enter a list seperated by a comma of the AIs you would like to exclude in the format "<Faces,Labels,Emotions,ObservedPeople>". Leave empty if you do not want to exclude any AIs
 
         public static async Task Main(string[] args)
         {

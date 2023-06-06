@@ -17,10 +17,11 @@ namespace VideoIndexerArm
         private const string ApiVersion = "2022-08-01";
         private const string AzureResourceManager = "https://management.azure.com";
         private const string SubscriptionId = "<Your Subscription Id Here>";
-        private const string ResourceGroup = "<Your Resource Gropup Name Here>";
+        private const string ResourceGroup = "< Your Resource Group Name Here>";
         private const string AccountName = "<Your Video Indexer Account Name Here>";
         private const string VideoUrl = "<Your Video Url Here>";
-        private const string ExcludedAI = "" // Enter a list seperated by a comma of the AIs you would like to exclude in the format "<Faces,Labels,Emotions,ObservedPeople>". Leave empty if you do not want to exclude any AIs
+        private const string ApiUrl = "https://api.videoindexer.ai";
+        private const string ExcludedAI = ""; // Enter a list seperated by a comma of the AIs you would like to exclude in the format "<Faces,Labels,Emotions,ObservedPeople>". Leave empty if you do not want to exclude any AIs. For more see here https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Upload-Video:~:text=AI%20to%20exclude%20when%20indexing%2C%20for%20example%20for%20sensitive%20scenarios.%20Options%20are%3A%20Face/Observed%20peopleEmotions/Labels%7D.
 
         public static async Task Main(string[] args)
         {
@@ -284,7 +285,7 @@ namespace VideoIndexerArm
 
         static string AddExcludedAIs(string excludedAI)
         {
-            if (excludedAI == null || excludedAI == "")
+            if (String.IsNullOrEmpty(excludedAI))
             {
                 return "";
             }

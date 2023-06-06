@@ -37,9 +37,10 @@ Instructions:
 2. Go to Program.cs and populate `ResourceGroup` with your resource group
 3. Go to Program.cs and populate `AccountName` with your account name
 4. Go to Program.cs and populate `VideoUrl` with your video url
-5. make sure dotnet 6.0 is installed. if not, please install https://dotnet.microsoft.com/download/dotnet/6.0
-6. Open your terminal and navigate to "ApiUsage\ArmBased" folder
-7. Run dotnet build
+5. Go to Program.cs and Populate `ExcludedAI` with the AI's you want to exclude from the indexing job.
+6. make sure dotnet 6.0 is installed. if not, please install https://dotnet.microsoft.com/download/dotnet/6.0
+7. Open your terminal and navigate to "ApiUsage\ArmBased" folder
+8. Run dotnet build
 
 For more information visit [here](https://docs.microsoft.com/en-us/azure/media-services/video-indexer/video-indexer-use-apis)
 

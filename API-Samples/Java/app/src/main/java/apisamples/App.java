@@ -14,14 +14,9 @@ public class App {
         System.out.println("==========================");
 
         //1. Create a VideoIndexerClient which encapsulates Http calls and AccessTokens
+        //The Video Indexer Client stores the credentials in TokensStore based on the permission asked for this VideoIndexerClient (Contributor on the account level)
         System.out.println("Creating Video Indexer Client Instance");
-        var videoIndexerClient = VideoIndexerClient.create();
-
-        //2. Explicit Get Account Access Token
-        // You can use the account Access Token for subsequent requests , in this demo it is stored inside the VideoIndexer Client.
-        // The Token is valid for 1 hour
-        System.out.println("Get Account Access Token");
-        videoIndexerClient.getAccountAccessToken(ArmAccessTokenPermission.Contributor, ArmAccessTokenScope.Account, null, null);
+        var videoIndexerClient = new VideoIndexerClient(ArmAccessTokenPermission.Contributor, ArmAccessTokenScope.Account);
 
         //3. Get Account Information
         Account account = videoIndexerClient.getAccountInfo();

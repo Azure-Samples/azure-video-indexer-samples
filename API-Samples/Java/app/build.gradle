@@ -24,7 +24,11 @@ dependencies {
     implementation 'com.azure:azure-identity:1.8.0'
     implementation 'com.azure:azure-messaging-eventhubs:5.15.2'
     implementation 'com.azure:azure-messaging-eventhubs-checkpointstore-blob:1.16.3'
+    implementation 'com.github.ben-manes.caffeine:caffeine:3.1.6'
     implementation 'org.slf4j:slf4j-nop:2.0.6'
+    implementation 'com.auth0:java-jwt:4.4.0'
+
+
 
 }
 

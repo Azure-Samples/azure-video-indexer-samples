@@ -1,17 +1,11 @@
 package apisamples;
 
-import com.azure.core.credential.TokenRequestContext;
-import com.azure.identity.DefaultAzureCredential;
-import com.azure.identity.DefaultAzureCredentialBuilder;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import apisamples.Account.Account;
 import apisamples.HttpUtils.Utils;
-import apisamples.authentication.AccessTokenRequest;
-import apisamples.authentication.AccessTokenResponse;
 import apisamples.authentication.ArmAccessTokenPermission;
 import apisamples.authentication.ArmAccessTokenScope;
-import com.sun.jna.platform.win32.Guid;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.net.URI;
@@ -26,75 +20,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static java.lang.Thread.sleep;
 import static apisamples.HttpUtils.Utils.*;
-import static java.util.UUID.*;
+import static java.lang.Thread.sleep;
+import static java.util.UUID.randomUUID;
 
 public class VideoIndexerClient {
-    private static final String AzureResourceManager = "https://management.azure.com";
-    private static final String SubscriptionId = "<Your_Subscription_Id_here>";
-    private static final String ResourceGroup = "<Your_Resource_Group_here>";
-    private static final String AccountName = "<Your_Account_Name_Here>";
-    private static final String ApiVersion = "2022-08-01";
-    private static final String ApiUrl = "https://api.videoindexer.ai";
+    public static final String AzureResourceManager = "https://management.azure.com";
+    public static final String SubscriptionId = "<Your_Subscription_Id_here>";
+    public static final String ResourceGroup = "<Your_Resource_Group_here>";
+    public static final String AccountName = "<Your_Account_Name_Here>";
+    public static final String ApiVersion = "2022-08-01";
+    public static final String ApiUrl = "https://api.videoindexer.ai";
     
     //If you want to be notified with POST events to your website
     //The callback URL can contain additional query parameters for example adding the externalId field
     //Or any Custom Field.
     //Example Callback with custom Parameters : https://webhook.site/#!/0000/?externalId=1234&customField=MyCustomField
     private static final String CallbackUrl = ""; 
-    
-    private final String armAccessToken;
     private final Gson gson;
-    private String accountAccessToken;
     private Account account = null;
+    private TokensStore tokensStore ;
 
-    private VideoIndexerClient(String armAccessToken) {
-        this.armAccessToken = armAccessToken;
+
+    public VideoIndexerClient(ArmAccessTokenPermission permission, ArmAccessTokenScope scope) {
         gson = new GsonBuilder().setPrettyPrinting().create();
-    }
-
-    /**
-     * Create a new Video Indexer Client.
-     * During Creation a DefaultAzureCredential Chain is being invoked .
-     *
-     * @return the Video Indexer Client
-     */
-    public static VideoIndexerClient create() {
-        var tokenRequestContext = new TokenRequestContext();
-        tokenRequestContext.addScopes(String.format("%s/.default", AzureResourceManager));
-
-        DefaultAzureCredential defaultCredential = new DefaultAzureCredentialBuilder().build();
-        String accessToken = Objects.requireNonNull(defaultCredential.getToken(tokenRequestContext).block()).getToken();
-        return new VideoIndexerClient(accessToken);
-    }
-
-    /**
-     * @param permission - the required permission on the Video Indexer Account
-     * @param scope      - The scope of the Access token
-     * @param videoId    - the Video ID
-     * @param projectId  - the Project ID
-     */
-    public void getAccountAccessToken(ArmAccessTokenPermission permission, ArmAccessTokenScope scope, String videoId, String projectId) {
-        var accessTokenRequest = new AccessTokenRequest(projectId, videoId, permission, scope);
-        var accessTokenRequestStr = gson.toJson(accessTokenRequest);
-
-        var requestUri = MessageFormat.format("{0}/subscriptions/{1}/resourcegroups/{2}/providers/Microsoft.VideoIndexer/accounts/{3}/generateAccessToken?api-version={4}",
-                                              AzureResourceManager, SubscriptionId, ResourceGroup, AccountName, ApiVersion);
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI(requestUri))
-                    .headers("Content-Type", "application/json;charset=UTF-8")
-                    .headers("Authorization", "Bearer " + this.armAccessToken)
-                    .POST(HttpRequest.BodyPublishers.ofString(accessTokenRequestStr))
-                    .build();
-
-            var response = httpStringResponse(request);
-            AccessTokenResponse accessTokenResponse = gson.fromJson(response.body(), AccessTokenResponse.class);
-            this.accountAccessToken = accessTokenResponse.accessToken;
-        } catch (URISyntaxException | IOException | InterruptedException ex) {
-            throw new RuntimeException(ex);
-        }
+        tokensStore = new TokensStore(permission,scope);
     }
 
     /**
@@ -106,7 +56,7 @@ public class VideoIndexerClient {
     public String uploadVideo(String videoUrl, String videoName) {
 
         Map<String, String> map = new HashMap<>();
-        map.put("accessToken", this.accountAccessToken);
+        map.put("accessToken", tokensStore.getVIAccessToken());
         map.put("name", videoName);
         map.put("description", "video_description");
         map.put("privacy", "private");
@@ -132,7 +82,7 @@ public class VideoIndexerClient {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(new URI(requestUri))
                     .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.noBody())
+                    .POST(HttpRequest.BodyPublishers.ofString("{}"))
                     .build();
 
             var response = httpStringResponse(request);
@@ -157,7 +107,7 @@ public class VideoIndexerClient {
         System.out.println(MessageFormat.format("Searching videos in account {0} for video Id {1}.", account.properties.accountId, videoId));
 
         Map<String, String> map = new HashMap<>();
-        map.put("accessToken", this.accountAccessToken);
+        map.put("accessToken", tokensStore.getVIAccessToken());
         map.put("id", videoId);
         var queryParam = Utils.toQueryParamString(map);
 
@@ -183,7 +133,7 @@ public class VideoIndexerClient {
             var requestUri = MessageFormat.format("{0}/subscriptions/{1}/resourcegroups/{2}/providers/Microsoft.VideoIndexer/accounts/{3}?api-version={4}",
                     AzureResourceManager, SubscriptionId, ResourceGroup, AccountName, ApiVersion);
             try {
-                HttpRequest request = Utils.httpGetRequestWithBearer(requestUri,this.armAccessToken);
+                HttpRequest request = Utils.httpGetRequestWithBearer(requestUri,tokensStore.getArmAccessToken());
                 var responseBodyJson = httpStringResponse(request).body();
                 this.account = gson.fromJson(responseBodyJson, Account.class);
             } catch (URISyntaxException | IOException | InterruptedException ex) {
@@ -205,7 +155,7 @@ public class VideoIndexerClient {
         System.out.printf("Waiting for Video %s to finish indexing.\n", videoId);
 
         Map<String, String> map = new HashMap<>();
-        map.put("accessToken", this.accountAccessToken);
+        map.put("accessToken", tokensStore.getVIAccessToken());
         //Setting Language is optional, if not set - default language will be used.
         map.put("language", "English");
 
@@ -252,7 +202,7 @@ public class VideoIndexerClient {
     public void deleteVideo(String videoId) {
 
         Map<String, String> map = new HashMap<>();
-        map.put("accessToken", this.accountAccessToken);
+        map.put("accessToken", tokensStore.getVIAccessToken());
         var queryParam = Utils.toQueryParamString(map);
         var requestUri = MessageFormat.format("{0}/{1}/Accounts/{2}/Videos/{3}?{4}",
                 ApiUrl, account.location, account.properties.accountId, videoId, queryParam);

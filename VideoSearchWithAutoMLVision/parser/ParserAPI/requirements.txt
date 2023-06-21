@@ -1,4 +1,4 @@
-requests==2.24.0
+requests==2.31.0
 ObjDict==0.4.4
 fastapi==0.65.2
 python-dotenv==0.14.0

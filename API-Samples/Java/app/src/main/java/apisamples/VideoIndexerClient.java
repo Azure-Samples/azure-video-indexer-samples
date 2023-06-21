@@ -26,9 +26,9 @@ import static java.util.UUID.randomUUID;
 
 public class VideoIndexerClient {
     public static final String AzureResourceManager = "https://management.azure.com";
-    public static final String SubscriptionId = "<Your_Subscription_Id_here>";
-    public static final String ResourceGroup = "<Your_Resource_Group_here>";
-    public static final String AccountName = "<Your_Account_Name_Here>";
+    public static final String SubscriptionId = "24237b72-8546-4da5-b204-8c3cb76dd930";
+    public static final String ResourceGroup = "ts-poc-wus2-rg";
+    public static final String AccountName = "vi-linked-loadtest";
     public static final String ApiVersion = "2022-08-01";
     public static final String ApiUrl = "https://api.videoindexer.ai";
     

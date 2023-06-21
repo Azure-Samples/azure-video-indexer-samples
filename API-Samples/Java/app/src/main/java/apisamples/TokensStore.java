@@ -4,6 +4,8 @@ import apisamples.authentication.AccessTokenRequest;
 import apisamples.authentication.AccessTokenResponse;
 import apisamples.authentication.ArmAccessTokenPermission;
 import apisamples.authentication.ArmAccessTokenScope;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.azure.core.credential.AccessToken;
 import com.azure.core.credential.TokenRequestContext;
 import com.azure.identity.DefaultAzureCredential;
@@ -30,6 +32,7 @@ public class TokensStore {
     private final LoadingCache<String, TimedEntry> cache;
     private static final String armAccessTokenKey = "armAccessToken";
     private static final String viAccountTokenKey = "viAccountToken";
+    private static final long ExpiryBufferTimeInMs = TimeUnit.MINUTES.toMillis(5);
 
     private final Gson gson;
     private final ArmAccessTokenPermission permission;
@@ -38,12 +41,13 @@ public class TokensStore {
 
     public TokensStore(ArmAccessTokenPermission permission, ArmAccessTokenScope scope) {
         this.cache = Caffeine.newBuilder()
-                .build(key -> new TimedEntry(key, 0, TimeUnit.MILLISECONDS));
+                    .build(key -> new TimedEntry(key, 0));
         this.gson = new GsonBuilder().setPrettyPrinting().create();
         this.permission = permission;
         this.scope = scope;
-        //Generate the First ARM + VI Access Token
-        this.generateVIAccessToken();
+
+        //Generate the First ARM and VI Access Token and place them in cache
+        this.getVIAccessToken();
     }
 
 
@@ -53,13 +57,10 @@ public class TokensStore {
     private class TimedEntry {
         long expiryTime;
         String value;
-        public TimedEntry(String value, long duration, TimeUnit unit) {
+
+        public TimedEntry(String value, long expiryTimeEpocMilli) {
             this.value = value;
-            this.expiryTime = System.currentTimeMillis() + unit.toMillis(duration);
-        }
-        public TimedEntry(String value, long expiryTimeEpocMillisec) {
-            this.value = value;
-            this.expiryTime = expiryTimeEpocMillisec;
+            this.expiryTime = expiryTimeEpocMilli;
         }
         public boolean isExpired() {
             return System.currentTimeMillis() > expiryTime;
@@ -67,14 +68,14 @@ public class TokensStore {
     }
 
     public String getArmAccessToken() {
-        return this.getOrCreate(armAccessTokenKey, this::generateArmAccessToken, 55, TimeUnit.MINUTES);
+        return this.getOrCreate(armAccessTokenKey, this::generateArmAccessToken);
     }
 
     public String getVIAccessToken() {
-        return this.getOrCreate(viAccountTokenKey, this::generateVIAccessToken, 55, TimeUnit.MINUTES);
+        return this.getOrCreate(viAccountTokenKey, this::generateVIAccessToken);
     }
 
-    public String getOrCreate(String key, Supplier<TimedEntry> valueSupplier, long duration, TimeUnit unit) {
+    public String getOrCreate(String key, Supplier<TimedEntry> valueSupplier) {
         TimedEntry timedEntry = cache.getIfPresent(key);
         if (timedEntry == null || timedEntry.isExpired()) {
             timedEntry = valueSupplier.get();
@@ -94,9 +95,9 @@ public class TokensStore {
 
         DefaultAzureCredential defaultCredential = new DefaultAzureCredentialBuilder().build();
         AccessToken accessToken = Objects.requireNonNull(defaultCredential.getToken(tokenRequestContext).block());
-        var odt = accessToken.getExpiresAt();
-        long epochNanoExpiry = odt.toInstant().toEpochMilli();
-        return new TimedEntry(accessToken.getToken(),accessToken.getExpiresAt().toInstant().toEpochMilli());
+        //Calculate Expiration token as Expiry value - Buffer Time ( default 5 Min)
+        long expiryEpocTime = accessToken.getExpiresAt().toInstant().toEpochMilli() - ExpiryBufferTimeInMs;
+        return new TimedEntry(accessToken.getToken(),expiryEpocTime);
     }
 
     /**
@@ -121,8 +122,11 @@ public class TokensStore {
 
             var response = httpStringResponse(request);
             AccessTokenResponse accessTokenResponse = gson.fromJson(response.body(), AccessTokenResponse.class);
-            long expiry = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(55);
-            return new TimedEntry(accessTokenResponse.accessToken, expiry);
+            String token = accessTokenResponse.accessToken;
+            DecodedJWT jwt = JWT.decode(token);
+            //Calculate Expiration token as Expiry value - Buffer Time ( default 5 Min)
+            long expiryEpocTime = jwt.getExpiresAtAsInstant().toEpochMilli() - ExpiryBufferTimeInMs;
+            return new TimedEntry(accessTokenResponse.accessToken, expiryEpocTime);
         } catch (URISyntaxException | IOException | InterruptedException ex) {
             throw new RuntimeException(ex);
         }

@@ -6,7 +6,7 @@ import apisamples.authentication.ArmAccessTokenScope;
 
 public class App {
 
-    private static final String VideoUrl = "<Your Video URL>";
+    private static final String VideoUrl = "<Place_Your_Video_URL_HERE>";
 
     public static void main(String[] args) {
 

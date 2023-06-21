@@ -82,7 +82,7 @@ public class VideoIndexerClient {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(new URI(requestUri))
                     .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.noBody())
+                    .POST(HttpRequest.BodyPublishers.ofString("{}"))
                     .build();
 
             var response = httpStringResponse(request);

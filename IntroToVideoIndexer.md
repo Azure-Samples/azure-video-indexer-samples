@@ -35,7 +35,6 @@ in this workshop, including customizing the catalog vocabulary, brands
 and faces, updating the video transcript, integration with Flow and
 connecting to an Azure subscription. 
 
-Next. Requirements
 ==================
 
 # Requirements
@@ -46,8 +45,6 @@ Next. Requirements
 
 3.  User account (preferably corporate)
 
-
-Next. Overview
 ==============
 
 # Overview
@@ -400,8 +397,7 @@ quality, and more.
 
     Try to explore **- what interesting insights you can find in this
     video?**
-
-Next. Embed widgets on your own website
+ 
 ===================================================
 
 # Exercise 5: Embed widgets on your own website
@@ -438,8 +434,7 @@ Steps
     will not work once the token is expired (after 1 hour) and you’ll
     need to ask for new one.
 
-
-Next. Edit a file
+ 
 =============================
 
 # Exercise 6: Edit a file

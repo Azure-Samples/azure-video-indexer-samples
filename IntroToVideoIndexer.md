@@ -34,7 +34,7 @@ There is much more you can do with Video Indexer and that is not included
 in this workshop, including customizing the catalog vocabulary, brands
 and faces, updating the video transcript, integration with Flow and
 connecting to an Azure subscription. 
-
+ 
 ==================
 
 # Requirements
@@ -45,6 +45,7 @@ connecting to an Azure subscription.
 
 3.  User account (preferably corporate)
 
+ 
 ==============
 
 # Overview
@@ -255,13 +256,13 @@ Steps
     well as OCRs, people found, sentiment indications and more.
 
     ![](media/Insights.png)
-
-6.  **Celebrity Identification**: Video Indexer identified Satya in the
+    
+ 6.  **Celebrity Identification**: Video Indexer identified Satya in the
     video, you can see his name, role and biography, as well as how much
     time and when he made appearances in the video. Use the left and
     right arrows to jump between segments he appears in
 
-    ![](media/image12.png)
+    ![](media/Celebs.png)
 
     Video indexer is able identify a large set of celebrities (like
     Satya in this example) out of the box and allows you custom train
@@ -273,7 +274,7 @@ Steps
     Note: Face identification, customization and celebrity recognition features access is limited based on eligibility and usage criteria in order to support our Responsible AI principles. Face identification, customization and celebrity recognition features are only available to Microsoft managed customers and partners. Use the [Face Recognition intake form] (https://customervoice.microsoft.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR7en2Ais5pxKtso_Pz4b1_xUQjA5SkYzNDM4TkcwQzNEOE1NVEdKUUlRRCQlQCN0PWcu) to apply for access.
 
 7.  **Topics identification**: Video Indexer uses the information on the transcript, gathered from the spoken information as well as OCR findings in the video, and celebrities it recognized and their bio in Wikipedia to identify relevant topics (i.e. what this video is about?), even if they weren’t mentioned explicitly.
-You can read more about this model in our [blog post](https://azure.microsoft.com/en-us/blog/multi-modal-topic-inferencing-from-videos/).
+You can read more about this model in our [blog post](https://azure.microsoft.com/es-es/blog/multi-modal-topic-inferencing-from-videos/).
 
     This can help you get the essence of what was discussed in this
     video. In this case we can see that Satya referred to the
@@ -283,7 +284,7 @@ You can read more about this model in our [blog post](https://azure.microsoft.co
     the full set of topics found and the right and left arrows to navigate to the specific
     location in the video where they appeared.
 
-    ![](media/image13.png)
+    ![](media/Topics.png)
 
 8.  **Label identification**: Labels are visual findings in the video,
     they can help you determine elements, scenes, and locations.
@@ -301,7 +302,7 @@ You can read more about this model in our [blog post](https://azure.microsoft.co
     huge space. However - looking at the labels still gives you a good
     idea of what this video is about.
 
-    ![](media/image132.png)
+    ![](media/Labels.png)
 
 9.  Video Indexer identified six **entities** in this video (three people and three brands),
     that Satya mentioned or appeared as OCR in his keynote. For example, "*Bill Gates*", 
@@ -311,7 +312,7 @@ You can read more about this model in our [blog post](https://azure.microsoft.co
     location in the video where they appeared and to use show
     description to see their Wikipedia abstract.
 
-    ![](media/image14.png)
+    ![](media/NamedEntities.png)
 
 10.  **Emotions**: Video Indexer has also identified the different
     emotions that appear throughout the video. The model can identify four different emotions: anger, fear, joy, and sadness. It does so by using facial expressions, voice tonality, and speech content. It gives a better tuning for the basic sentiment analysis of positive and negative emotions. For further details follow this [link](https://azure.microsoft.com/en-us/blog/cross-channel-emotion-analysis-in-microsoft-video-indexer/).
@@ -319,23 +320,22 @@ You can read more about this model in our [blog post](https://azure.microsoft.co
     Click on each segment to see what actually happened in the video to drive that. you can see
     that overall (unsurprisingly) joy was the main emotions of Satya’s keynote.
 
-    ![](media/image15.png)
+    ![](media/Emotions.png)
 
 As part of the default insights presented you can also see the different scenes detected in the video based on visual cues and keyframes extraction.
 
-**Important** - this is only a partial list of the available features of Video Indexer. You can find out more about the different features we offer in our [documentation](https://docs.microsoft.com/en-us/azure/media-services/video-indexer/video-indexer-overview#features).
+**Important** - this is only a partial list of the available features of Video Indexer. You can find out more about the different features we offer in our [documentation](https://learn.microsoft.com/en-gb/azure/azure-video-indexer/).
 
 7.  **Download the insights as a JSON file** by clicking on the **Download** button at the
     bottom left of the video player. You can also download the transcript in different closed caption formats and other file types (SRT, VTT, TTML, TXT and CSV)
     and the artifacts as ZIP.
 
-    ![](media/image16.png)
+    ![](media/Download.png)
 
 All this information that you can browse on the widgets comes from a
 JSON file that it's what the developers would need to work with, if
 they're building a custom solution. You will be able to explore the JSON
 file in more detail in Exercise 8 below.
-
 ================================================
 
 # Exercise 4: Upload and Index your own file
@@ -357,25 +357,25 @@ Steps
 1.  Go back to the video catalog by clicking **Video Indexer** on the top right corner of the
     screen
 
-    ![](media/Upload.png)
-
 2.  Click the **Upload** button on the top right of your catalog
 
      ![](media/Upload.png)
 
-3.  Select the **enter file URL** link and enter the following sample
-    URL address: 
-    
-        https://aka.ms/VISampleVideo
+3.  Select the **enter file URL** link
 
     ![](media/UploadDialog.png)
 
-4.  Select a 'video name' of your choice for your video and Click
-    **Upload**.
+4.  Enter the sample URL address bellow and click **Add** 
+        https://aka.ms/VISampleVideoSelect    
 
-    The video will start to upload...
+the file will be added to the files to be uploaded list (you can add up to 10 files in a single upload operation), 
+make sure to check the checkbox below after reading the **terms** and **privacy statment**,
+Click **Upload**. 
 
-    ![](media/image20.png)
+  ![](media/UploadLink.png)
+
+The video will now start to upload.
+
 
 -	**Important:** Using the “*Advanced options*” you can decide if the
 indexing would be Audio, Video, or both. You can control the streaming
@@ -386,10 +386,12 @@ quality, and more.
     background** to continue browsing your existing videos while the
     video is uploading
 
+  ![](media/UploadSammery.png)
+
 6.  Once the video is uploaded it will be added to your catalog under the
     **Library** tab and start indexing
 
-    ![](media/image21.png)
+    ![](media/UploadProgress.png)
 
 7.  **Done!** You have indexed your first video, you can now explore the
     insights found for this video in the portal as well as on a JSON
@@ -397,7 +399,7 @@ quality, and more.
 
     Try to explore **- what interesting insights you can find in this
     video?**
- 
+    
 ===================================================
 
 # Exercise 5: Embed widgets on your own website
@@ -419,13 +421,13 @@ Steps
 
 2.  Click on *Embed* (**\</\>**) at the bottom of the video
 
-    ![](media/image22.png)
+    ![](media/embeddedLink.png)
 
 3.  A 'share & embed' pop up appears, allowing to copy the iframe code
     to the web site. From here you can choose to create an embedded code
-    for the cognitive insights, the video player or both.
+    for the insights, the video player or both.
 
-   ![](media/image23.png)
+   ![](media/ShareAndEmbed.png)
 
 4.  Optional: to test the iframe copy the 'src' part of the 'Copy embed
     code' section into a new tab in your browser (see highlighted part

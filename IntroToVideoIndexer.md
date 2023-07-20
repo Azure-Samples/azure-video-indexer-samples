@@ -261,17 +261,12 @@ Steps
     video, you can see his name, role and biography, as well as how much
     time and when he made appearances in the video. Use the left and
     right arrows to jump between segments he appears in
-
-    ![](media/Celebs.png)
-
-    Video indexer is able identify a large set of celebrities (like
-    Satya in this example) out of the box and allows you custom train
-    the model with your own celebrities, by tagging additional faces
-    identified in your uploaded video.
-
-    *Furthermore, the face model can be trained by images you upload and once you updated the model - the new face recognition model will update all relevant videos already uploaded and all future videos.*
-
-    Note: Face identification, customization and celebrity recognition features access is limited based on eligibility and usage criteria in order to support our Responsible AI principles. Face identification, customization and celebrity recognition features are only available to Microsoft managed customers and partners. Use the [Face Recognition intake form] (https://customervoice.microsoft.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR7en2Ais5pxKtso_Pz4b1_xUQjA5SkYzNDM4TkcwQzNEOE1NVEdKUUlRRCQlQCN0PWcu) to apply for access.
+ Video indexer is able identify a large set of celebrities (like Satya in this example) out of the box and allows you custom train the model with ur own celebrities, by tagging additional faces identified in your uploaded video. 
+![](media/Celebs.png)
+     
+     *Furthermore, the face model can be trained by images you upload and once you updated the model - the new face recognition model will update all relevant videos already uploaded and all future videos.*
+     
+     Note: Face identification, customization and celebrity recognition features access is limited based on eligibility and usage criteria in order to support our Responsible AI principles. Face identification, customization and celebrity recognition features are only available to Microsoft managed customers and partners. Use the [Face Recognition intake form](https://customervoice.microsoft.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR7en2Ais5pxKtso_Pz4b1_xUQjA5SkYzNDM4TkcwQzNEOE1NVEdKUUlRRCQlQCN0PWcu) to apply for access.
 
 7.  **Topics identification**: Video Indexer uses the information on the transcript, gathered from the spoken information as well as OCR findings in the video, and celebrities it recognized and their bio in Wikipedia to identify relevant topics (i.e. what this video is about?), even if they weren’t mentioned explicitly.
 You can read more about this model in our [blog post](https://azure.microsoft.com/es-es/blog/multi-modal-topic-inferencing-from-videos/).
@@ -299,7 +294,9 @@ You can read more about this model in our [blog post](https://azure.microsoft.co
     example 'outdoor', this is the nature of machine learning
     algorithms, it is a prediction tool and, in some cases, may be
     erroneous. In this case probably because this movie was shot in a
-    huge space. However - looking at the labels still gives you a good
+    huge space. 
+    
+    However - looking at the labels still gives you a good
     idea of what this video is about.
 
     ![](media/Labels.png)
@@ -315,16 +312,13 @@ You can read more about this model in our [blog post](https://azure.microsoft.co
     ![](media/NamedEntities.png)
 
 10.  **Emotions**: Video Indexer has also identified the different
-    emotions that appear throughout the video. The model can identify four different emotions: anger, fear, joy, and sadness. It does so by using facial expressions, voice tonality, and speech content. It gives a better tuning for the basic sentiment analysis of positive and negative emotions. For further details follow this [link](https://azure.microsoft.com/en-us/blog/cross-channel-emotion-analysis-in-microsoft-video-indexer/).
-
+    emotions that appear throughout the video. The model can identify four different emotions: anger, fear, joy, and sadness. It does so by using facial expressions, voice tonality, and speech content. It gives a better tuning for the basic sentiment analysis of positive and negative emotions. For further details follow this [link](https://azure.microsoft.com/en-us/blog/cross-channel-emotion-analysis-in-microsoft-video-indexer/). 
     Click on each segment to see what actually happened in the video to drive that. you can see
-    that overall (unsurprisingly) joy was the main emotions of Satya’s keynote.
-
-    ![](media/Emotions.png)
-
-As part of the default insights presented you can also see the different scenes detected in the video based on visual cues and keyframes extraction.
-
-**Important** - this is only a partial list of the available features of Video Indexer. You can find out more about the different features we offer in our [documentation](https://learn.microsoft.com/en-gb/azure/azure-video-indexer/).
+    that overall (unsurprisingly) joy was the main emotions of Satya’s keynote. 
+    ![](media/Emotions.png)    
+    As part of the default insights presented you can also see the different scenes detected in the video based on visual cues and keyframes extraction.
+     
+     **Important** - this is only a partial list of the available features of Video Indexer. You can find out more about the different features we offer in our [documentation](https://learn.microsoft.com/en-gb/azure/azure-video-indexer/).
 
 7.  **Download the insights as a JSON file** by clicking on the **Download** button at the
     bottom left of the video player. You can also download the transcript in different closed caption formats and other file types (SRT, VTT, TTML, TXT and CSV)
@@ -332,10 +326,8 @@ As part of the default insights presented you can also see the different scenes 
 
     ![](media/Download.png)
 
-All this information that you can browse on the widgets comes from a
-JSON file that it's what the developers would need to work with, if
-they're building a custom solution. You will be able to explore the JSON
-file in more detail in Exercise 8 below.
+    All this information that you can browse on the widgets comes from a JSON file that it's what the developers would need to work with, if they're building a custom solution. You will be able to explore the JSON file in more detail in Exercise #8 below.
+
 ================================================
 
 # Exercise 4: Upload and Index your own file
@@ -499,12 +491,12 @@ After pressing render, a pop up will appear asking if you want to continue with 
  
 8. A new video that contains a clip from the original video was added
     to your catalog and it’s ready to be played!
+    
+    **Two important things:** 
 
-**Two important things:** 
+    A. This whole process could also be done using the API presented in the next section.
 
-A. This whole process could also be done using the API presented in the next section.
-
-B. Until you render the project, the project is dependent on the original videos from which it was samples. Therefore, if you delete an original video before rendering the project it will distort you project.
+    B. Until you render the project, the project is dependent on the original videos from which it was samples. Therefore, if you delete an original video before rendering the project it will distort you project.
  
 =============================================================
 
@@ -547,17 +539,17 @@ For classic accounts:
     
 4.1 Locate you account id, go back to the Video indexer portal as in exercise #1, on the left side of the page click on **account settings** button, in the new page copy the **account id** value. 
 
-    ![](media/AccountSettings.png)
+![](media/AccountSettings.png)
 
 4.2 Go back to the API page, locate the **Get Account Access Token** API call, and click on the "try it" button.
 4.3 A new pane will be opened on the right side of the page, fill the account Id, and check if the location is set to 'trial'.
 4.4 Click **Send**, the new generated token will show on the buttom of the pane, we recomend to copy and save it for the next steps. 
 
 
-    ![](media/Token.png)
+![](media/Token.png)
 
 
-    Note: this token is valid for one hour, and you’ll need to generate a new one when it expires.
+Note: this token is valid for one hour, and you’ll need to generate a new one when it expires.
 
 
 

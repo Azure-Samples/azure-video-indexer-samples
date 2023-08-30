@@ -1,3 +1,5 @@
+using Azure.Core;
+using Azure.Identity;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,8 +9,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Web;
-using Azure.Core;
-using Azure.Identity;
 
 namespace VideoIndexingARMAccounts
 {
@@ -19,12 +19,12 @@ namespace VideoIndexingARMAccounts
         private const string SubscriptionId = "<Your Subscription Id Here>";
         private const string ResourceGroup = "< Your Resource Group Name Here>";
         private const string AccountName = "<Your Video Indexer Account Name Here>";
-        
+
         //Choose public Access Video URL
         private const string VideoUrl = "<Your Video Url Here>";
         //OR 
         /// Optional : Use Local File Upload 
-        private const string LocalVideoPath = "<Your Video Url Here>"; 
+        private const string LocalVideoPath = "<Your Video Url Here>";
 
         private const string ApiUrl = "https://api.videoindexer.ai";
         private const string ExcludedAI = ""; // Enter a list seperated by a comma of the AIs you would like to exclude in the format "<Faces,Labels,Emotions,ObservedPeople>". Leave empty if you do not want to exclude any AIs. For more see here https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Upload-Video:~:text=AI%20to%20exclude%20when%20indexing%2C%20for%20example%20for%20sensitive%20scenarios.%20Options%20are%3A%20Face/Observed%20peopleEmotions/Labels%7D.
@@ -123,7 +123,7 @@ namespace VideoIndexingARMAccounts
                 }
                 var queryParams = CreateQueryString(queryDictionary);
                 queryParams += AddExcludedAIs(ExcludedAI);
-                
+
                 // Send POST request
                 var uploadRequestResult = await client.PostAsync($"{apiUrl}/{accountLocation}/Accounts/{accountId}/Videos?{queryParams}", content);
                 VerifyStatus(uploadRequestResult, System.Net.HttpStatusCode.OK);

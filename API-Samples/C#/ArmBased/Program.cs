@@ -10,8 +10,7 @@ using System.Web;
 using Azure.Core;
 using Azure.Identity;
 
-
-namespace VideoIndexerArm
+namespace VideoIndexingARMAccounts
 {
     public class Program
     {
@@ -20,7 +19,13 @@ namespace VideoIndexerArm
         private const string SubscriptionId = "<Your Subscription Id Here>";
         private const string ResourceGroup = "< Your Resource Group Name Here>";
         private const string AccountName = "<Your Video Indexer Account Name Here>";
+        
+        //Choose public Access Video URL
         private const string VideoUrl = "<Your Video Url Here>";
+        //OR 
+        /// Optional : Use Local File Upload 
+        private const string LocalVideoPath = "<Your Video Url Here>"; 
+
         private const string ApiUrl = "https://api.videoindexer.ai";
         private const string ExcludedAI = ""; // Enter a list seperated by a comma of the AIs you would like to exclude in the format "<Faces,Labels,Emotions,ObservedPeople>". Leave empty if you do not want to exclude any AIs. For more see here https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Upload-Video:~:text=AI%20to%20exclude%20when%20indexing%2C%20for%20example%20for%20sensitive%20scenarios.%20Options%20are%3A%20Face/Observed%20peopleEmotions/Labels%7D.
 
@@ -85,31 +90,41 @@ namespace VideoIndexerArm
         {
             Console.WriteLine($"Video for account {accountId} is starting to upload.");
             var content = new MultipartFormDataContent();
-
             try
             {
-                // Get the video from URL
-                var queryParams = CreateQueryString(
-                new Dictionary<string, string>()
+                //Build Query Parameter Dictionary
+                var queryDictionary = new Dictionary<string, string>
+                    {
+                        { "accessToken", acountAccessToken },
+                        { "name", "video sample" },
+                        { "description", "video_description" },
+                        { "privacy", "private" },
+                        { "partition", "partition" }
+                    };
+
+                if (!string.IsNullOrEmpty(VideoUrl) && Uri.IsWellFormedUriString(VideoUrl, UriKind.Absolute))
                 {
-                    {"accessToken", acountAccessToken},
-                    {"name", "video sample"},
-                    {"description", "video_description"},
-                    {"privacy", "private"},
-                    {"partition", "partition"},
-                    {"videoUrl", VideoUrl}, // Do not Include VideoURL when uploading Video using StreamContent
-                });
-
+                    Console.WriteLine("Using publiuc video url For upload.");
+                    queryDictionary.Add("videoUrl", VideoUrl);
+                }
+                else if (File.Exists(LocalVideoPath))
+                {
+                    Console.WriteLine("Using local video Multipart upload.");
+                    // Add file content
+                    await using var fileStream = new FileStream(LocalVideoPath, FileMode.Open, FileAccess.Read);
+                    using var streamContent = new StreamContent(fileStream);
+                    content.Add(streamContent, "fileName", Path.GetFileName(LocalVideoPath));
+                    streamContent.Headers.Add("Content-Type", "multipart/form-data");
+                    streamContent.Headers.Add("Content-Length", fileStream.Length.ToString());
+                }
+                else
+                {
+                    throw new ArgumentException("VideoUrl or LocalVidePath are invalid");
+                }
+                var queryParams = CreateQueryString(queryDictionary);
                 queryParams += AddExcludedAIs(ExcludedAI);
-
-                // As an alternative to specifying video URL, you can upload a file.
-                // Remove the videoUrl parameter from the query params below and add the following lines:
-                //FileStream video = File.OpenRead(VideoFilePath);
-                //var streamContent = new StreamContent(video);
-                //streamContent.Headers.Add("Content-Type", "application/octet-stream");
-                //streamContent.Headers.Add("Content-Length", video.Length.ToString());
-                //content.Add(streamContent, "video", Path.GetFileName(VideoFilePath));
-
+                
+                // Send POST request
                 var uploadRequestResult = await client.PostAsync($"{apiUrl}/{accountLocation}/Accounts/{accountId}/Videos?{queryParams}", content);
                 VerifyStatus(uploadRequestResult, System.Net.HttpStatusCode.OK);
                 var uploadResult = await uploadRequestResult.Content.ReadAsStringAsync();
@@ -125,6 +140,8 @@ namespace VideoIndexerArm
                 throw;
             }
         }
+
+
 
         /// <summary>
         /// Calls getVideoIndex API in 10 second intervals until the indexing state is 'processed'(https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Get-Video-Index)

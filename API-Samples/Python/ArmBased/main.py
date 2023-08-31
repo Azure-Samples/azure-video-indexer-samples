@@ -6,6 +6,20 @@ import time
 import json
 from azure.identity import DefaultAzureCredential
 from azure.core.credentials import AccessToken
+import argparse
+
+parser = argparse.ArgumentParser(
+    description='Upload and index a video using Azure Video Indexer')
+parser.add_argument('-u', '--url', required=True,
+                    help='URL of the video to be uploaded and indexed')
+parser.add_argument('-n', '--name', required=True, help='Name of the video')
+parser.add_argument('-d', '--description', required=True,
+                    help='Description of the video')
+
+args = parser.parse_args()
+video_url = args.url
+video_name = args.name
+video_description = args.description
 
 load_dotenv(find_dotenv())
 
@@ -30,11 +44,22 @@ class VideoIndexerResourceProviderClient:
         return token.token
 
     def get_access_token(self, permission: str, scope: str, video_id: str = None, project_id: str = None):
-        if project_id != None and video_id != None:
+        if video_id and project_id:
             access_token_request = {
                 "permissionType": permission,
                 "scope": scope,
-                "videoId": video_id,
+                "videoId": video_id
+            }
+        elif video_id:
+            access_token_request = {
+                "permissionType": permission,
+                "scope": scope,
+                "videoId": video_id
+            }
+        elif project_id:
+            access_token_request = {
+                "permissionType": permission,
+                "scope": scope,
                 "projectId": project_id
             }
         else:
@@ -54,9 +79,8 @@ class VideoIndexerResourceProviderClient:
                 url=request_url, data=json_request_body, headers=headers)
             # verify_status(response, 2)
             json_response_body = response.json()
-            print(json_response_body)
+            # print(json_response_body) # response looks like this {'accessToken':''}
             # print(f"Got access token: {scope} {video_id}, {permission}")
-
             return json_response_body["accessToken"]
         except Exception as ex:
             print(str(ex))
@@ -87,23 +111,31 @@ class VideoIndexerResourceProviderClient:
 def upload_video(account_id: str, account_location: str, account_access_token: str, api_url: str, video_info: dict):
     query_params = urlencode({
         "accessToken": account_access_token,
-        "name": video_info.name,
-        "description": video_info.description,
+        "name": video_info['name'],
+        "description": video_info['description'],
         "privacy": "private",
         "partition": "partition",
         # Do not include VideoUrl when uploading Video using StreamContent
-        "videoUrl": video_info.url,
+        "videoUrl": video_info['url'],
     })
 
-    response = requests.post(
-        url=f'{api_url}/{account_location}/Accounts/{account_id}/Videos?{query_params}')
+    header = {
+        "Content-Type": "multipart/form-data"
+    }
 
-    print(response.json())
+    try:
+        response = requests.post(
+            url=f'{api_url}/{account_location}/Accounts/{account_id}/Videos?{query_params}')
+        response = response.json()
+        return response
+    except Exception as ex:
+        print(str(ex))
+        raise
 
 
 def wait_for_index(account_id: str, account_location: str, account_access_token: str, api_url: str, video_id: str):
     '''
-        Waits for the video to be indexed,
+        Waits for the video to be indexed, if indexing fails, raises an exception
     '''
     print(f'Waiting for index for video {video_id} to be ready...')
     i = 0
@@ -113,21 +145,82 @@ def wait_for_index(account_id: str, account_location: str, account_access_token:
             "language": "English"
         })
         response = requests.get(
-            url=f'{api_url}/{account_location}/Accounts/{account_id}/Videos/Index?{query_params}')
+            url=f'{api_url}/{account_location}/Accounts/{account_id}/Videos/{video_id}/Index?{query_params}')
 
         response = response.json()
 
+        print('Waiting for index response: ', response)
+
         if response['state'] == 'Processed':
+            with open(f'output/{video_id}.json', 'w') as f:
+                json.dump(response, f)
             print('Indexing completed')
             break
         elif response['state'] == 'Failed':
             print('Indexing failed')
             raise Exception(f'Indexing failed for video {video_id}')
-
         print(
             f'Indexing not completed yet, waiting 10 seconds. Time elapsed: {i*10} seconds')
         time.sleep(10)
         i += 1
+
+
+def get_video(account_id: str, account_location: str, video_access_token: str, api_url: str, video_id: str):
+    print(
+        f'\nSearching videos in account {ACCOUNT_NAME} for video ID {video_id}.')
+    query_params = urlencode({
+        "accessToken": video_access_token,
+        "id": video_id
+    })
+    try:
+        request_url = f"{api_url}/{account_location}/Accounts/{account_id}/Videos/Search?{query_params}"
+        response = requests.get(
+            url=request_url)
+        response = response.json()
+
+        return response
+    except Exception as ex:
+        print(str(ex))
+        raise
+
+
+def get_insights_widget_url(account_id: str, account_location: str, video_access_token: str, api_url: str, video_id: str):
+    query_params = urlencode({
+        "accessToken": video_access_token,
+        "widgetType": "Keywords",
+        "allowEdit": "true"
+    })
+    try:
+        request_url = f"{api_url}/{account_location}/Accounts/{account_id}/Videos/{video_id}/InsightsWidget?{query_params}"
+        response = requests.get(url=request_url)
+        print('Insights widget headers', response.headers)
+        print('Insights widget response content', response.text)
+
+        insights_widget_url = response.headers['Location']
+        print(f'Insights widget URL: {insights_widget_url}')
+        return insights_widget_url
+    except Exception as ex:
+        print(str(ex))
+        raise
+
+
+def get_player_widget_url(account_id: str, account_location: str, video_access_token: str, api_url: str, video_id: str):
+    query_params = urlencode({
+        "accessToken": video_access_token
+    })
+    try:
+        request_url = f"{api_url}/{account_location}/Accounts/{account_id}/Videos/{video_id}/PlayerWidget?{query_params}"
+        response = requests.get(url=request_url)
+        print('Player widget headers', response.headers)
+        print('Player widget response content', response.text)
+
+        print('Player widget keys', response.headers.keys())
+        # player_widget_url = response.headers.keys()
+        # print(f'Player widget URL: {player_widget_url}')
+        return response
+    except Exception as ex:
+        print(str(ex))
+        raise
 
 
 if __name__ == "__main__":
@@ -137,7 +230,37 @@ if __name__ == "__main__":
     # extract account info
     account_location = account['location']
     account_id = account['properties']['accountId']
-    # get video access token
+    # get account access token
     account_access_token = videoIndexerResourceProviderClient.get_access_token(
         permission="Contributor", scope="Account")
     # upload video
+    video_info = {
+        "name": video_name,
+        "description": video_description,
+        "url": video_url
+    }
+    video_response = upload_video(account_id, account_location,
+                                account_access_token, api_url=API_URL, video_info=video_info)
+    print('Video response: ', video_response)
+    video_id = video_response['id']
+    # wait for video to be indexed
+    wait_for_index(account_id, account_location, account_access_token,
+                   api_url=API_URL, video_id=video_id)
+    # when video is indexed, get video access token
+    video_access_token = videoIndexerResourceProviderClient.get_access_token(
+        permission="Contributor", scope="Video", video_id=video_id)
+
+    # get video
+    video = get_video(account_id, account_location,
+                      video_access_token, api_url=API_URL, video_id=video_id)
+    print('Get video: ', video)
+
+    # now that video is indexed, get video insights widget url
+    insights_widget_url = get_insights_widget_url(account_id=account_id, account_location=account_location,
+                                                  video_access_token=video_access_token, api_url=API_URL, video_id=video_id)
+    # and the player widget url
+    player_widget_url = get_player_widget_url(account_id=account_id, account_location=account_location,
+                                              video_access_token=video_access_token, api_url=API_URL, video_id=video_id)
+
+    print(f'Insights widget URL: {insights_widget_url}')
+    print(f'Player widget URL: {player_widget_url}')

@@ -1,3 +1,4 @@
+# %%
 import requests
 import os
 from dotenv import load_dotenv, find_dotenv
@@ -192,13 +193,9 @@ def get_insights_widget_url(account_id: str, account_location: str, video_access
     })
     try:
         request_url = f"{api_url}/{account_location}/Accounts/{account_id}/Videos/{video_id}/InsightsWidget?{query_params}"
-        response = requests.get(url=request_url)
-        print('Insights widget headers', response.headers)
-        print('Insights widget response content', response.text)
-
-        insights_widget_url = response.headers['Location']
-        print(f'Insights widget URL: {insights_widget_url}')
-        return insights_widget_url
+        response = requests.get(url=request_url, allow_redirects=False)
+        insights_url = response.headers['Location']
+        return insights_url
     except Exception as ex:
         print(str(ex))
         raise
@@ -210,14 +207,9 @@ def get_player_widget_url(account_id: str, account_location: str, video_access_t
     })
     try:
         request_url = f"{api_url}/{account_location}/Accounts/{account_id}/Videos/{video_id}/PlayerWidget?{query_params}"
-        response = requests.get(url=request_url)
-        print('Player widget headers', response.headers)
-        print('Player widget response content', response.text)
-
-        print('Player widget keys', response.headers.keys())
-        # player_widget_url = response.headers.keys()
-        # print(f'Player widget URL: {player_widget_url}')
-        return response
+        response = requests.get(url=request_url, allow_redirects=False)
+        player_url = response.headers['Location']
+        return player_url
     except Exception as ex:
         print(str(ex))
         raise
@@ -240,8 +232,8 @@ if __name__ == "__main__":
         "url": video_url
     }
     video_response = upload_video(account_id, account_location,
-                                account_access_token, api_url=API_URL, video_info=video_info)
-    print('Video response: ', video_response)
+                                  account_access_token, api_url=API_URL, video_info=video_info)
+    
     video_id = video_response['id']
     # wait for video to be indexed
     wait_for_index(account_id, account_location, account_access_token,
@@ -253,7 +245,7 @@ if __name__ == "__main__":
     # get video
     video = get_video(account_id, account_location,
                       video_access_token, api_url=API_URL, video_id=video_id)
-    print('Get video: ', video)
+    
 
     # now that video is indexed, get video insights widget url
     insights_widget_url = get_insights_widget_url(account_id=account_id, account_location=account_location,
@@ -264,3 +256,5 @@ if __name__ == "__main__":
 
     print(f'Insights widget URL: {insights_widget_url}')
     print(f'Player widget URL: {player_widget_url}')
+
+

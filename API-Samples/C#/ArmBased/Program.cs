@@ -70,7 +70,7 @@ namespace VideoIndexingARMAccounts
             await GetPlayerWidgetUrl(accountId, accountLocation, videoAccessToken, ApiUrl, client, videoId);
 
             Console.WriteLine("\nPress Enter to exit...");
-            String line = Console.ReadLine();
+            var line = Console.ReadLine();
             if (line == "enter")
             {
                 System.Environment.Exit(0);
@@ -90,17 +90,19 @@ namespace VideoIndexingARMAccounts
         {
             Console.WriteLine($"Video for account {accountId} is starting to upload.");
             var content = new MultipartFormDataContent();
+            FileStream fileStream = null;
+            StreamContent streamContent = null;
             try
             {
                 //Build Query Parameter Dictionary
                 var queryDictionary = new Dictionary<string, string>
-                    {
-                        { "accessToken", acountAccessToken },
-                        { "name", "video sample" },
-                        { "description", "video_description" },
-                        { "privacy", "private" },
-                        { "partition", "partition" }
-                    };
+                {
+                    { "accessToken", acountAccessToken },
+                    { "name", "video sample2" },
+                    { "description", "video_description" },
+                    { "privacy", "private" },
+                    { "partition", "partition" }
+                };
 
                 if (!string.IsNullOrEmpty(VideoUrl) && Uri.IsWellFormedUriString(VideoUrl, UriKind.Absolute))
                 {
@@ -111,8 +113,8 @@ namespace VideoIndexingARMAccounts
                 {
                     Console.WriteLine("Using local video Multipart upload.");
                     // Add file content
-                    await using var fileStream = new FileStream(LocalVideoPath, FileMode.Open, FileAccess.Read);
-                    using var streamContent = new StreamContent(fileStream);
+                    fileStream = new FileStream(LocalVideoPath, FileMode.Open, FileAccess.Read);
+                    streamContent = new StreamContent(fileStream);
                     content.Add(streamContent, "fileName", Path.GetFileName(LocalVideoPath));
                     streamContent.Headers.Add("Content-Type", "multipart/form-data");
                     streamContent.Headers.Add("Content-Length", fileStream.Length.ToString());
@@ -138,6 +140,11 @@ namespace VideoIndexingARMAccounts
             {
                 Console.WriteLine(ex.ToString());
                 throw;
+            }
+            finally
+            {
+                fileStream?.Dispose();
+                streamContent?.Dispose();
             }
         }
 

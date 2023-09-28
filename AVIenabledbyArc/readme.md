@@ -35,7 +35,7 @@ You can read more on how to set up your cloud shell environment [here](https://l
 In the cloud shell execute these two commands:
 
 ```bash
-curl -sSL https://gist.github.com/fvneerden/64c2642c3a707ab518e379c7c1435551/raw/f3915aa501823957c1cb3992ae7add093bab456c/vi-edge-deployment-script.sh -o install_vi_arc.sh
+curl -sSL https://github.com/Azure-Samples/media-services-video-indexer/blob/master/AVIenabledbyArc/vi-edge-deployment-script.sh -o install_vi_arc.sh
 
 sh install_vi_arc.sh
 ```

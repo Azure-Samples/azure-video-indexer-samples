@@ -18,6 +18,9 @@ The purpose of this document is to present the onboarding steps and pre-requisit
 
 ```bash
 az extension add --name connectedk8s
+az provider register -n 'Microsoft.Kubernetes' 
+az provider register -n 'Microsoft.KubernetesConfiguration' 
+az provider register -n 'Microsoft.ExtendedLocation'
 ```
 
 ## 1. One-Click Deploy Sample to Azure

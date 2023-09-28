@@ -150,7 +150,7 @@ The following parameters will be used as input to the extension creation command
 | release-namespace | default | The kubernetes namespace which the extension will be installed into | 
 | cluster-name | | The kubernetes azure arc instance name |
 | resource-group | | The kubernetes azure arc resource group name |
-| version | 1.0.20-preview | Video Indexer Extension version |
+| version | 1.0.24-preview | Video Indexer Extension version |
 | speech.endpointUri |  | Speech Service Url Endpoint |
 | speech.secret |  | Speech Instance secret |
 | translate.endpointUri |  | Translation Service Url Endpoint  |

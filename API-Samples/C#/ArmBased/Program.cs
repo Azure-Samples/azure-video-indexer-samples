@@ -63,7 +63,7 @@ namespace VideoIndexingARMAccounts
             var fileVideoId = await client.FileUpload("my-local-media", LocalVideoPath, null, null);
             
             // Sample 3 : Wait for the video index to finish ( Polling method)
-            //await client.WaitForIndex(videoId);
+            await client.WaitForIndex(videoId);
 
             // Sample 4: Search for the video and get insights
             await client.GetVideo(videoId);

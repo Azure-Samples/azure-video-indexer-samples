@@ -55,6 +55,12 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
             return queryParameters.ToString();
         }
 
-
+        public static void VerifyStatus(this HttpResponseMessage response, System.Net.HttpStatusCode excpectedStatusCode)
+        {
+            if (response.StatusCode != excpectedStatusCode)
+            {
+                throw new Exception(response.ToString());
+            }
+        }
     }
 }

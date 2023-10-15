@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VideoIndexerClient
+namespace VideoIndexingARMAccounts.VideoIndexerClient.utils
 {
     public static class Consts
     {

@@ -6,8 +6,10 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading.Tasks;
-using VideoIndexerClient;
-using static VideoIndexerClient.Consts;
+using VideoIndexingARMAccounts.VideoIndexerClient.auth;
+using VideoIndexingARMAccounts.VideoIndexerClient.model;
+using VideoIndexingARMAccounts.VideoIndexerClient.utils;
+using static VideoIndexingARMAccounts.VideoIndexerClient.utils.Consts;
 
 
 namespace VideoIndexingARMAccounts.VideoIndexerClient
@@ -163,11 +165,6 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
         /// <summary>
         /// Calls getVideoIndex API in 10 second intervals until the indexing state is 'processed'(https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Get-Video-Index)
         /// </summary>
-        /// <param name="accountId"> The account ID</param>
-        /// <param name="accountLocation"> The account location </param>
-        /// <param name="acountAccessToken"> The access token </param>
-        /// <param name="apiUrl"> The video indexer api url </param>
-        /// <param name="client"> The http client </param>
         /// <param name="videoId"> The video id </param>
         /// <returns> Prints video index when the index is complete, otherwise throws exception </returns>
         public async Task WaitForIndex(string videoId)
@@ -208,11 +205,6 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
         /// <summary>
         /// Searches for the video in the account. Calls the searchVideo API (https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Search-Videos)
         /// </summary>
-        /// <param name="accountId"> The account ID</param>
-        /// <param name="accountLocation"> The account location </param>
-        /// <param name="videoAccessToken"> The access token </param>
-        /// <param name="apiUrl"> The video indexer api url </param>
-        /// <param name="client"> The http client </param>
         /// <param name="videoId"> The video id </param>
         /// <returns> Prints the video metadata, otherwise throws excpetion</returns>
         public async Task GetVideo(string videoId)
@@ -251,11 +243,6 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
         /// <summary>
         /// Calls the getVideoInsightsWidget API (https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Get-Video-Insights-Widget)
         /// </summary>
-        /// <param name="accountId"> The account ID</param>
-        /// <param name="accountLocation"> The account location </param>
-        /// <param name="videoAccessToken"> The access token </param>
-        /// <param name="apiUrl"> The video indexer api url </param>
-        /// <param name="client"> The http client </param>
         /// <param name="videoId"> The video id </param>
         /// <returns> Prints the VideoInsightsWidget URL, otherwise throws exception</returns>
         public async Task GetInsightsWidgetUrl(string videoId)
@@ -284,11 +271,6 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
         /// <summary>
         /// Calls the getVideoPlayerWidget API (https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Get-Video-Player-Widget)
         /// </summary>
-        /// <param name="accountId"> The account ID</param>
-        /// <param name="accountLocation"> The account location </param>
-        /// <param name="videoAccessToken"> The access token </param>
-        /// <param name="apiUrl"> The video indexer api url </param>
-        /// <param name="client"> The http client </param>
         /// <param name="videoId"> The video id </param>
         /// <returns> Prints the VideoPlayerWidget URL, otherwise throws exception</returns>
         public async Task GetPlayerWidgetUrl( string videoId)

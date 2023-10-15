@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace VideoIndexingARMAccounts.VideoIndexerClient;
+namespace VideoIndexingARMAccounts.VideoIndexerClient.model;
 
 public class Account
 {

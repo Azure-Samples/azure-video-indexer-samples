@@ -11,10 +11,4 @@
     <PackageReference Include="Microsoft.Identity.Client" Version="4.56.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="VideoIndexerClient\model\" />
-    <Folder Include="VideoIndexerClient\auth\" />
-    <Folder Include="VideoIndexerClient\utils\" />
-  </ItemGroup>
-
 </Project>

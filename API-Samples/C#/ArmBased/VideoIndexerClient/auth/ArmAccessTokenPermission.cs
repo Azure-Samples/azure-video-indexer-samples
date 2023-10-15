@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace VideoIndexerClient
+namespace VideoIndexingARMAccounts.VideoIndexerClient.auth
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum ArmAccessTokenPermission

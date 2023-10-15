@@ -7,14 +7,15 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using VideoIndexingARMAccounts.VideoIndexerClient.utils;
 
-namespace VideoIndexerClient
+namespace VideoIndexingARMAccounts.VideoIndexerClient.auth
 {
 
     public static class AccountTokenProvider
     {
-      
-    
+
+
         public static async Task<string> GetArmAccessTokenAsync(CancellationToken ct = default)
         {
             var tokenRequestContext = new TokenRequestContext(new[] { $"{Consts.AzureResourceManager}/.default" });
@@ -22,7 +23,7 @@ namespace VideoIndexerClient
             return tokenRequestResult.Token;
         }
 
-        public static async Task<string> GetAccountAccessTokenAsync(string armAccessToken, ArmAccessTokenPermission permission = ArmAccessTokenPermission.Contributor, ArmAccessTokenScope scope = ArmAccessTokenScope.Account,  CancellationToken ct = default)
+        public static async Task<string> GetAccountAccessTokenAsync(string armAccessToken, ArmAccessTokenPermission permission = ArmAccessTokenPermission.Contributor, ArmAccessTokenScope scope = ArmAccessTokenScope.Account, CancellationToken ct = default)
         {
             var accessTokenRequest = new AccessTokenRequest
             {

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace VideoIndexerClient
+namespace VideoIndexingARMAccounts.VideoIndexerClient.auth
 {
     public class GenerateAccessTokenResponse
     {

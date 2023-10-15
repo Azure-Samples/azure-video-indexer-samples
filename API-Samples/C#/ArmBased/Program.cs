@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reflection.Metadata;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -12,15 +13,24 @@ using System.Web;
 
 namespace VideoIndexingARMAccounts
 {
+    public static class Consts
+    {
+        public const string ApiVersion = "2022-08-01";
+        public const string AzureResourceManager = "https://management.azure.com";
+        public static readonly string SubscriptionId = Environment.GetEnvironmentVariable("SUBSCIPTION_ID");
+        public static readonly string ResourceGroup = Environment.GetEnvironmentVariable("VI_RESOURCE_GROUP");
+        public static readonly string ViAccountName = Environment.GetEnvironmentVariable("VI_ACCOUNT_NAME");
+        public static readonly string ApiEndpoint = Environment.GetEnvironmentVariable("API_ENDPOINT") ?? "https://api.videoindexer.ai";
+
+        public static bool Valid() => !string.IsNullOrWhiteSpace(SubscriptionId) &&
+                               !string.IsNullOrWhiteSpace(ResourceGroup) &&
+                               !string.IsNullOrWhiteSpace(ViAccountName);
+    }
+
     public class Program
     {
-        private const string ApiVersion = "2022-08-01";
-        private const string SubscriptionId = "<Your_Subscription_ID>";
-        private const string ResourceGroup = "<Your_Resource_Group>";
-        private const string AccountName = "<Your_Account_Name>";
-        
         //Choose public Access Video URL or File Path
-        private const string VideoUrl = "<Your Video Url Here>";
+        private const string VideoUrl = "<Enter Your Video URL Here>";
         //OR 
         private const string LocalVideoPath = "<Your Video File Path Here>";
         
@@ -29,37 +39,40 @@ namespace VideoIndexingARMAccounts
 
         public static async Task Main(string[] args)
         {
+            Console.WriteLine("Video Indexer API Samples ");
+            Console.WriteLine("=========================== ");
+
+            if (!Consts.Valid())
+            {
+                throw new Exception(
+                    "Please Fill In SubscriptionId, Account Name and Resource Group on the Constant Class !");
+            }
+            
             // Create viode Indexer Client
             var client = new VideoIndexerClient.VideoIndexerClient();
             //Get Access Tokens
             await client.Authenticate();
 
-            //1. Sample 1 : Get account details
-            var account = await client.GetAccount(AccountName);
-            var accountLocation = account.Location;
-            var accountId = account.Properties.Id;
-
-
+            //1. Sample 1 : Get account details, not required in most of the cases
+            await client.GetAccount(Consts.ViAccountName);
+            
             //2. Sample 2 :  Upload a video , do not wait for the index operation to complete
-            var videoId = await client.UrlUplopad(VideoUrl, "my-video-1", ExcludedAI, false);
-
+            var videoId = await client.UploadUrl(VideoUrl, "my-video-name", ExcludedAI, false);
+            
             //2A. Sample 2A : Upload From Local File 
             //var fileVideoId = await client.FileUpload("my-video-2", LocalVideoPath, null, null);
+            
+            // Sample 3 : Wait for the video index to finish ( Polling method)
+            //await client.WaitForIndex(videoId);
 
-            // Wait for the video index to finish
-            await client.WaitForIndex(videoId);
-
-            // Get video level access token for Azure Video Indexer 
-            //var videoAccessToken = await videoIndexerResourceProviderClient.GetAccessToken(ArmAccessTokenPermission.Contributor, ArmAccessTokenScope.Video, videoId);
-
-            // Search for the video
+            // Sample 4: Search for the video and get insights
             await client.GetVideo(videoId);
 
-            // Get insights widget url
-            await client.GetInsightsWidgetUrl(videoId);
+            // Sample 5: Get insights widget url
+            //await client.GetInsightsWidgetUrl(videoId);
 
-            // Get player widget url
-            await client.GetPlayerWidgetUrl(videoId);
+            // Sample 6:  Get player widget url
+            //await client.GetPlayerWidgetUrl(videoId);
 
             Console.WriteLine("\nPress Enter to exit...");
             var line = Console.ReadLine();

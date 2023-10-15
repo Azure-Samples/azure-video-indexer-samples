@@ -9,8 +9,7 @@ using System.Threading.Tasks;
 using VideoIndexingARMAccounts.VideoIndexerClient.auth;
 using VideoIndexingARMAccounts.VideoIndexerClient.model;
 using VideoIndexingARMAccounts.VideoIndexerClient.utils;
-using static VideoIndexingARMAccounts.VideoIndexerClient.utils.Consts;
-
+using static VideoIndexingARMAccounts.Consts;
 
 namespace VideoIndexingARMAccounts.VideoIndexerClient
 {
@@ -88,7 +87,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
         /// <param name="exludedAIs"> The ExcludeAI list to run </param>
         /// <param name="waitForIndex"> should this method wait for index operation to complete </param>
         /// <returns> Video Id of the video being indexed, otherwise throws excpetion</returns>
-        public async Task<string> UrlUplopad(string videoUrl , string videoName, string exludedAIs = null, bool waitForIndex = false )
+        public async Task<string> UploadUrl(string videoUrl , string videoName, string exludedAIs = null, bool waitForIndex = false )
         {
             if (_account == null)
             {
@@ -97,8 +96,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
 
             Console.WriteLine($"Video for account {_account.Properties.Id} is starting to upload.");
             var content = new MultipartFormDataContent();
-            FileStream fileStream = null;
-            StreamContent streamContent = null;
+            
             try
             {
                 //Build Query Parameter Dictionary
@@ -118,6 +116,8 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
                 }
                 /*else if (File.Exists(LocalVideoPath))
                 {
+                    FileStream fileStream = null;
+                    StreamContent streamContent = null;    
                     Console.WriteLine("Using local video Multipart upload.");
                     // Add file content
                     fileStream = new FileStream(LocalVideoPath, FileMode.Open, FileAccess.Read);
@@ -154,11 +154,6 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
             {
                 Console.WriteLine(ex.ToString());
                 throw;
-            }
-            finally
-            {
-                await fileStream.DisposeAsync();
-                streamContent.Dispose();
             }
         }
 
@@ -232,7 +227,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
 
         public async Task<string> FileUpload(string videoName,  string mediaPath, string callbackUrl, string clientRequestId)
         {
-            var url = $"{ApiEndpoint}/Accounts/{ViAccountId}/Videos?name={videoName}&callbackurl={callbackUrl}";
+            var url = $"{ApiEndpoint}/Accounts/{_account.Properties.Id}/Videos?name={videoName}&callbackurl={callbackUrl}";
             // Create multipart form data content
             if (!File.Exists(mediaPath))
                 throw new Exception($"Could not find file at path {mediaPath}");

@@ -114,18 +114,6 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
                     Console.WriteLine("Using publiuc video url For upload.");
                     queryDictionary.Add("videoUrl", videoUrl);
                 }
-                /*else if (File.Exists(LocalVideoPath))
-                {
-                    FileStream fileStream = null;
-                    StreamContent streamContent = null;    
-                    Console.WriteLine("Using local video Multipart upload.");
-                    // Add file content
-                    fileStream = new FileStream(LocalVideoPath, FileMode.Open, FileAccess.Read);
-                    streamContent = new StreamContent(fileStream);
-                    content.Add(streamContent, "fileName", Path.GetFileName(LocalVideoPath));
-                    streamContent.Headers.Add("Content-Type", "multipart/form-data");
-                    streamContent.Headers.Add("Content-Length", fileStream.Length.ToString());
-                }*/
                 else
                 {
                     throw new ArgumentException("VideoUrl or LocalVidePath are invalid");

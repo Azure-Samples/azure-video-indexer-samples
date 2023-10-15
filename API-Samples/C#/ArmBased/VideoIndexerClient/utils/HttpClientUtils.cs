@@ -21,6 +21,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient.utils
             return httpClient;
         }
 
+
         public static async Task<string> FileUpload(this HttpClient client, string url, string filePath, string clientRequestId)
         {
             using var content = new MultipartFormDataContent();
@@ -29,9 +30,9 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient.utils
             using var streamContent = new StreamContent(fileStream);
             content.Add(streamContent, "fileName", Path.GetFileName(filePath));
             content.Headers.Add("x-ms-client-request-id", clientRequestId);
-            //streamContent.Headers.Add("Content-Type", "multipart/form-data");
-            //content.Headers.Add("Content-Length", fileStream.Length.ToString());
-            Console.WriteLine(streamContent.ToString());
+            streamContent.Headers.Add("Content-Type", "multipart/form-data");
+            content.Headers.Add("Content-Length", fileStream.Length.ToString());
+            Console.WriteLine("Uploading a local file using multipart/form-data post request..");
             // Send POST request
             var response = await client.PostAsync(url, content);
             Console.WriteLine(response.Headers.ToString());

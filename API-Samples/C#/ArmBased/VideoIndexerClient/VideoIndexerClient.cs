@@ -111,7 +111,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
 
                 if (!string.IsNullOrEmpty(videoUrl) && Uri.IsWellFormedUriString(videoUrl, UriKind.Absolute))
                 {
-                    Console.WriteLine("Using publiuc video url For upload.");
+                    Console.WriteLine("Using public video url For upload.");
                     queryDictionary.Add("videoUrl", videoUrl);
                 }
                 else
@@ -213,14 +213,43 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
             }
         }
 
-        public async Task<string> FileUpload(string videoName,  string mediaPath, string callbackUrl, string clientRequestId)
+
+        public async Task<string> FileUpload(string videoName,  string mediaPath)
         {
-            var url = $"{ApiEndpoint}/Accounts/{_account.Properties.Id}/Videos?name={videoName}&callbackurl={callbackUrl}";
             // Create multipart form data content
             if (!File.Exists(mediaPath))
                 throw new Exception($"Could not find file at path {mediaPath}");
-            var response = await _httpClient.FileUpload(url, mediaPath, clientRequestId);
-            return response;
+            var queryParams = new Dictionary<string, string>()
+            {
+                {"accessToken", _accountAccessToken},
+                {"filename" , videoName },
+                { "description", "video_description" },
+                { "privacy", "private" },
+                { "partition", "partition" }
+            }.CreateQueryString();
+            
+            var uploadUrl = $"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos?{queryParams}";
+            using var content = new MultipartFormDataContent();
+            // Add file content
+            await using var fileStream = new FileStream(mediaPath, FileMode.Open, FileAccess.Read);
+            using var streamContent = new StreamContent(fileStream);
+            content.Add(streamContent, "fileName", Path.GetFileName(mediaPath));
+            
+            streamContent.Headers.Add("Content-Type", "multipart/form-data");
+            content.Headers.Add("Content-Length", fileStream.Length.ToString());
+            Console.WriteLine("Uploading a local file using multipart/form-data post request..");
+            // Send POST request
+            var response = await _httpClient.PostAsync(uploadUrl, content);
+            Console.WriteLine(response.Headers.ToString());
+            // Process response
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                return responseBody;
+            }
+            Console.WriteLine($"Request failed with status code: {response.StatusCode}");
+            return response.ToString();
+
         }
 
         /// <summary>

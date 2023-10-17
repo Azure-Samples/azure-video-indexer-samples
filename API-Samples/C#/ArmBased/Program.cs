@@ -60,7 +60,7 @@ namespace VideoIndexingARMAccounts
             var videoId = await client.UploadUrl(VideoUrl, "my-video-name", ExcludedAI, false);
             
             //2A. Sample 2A : Upload From Local File 
-            var fileVideoId = await client.FileUpload("my-local-media", LocalVideoPath, null, null);
+            var fileVideoId = await client.FileUpload("my-local-media", LocalVideoPath);
             
             // Sample 3 : Wait for the video index to finish ( Polling method)
             await client.WaitForIndex(videoId);

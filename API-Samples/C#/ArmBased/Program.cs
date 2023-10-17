@@ -82,21 +82,5 @@ namespace VideoIndexingARMAccounts
             }
         }
 
-        
-
-
-
-        
-
-       
-
-        
-
-        
-        
-        
-       
-
-        
     }
 }

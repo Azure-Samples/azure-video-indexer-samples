@@ -123,7 +123,8 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
                     queryParams += AddExcludedAIs(exludedAIs);
 
                 // Send POST request
-                var uploadRequestResult = await _httpClient.PostAsync($"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos?{queryParams}", content);
+                var url = $"{ApiEndpoint}/Accounts/{_account.Properties.Id}/Videos?{queryParams}";
+                var uploadRequestResult = await _httpClient.PostAsync(url, content);
                 uploadRequestResult.VerifyStatus(System.Net.HttpStatusCode.OK);
                 var uploadResult = await uploadRequestResult.Content.ReadAsStringAsync();
 
@@ -213,33 +214,33 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
             }
         }
 
-
-        public async Task<string> FileUpload(string videoName,  string mediaPath)
+        public async Task<string> FileUpload(string videoName,  string mediaPath, string exludedAIs = null)
         {
-            // Create multipart form data content
             if (!File.Exists(mediaPath))
                 throw new Exception($"Could not find file at path {mediaPath}");
-            var queryParams = new Dictionary<string, string>()
+
+            var queryParams = new Dictionary<string, string>
             {
-                {"accessToken", _accountAccessToken},
-                {"filename" , videoName },
+                { "accessToken", _accountAccessToken },
+                { "name", videoName },
                 { "description", "video_description" },
                 { "privacy", "private" },
                 { "partition", "partition" }
             }.CreateQueryString();
             
-            var uploadUrl = $"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos?{queryParams}";
+            if (!string.IsNullOrEmpty(exludedAIs))
+                queryParams += AddExcludedAIs(exludedAIs);
+            
+            var url = $"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos?{queryParams}";
+            // Create multipart form data content
             using var content = new MultipartFormDataContent();
             // Add file content
             await using var fileStream = new FileStream(mediaPath, FileMode.Open, FileAccess.Read);
             using var streamContent = new StreamContent(fileStream);
             content.Add(streamContent, "fileName", Path.GetFileName(mediaPath));
-            
-            streamContent.Headers.Add("Content-Type", "multipart/form-data");
-            content.Headers.Add("Content-Length", fileStream.Length.ToString());
             Console.WriteLine("Uploading a local file using multipart/form-data post request..");
             // Send POST request
-            var response = await _httpClient.PostAsync(uploadUrl, content);
+            var response = await _httpClient.PostAsync(url, content);
             Console.WriteLine(response.Headers.ToString());
             // Process response
             if (response.IsSuccessStatusCode)
@@ -249,7 +250,6 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
             }
             Console.WriteLine($"Request failed with status code: {response.StatusCode}");
             return response.ToString();
-
         }
 
         /// <summary>

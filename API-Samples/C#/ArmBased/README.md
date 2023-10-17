@@ -35,12 +35,17 @@ Instructions:
 
 1. Go to Program.cs and populate `SubscriptionId` with your subscription id
 2. Go to Program.cs and populate `ResourceGroup` with your resource group
-3. Go to Program.cs and populate `AccountName` with your account name
+3. Go to Program.cs and populate `ViAccountName` with your account name
 4. Go to Program.cs and populate `VideoUrl` with your video url
 5. Go to Program.cs and Populate `ExcludedAI` with the AI's you want to exclude from the indexing job.
-6. make sure dotnet 6.0 is installed. if not, please install https://dotnet.microsoft.com/download/dotnet/6.0
-7. Open your terminal and navigate to "ApiUsage\ArmBased" folder
-8. Run dotnet build
+6. Go to Program.cs and Populate `VideoUrl` and `LocalVideoPath` with publicly accessed video Url and/or with local path to video file.
+7. Review the VideoIndexerClient/VideoIndexerClient.cs file to learn about the implementation of the API. The Client is a convineint Http Wrapper 
+around REST calls, and can be replaced easily with your custom behavior.  Note the section of issuing Video Indexer Access Token.
+(The Token is Valid for 30 minutes) .
+
+8. make sure dotnet 6.0 is installed. if not, please install https://dotnet.microsoft.com/download/dotnet/6.0
+9. Open your terminal and navigate to "ApiUsage\ArmBased" folder
+10. Run dotnet build
 
 For more information visit [here](https://docs.microsoft.com/en-us/azure/media-services/video-indexer/video-indexer-use-apis)
 

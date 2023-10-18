@@ -6,10 +6,8 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using VideoIndexingARMAccounts.VideoIndexerClient.utils;
 
-namespace VideoIndexingARMAccounts.VideoIndexerClient.auth
+namespace VideoIndexingARMAccounts.VideoIndexerClient.Auth
 {
 
     public static class AccountTokenProvider

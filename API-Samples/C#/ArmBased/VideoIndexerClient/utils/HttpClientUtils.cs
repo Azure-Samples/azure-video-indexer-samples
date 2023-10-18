@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
-using System.Threading.Tasks;
 using System.Web;
 
-namespace VideoIndexingARMAccounts.VideoIndexerClient.utils
+namespace VideoIndexingARMAccounts.VideoIndexerClient.Utils
 {
     public static class HttpClientUtils
     {
@@ -14,7 +12,6 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient.utils
             var handler = new HttpClientHandler
             {
                 AllowAutoRedirect = false,
-                ServerCertificateCustomValidationCallback = (_, _, _, _) => true
             };
             var httpClient = new HttpClient(handler);
             httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");

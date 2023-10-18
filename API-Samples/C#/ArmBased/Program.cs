@@ -1,15 +1,5 @@
-using Azure.Core;
-using Azure.Identity;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Reflection.Metadata;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace VideoIndexingARMAccounts
 {

@@ -1,4 +1,4 @@
-﻿namespace VideoIndexingARMAccounts.VideoIndexerClient.model;
+﻿namespace VideoIndexingARMAccounts.VideoIndexerClient.Model;
 
 public enum ProcessingState
 {

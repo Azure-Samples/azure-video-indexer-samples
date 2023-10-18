@@ -6,9 +6,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading.Tasks;
-using VideoIndexingARMAccounts.VideoIndexerClient.auth;
-using VideoIndexingARMAccounts.VideoIndexerClient.model;
-using VideoIndexingARMAccounts.VideoIndexerClient.utils;
+using VideoIndexingARMAccounts.VideoIndexerClient.Auth;
+using VideoIndexingARMAccounts.VideoIndexerClient.Model;
+using VideoIndexingARMAccounts.VideoIndexerClient.Utils;
 using static VideoIndexingARMAccounts.Consts;
 
 namespace VideoIndexingARMAccounts.VideoIndexerClient
@@ -95,14 +95,12 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
             }
 
             Console.WriteLine($"Video for account {_account.Properties.Id} is starting to upload.");
-            var content = new MultipartFormDataContent();
             
             try
             {
                 //Build Query Parameter Dictionary
                 var queryDictionary = new Dictionary<string, string>
                 {
-                    { "accessToken", _accountAccessToken },
                     { "name", videoName },
                     { "description", "video_description" },
                     { "privacy", "private" },
@@ -123,8 +121,8 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
                     queryParams += AddExcludedAIs(exludedAIs);
 
                 // Send POST request
-                var url = $"{ApiEndpoint}/Accounts/{_account.Properties.Id}/Videos?{queryParams}";
-                var uploadRequestResult = await _httpClient.PostAsync(url, content);
+                var url = $"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos?{queryParams}";
+                var uploadRequestResult = await _httpClient.PostAsync(url, null);
                 uploadRequestResult.VerifyStatus(System.Net.HttpStatusCode.OK);
                 var uploadResult = await uploadRequestResult.Content.ReadAsStringAsync();
 
@@ -158,7 +156,6 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
             {
                 var queryParams = new Dictionary<string, string>()
                 {
-                    {"accessToken", _accountAccessToken},
                     {"language", "English"},
                 }.CreateQueryString();
 
@@ -196,7 +193,6 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
             Console.WriteLine($"Searching videos in account {_account.Properties.Id} for video ID {videoId}.");
             var queryParams = new Dictionary<string, string>()
             {
-                {"accessToken", _accountAccessToken},
                 {"id", videoId},
             }.CreateQueryString();
 
@@ -221,7 +217,6 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
 
             var queryParams = new Dictionary<string, string>
             {
-                { "accessToken", _accountAccessToken },
                 { "name", videoName },
                 { "description", "video_description" },
                 { "privacy", "private" },
@@ -262,7 +257,6 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
             Console.WriteLine($"Getting the insights widget URL for video {videoId}");
             var queryParams = new Dictionary<string, string>()
             {
-                {"accessToken", _accountAccessToken},
                 {"widgetType", "Keywords"},
                 {"allowEdit", "true"},
             }.CreateQueryString();
@@ -288,14 +282,10 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
         public async Task GetPlayerWidgetUrl( string videoId)
         {
             Console.WriteLine($"Getting the player widget URL for video {videoId}");
-            var queryParams = new Dictionary<string, string>()
-            {
-                {"accessToken", _accountAccessToken},
-            }.CreateQueryString();
-
+            
             try
             {
-                var requestUrl = $"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos/{videoId}/PlayerWidget?{queryParams}";
+                var requestUrl = $"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos/{videoId}/PlayerWidget";
                 var playerWidgetRequestResult = await _httpClient.GetAsync(requestUrl);
 
                 var playerWidgetLink = playerWidgetRequestResult.Headers.Location;

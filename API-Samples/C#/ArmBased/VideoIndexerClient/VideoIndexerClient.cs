@@ -109,7 +109,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
 
                 if (!string.IsNullOrEmpty(videoUrl) && Uri.IsWellFormedUriString(videoUrl, UriKind.Absolute))
                 {
-                    Console.WriteLine("Using publiuc video url For upload.");
+                    Console.WriteLine("Using public video url For upload.");
                     queryDictionary.Add("videoUrl", videoUrl);
                 }
                 else
@@ -210,7 +210,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
             }
         }
 
-        public async Task<string> FileUpload(string videoName,  string mediaPath, string exludedAIs)
+        public async Task<string> FileUpload(string videoName,  string mediaPath, string exludedAIs = null)
         {
             if (!File.Exists(mediaPath))
                 throw new Exception($"Could not find file at path {mediaPath}");

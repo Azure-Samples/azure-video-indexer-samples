@@ -47,10 +47,10 @@ namespace VideoIndexingARMAccounts
             await client.GetAccount(Consts.ViAccountName);
             
             //2. Sample 2 :  Upload a video , do not wait for the index operation to complete
-            var videoId = await client.UploadUrl(VideoUrl, "my-video-name", ExcludedAI, false);
+            var videoId = await client.UploadUrl(VideoUrl, "my-video-name23", ExcludedAI, false);
             
             //2A. Sample 2A : Upload From Local File 
-            var fileVideoId = await client.FileUpload("my-local-media", LocalVideoPath);
+            //var fileVideoId = await client.FileUpload("my-local-media", LocalVideoPath);
             
             // Sample 3 : Wait for the video index to finish ( Polling method)
             await client.WaitForIndex(videoId);

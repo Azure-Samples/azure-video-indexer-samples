@@ -34,7 +34,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
             {
                 _armAccessToken = await AccountTokenProvider.GetArmAccessTokenAsync();
                 _accountAccessToken = await AccountTokenProvider.GetAccountAccessTokenAsync(_armAccessToken);
-                _httpClient = HttpClientUtils.CreateHttpClient(_accountAccessToken);
+                _httpClient = HttpClientUtils.CreateHttpClient();
             }
             catch (Exception ex)
             {
@@ -104,24 +104,21 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
                     { "name", videoName },
                     { "description", "video_description" },
                     { "privacy", "private" },
-                    { "partition", "partition" }
+                    { "accessToken" , _accountAccessToken },
+                    { "videoUrl" , videoUrl }
                 };
 
-                if (!string.IsNullOrEmpty(videoUrl) && Uri.IsWellFormedUriString(videoUrl, UriKind.Absolute))
-                {
-                    Console.WriteLine("Using public video url For upload.");
-                    queryDictionary.Add("videoUrl", videoUrl);
-                }
-                else
+                if (!Uri.IsWellFormedUriString(videoUrl, UriKind.Absolute))
                 {
                     throw new ArgumentException("VideoUrl or LocalVidePath are invalid");
                 }
+                
                 var queryParams = queryDictionary.CreateQueryString();
                 if (!string.IsNullOrEmpty(exludedAIs))
                     queryParams += AddExcludedAIs(exludedAIs);
 
                 // Send POST request
-                var url = $"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos?{queryParams}";
+                var url = $"{ApiEndpoint}/westus2/Accounts/{_account.Properties.Id}/Videos?{queryParams}";
                 var uploadRequestResult = await _httpClient.PostAsync(url, null);
                 uploadRequestResult.VerifyStatus(System.Net.HttpStatusCode.OK);
                 var uploadResult = await uploadRequestResult.Content.ReadAsStringAsync();

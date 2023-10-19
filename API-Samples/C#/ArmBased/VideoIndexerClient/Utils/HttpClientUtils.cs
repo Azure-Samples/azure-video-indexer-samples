@@ -7,14 +7,13 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient.Utils
 {
     public static class HttpClientUtils
     {
-        public static HttpClient CreateHttpClient(string token)
+        public static HttpClient CreateHttpClient()
         {
             var handler = new HttpClientHandler
             {
                 AllowAutoRedirect = false,
             };
             var httpClient = new HttpClient(handler);
-            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
             return httpClient;
         }
         

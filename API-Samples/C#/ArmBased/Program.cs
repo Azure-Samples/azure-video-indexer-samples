@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Concurrent;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace VideoIndexingARMAccounts
@@ -44,25 +46,34 @@ namespace VideoIndexingARMAccounts
             await client.Authenticate();
 
             //1. Sample 1 : Get account details, not required in most of the cases
+            Console.WriteLine("Sample1- Get Account Basic Details");
             await client.GetAccount(Consts.ViAccountName);
-            
-            //2. Sample 2 :  Upload a video , do not wait for the index operation to complete
+
+            //2. Sample 2 :  Upload a video , do not wait for the index operation to complete. 
+            Console.WriteLine("Sample2- Index a Video from URL");
             var videoId = await client.UploadUrl(VideoUrl, "my-video-name", ExcludedAI, false);
             
             //2A. Sample 2A : Upload From Local File 
-            //var fileVideoId = await client.FileUpload("my-local-media", LocalVideoPath);
-            
+            if (File.Exists(LocalVideoPath))
+            {
+                Console.WriteLine("Sample 2A - Index a video From File");
+                var fileVideoId = await client.FileUpload("my-other-video-name", LocalVideoPath);
+            }
+
             // Sample 3 : Wait for the video index to finish ( Polling method)
+            Console.WriteLine("Sample 3 - Polling on Video Completion Event");
             await client.WaitForIndex(videoId);
 
             // Sample 4: Search for the video and get insights
+            Console.WriteLine("Sample 4 - Search for Video And get insights");
             await client.GetVideo(videoId);
 
-            // Sample 5: Get insights widget url
-            //await client.GetInsightsWidgetUrl(videoId);
+            // Sample 5: Widgets API's
+            Console.WriteLine("Sample 5- Widgets API");
+            await client.GetInsightsWidgetUrl(videoId);
+            await client.GetPlayerWidgetUrl(videoId);
+            
 
-            // Sample 6:  Get player widget url
-            //await client.GetPlayerWidgetUrl(videoId);
 
             Console.WriteLine("\nPress Enter to exit...");
             var line = Console.ReadLine();

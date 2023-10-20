@@ -118,7 +118,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
                     queryParams += AddExcludedAIs(exludedAIs);
 
                 // Send POST request
-                var url = $"{ApiEndpoint}/westus2/Accounts/{_account.Properties.Id}/Videos?{queryParams}";
+                var url = $"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos?{queryParams}";
                 var uploadRequestResult = await _httpClient.PostAsync(url, null);
                 uploadRequestResult.VerifyStatus(System.Net.HttpStatusCode.OK);
                 var uploadResult = await uploadRequestResult.Content.ReadAsStringAsync();

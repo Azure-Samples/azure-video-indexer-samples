@@ -7,7 +7,7 @@
 loc="eus"
 region="eastus"
 groupPrefix="vi-arc"
-version="1.0.20-preview"
+version="1.0.26-preview"
 aksVersion="1.25.6"
 namespace="video-indexer"
 extension_name="videoindexer"

@@ -28,7 +28,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
             
         }
 
-        public async Task Authenticate()
+        public async Task AuthenticateAsync()
         {
             try
             {
@@ -48,7 +48,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
         /// </summary>
         /// <param name="accountName"></param>
         /// <returns></returns>
-        public async Task<Account> GetAccount(string accountName)
+        public async Task<Account> GetAccountAsync(string accountName)
         {
             if (_account != null)
             {
@@ -87,7 +87,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
         /// <param name="exludedAIs"> The ExcludeAI list to run </param>
         /// <param name="waitForIndex"> should this method wait for index operation to complete </param>
         /// <returns> Video Id of the video being indexed, otherwise throws excpetion</returns>
-        public async Task<string> UploadUrl(string videoUrl , string videoName, string exludedAIs = null, bool waitForIndex = false )
+        public async Task<string> UploadUrlAsync(string videoUrl , string videoName, string exludedAIs = null, bool waitForIndex = false )
         {
             if (_account == null)
             {
@@ -130,7 +130,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
                 if (waitForIndex)
                 {
                     Console.WriteLine("Waiting for Index Operation to Complete");
-                    await WaitForIndex(videoId);
+                    await WaitForIndexAsync(videoId);
                 }
                 return videoId;
             }
@@ -146,7 +146,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
         /// </summary>
         /// <param name="videoId"> The video id </param>
         /// <returns> Prints video index when the index is complete, otherwise throws exception </returns>
-        public async Task WaitForIndex(string videoId)
+        public async Task WaitForIndexAsync(string videoId)
         {
             Console.WriteLine($"Waiting for video {videoId} to finish indexing.");
             while (true)
@@ -185,7 +185,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
         /// </summary>
         /// <param name="videoId"> The video id </param>
         /// <returns> Prints the video metadata, otherwise throws excpetion</returns>
-        public async Task GetVideo(string videoId)
+        public async Task GetVideoAsync(string videoId)
         {
             Console.WriteLine($"Searching videos in account {_account.Properties.Id} for video ID {videoId}.");
             var queryParams = new Dictionary<string, string>()
@@ -207,7 +207,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
             }
         }
 
-        public async Task<string> FileUpload(string videoName,  string mediaPath, string exludedAIs = null)
+        public async Task<string> FileUploadAsync(string videoName,  string mediaPath, string exludedAIs = null)
         {
             if (!File.Exists(mediaPath))
                 throw new Exception($"Could not find file at path {mediaPath}");
@@ -249,7 +249,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
         /// </summary>
         /// <param name="videoId"> The video id </param>
         /// <returns> Prints the VideoInsightsWidget URL, otherwise throws exception</returns>
-        public async Task GetInsightsWidgetUrl(string videoId)
+        public async Task GetInsightsWidgetUrlAsync(string videoId)
         {
             Console.WriteLine($"Getting the insights widget URL for video {videoId}");
             var queryParams = new Dictionary<string, string>()
@@ -276,7 +276,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
         /// </summary>
         /// <param name="videoId"> The video id </param>
         /// <returns> Prints the VideoPlayerWidget URL, otherwise throws exception</returns>
-        public async Task GetPlayerWidgetUrl( string videoId)
+        public async Task GetPlayerWidgetUrlAsync( string videoId)
         {
             Console.WriteLine($"Getting the player widget URL for video {videoId}");
             

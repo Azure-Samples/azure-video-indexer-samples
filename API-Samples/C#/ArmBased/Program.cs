@@ -40,38 +40,38 @@ namespace VideoIndexingARMAccounts
                     "Please Fill In SubscriptionId, Account Name and Resource Group on the Constant Class !");
             }
             
-            // Create viode Indexer Client
+            // Create Video Indexer Client
             var client = new VideoIndexerClient.VideoIndexerClient();
             //Get Access Tokens
-            await client.Authenticate();
+            await client.AuthenticateAsync();
 
-            //1. Sample 1 : Get account details, not required in most of the cases
+            //1. Sample 1 : Get account details, not required in most cases
             Console.WriteLine("Sample1- Get Account Basic Details");
-            await client.GetAccount(Consts.ViAccountName);
+            await client.GetAccountAsync(Consts.ViAccountName);
 
             //2. Sample 2 :  Upload a video , do not wait for the index operation to complete. 
             Console.WriteLine("Sample2- Index a Video from URL");
-            var videoId = await client.UploadUrl(VideoUrl, "my-video-name", ExcludedAI, false);
+            var videoId = await client.UploadUrlAsync(VideoUrl, "my-video-name", ExcludedAI, false);
             
             //2A. Sample 2A : Upload From Local File 
             if (File.Exists(LocalVideoPath))
             {
                 Console.WriteLine("Sample 2A - Index a video From File");
-                var fileVideoId = await client.FileUpload("my-other-video-name", LocalVideoPath);
+                var fileVideoId = await client.FileUploadAsync("my-other-video-name", LocalVideoPath);
             }
 
             // Sample 3 : Wait for the video index to finish ( Polling method)
             Console.WriteLine("Sample 3 - Polling on Video Completion Event");
-            await client.WaitForIndex(videoId);
+            await client.WaitForIndexAsync(videoId);
 
             // Sample 4: Search for the video and get insights
             Console.WriteLine("Sample 4 - Search for Video And get insights");
-            await client.GetVideo(videoId);
+            await client.GetVideoAsync(videoId);
 
             // Sample 5: Widgets API's
             Console.WriteLine("Sample 5- Widgets API");
-            await client.GetInsightsWidgetUrl(videoId);
-            await client.GetPlayerWidgetUrl(videoId);
+            await client.GetInsightsWidgetUrlAsync(videoId);
+            await client.GetPlayerWidgetUrlAsync(videoId);
             
 
 

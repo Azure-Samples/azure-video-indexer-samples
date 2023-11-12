@@ -6,6 +6,8 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
+using VideoIndexingARMAccounts.VideoIndexerClient.Utils;
 
 namespace VideoIndexingARMAccounts.VideoIndexerClient.Auth
 {
@@ -37,7 +39,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient.Auth
 
                 // Set request uri
                 var requestUri = $"{Consts.AzureResourceManager}/subscriptions/{Consts.SubscriptionId}/resourcegroups/{Consts.ResourceGroup}/providers/Microsoft.VideoIndexer/accounts/{Consts.ViAccountName}/generateAccessToken?api-version={Consts.ApiVersion}";
-                var client = new HttpClient(new HttpClientHandler());
+                var client = HttpClientUtils.CreateHttpClient();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", armAccessToken);
 
                 var result = await client.PostAsync(requestUri, httpContent, ct);

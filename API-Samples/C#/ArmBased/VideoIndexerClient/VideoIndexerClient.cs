@@ -15,7 +15,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
 {
     public class VideoIndexerClient
     {
-        private HttpClient _httpClient;
+        private readonly HttpClient _httpClient;
         private string _armAccessToken;
         private string _accountAccessToken;
         private Account _account;
@@ -25,7 +25,8 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
         public VideoIndexerClient()
         {
             System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12 | System.Net.SecurityProtocolType.Tls13;
-            
+            _httpClient = HttpClientUtils.CreateHttpClient();
+
         }
 
         public async Task AuthenticateAsync()
@@ -34,7 +35,6 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
             {
                 _armAccessToken = await AccountTokenProvider.GetArmAccessTokenAsync();
                 _accountAccessToken = await AccountTokenProvider.GetAccountAccessTokenAsync(_armAccessToken);
-                _httpClient = HttpClientUtils.CreateHttpClient();
             }
             catch (Exception ex)
             {
@@ -59,7 +59,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
             {
                 // Set request uri
                 var requestUri = $"{AzureResourceManager}/subscriptions/{SubscriptionId}/resourcegroups/{ResourceGroup}/providers/Microsoft.VideoIndexer/accounts/{accountName}?api-version={ApiVersion}";
-                var client = new HttpClient(new HttpClientHandler());
+                var client = HttpClientUtils.CreateHttpClient();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _armAccessToken);
 
                 var result = await client.GetAsync(requestUri);

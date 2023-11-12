@@ -7,11 +7,11 @@
 loc="eus"
 region="eastus"
 groupPrefix="vi-arc"
-version="1.0.26-preview"
-aksVersion="1.25.6"
+version="<TBD>"
+aksVersion="1.27.3"
 namespace="video-indexer"
 extension_name="videoindexer"
-releaseTrain="preview"
+releaseTrain="release"
 
 #=============================================#
 #============== Customization  ===============#
@@ -20,10 +20,7 @@ releaseTrain="preview"
 #### Replace it with another Account Id if needed
 install_aks_cluster="true"
 install_extension="true"
-
-# Set default values
 viApiVersion="2023-06-02-preview" # VI API version
-
 
 ###############Helper Functions################# 
 # Function to ask a question and read user's input
@@ -37,13 +34,24 @@ ask_question() {
         eval "$variable=\"$input\""
     fi
 }
+progress-bar() {
+  local duration=${1}
+  local elapsed=${2}
+    already_done() { for ((done=0; done<$elapsed; done++)); do printf "▇"; done }
+    remaining() { for ((remain=$elapsed; remain<$duration; remain++)); do printf " "; done }
+    percentage() { printf "| %s%%" $(( (($elapsed)*100)/($duration)*100/100 )); }
+    clean_line() { printf "\r"; }
+    clean_line
+    already_done; remaining; percentage
+    clean_line
+}
 ##############################
 # create_cognitive_hobo_resources
-# Creeating Cognitive Services On VI RP, on behalf of the user
+# Creating Cognitive Services On VI RP, on behalf of the user
 ##############################
 function create_cognitive_hobo_resources {
   echo -e "\t create Cognitive Services On VI RP ***start***"
-  sleepDuration=90
+  sleepDuration=10
   echo "getting arm token"
   createResourceUri="https://management.azure.com/subscriptions/${viSubscriptionId}/resourceGroups/${viResourceGroup}/providers/Microsoft.VideoIndexer/accounts/${viAccountName}/CreateExtensionDependencies?api-version=2023-06-02-preview"
   echo "=============================="
@@ -52,24 +60,51 @@ function create_cognitive_hobo_resources {
   result=$(az rest --method post --uri $createResourceUri 2>&1 >/dev/null || true)
   echo $result    
 
-  if [[ "$result" == *"ERROR:"* ]]; then
-    echo "CS Resources already exist. ignoring"
+  if [[ "$result" == *"ERROR: Conflict"* ]]; then
+    echo "CS Resources already exist. Moving on."
   else
-    echo "sleeping for $sleepDuration seconds"  
-    sleep $sleepDuration
+    echo "No CS resources found. Creating"  
   fi
-  echo "CS resources has been created"
+  getSecretsUri="https://management.azure.com/subscriptions/${viSubscriptionId}/resourceGroups/${viResourceGroup}/providers/Microsoft.VideoIndexer/accounts/${viAccountName}/ListExtensionDependenciesData?api-version=${viApiVersion}"
+  csResourcesData=$(az rest --method post --uri $getSecretsUri 2>&1 >/dev/null || true)
+  if [[ "$csResourcesData" == *"ERROR"* ]]; then
+    printf "\n"
+    numRetries=0
+    sleepDuration=1
+    maxNumRetries=20
+    while  [ $numRetries -lt $maxNumRetries ]; do
+      csResourcesData=$(az rest --method post --uri $getSecretsUri 2>&1 >/dev/null || true)
+      if [[ "$csResourcesData" == *"ERROR"* ]]; then
+          numRetries=$(( $numRetries + 1 ))
+          progress=$(( $numRetries*100/20 ))
+          progress-bar 100 $progress; 
+    sleep $sleepDuration
+      else
+          progress-bar 100 100; 
+          break
+      fi
+    done
+      printf "\n"
+  fi
 
   echo "=============================="
   echo "Getting secrets"
   echo "=============================="
-  getSecretsUri="https://management.azure.com/subscriptions/${viSubscriptionId}/resourceGroups/${viResourceGroup}/providers/Microsoft.VideoIndexer/accounts/${viAccountName}/ListExtensionDependenciesData?api-version=${viApiVersion}"
+
+  printf "\n"
+  if [[ "$csResourcesData" == *"ERROR:"* ]]; then
+    echo "Error getting the cognitive services resources, please reach out to support"
+  else 
+    echo "Got CS resources"
   resultJson=$(az rest --method post --uri $getSecretsUri)
+  fi  
   
   export speechPrimaryKey=$(echo $resultJson | jq -r '.speechCognitiveServicesPrimaryKey')
   export speechEndpoint=$(echo $resultJson | jq -r '.speechCognitiveServicesEndpoint')
   export translatorPrimaryKey=$(echo $resultJson | jq -r '.translatorCognitiveServicesPrimaryKey')
   export translatorEndpoint=$(echo $resultJson | jq -r '.translatorCognitiveServicesEndpoint')
+  export ocrPrimaryKey=$(echo $resultJson | jq -r '.ocrCognitiveServicesPrimaryKey')
+  export ocrEndpoint=$(echo $resultJson | jq -r '.ocrCognitiveServicesEndpoint')
   
   echo -e "\t create Cognitive Services On VI RP ***done***"
 }
@@ -110,13 +145,13 @@ echo "Unique Identifier: $uniqueIdentifier"
   esac
 done
 
-echo "switiching to $viSubscriptionId"
+echo "switching to $viSubscriptionId"
 az account set --subscription $viSubscriptionId
 
 #=============================================#
 
 if [[ -z $uniqueIdentifier || -z $viAccountId ]]; then
-    echo "Please provide the required parameters for Speech and Translate resources in Azure: (viAccountId, uniqueIdentifier)"
+    echo "Please provide the required parameters for Speech, Translate, and OCR resources in Azure: (viAccountId, uniqueIdentifier)"
     exit 1
 fi
 
@@ -135,6 +170,7 @@ register_cli_add_ons="false"
 
 if [[ $register_cli_add_ons == "true" ]]; then
    az extension add --name connectedk8s
+   az extension add --name aks-preview
    az provider register --namespace Microsoft.Kubernetes
    az provider register --namespace Microsoft.KubernetesConfiguration
    az provider register --namespace Microsoft.ExtendedLocation
@@ -151,9 +187,10 @@ echo "Resource Names: [ AKS: $aks, AKS-RG: $rg ]"
 
 connectedClusterName="$prefix-connected-aks"
 connectedClusterRg="${rg}"
-nodePoolRg="$aks-agentpool-rg"
-nodeVmSize="Standard_D8as_v4" # 8 vcpus, 32 GB RAM
-
+nodePoolRg="${aks}-agentpool-rg"
+nodeVmSize="Standard_D4a_v4" # 4 vcpus, 16 GB RAM
+workerVmSize="Standard_D32a_v4" # 32 vcpus, 128 GB RAM
+dnsPrefix="${groupPrefix}-${uniqueIdentifier}"
 #######################################################################
 
 if [[ $install_aks_cluster == "true" ]]; then
@@ -165,14 +202,30 @@ if [[ $install_aks_cluster == "true" ]]; then
             --enable-managed-identity\
             --kubernetes-version ${aksVersion} \
             --enable-oidc-issuer \
+            --nodepool-name system \
+            --os-sku AzureLinux \
             --node-count 2 \
             --tier standard \
             --generate-ssh-keys \
             --network-plugin kubenet \
             --tags $tags \
             --node-resource-group $nodePoolRg \
-            --node-vm-size $nodeVmSize 
+            --node-vm-size $nodeVmSize \
+            --node-os-upgrade-channel NodeImage --auto-upgrade-channel node-image
+
       echo -e "\t create aks cluster Name: $aks , Resource Group $rg- ***done***"
+      echo "Adding another worload node pool"
+      az aks nodepool add -g $rg --cluster-name $aks  -n workload \
+              --os-sku AzureLinux \
+              --mode User \
+              --node-vm-size $workerVmSize \
+              --node-osdisk-size 100 \
+              --node-count 0 \
+              --max-count 10 \
+              --min-count 0  \
+              --enable-cluster-autoscaler \
+              --max-pods 110
+      echo "Adding another workload node pool ***done***"
       #=============================================#
       #============== AKS Credentials ==============#
       #=============================================#
@@ -188,11 +241,19 @@ if [[ $install_aks_cluster == "true" ]]; then
       kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/cloud/deploy.yaml
       echo -e "\tAdding ingress controller -- ***done***"
       #=============================================#
+      #========= Patch Public IP DNS Label =========
+      #=============================================#    
+      publicIpResourceId=$(az network public-ip list --resource-group $nodePoolRg --query "[?contains(name, 'kubernetes')].id" -otsv)
+      echo "publicIpResourceId: $publicIpResourceId"
+      az network public-ip update --ids $publicIpResourceId --dns-name $dnsPrefix
+      echo "Public IP DNS Label has been updated to $dnsPrefix"
+      
+      #=============================================#
       #============== Create AKS ARC Cluster =======#
       #=============================================#
-      echo -e "\tConneting AKS to ARC-AKS -- ***start***"
+      echo -e "\tConnecting AKS to ARC-AKS -- ***start***"
       az connectedk8s connect --name $connectedClusterName --resource-group $connectedClusterRg --yes --tags $tags
-      echo -e "\tconneting AKS to ARC-AKS -- ***done***"
+      echo -e "\tconnecting AKS to ARC-AKS -- ***done***"
 fi
 
 #===============================================================================#
@@ -200,10 +261,10 @@ fi
 #===============================================================================#
 create_cognitive_hobo_resources
 
-echo "translatorEndpoint=$translatorEndpoint, speechEndpoint=$speechEndpoint"
+echo "translatorEndpoint=$translatorEndpoint, speechEndpoint=$speechEndpoint, ocrEndpoint=$ocrEndpoint"
 
-if [[ -z $translatorEndpoint || -z $translatorPrimaryKey || -z $speechEndpoint || -z $speechPrimaryKey ]]; then
-    echo "one of [ translatorEndpoint, translatorPrimaryKey, speechEndpoint, speechPrimaryKey ]  is empty. Exiting"
+if [[ -z $translatorEndpoint || -z $translatorPrimaryKey || -z $speechEndpoint || -z $speechPrimaryKey || -z $ocrEndpoint || -z $ocrPrimaryKey ]]; then
+    echo "one of [ translatorEndpoint, translatorPrimaryKey, speechEndpoint, speechPrimaryKey, ocrEndpoint, ocrPrimaryKey]  is empty. Exiting"
     exit 1
 fi
 #=============================================#
@@ -212,17 +273,16 @@ fi
 if [[ $install_extension == "true" ]]; then
   
   scope="cluster"
-  connectedClusterName="$connectedClusterName"
-  connectedClusterRg="$connectedClusterRg"
   echo "==============================="
   echo "Installing VI Extenion into AKS Connected Cluster $connectedClusterName on ResourceGroup $connectedClusterRg"
   echo "==============================="
   ######################
   
   
-  EXTERNAL_IP=$(kubectl get services --namespace ingress-nginx ingress-nginx-controller --output jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  #ENDPOINT_URI="${groupPrefix}-${uniqueIdentifier}.eastus.cloudapp.azure.com"
+  ENDPOINT_URI=$(az network public-ip list --resource-group $nodePoolRg --query "[?contains(name, 'kubernetes')].dnsSettings.fqdn" -otsv)
   echo "Check If videoindexer extension is already installed"
-  exists=$(az k8s-extension list --cluster-name $aks --cluster-type connectedClusters -g $rg --query "[?name=='videoindexer'].name" -otsv)
+  exists=$(az k8s-extension list --cluster-name $connectedClusterName --cluster-type connectedClusters -g $connectedClusterRg --query "[?name=='videoindexer'].name" -otsv)
   
   if [[ $exists == "videoindexer" ]]; then
     echo -e "\tExtension Found - Updating VI Extension - ***start***"
@@ -235,18 +295,13 @@ if [[ $install_extension == "true" ]]; then
                           --auto-upgrade-minor-version false \
                           --config-protected-settings "speech.endpointUri=${speechEndpoint}" \
                           --config-protected-settings "speech.secret=${speechPrimaryKey}" \
-                          --config-protected-settings "translate.endpointUri=https://eastus.api.cognitive.microsoft.com" \
+                          --config-protected-settings "translate.endpointUri=${translatorEndpoint}" \
                           --config-protected-settings "translate.secret=${translatorPrimaryKey}" \
+                          --config-protected-settings "ocr.endpointUri=${ocrEndpoint}" \
+                          --config-protected-settings "ocr.secret=${ocrPrimaryKey}"\
                           --config "videoIndexer.accountId=${viAccountId}" \
-                          --config "frontend.endpointUri=https://${EXTERNAL_IP}" \
+                          --config "frontend.endpointUri=https://${ENDPOINT_URI}" \
                           --config AI.nodeSelector."beta\\.kubernetes\\.io/os"=linux \
-                          --config "speech.resource.requests.cpu=500m" \
-                          --config "speech.resource.requests.mem=2Gi" \
-                          --config "speech.resource.limits.cpu=1" \
-                          --config "speech.resource.limits.mem=4Gi" \
-                          --config "videoIndexer.webapi.resources.requests.mem=4Gi"\
-                          --config "videoIndexer.webapi.resources.limits.mem=8Gi"\
-                          --config "videoIndexer.webapi.resources.limits.cpu=1"\
                           --config "storage.storageClass=azurefile-csi" \
                           --config "storage.accessMode=ReadWriteMany" 
     echo -e "\tUpdating VI Extension - ***done***"
@@ -265,18 +320,13 @@ if [[ $install_extension == "true" ]]; then
                               --auto-upgrade-minor-version false \
                               --config-protected-settings "speech.endpointUri=${speechEndpoint}" \
                               --config-protected-settings "speech.secret=${speechPrimaryKey}" \
-                              --config-protected-settings "translate.endpointUri=https://eastus.api.cognitive.microsoft.com" \
+                              --config-protected-settings "translate.endpointUri=${translatorEndpoint}" \
                               --config-protected-settings "translate.secret=${translatorPrimaryKey}" \
+                              --config-protected-settings "ocr.endpointUri=${ocrEndpoint}" \
+                              --config-protected-settings "ocr.secret=${ocrPrimaryKey}"\
                               --config "videoIndexer.accountId=${viAccountId}" \
-                              --config "frontend.endpointUri=https://${EXTERNAL_IP}" \
+                              --config "frontend.endpointUri=https://${ENDPOINT_URI}" \
                               --config AI.nodeSelector."beta\\.kubernetes\\.io/os"=linux \
-                              --config "speech.resource.requests.cpu=500m" \
-                              --config "speech.resource.requests.mem=2Gi" \
-                              --config "speech.resource.limits.cpu=1" \
-                              --config "speech.resource.limits.mem=4Gi" \
-                              --config "videoIndexer.webapi.resources.requests.mem=4Gi"\
-                              --config "videoIndexer.webapi.resources.limits.mem=8Gi"\
-                              --config "videoIndexer.webapi.resources.limits.cpu=1"\
                               --config "storage.storageClass=azurefile-csi" \
                               --config "storage.accessMode=ReadWriteMany" 
     echo -e "\tCreate New VI Extension - ***done***"

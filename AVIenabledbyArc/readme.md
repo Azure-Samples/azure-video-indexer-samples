@@ -66,14 +66,13 @@ Follow these steps to deploy the Video Indexer Arc Extention to your Arc K8S Ena
 The following is the minumum and recommended requirements if the extension contains single Languge support.
 > **_Note:_** If you install multiple Speech and Translation containers with several languages, ensure to increase the hardware requirements accordingly.
 
-| Component | Minimum Requirements | Recommended Requirements
-| --- | --- | --- |
-| VM Count | 1 | 2
-| CPU (Per Cluster)| 16 cores | 32 cores | 
-| RAM (Per Cluster)| 32 GB | 64 GB |
-| Storage | 30 GB | 50 GB |
+| Configuration | VM Count | Node CPU Cores Count  | Node Ram | Node Storage | Remarks
+| --- | --- | --- | --- | --- | --- |
+| Minimum | 1 | 32 Cores | 64 GB | 50 GB | Storage needs to support `ReadWriteMany` Storage Class
+| Recommended | 2 | 48-64 Cores | 256 GB | 100 GB | Storage needs to support `ReadWriteMany` Storage Class
 
-> **_Note:_** at least 2-node cluster is recommended for high availability and scalability. The Recommended Settings refer to cluster wide settings, so for example, if you have 2 nodes, each node should have 16 cores and 32 GB of RAM.
+
+> **_Note:_** at least 2-node cluster is recommended for high availability and scalability. 
 
 > **_Tip:_** We recommend creating a dedicate node-pool / auto-scaling groups to host the VI Solution
 
@@ -82,9 +81,9 @@ The following is the minumum and recommended requirements if the extension conta
 
 | Component |  Minimum Requirements |
 | --- | --- |
-| Operating System | Ubuntu 20.04 LTS or any Linux Compatible OS |
-| Kubernetes | 1.24 |
-| Azure CLI | 2.4.0 |
+| Operating System | Ubuntu 22.04 LTS or any Linux Compatible OS |
+| Kubernetes | 1.26 |
+| Azure CLI | 2.48.0 |
 
 ## Installation Steps
 

@@ -10,6 +10,10 @@ param viAccountId string
 param storageAccountKey string
 param functionAppName string
 
+param computerVisionEndpoint string
+param computerVisionKey string
+param computerVisionCustomModelName string
+
 
 param linuxFxVersion string = 'DOTNET|4.27.5.5'
 
@@ -59,6 +63,9 @@ module appService_appSettings 'app-config.bicep' = {
     resorucePrefix: resourcePrefix
     viAccountId: viAccountId
     eventsHubConnectionString: eventsHubConnectionString
+    csVisionEndpoint: computerVisionEndpoint
+    csVisionAPIKey: computerVisionKey
+    csVisionCustomModelName: computerVisionCustomModelName
   }
   dependsOn: [
     viFunctionApp

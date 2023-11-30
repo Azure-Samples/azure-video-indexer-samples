@@ -4,9 +4,15 @@ param storageAccountAccessKey string
 param resorucePrefix string 
 param viAccountId string
 
+//Compute Vision Resource
+param csVisionEndpoint string
+param csVisionCustomModelName string
+param csVisionAPIKey string
+
 var viAccountName = '${resorucePrefix}vi'
 var viAccountRg = '${resorucePrefix}-rg'
 var functionAppName = '${resorucePrefix}-app'
+
 
 @description('Value of "APP_CONFIGURATION_LABEL" appsetting for production slot')
 param appConfiguration_appConfigLabel_value_production string = 'production'
@@ -25,16 +31,16 @@ var BASE_SLOT_APPSETTINGS = {
   WEBSITES_ENABLE_APP_SERVICE_STORAGE: 'false'
   WEBSITE_CONTENTSHARE: toLower(storageAccountName)
   WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccountAccessKey}'
-  SUBSCIPTION_ID: '56c46afd-b41b-4e86-a597-0d3a351121af'
+  SUBSCIPTION_ID: subscription().subscriptionId
   VI_RESOURCE_GROUP: viAccountRg
   VI_ACCOUNT_NAME: viAccountName
   VI_ACCOUNT_ID: viAccountId
   API_ENDPOINT: 'https://api.videoindexer.ai'
   INTERNAL_API_ENDPOINT: 'https://api.videoindexer.ai/internals'
   VI_LOCATION: 'eastus'
-  CS_VISION_ENDPOINT: 'https://shaybyotest1.cognitiveservices.azure.com/vision/v4.0-preview.1/operations/imageanalysis:analyze'
-  CS_VISION_CUSTOM_MODEL_NAME: 'cartypesb1'
-  CS_VISION_API_KEY: '<set-api-key>'
+  CS_VISION_ENDPOINT: csVisionEndpoint
+  CS_VISION_CUSTOM_MODEL_NAME: csVisionCustomModelName
+  CS_VISION_API_KEY: csVisionAPIKey
   EHCONNECTION: eventsHubConnectionString
 }
 

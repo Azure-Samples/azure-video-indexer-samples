@@ -4,15 +4,23 @@ param location string = resourceGroup().location
 @minLength(3)
 param resourceNamePrefix string
 
-var envResourceNamePrefix = toLower(resourceNamePrefix)
-
 @description('Deployment name/id')
 param deploymentNameId string = '0000000000'
+
+@description('The Computer Vision endpoint')
+param computerVisionEndpoint string
+@description('The Computer Vision API Key')
+param computerVisionKey string
+@description('The Computer Vision Custom Model Name')
+param computerVisionCustomModelName string
 
 var storageAccountName = '${envResourceNamePrefix}sa'
 var functionAppName = '${envResourceNamePrefix}-asp'
 var eventHubNamespaceName = '${envResourceNamePrefix}-eventhub'
 var eventHubName = 'vilogs'
+var envResourceNamePrefix = toLower(resourceNamePrefix)
+
+
 
 /* App Insights  */
 module viapp_appInsights 'appinsights.bicep' = {
@@ -68,6 +76,9 @@ module viapp_function 'functionApp.bicep' = {
     storageAccountKey: viapp_storageAccount.outputs.storageAccountKey
     viAccountId: viapp_videoIndexer.outputs.videoIndexerAccountId
     eventsHubConnectionString: viapp_eventHubs.outputs.eventHubNamespaceConnectionString
+    computerVisionEndpoint: computerVisionEndpoint
+    computerVisionKey: computerVisionKey
+    computerVisionCustomModelName: computerVisionCustomModelName
   }
   dependsOn: [
     viapp_eventHubs

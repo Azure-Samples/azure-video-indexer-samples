@@ -3,17 +3,20 @@
 set -e
 export SCRIPT_PATH=$(dirname "$(readlink -f "$0")")
 echo $(dirname 0)
-export SUBSCRIPTION="24237b72-8546-4da5-b204-8c3cb76dd930"
+export SUBSCRIPTION="<Add_Subscription_ID>"
 export LOCATION=eastus
 export RESOURCE_PREFIX=byo1
 export STORAGE_ACCOUNT="${RESOURCE_PREFIX}sa"
 export RESOURCE_GROUP="${RESOURCE_PREFIX}-rg"
 export APPLICATION_NAME="${RESOURCE_PREFIX}-app"
-export DEPLOY_NANE=byodeploy241128
+export DEPLOY_NANE=byodeploy
 export deploy_infra=true
-export deploy_app=false
+export deploy_app=true
 export ZIP_CONTAINER=${ZIP_CONTAINER:-functions}
 
+
+# Login to Azure
+az login --use-device-code
 az account set -s $SUBSCRIPTION
 
 if [ $deploy_infra = true ]; then

@@ -25,8 +25,11 @@ resource azHostingPlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   location: location
   kind: 'linux'
   sku: {
-    tier: 'Basic'
-    name: 'B1'
+    tier: 'Standard'
+    name: 'S2'
+    size: 'S2'
+    family: 'S'
+    capacity: 1
   }
   properties: {
     reserved: true

@@ -3,42 +3,48 @@
 set -e
 export SCRIPT_PATH=$(dirname "$(readlink -f "$0")")
 echo $(dirname 0)
-export SUBSCRIPTION="<Add_Subscription_ID>"
-export LOCATION=eastus
-export RESOURCE_PREFIX=byo1
-export STORAGE_ACCOUNT="${RESOURCE_PREFIX}sa"
-export RESOURCE_GROUP="${RESOURCE_PREFIX}-rg"
-export APPLICATION_NAME="${RESOURCE_PREFIX}-app"
-export DEPLOY_NANE=byodeploy
-export deploy_infra=true
-export deploy_app=true
-export ZIP_CONTAINER=${ZIP_CONTAINER:-functions}
+
+subscription="<Your Subscription Id>"
+location=eastus
+resource_prefix=byo2
+storage_account="${resource_prefix}sa"
+resource_group="${resource_prefix}-rg"
+application_name="${resource_prefix}-app"
+deploy_name=byodeploy
+deploy_infra=true
+deploy_app=true
+ZipContainerName=${ZIP_CONTAINER:-functions}
+
+#Template
+parameters_file="main.parameters.json"
+template_file="main.bicep"
 
 
 # Login to Azure
 az login --use-device-code
-az account set -s $SUBSCRIPTION
+az account set -s $subscription
 
 if [ $deploy_infra = true ]; then
     echo "Create Resource Group"
-    az group create -n ${RESOURCE_GROUP} -l $LOCATION
+    az group create -n ${resource_group} -l $location
 
     echo "Deploy Resources"
-    az deployment group create -g $RESOURCE_GROUP --name $DEPLOY_NANE \
-                            --template-file .\\main.bicep \
-                            --parameters deploymentNameId=${DEPLOY_NANE}-1 resourceNamePrefix=${RESOURCE_PREFIX}
+    az deployment group create -g $resource_group --name $deploy_name \
+                            --template-file $template_file \
+                            --parameters $parameters_file \
+                            --parameters deploymentNameId=${deploy_name}-1 resourceNamePrefix=${resource_prefix}
 fi
 
 if [ $deploy_app = true ]; then
     echo "deploy function app"
-    cd ${SCRIPT_PATH}/../../Src/
+    cd ${SCRIPT_PATH}/../Src/
     rm -rf bin/publish
-    dotnet publish FlorenceEnhancer/FlorenceEnhancer.csproj -c Release -o bin/publish
+    dotnet publish CarDetectorFuncApp/CarDetectorApp.csproj -c Release -o bin/publish
     echo "zipping function app solution"
     cd bin/publish
     zip -r - . >../../func.zip
     cd ../../
     echo "uploading to Azure Functions"
-    az functionapp deployment source config-zip -g ${RESOURCE_GROUP}  -n ${APPLICATION_NAME} --src ./func.zip
+    az functionapp deployment source config-zip -g ${resource_group}  -n ${application_name} --src ./func.zip
 fi
 

@@ -329,5 +329,5 @@ fi
 echo "==============================="
 echo "VI Extension is installed"
 echo "Swagger is available at: https://$EXTERNAL_IP/swagger/index.html"
-echo "In order to replace the Extension version run the following command: az k8s-extension update --name videoindexer --cluster-name ${connectedClusterName} --resource-group ${connectedClusterRg} --cluster-type connectedClusters --release-train ${releaseTrain} --version NEW_VERSION --auto-upgrade-minor-version false"
+echo "In order to replace the Extension version run the following command: az k8s-extension update --name videoindexer --cluster-name ${connectedClusterName} --resource-group ${connectedClusterRg} --cluster-type connectedClusters --version NEW_VERSION --auto-upgrade-minor-version true"
 echo "In order to delete the Extension run the following command: az k8s-extension delete --name videoindexer --cluster-name ${connectedClusterName} --resource-group ${connectedClusterRg} --cluster-type connectedClusters"

@@ -1,26 +1,23 @@
 #!/bin/bash
 
+#=============================================#
+#============== Customization  ===============#
+#=============================================#
+install_aks_cluster="true"
+install_extension="true"
+viApiVersion="2023-06-02-preview" # VI API version
+region="<Add_Your_Deploy_Region_Here>"
+#Customize the following variables if you want to use a prefix for all resources. a min of 3 characters is required
+groupPrefix="vi-arc"
 
 #=============================================#
 #============== Constants  ===================#
 #=============================================#
-loc="eus"
-region="eastus"
-groupPrefix="vi-arc"
-version="<TBD>"
+$loc=$region
+# review https://learn.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli to select a valid k8s version
 aksVersion="1.27.3"
 namespace="video-indexer"
 extension_name="videoindexer"
-releaseTrain="release"
-
-#=============================================#
-#============== Customization  ===============#
-#=============================================#
-#### The following VI Account is on vi-dev-arc-global Resource group
-#### Replace it with another Account Id if needed
-install_aks_cluster="true"
-install_extension="true"
-viApiVersion="2023-06-02-preview" # VI API version
 
 ###############Helper Functions################# 
 # Function to ask a question and read user's input

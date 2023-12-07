@@ -287,9 +287,7 @@ if [[ $install_extension == "true" ]]; then
                           --cluster-name ${connectedClusterName} \
                           --resource-group ${connectedClusterRg} \
                           --cluster-type connectedClusters \
-                          --release-train ${releaseTrain}  \
-                          --version ${version} \
-                          --auto-upgrade-minor-version false \
+                          --auto-upgrade-minor-version true \
                           --config-protected-settings "speech.endpointUri=${speechEndpoint}" \
                           --config-protected-settings "speech.secret=${speechPrimaryKey}" \
                           --config-protected-settings "translate.endpointUri=${translatorEndpoint}" \
@@ -312,8 +310,6 @@ if [[ $install_extension == "true" ]]; then
                               --cluster-name ${connectedClusterName} \
                               --resource-group ${connectedClusterRg} \
                               --cluster-type connectedClusters \
-                              --release-train ${releaseTrain} \
-                              --version ${version} \
                               --auto-upgrade-minor-version false \
                               --config-protected-settings "speech.endpointUri=${speechEndpoint}" \
                               --config-protected-settings "speech.secret=${speechPrimaryKey}" \

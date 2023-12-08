@@ -1,4 +1,5 @@
 ﻿using System.Web;
+#pragma warning disable CS8603 // Possible null reference return.
 
 namespace VideoIndexerClient.Utils
 {
@@ -24,7 +25,7 @@ namespace VideoIndexerClient.Utils
             {
                 queryParameters[parameter.Key] = parameter.Value;
             }
-            return queryParameters.ToString();
+            return queryParameters.ToString() ;
         }
 
         public static void VerifyStatus(this HttpResponseMessage response, System.Net.HttpStatusCode excpectedStatusCode)

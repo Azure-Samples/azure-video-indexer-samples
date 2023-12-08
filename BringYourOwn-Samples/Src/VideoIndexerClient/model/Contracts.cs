@@ -1,29 +1,35 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
 namespace VideoIndexerClient.model
 {
-    public class FrameUriData
+    public class StartEndPair
     {
-        public FrameUriData(string name, int frameIndex, TimeSpan startTime, TimeSpan endTime, string filePath)
+        public TimeSpan StartTime { get; set; }
+        public TimeSpan EndTime { get; set; }
+    }
+
+    public class FrameData
+    {
+        public FrameData(string name, int frameIndex, string filePath, List<StartEndPair> startEndPairs )
         {
             Name = name;
             FrameIndex = frameIndex;
-            StartTime = startTime;
-            EndTime = endTime;
             FilePath = filePath;
+            StartEndPairs = startEndPairs;
         }
 
         public string Name { get; set; }
         public int FrameIndex { get; set; }
-        public TimeSpan StartTime { get; set; }
-        public TimeSpan EndTime { get; set; }
+        public List<StartEndPair> StartEndPairs { get; set; }
         public string FilePath { get; set; }
     }
 
+
     public class FramesUrisResult
     {
-        public FrameUriData[] Results { get; set; } = Array.Empty<FrameUriData>();
+        public FrameData[] Results { get; set; } = Array.Empty<FrameData>();
         public PagingInfo NextPage { get; set; }
     }
 
@@ -54,53 +60,6 @@ namespace VideoIndexerClient.model
         }
     }
 
-
-    public class Contracts
-    {
-        public class FlorenceResults
-        {
-            public string Kind { get; set; }
-            public Metadata Metadata { get; set; }
-            public CustomModelResult? CustomModelResult { get; set; }
-        }
-
-        public class Metadata
-        {
-            public int Height { get; set; }
-            public int Width { get; set; }
-        }
-
-        public class CustomModelResult
-        {
-            public List<object> Classifications { get; set; }
-            public List<Object> Objects { get; set; }
-            public Metadata ImageMetadata { get; set; }
-        }
-
-        public class Object
-        {
-            public string Id { get; set; }
-            public BoundingBox BoundingBox { get; set; }
-            public List<Classification> Classifications { get; set; }
-        }
-
-        public class BoundingBox
-        {
-            public int X { get; set; }
-            public int Y { get; set; }
-            public int W { get; set; }
-            public int H { get; set; }
-        }
-
-        public class Classification
-        {
-            public double Confidence { get; set; }
-            public string Label { get; set; }
-        }
-
-    }
-
-    
     public class CustomInsights
     {
         [JsonRequired]
@@ -138,34 +97,15 @@ namespace VideoIndexerClient.model
     ///////////////////////
     /// Artifacts
     ///////////////////////
-    public class Artifact
-    {
-        public string AlgoVersion { get; set; }
-        public string SchemaVersion { get; set; }
-        public ArtifactResult[] Results { get; set; }
-    }
-    public class ArtifactResult
-    {
-        public int Id { get; set; }
-        public string ClassName { get; set; }
-        public string Type { get; set; }
-        public string WikiDataID { get; set; }
-        public Instance[] Instances { get; set; }
-    }
+    
 
     public class Instance
     {
-        public double X { get; set; }
-        public double Y { get; set; }
-        public double Width { get; set; }
-        public double Height { get; set; }
-        public int Frame { get; set; }
         public TimeSpan Start { get; set; }
         public TimeSpan End { get; set; }
         public TimeSpan AdjustedStart { get; set; }
         public TimeSpan AdjustedEnd { get; set; }
         public double Confidence { get; set; }
-        public bool IsBest { get; set; }
     }
 
     public enum DisplayType

@@ -10,9 +10,6 @@ namespace VideoIndexerClient.auth
 
     public static class AccountTokenProvider
     {
-        
-
-
         public static async Task<string> GetAccountAccessTokenAsync(ILogger logger, ArmAccessTokenPermission permission = ArmAccessTokenPermission.Contributor, ArmAccessTokenScope scope = ArmAccessTokenScope.Account, CancellationToken ct = default)
         {
             var armAccessToken = await GetArmAccessTokenAsync(ct);

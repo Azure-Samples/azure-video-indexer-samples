@@ -10,7 +10,7 @@ namespace CarDetectorApp
     {
         private const string EventHubsName = "vilogs";
         private const string CSConfigName = "EHCONNECTION";
-
+        
         public CarDetectorFuncApp()
         {
             ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
@@ -20,7 +20,8 @@ namespace CarDetectorApp
         public static async Task Run([EventHubTrigger(eventHubName: EventHubsName , Connection = CSConfigName)] EventData[] events, ILogger log)
         {
             log.LogInformation("CarDetectorFunc invoked from EventHubs Listener Trigger {0}", EventHubsName);
-            await (new IndexingEventHandler(log)).OnEventReceived(events);
+            AppLogger.Logger = log;
+            await (new IndexingEventHandler()).OnEventReceived(events);
             log.LogInformation("Finished Processing on event Hub {0}", EventHubsName);
         }
     }

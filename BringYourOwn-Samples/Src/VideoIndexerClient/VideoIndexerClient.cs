@@ -6,6 +6,8 @@ using VideoIndexerClient.model;
 using VideoIndexerClient.Utils;
 using static VideoIndexerClient.Utils.Consts;
 using JsonSerializer = System.Text.Json.JsonSerializer;
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning disable CS8603 // Possible null reference return.
 
 namespace VideoIndexerClient
 {
@@ -15,16 +17,15 @@ namespace VideoIndexerClient
         private string _accountAccessToken;
         private readonly Account _account;
         private readonly ILogger _logger;
-
-
-        public VideoIndexerClient(ILogger logger, Account account = null)
+        
+        public VideoIndexerClient(ILogger logger, Account account)
         {
             System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12 | System.Net.SecurityProtocolType.Tls13;
-            _logger = logger;
             _account = account;
+            _logger = logger;
         }
 
-        public async Task Authenticate(string? accessToken)
+        public async Task Authenticate(string? accessToken = null)
         {
             try
             {
@@ -89,9 +90,9 @@ namespace VideoIndexerClient
                 var uploadResult = await uploadRequestResult.Content.ReadAsStringAsync();
 
                 // Get the video ID from the upload result
-                var videoId = JsonSerializer.Deserialize<Video>(uploadResult).Id;
+                var videoId = JsonSerializer.Deserialize<Video>(uploadResult)?.Id;
                 _logger.LogInformation("Video ID {0} was uploaded successfully", videoId);
-                return videoId;
+                return videoId ?? string.Empty;
             }
             catch (Exception ex)
             {
@@ -100,69 +101,52 @@ namespace VideoIndexerClient
             }
         }
 
-        public async Task<string> GetIndex(string videoId)
+        public string GetThumbnailRequestURI(string videoId, string thumbnailId)
         {
+            // Send a GET request to the Video Indexer API
             var queryParams = new Dictionary<string, string>
             {
-                { "language", "en-US" },
-                { "accessToken", _accountAccessToken }
-
+                { "accessToken", _accountAccessToken },
+                { "format" , "Jpeg "}
             }.CreateQueryString();
 
-            var requestUrl = $"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos/{videoId}/Index?{queryParams}";
-            var indexResponse = await _httpClient.GetAsync(requestUrl);
-            indexResponse.VerifyStatus(System.Net.HttpStatusCode.OK);
-            var indexResult = await indexResponse.Content.ReadAsStringAsync();
-
-            Console.WriteLine(indexResult);
-            return indexResult;
+            try
+            {
+                _logger.LogInformation("Getting Thumbnail {0} for Video {1}",videoId,thumbnailId);
+                var requestUrl = $"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos/{videoId}/Thumbnails/{thumbnailId}?{queryParams}";
+                return requestUrl;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,"Could not Get Thumbail from Server. videoId: {0}, thumbnailId: {1}", videoId,thumbnailId);
+            }
+            return string.Empty;
         }
 
-        public async Task<List<FrameUriData>> GetVideoFrames(string videoId)
+        public async Task<Insights?> GetVideoInsights(string videoId)
         {
-            var frames = new List<FrameUriData>();
-            var pageSize = 1000;
-            var skip = 0;
-            var done = false; 
-
-            while (!done)
+            var queryParams = new Dictionary<string, string>()
             {
-                var page = await GetVideoFramesAsPages(videoId, pageSize, skip);
-                done = page.NextPage.Done;
-                skip += pageSize;
-                frames.AddRange(page.Results);
+                {"language", "English"},
+                { "accessToken", _accountAccessToken },
+            }.CreateQueryString();
+
+            try
+            {
+                var requestUrl = $"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos/{videoId}/Index?{queryParams}";
+                var videoGetIndexRequestResult = await _httpClient.GetAsync(requestUrl);
+                videoGetIndexRequestResult.VerifyStatus(System.Net.HttpStatusCode.OK);
+                var videoGetIndexResult = await videoGetIndexRequestResult.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<Insights>(videoGetIndexResult);
             }
-            return frames; 
-
-        }
-
-        public async Task<FramesUrisResult> GetVideoFramesAsPages(string videoId, int ? pageSize, int ? skip)
-        {
-            var queryParams = new Dictionary<string, string>
+            catch (Exception ex)
             {
-                { "language", "en-US" },
-                { "urlsLifetimeSeconds", "3600"},
-                { "accessToken", _accountAccessToken }
-            };
-
-            if (pageSize.HasValue)
-            {
-                queryParams.Add("pageSize", pageSize.Value.ToString());
+                _logger.LogError(ex, "Could not Get Video Index Insights. videoId: {0}",videoId);
             }
 
-            if (skip.HasValue)
-            {
-                queryParams.Add("skip", skip.Value.ToString());
-            }
-
-            var queryParamsString = queryParams.CreateQueryString();
-            var requestUrl = $"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos/{videoId}/FramesFilePaths?{queryParamsString}";
-            var framesResponse = await _httpClient.GetAsync(requestUrl);
-            framesResponse.VerifyStatus(System.Net.HttpStatusCode.OK);
-            var framesResult = await framesResponse.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<FramesUrisResult>(framesResult);
-        }
-
+            return null;
+        } 
+        
         /// <summary>
         /// Get Video Artifact 
         /// </summary>

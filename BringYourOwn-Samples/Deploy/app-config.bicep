@@ -42,6 +42,7 @@ var BASE_SLOT_APPSETTINGS = {
   CS_VISION_CUSTOM_MODEL_NAME: csVisionCustomModelName
   CS_VISION_API_KEY: csVisionAPIKey
   EHCONNECTION: eventsHubConnectionString
+  DETECT_OBJECT_CLASS: 'Car'
 }
 
 /* update production slot with unique settings */

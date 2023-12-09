@@ -2,32 +2,32 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-         "name": {
+        "name": {
             "type": "string",
-            "metadata" : {
-                "description" : "The name of the AVAM resource"
+            "metadata": {
+                "description": "The name of the AVAM resource"
             },
             "defaultValue": "avam-account"
         },
         "managedIdentityResourceId": {
             "type": "string",
-            "metadata" : {
-                "description" : "The managed identity Resource Id used to grant access to the Azure Media Service (AMS) account"
+            "metadata": {
+                "description": "The managed identity Resource Id used to grant access to the Azure Media Service (AMS) account"
             },
-            "defaultValue": ""
+            "defaultValue": "<Add your MI Identity Resource Id Here>"
         },
         "mediaServiceAccountResourceId": {
             "type": "string",
-            "metadata" : {
-                "description" : "The media Service Account Resource Id. The Account needs to be created prior to the creation of this template"
+            "metadata": {
+                "description": "The media Service Account Resource Id. The Account needs to be created prior to the creation of this template"
             },
-            "defaultValue": ""
+            "defaultValue": "<Add your Media Service Account Resource Id here>"
         },
-       
+
         "tags": {
             "type": "object",
-            "metadata" : {
-                "description" : "Arm Template Tags"
+            "metadata": {
+                "description": "Arm Template Tags"
             },
             "defaultValue": {}
         }
@@ -37,7 +37,7 @@
             "type": "Microsoft.VideoIndexer/accounts",
             "apiVersion": "2022-08-01",
             "name": "[parameters('name')]",
-            
+
             "location": "[resourceGroup().location]",
             "tags": "[parameters('tags')]",
             "identity": {

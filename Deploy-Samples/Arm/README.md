@@ -5,13 +5,13 @@
 
 In this Quick-Start you will create an Azure Video Indexer  account by using ARM template (PREVIEW)
 
-The resource will be deployed to your subscription and will create the Azure Video Indexer resource based on parameters defined in the avam.template file.
+The resource will be deployed to your subscription and will create the Azure Video Indexer resource based on parameters defined in the videoindexer.template file.
 
 
 > **Note:**
 > this sample is *not* for connecting an existing Azure Video Indexer classic account to an ARM-Based Video Indexer account.
 
-> For full documentation on Azure Video Indexer API, visit the [Developer Portal](https://aka.ms/avam-dev-portal) page.
+> For full documentation on Azure Video Indexer API, visit the [Developer Portal](https://aka.ms/videoindexer-dev-portal) page.
 
 > The current API Version is "2022-08-01". Check this Repo from time to time to get updates on new API Versions.
 
@@ -28,13 +28,13 @@ The resource will be deployed to your subscription and will create the Azure Vid
 ### Option 1: Click the "Deploy To Azure Button", and fill in the missing parameters
 
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fmedia-services-video-indexer%2Fmaster%2FDeploy-Samples%2FArmTemplates%2Favam.template.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fmedia-services-video-indexer%2Fmaster%2FDeploy-Samples%2FArmTemplates%2Fvideoindexer.template.json)
 
 ----
 
 ### Option 2 : Deploy using Power Shell Script
 
-1. Open The [Template File](avam.template.json) file and inspect its content.
+1. Open The [Template File](videoindexer.template.json) file and inspect its content.
 2. Fill in the required parameters (see below)
 3. Run the Following Power Shell commands:
 
@@ -48,11 +48,11 @@ New-AzResourceGroup -Name myResourceGroup -Location eastus
 * Deploy the template to the resoruce group using the [New-AzResourceGroupDeployment](https://docs.microsoft.com/en-us/powershell/module/az.resources/new-azresourcegroupdeployment) cmdlet.
 
 ```powershell
-New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile ./avam.template.json
+New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile ./videoindexer.template.json
 ```
 
 > **Note:**
-> If you would like to work with bicep format, inspect the [bicep file](avam.template.bicep) on this repo.
+> If you would like to work with bicep format, inspect the [bicep folder](../bicep/) on this repo.
 
 ## Parameters
 
@@ -115,7 +115,7 @@ If you're new to Azure Video Indexer , see:
 
 
 * [Azure Video Indexer Documentation](https://aka.ms/vi-docs)
-* [Azure Video Indexer Developer Portal]https://aka.ms/avam-dev-portal)
+* [Azure Video Indexer Developer Portal](https://aka.ms/videoindexer-dev-portal)
 
 * After completing this tutorial, head to other Azure Video Indexer Samples, described on [README.md](../../README.md)
 

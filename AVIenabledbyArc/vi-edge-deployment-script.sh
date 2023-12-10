@@ -278,10 +278,10 @@ if [[ $install_extension == "true" ]]; then
   
   #ENDPOINT_URI="${groupPrefix}-${uniqueIdentifier}.eastus.cloudapp.azure.com"
   ENDPOINT_URI=$(az network public-ip list --resource-group $nodePoolRg --query "[?contains(name, 'kubernetes')].dnsSettings.fqdn" -otsv)
-  echo "Check If videoindexer extension is already installed"
-  exists=$(az k8s-extension list --cluster-name $connectedClusterName --cluster-type connectedClusters -g $connectedClusterRg --query "[?name=='videoindexer'].name" -otsv)
+  echo "Check If ${extension_name} extension is already installed"
+  exists=$(az k8s-extension list --cluster-name $connectedClusterName --cluster-type connectedClusters -g $connectedClusterRg --query "[?name=='${extension_name}'].name" -otsv)
   
-  if [[ $exists == "videoindexer" ]]; then
+  if [[ $exists == ${extension_name} ]]; then
     echo -e "\tExtension Found - Updating VI Extension - ***start***"
     az k8s-extension update --name ${extension_name} \
                           --cluster-name ${connectedClusterName} \
@@ -329,5 +329,5 @@ fi
 echo "==============================="
 echo "VI Extension is installed"
 echo "Swagger is available at: https://$EXTERNAL_IP/swagger/index.html"
-echo "In order to replace the Extension version run the following command: az k8s-extension update --name videoindexer --cluster-name ${connectedClusterName} --resource-group ${connectedClusterRg} --cluster-type connectedClusters --version NEW_VERSION --auto-upgrade-minor-version true"
-echo "In order to delete the Extension run the following command: az k8s-extension delete --name videoindexer --cluster-name ${connectedClusterName} --resource-group ${connectedClusterRg} --cluster-type connectedClusters"
+echo "In order to replace the Extension version run the following command: az k8s-extension update --name ${extension_name} --cluster-name ${connectedClusterName} --resource-group ${connectedClusterRg} --cluster-type connectedClusters --version NEW_VERSION --auto-upgrade-minor-version true"
+echo "In order to delete the Extension run the following command: az k8s-extension delete --name ${extension_name} --cluster-name ${connectedClusterName} --resource-group ${connectedClusterRg} --cluster-type connectedClusters"

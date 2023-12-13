@@ -43,10 +43,10 @@ function wait_for_cs_secrets {
 
     if [[ "$csResourcesData" == *"ERROR"* ]]; then
       numRetries=$((numRetries + 1))
-      echo "Retrying to get CS resources data. Attempt $numRetries/$maxNumRetries"
+      echo "Retrying to get Cognitive Services resources credentials. Attempt $numRetries/$maxNumRetries"
       sleep $sleepDuration
     else
-      echo "CS resources data retrieved successfully."
+      echo "Cognitive Services resources credentials retrieved successfully."
       resultJson=$(az rest --method post --uri $getSecretsUri)
       export speechPrimaryKey=$(echo $resultJson | jq -r '.speechCognitiveServicesPrimaryKey')
       export speechEndpoint=$(echo $resultJson | jq -r '.speechCognitiveServicesEndpoint')
@@ -78,9 +78,9 @@ function create_cognitive_hobo_resources {
   responseCode=$((responseStatus))
   echo "responseCode: $responseCode"
   if [[ "$responseCode" == 202 ]]; then
-    echo "CS resources are being created. Waiting for completion"
+    echo "Cognitive Services resources are being created. Waiting for completion"
   elif [[ "$responseCode" == 409 ]]; then
-    echo "CS Resources already exist. Moving on."
+    echo "Cognitive Services resources already exist. Moving on."
   else
     echo "an Unknown error occured: $responseStatus . Exiting"
     exit 1 
@@ -99,6 +99,7 @@ function create_cognitive_hobo_resources {
 #=============================================#
 install_aks_cluster="true"
 install_extension="true"
+install_cli_tools="true"
 register_cli_add_ons="true"
 aksVersion="1.27.3" # https://learn.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli
 viApiVersion="2023-06-02-preview" # VI API version

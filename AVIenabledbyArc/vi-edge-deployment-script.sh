@@ -32,63 +32,64 @@ function install_cli_tools {
   az provider register --namespace Microsoft.ExtendedLocation
 }
 
+function wait_for_cs_secrets {
+  
+  getSecretsUri="https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.VideoIndexer/accounts/${accountName}/ListExtensionDependenciesData?api-version=${viApiVersion}"
+  numRetries=0
+  sleepDuration=10
+  maxNumRetries=30
+  while :; do
+    csResourcesData=$(az rest --method post --uri $getSecretsUri 2>&1 >/dev/null || true)
+
+    if [[ "$csResourcesData" == *"ERROR"* ]]; then
+      numRetries=$((numRetries + 1))
+      echo "Retrying to get CS resources data. Attempt $numRetries/$maxNumRetries"
+      sleep $sleepDuration
+    else
+      echo "CS resources data retrieved successfully."
+      resultJson=$(az rest --method post --uri $getSecretsUri)
+      export speechPrimaryKey=$(echo $resultJson | jq -r '.speechCognitiveServicesPrimaryKey')
+      export speechEndpoint=$(echo $resultJson | jq -r '.speechCognitiveServicesEndpoint')
+      export translatorPrimaryKey=$(echo $resultJson | jq -r '.translatorCognitiveServicesPrimaryKey')
+      export translatorEndpoint=$(echo $resultJson | jq -r '.translatorCognitiveServicesEndpoint')
+      export ocrPrimaryKey=$(echo $resultJson | jq -r '.ocrCognitiveServicesPrimaryKey')
+      export ocrEndpoint=$(echo $resultJson | jq -r '.ocrCognitiveServicesEndpoint')
+      break
+    fi
+    
+    if [ $numRetries -ge $maxNumRetries ]; then
+      echo "Max number of retries reached without getting Cognitive Service Secrets . Exiting script."
+      printf "\n"
+      exit 1
+    fi
+  done
+
+}
 ##################################################################
 # Create Cognitive Services HOBO (On Behalf Of the User ) Resources
 ##################################################################
 function create_cognitive_hobo_resources {
   echo -e "\t create Cognitive Services On VI RP ***start***"
   sleepDuration=10
-  echo "getting arm token"
   createResourceUri="https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.VideoIndexer/accounts/${accountName}/CreateExtensionDependencies?api-version=${viApiVersion}"
   echo "=============================="
   echo "Creating cs resources"
   echo "=============================="
-  result=$(az rest --method post --uri $createResourceUri 2>&1 >/dev/null || true)
-  echo $result    
-
-  if [[ "$result" == *"ERROR: Conflict"* ]]; then
+  responseString=$(az rest --method post --uri $createResourceUri --verbose 2>&1 >/dev/null || true)
+  responseStatusLine=$(echo "$responseString" | grep 'INFO: Response status:')
+  responseStatus=$(echo "$responseStatusLine" | grep -oP '\d+')
+  responseCode=$((responseStatus))
+  echo "responseCode: $responseCode"
+  if [[ "$responseCode" == 202 ]]; then
+    echo "CS resources are being created. Waiting for completion"
+  elif [[ "$responseCode" == 409 ]]; then
     echo "CS Resources already exist. Moving on."
   else
-    echo "No CS resources found. Creating"  
-  fi
-  getSecretsUri="https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.VideoIndexer/accounts/${accountName}/ListExtensionDependenciesData?api-version=${viApiVersion}"
-  csResourcesData=$(az rest --method post --uri $getSecretsUri 2>&1 >/dev/null || true)
-  if [[ "$csResourcesData" == *"ERROR"* ]]; then
-    printf "\n"
-    numRetries=0
-    sleepDuration=10
-    maxNumRetries=20
-    while  [ $numRetries -lt $maxNumRetries ]; do
-      csResourcesData=$(az rest --method post --uri $getSecretsUri 2>&1 >/dev/null || true)
-      if [[ "$csResourcesData" == *"ERROR"* ]]; then
-          numRetries=$(( $numRetries + 1 ))
-          echo "Retrying to get CS resources data. Attempt $numRetries/$maxNumRetries"
-          sleep $sleepDuration
-      else
-          break
-      fi
-    done
-      printf "\n"
+    echo "an Unknown error occured: $responseStatus . Exiting"
+    exit 1 
   fi
 
-  echo "=============================="
-  echo "Getting secrets"
-  echo "=============================="
-  printf "\n"
-  if [[ "$csResourcesData" == *"ERROR:"* ]]; then
-    echo "Error getting the cognitive services resources, please reach out to support"
-  else 
-    echo "Got CS resources"
-  resultJson=$(az rest --method post --uri $getSecretsUri)
-  fi  
-  
-  export speechPrimaryKey=$(echo $resultJson | jq -r '.speechCognitiveServicesPrimaryKey')
-  export speechEndpoint=$(echo $resultJson | jq -r '.speechCognitiveServicesEndpoint')
-  export translatorPrimaryKey=$(echo $resultJson | jq -r '.translatorCognitiveServicesPrimaryKey')
-  export translatorEndpoint=$(echo $resultJson | jq -r '.translatorCognitiveServicesEndpoint')
-  export ocrPrimaryKey=$(echo $resultJson | jq -r '.ocrCognitiveServicesPrimaryKey')
-  export ocrEndpoint=$(echo $resultJson | jq -r '.ocrCognitiveServicesEndpoint')
-  
+  wait_for_cs_secrets
   echo -e "\t create Cognitive Services On VI RP ***done***"
 }
 

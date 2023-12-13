@@ -1,24 +1,14 @@
 #!/bin/bash
 
-#=============================================#
-#============== Parameters Defaults ==========#
-#=============================================#
-install_aks_cluster="true"
-install_extension="true"
-register_cli_add_ons="true"
+#===========================================================================================================#
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Helper Functions @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#===========================================================================================================#
 
-viApiVersion="2023-06-02-preview" # VI API version
-region="eastus" #default region , will be override later
-extensionName="video-indexer" #default extension name , will be override later
-resourcesPrefix="vi" #default resources prefix , will be override later
-aksVersion="1.27.3" # Review https://learn.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli to select a valid k8s version
-namespace="video-indexer" #default namespace , will be override later
-
-##############################################
-# Helper Functions
+#################################################
+# get_parameter_value 
 # Function to ask a question and read user's input
 ##############################################
-function ask_question() {
+function get_parameter_value () {
     local question="$1"
     local variable="$2"
 
@@ -101,25 +91,46 @@ function create_cognitive_hobo_resources {
   
   echo -e "\t create Cognitive Services On VI RP ***done***"
 }
-########################################################################
+
+#===========================================================================================================#
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Main Script @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#===========================================================================================================#
+
+#=============================================#
+#============== Constants           ==========#
+#=============================================#
+install_aks_cluster="true"
+install_extension="true"
+register_cli_add_ons="true"
+aksVersion="1.27.3" # https://learn.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli
+viApiVersion="2023-06-02-preview" # VI API version
+
+#=============================================#
+#============== Parameters Customization =====#
+#=============================================#
+region="eastus" #default region , will be override later
+extensionName="video-indexer" #default extension name , will be override later
+resourcesPrefix="vi" #default resources prefix , will be override later
+namespace="video-indexer" #default namespace , will be override later
 
 # Ask questions and read user input
-ask_question "What is the Azure subscription ID during deployment?" "subscriptionId"
-ask_question "What is the name of the Video Indexer resource group during deployment?" "resourceGroup"
-ask_question "What is the name of the Video Indexer account name during deployment?" "accountName"
-ask_question "What is the name of the Video Indexer account Id during deployment?" "accountId"
-ask_question "What is the location of the Video Indexer during deployment?" "region"
-ask_question "Provide a unique identifier value during deployment.(this will be used for Cloud Resources : AKS, DNS names etc)?" "resourcesPrefix"
-ask_question "What is the Video Indexer extension name ?" "extensionName"
-ask_question "What is the extension kubernetes namespace to install to ?" "namespace"
+get_parameter_value "What is the Azure subscription ID during deployment?" "subscriptionId"
+get_parameter_value "What is the name of the Video Indexer resource group during deployment?" "resourceGroup"
+get_parameter_value "What is the name of the Video Indexer account name during deployment?" "accountName"
+get_parameter_value "What is the name of the Video Indexer account Id during deployment?" "accountId"
+get_parameter_value "What is the location of the Video Indexer during deployment?" "region"
+get_parameter_value "Provide a unique identifier value during deployment.(this will be used for Cloud Resources : AKS, DNS names etc)?" "resourcesPrefix"
+get_parameter_value "What is the Video Indexer extension name ?" "extensionName"
+get_parameter_value "What is the extension kubernetes namespace to install to ?" "namespace"
 
 echo "SubscriptionId: $subscriptionId"
 echo "Azure Resource Group: ${resourceGroup}"
+echo "Video Indexer AccountName: $accountName"
+echo "Video Indexer AccountId: $accountId"
 echo "Azure Resource prefixes: ${resourcesPrefix}"
 echo "Region: $region"
-echo "Video Indexer AccountId: $accountId"
-echo "Video Indexer AccountName: $accountName"
 echo "Video Indexer Extension Name: $extensionName"
+echo "Video Indexer Extension Namespace: $namespace"
 
 echo "switching to $subscriptionId"
 az account set --subscription $subscriptionId
@@ -141,6 +152,9 @@ echo "================================================================"
 echo "============= Deploying new ARC Resources ======================"
 echo "================================================================"
 
+#===========================================================================================================#
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Deploy Infra @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#===========================================================================================================#
 if [[ $install_aks_cluster == "true" ]]; then
       echo "Deploying Resources: [Resource group: $rg, AKS: $aks, Connected-Cluster Name: ${connectedClusterName}]"
       echo "create Resource group"
@@ -206,9 +220,9 @@ if [[ $install_aks_cluster == "true" ]]; then
       echo -e "\tconnecting AKS to ARC-AKS -- ***done***"
 fi
 
-#=============================================#
-#============== VI Extension =================#
-#=============================================#
+#===========================================================================================================#
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Deploy Video Indexer Extension @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#===========================================================================================================#
 if [[ $install_extension == "true" ]]; then
   #===============================================================================#
   #====== Creating Cognitive Services on Behalf of the user on VI RP =============#

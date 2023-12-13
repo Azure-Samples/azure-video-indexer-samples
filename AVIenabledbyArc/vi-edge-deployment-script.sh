@@ -72,9 +72,6 @@ function create_cognitive_hobo_resources {
   echo -e "\t create Cognitive Services On VI RP ***start***"
   sleepDuration=10
   createResourceUri="https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.VideoIndexer/accounts/${accountName}/CreateExtensionDependencies?api-version=${viApiVersion}"
-  echo "=============================="
-  echo "Creating cs resources"
-  echo "=============================="
   responseString=$(az rest --method post --uri $createResourceUri --verbose 2>&1 >/dev/null || true)
   responseStatusLine=$(echo "$responseString" | grep 'INFO: Response status:')
   responseStatus=$(echo "$responseStatusLine" | grep -oP '\d+')

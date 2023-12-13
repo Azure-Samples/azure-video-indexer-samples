@@ -148,14 +148,15 @@ if [[ $install_cli_tools == "true" ]]; then
   install_cli_tools
 fi
 
-echo "================================================================"
-echo "============= Deploying new ARC Resources ======================"
-echo "================================================================"
 
 #===========================================================================================================#
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Deploy Infra @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #===========================================================================================================#
 if [[ $install_aks_cluster == "true" ]]; then
+      echo "================================================================"
+      echo "============= Deploying new ARC Resources ======================"
+      echo "================================================================"
+
       echo "Deploying Resources: [Resource group: $rg, AKS: $aks, Connected-Cluster Name: ${connectedClusterName}]"
       echo "create Resource group"
       az group create --name $rg --location $region --output table --tags $tags
@@ -227,6 +228,10 @@ if [[ $install_extension == "true" ]]; then
   #===============================================================================#
   #====== Creating Cognitive Services on Behalf of the user on VI RP =============#
   #===============================================================================#
+  echo "================================================================"
+  echo "============= Deploying ARC Extension  ========================="
+  echo "================================================================"
+  
   create_cognitive_hobo_resources
 
   echo "translatorEndpoint=$translatorEndpoint, speechEndpoint=$speechEndpoint, ocrEndpoint=$ocrEndpoint"

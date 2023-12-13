@@ -217,6 +217,12 @@ if [[ $install_aks_cluster == "true" ]]; then
       #=============================================#
       echo -e "\tConnecting AKS to ARC-AKS -- ***start***"
       az connectedk8s connect --name ${connectedClusterName} --resource-group $rg --yes
+      echo "Performing AKS-Arc-connected connectivity Sanity test"
+      connectedResult=$(az connectedk8s show --name ${connectedClusterName} --resource-group $rg 2>&1)
+      if [[ "$connectedResult" == *"ERROR"* ]]; then
+        echo "AKS-Arc-connected connectivity Sanity test failed. Exiting"
+        exit 1
+      fi
       echo -e "\tconnecting AKS to ARC-AKS -- ***done***"
 fi
 

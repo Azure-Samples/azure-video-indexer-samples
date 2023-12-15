@@ -1,34 +1,14 @@
 #!/bin/bash
 
+#===========================================================================================================#
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Helper Functions @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#===========================================================================================================#
 
-#=============================================#
-#============== Constants  ===================#
-#=============================================#
-loc="eus"
-region="eastus"
-groupPrefix="vi-arc"
-version="1.0.26-preview"
-aksVersion="1.25.6"
-namespace="video-indexer"
-extension_name="videoindexer"
-releaseTrain="preview"
-
-#=============================================#
-#============== Customization  ===============#
-#=============================================#
-#### The following VI Account is on vi-dev-arc-global Resource group
-#### Replace it with another Account Id if needed
-install_aks_cluster="true"
-install_extension="true"
-
-# Set default values
-viApiVersion="2023-06-02-preview" # VI API version
-
-
-###############Helper Functions################# 
+#################################################
+# get_parameter_value 
 # Function to ask a question and read user's input
-# Usage: ask_question "What is your name?" "name"
-ask_question() {
+##############################################
+function get_parameter_value () {
     local question="$1"
     local variable="$2"
 
@@ -37,126 +17,146 @@ ask_question() {
         eval "$variable=\"$input\""
     fi
 }
-##############################
-# create_cognitive_hobo_resources
-# Creeating Cognitive Services On VI RP, on behalf of the user
-##############################
+
+##############################################
+#  CLI Pre-requisites
+###############################################
+function install_cli_tools {
+  # https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli
+  echo "ensure you got the latest CLI client and install add ons if needed"
+  echo "https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli"
+  az extension add --name connectedk8s
+  az extension add --name aks-preview
+  az provider register --namespace Microsoft.Kubernetes
+  az provider register --namespace Microsoft.KubernetesConfiguration
+  az provider register --namespace Microsoft.ExtendedLocation
+}
+
+function wait_for_cs_secrets {
+  
+  getSecretsUri="https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.VideoIndexer/accounts/${accountName}/ListExtensionDependenciesData?api-version=${viApiVersion}"
+  numRetries=0
+  sleepDuration=10
+  maxNumRetries=30
+  while :; do
+    csResourcesData=$(az rest --method post --uri $getSecretsUri 2>&1 >/dev/null || true)
+
+    if [[ "$csResourcesData" == *"ERROR"* ]]; then
+      numRetries=$((numRetries + 1))
+      echo "Retrying to get Cognitive Services resources credentials. Attempt $numRetries/$maxNumRetries"
+      sleep $sleepDuration
+    else
+      echo "Cognitive Services resources credentials retrieved successfully."
+      resultJson=$(az rest --method post --uri $getSecretsUri)
+      export speechPrimaryKey=$(echo $resultJson | jq -r '.speechCognitiveServicesPrimaryKey')
+      export speechEndpoint=$(echo $resultJson | jq -r '.speechCognitiveServicesEndpoint')
+      export translatorPrimaryKey=$(echo $resultJson | jq -r '.translatorCognitiveServicesPrimaryKey')
+      export translatorEndpoint=$(echo $resultJson | jq -r '.translatorCognitiveServicesEndpoint')
+      export ocrPrimaryKey=$(echo $resultJson | jq -r '.ocrCognitiveServicesPrimaryKey')
+      export ocrEndpoint=$(echo $resultJson | jq -r '.ocrCognitiveServicesEndpoint')
+      break
+    fi
+    
+    if [ $numRetries -ge $maxNumRetries ]; then
+      echo "Max number of retries reached without getting Cognitive Service Secrets . Exiting script."
+      printf "\n"
+      exit 1
+    fi
+  done
+
+}
+##################################################################
+# Create Cognitive Services HOBO (On Behalf Of the User ) Resources
+##################################################################
 function create_cognitive_hobo_resources {
   echo -e "\t create Cognitive Services On VI RP ***start***"
-  sleepDuration=90
-  echo "getting arm token"
-  createResourceUri="https://management.azure.com/subscriptions/${viSubscriptionId}/resourceGroups/${viResourceGroup}/providers/Microsoft.VideoIndexer/accounts/${viAccountName}/CreateExtensionDependencies?api-version=2023-06-02-preview"
-  echo "=============================="
-  echo "Creating cs resources"
-  echo "=============================="
-  result=$(az rest --method post --uri $createResourceUri 2>&1 >/dev/null || true)
-  echo $result    
-
-  if [[ "$result" == *"ERROR:"* ]]; then
-    echo "CS Resources already exist. ignoring"
+  sleepDuration=10
+  createResourceUri="https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.VideoIndexer/accounts/${accountName}/CreateExtensionDependencies?api-version=${viApiVersion}"
+  responseString=$(az rest --method post --uri $createResourceUri --verbose 2>&1 >/dev/null || true)
+  responseStatusLine=$(echo "$responseString" | grep 'INFO: Response status:')
+  responseStatus=$(echo "$responseStatusLine" | grep -oP '\d+')
+  responseCode=$((responseStatus))
+  echo "responseCode: $responseCode"
+  if [[ "$responseCode" == 202 ]]; then
+    echo "Cognitive Services resources are being created. Waiting for completion"
+  elif [[ "$responseCode" == 409 ]]; then
+    echo "Cognitive Services resources already exist. Moving on."
   else
-    echo "sleeping for $sleepDuration seconds"  
-    sleep $sleepDuration
+    echo "an Unknown error occured: $responseStatus . Exiting"
+    exit 1 
   fi
-  echo "CS resources has been created"
 
-  echo "=============================="
-  echo "Getting secrets"
-  echo "=============================="
-  getSecretsUri="https://management.azure.com/subscriptions/${viSubscriptionId}/resourceGroups/${viResourceGroup}/providers/Microsoft.VideoIndexer/accounts/${viAccountName}/ListExtensionDependenciesData?api-version=${viApiVersion}"
-  resultJson=$(az rest --method post --uri $getSecretsUri)
-  
-  export speechPrimaryKey=$(echo $resultJson | jq -r '.speechCognitiveServicesPrimaryKey')
-  export speechEndpoint=$(echo $resultJson | jq -r '.speechCognitiveServicesEndpoint')
-  export translatorPrimaryKey=$(echo $resultJson | jq -r '.translatorCognitiveServicesPrimaryKey')
-  export translatorEndpoint=$(echo $resultJson | jq -r '.translatorCognitiveServicesEndpoint')
-  
+  wait_for_cs_secrets
   echo -e "\t create Cognitive Services On VI RP ***done***"
 }
-########################################################################
+
+#===========================================================================================================#
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Main Script @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#===========================================================================================================#
+
+#=============================================#
+#============== Constants           ==========#
+#=============================================#
+install_aks_cluster="true"
+install_extension="true"
+install_cli_tools="true"
+register_cli_add_ons="true"
+aksVersion="1.27.3" # https://learn.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli
+viApiVersion="2023-06-02-preview" # VI API version
+
+#=============================================#
+#============== Parameters Customization =====#
+#=============================================#
+region="eastus" #default region , will be override later
+extensionName="video-indexer" #default extension name , will be override later
+resourcesPrefix="vi" #default resources prefix , will be override later
+namespace="video-indexer" #default namespace , will be override later
 
 # Ask questions and read user input
-ask_question "What is the Azure subscription ID during deployment?" "viSubscriptionId"
-ask_question "What is the name of the Video Indexer resource group during deployment?" "viResourceGroup"
-ask_question "What is the name of the Video Indexer account during deployment?" "viAccountName"
-ask_question "What is the Video Indexer account ID during deployment?" "viAccountId"
-ask_question "What is the desired Extension version for VI during deployment? Press enter will default to $version" "version"
-ask_question "What is the desired API version for VI during deployment? Press enter will default to $viApiVersion" "viApiVersion"
-ask_question "Provide a unique identifier value during deployment.(this will be used for AKS name with prefixes)?" "uniqueIdentifier"
+get_parameter_value "What is the Azure subscription ID during deployment?" "subscriptionId"
+get_parameter_value "What is the name of the Video Indexer resource group during deployment?" "resourceGroup"
+get_parameter_value "What is the name of the Video Indexer account name during deployment?" "accountName"
+get_parameter_value "What is the name of the Video Indexer account Id during deployment?" "accountId"
+get_parameter_value "What is the location of the Video Indexer during deployment?" "region"
+get_parameter_value "Provide a unique identifier value during deployment.(this will be used for Cloud Resources : AKS, DNS names etc)?" "resourcesPrefix"
+get_parameter_value "What is the Video Indexer extension name ?" "extensionName"
+get_parameter_value "What is the extension kubernetes namespace to install to ?" "namespace"
 
-while true; do
-# Use the variables in your script as needed
-echo "viAccountId: $viAccountId"
-echo "viSubscriptionId: $viSubscriptionId"
-echo "viResourceGroup: $viResourceGroup"
-echo "viExtensionVersion: $version"
-echo "viApiVersion: $viApiVersion"
-echo "viAccountName: $viAccountName"
-echo "region: $region"
-echo "Unique Identifier: $uniqueIdentifier"
+echo "SubscriptionId: $subscriptionId"
+echo "Azure Resource Group: ${resourceGroup}"
+echo "Video Indexer AccountName: $accountName"
+echo "Video Indexer AccountId: $accountId"
+echo "Azure Resource prefixes: ${resourcesPrefix}"
+echo "Region: $region"
+echo "Video Indexer Extension Name: $extensionName"
+echo "Video Indexer Extension Namespace: $namespace"
 
- read -p "Are the values correct? (yes/no): " answer
-  case $answer in
-    [Yy]*)
-      break
-      ;;
-    [Nn]*)
-      echo "Exiting the script..."
-      exit 0
-      ;;
-    *)
-      echo "Invalid input. Please enter Yes or No."
-      ;;
-  esac
-done
+echo "switching to $subscriptionId"
+az account set --subscription $subscriptionId
+#==============================================#
 
-echo "switiching to $viSubscriptionId"
-az account set --subscription $viSubscriptionId
-
-#=============================================#
-
-if [[ -z $uniqueIdentifier || -z $viAccountId ]]; then
-    echo "Please provide the required parameters for Speech and Translate resources in Azure: (viAccountId, uniqueIdentifier)"
-    exit 1
+aks="${resourcesPrefix}-aks"
+rg="${resourcesPrefix}-rg"
+connectedClusterName="${resourcesPrefix}-connected-aks"
+nodePoolRg="${aks}-agentpool-rg"
+nodeVmSize="Standard_D4a_v4" # 4 vcpus, 16 GB RAM
+workerVmSize="Standard_D32a_v4" # 32 vcpus, 128 GB RAM
+tags="createdBy=vi-arc-extension"
+#=========Install CLI Tools if needed =====================#
+if [[ $install_cli_tools == "true" ]]; then
+  install_cli_tools
 fi
 
-#==============================================#
-echo "================================================================"
-echo "============= Deploying new ARC Dev Resources =================="
-echo "================================================================"
 
-#=============================================#
-#============== CLI Pre-requisites ===========#
-#=============================================#
-# https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli
-echo "ensure you got the latest CLI client and install add ons if needed"
-echo "https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli"
-register_cli_add_ons="false"
-
-if [[ $register_cli_add_ons == "true" ]]; then
-   az extension add --name connectedk8s
-   az provider register --namespace Microsoft.Kubernetes
-   az provider register --namespace Microsoft.KubernetesConfiguration
-   az provider register --namespace Microsoft.ExtendedLocation
-fi 
-
-tags="team=${groupPrefix} owner=${uniqueIdentifier}"
-prefix="${groupPrefix}-${uniqueIdentifier}-$loc"
-
-aks="$prefix-aks"
-rg="$prefix-rg"
-
-
-echo "Resource Names: [ AKS: $aks, AKS-RG: $rg ]"
-
-connectedClusterName="$prefix-connected-aks"
-connectedClusterRg="${rg}"
-nodePoolRg="$aks-agentpool-rg"
-nodeVmSize="Standard_D8as_v4" # 8 vcpus, 32 GB RAM
-
-#######################################################################
-
+#===========================================================================================================#
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Deploy Infra @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#===========================================================================================================#
 if [[ $install_aks_cluster == "true" ]]; then
+      echo "================================================================"
+      echo "============= Deploying new ARC Resources ======================"
+      echo "================================================================"
+
+      echo "Deploying Resources: [Resource group: $rg, AKS: $aks, Connected-Cluster Name: ${connectedClusterName}]"
       echo "create Resource group"
       az group create --name $rg --location $region --output table --tags $tags
 
@@ -165,14 +165,31 @@ if [[ $install_aks_cluster == "true" ]]; then
             --enable-managed-identity\
             --kubernetes-version ${aksVersion} \
             --enable-oidc-issuer \
+            --nodepool-name system \
+            --os-sku AzureLinux \
             --node-count 2 \
             --tier standard \
             --generate-ssh-keys \
             --network-plugin kubenet \
             --tags $tags \
             --node-resource-group $nodePoolRg \
-            --node-vm-size $nodeVmSize 
+            --node-vm-size $nodeVmSize \
+            --node-os-upgrade-channel NodeImage --auto-upgrade-channel node-image
+
       echo -e "\t create aks cluster Name: $aks , Resource Group $rg- ***done***"
+      echo "Adding another worload node pool"
+      az aks nodepool add -g $rg --cluster-name $aks  -n workload \
+              --os-sku AzureLinux \
+              --mode User \
+              --node-vm-size $workerVmSize \
+              --node-osdisk-size 100 \
+              --node-count 0 \
+              --max-count 10 \
+              --min-count 0  \
+              --tags $tags \
+              --enable-cluster-autoscaler \
+              --max-pods 110
+      echo "Adding another workload node pool ***done***"
       #=============================================#
       #============== AKS Credentials ==============#
       #=============================================#
@@ -185,98 +202,88 @@ if [[ $install_aks_cluster == "true" ]]; then
       #============== Add ingress controller =======#
       #=============================================#
       echo -e "\tAdding ingress controller -- ***start***"
-      kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/cloud/deploy.yaml
+      kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.4/deploy/static/provider/cloud/deploy.yaml
       echo -e "\tAdding ingress controller -- ***done***"
+      #=============================================#
+      #========= Patch Public IP DNS Label =========
+      #=============================================#    
+      publicIpResourceId=$(az network public-ip list --resource-group $nodePoolRg --query "[?contains(name, 'kubernetes')].id" -otsv)
+      echo "publicIpResourceId: $publicIpResourceId"
+      az network public-ip update --ids $publicIpResourceId --dns-name ${resourcesPrefix}
+      echo "Public IP DNS Label has been updated to ${resourcesPrefix}"
+      
       #=============================================#
       #============== Create AKS ARC Cluster =======#
       #=============================================#
-      echo -e "\tConneting AKS to ARC-AKS -- ***start***"
-      az connectedk8s connect --name $connectedClusterName --resource-group $connectedClusterRg --yes --tags $tags
-      echo -e "\tconneting AKS to ARC-AKS -- ***done***"
+      echo -e "\tConnecting AKS to ARC-AKS -- ***start***"
+      az connectedk8s connect --name ${connectedClusterName} --resource-group $rg --yes
+      echo "Performing AKS-Arc-connected connectivity Sanity test"
+      connectedResult=$(az connectedk8s show --name ${connectedClusterName} --resource-group $rg 2>&1)
+      if [[ "$connectedResult" == *"ERROR"* ]]; then
+        echo "AKS-Arc-connected connectivity Sanity test failed. Exiting"
+        exit 1
+      fi
+      echo -e "\tconnecting AKS to ARC-AKS -- ***done***"
 fi
 
-#===============================================================================#
-#====== Creating Cognitive Services on Behalf of the user on VI RP =============#
-#===============================================================================#
-create_cognitive_hobo_resources
-
-echo "translatorEndpoint=$translatorEndpoint, speechEndpoint=$speechEndpoint"
-
-if [[ -z $translatorEndpoint || -z $translatorPrimaryKey || -z $speechEndpoint || -z $speechPrimaryKey ]]; then
-    echo "one of [ translatorEndpoint, translatorPrimaryKey, speechEndpoint, speechPrimaryKey ]  is empty. Exiting"
-    exit 1
-fi
-#=============================================#
-#============== VI Extension =================#
-#=============================================#
+#===========================================================================================================#
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Deploy Video Indexer Extension @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#===========================================================================================================#
 if [[ $install_extension == "true" ]]; then
+  echo "================================================================"
+  echo "============= Deploying ARC Extension  ========================="
+  echo "================================================================"
   
-  scope="cluster"
-  connectedClusterName="$connectedClusterName"
-  connectedClusterRg="$connectedClusterRg"
+  create_cognitive_hobo_resources
+
+  echo "translatorEndpoint=$translatorEndpoint, speechEndpoint=$speechEndpoint, ocrEndpoint=$ocrEndpoint"
+
+    if [[ -z $translatorEndpoint || -z $translatorPrimaryKey || -z $speechEndpoint || -z $speechPrimaryKey || -z $ocrEndpoint || -z $ocrPrimaryKey ]]; then
+      echo "one of [ translatorEndpoint, translatorPrimaryKey, speechEndpoint, speechPrimaryKey, ocrEndpoint, ocrPrimaryKey]  is empty. Exiting"
+      exit 1
+    fi
   echo "==============================="
-  echo "Installing VI Extenion into AKS Connected Cluster $connectedClusterName on ResourceGroup $connectedClusterRg"
+  echo "Installing VI Extenion into AKS Connected Cluster ${connectedClusterName} on ResourceGroup $rg"
   echo "==============================="
   ######################
+  ENDPOINT_URI=$(az network public-ip list --resource-group $nodePoolRg --query "[?contains(name, 'kubernetes')].dnsSettings.fqdn" -otsv)
+  echo "Check If ${extensionName} extension is already installed"
+  exists=$(az k8s-extension list --cluster-name ${connectedClusterName} --cluster-type connectedClusters -g $rg --query "[?name=='${extensionName}'].name" -otsv)
   
-  
-  EXTERNAL_IP=$(kubectl get services --namespace ingress-nginx ingress-nginx-controller --output jsonpath='{.status.loadBalancer.ingress[0].ip}')
-  echo "Check If videoindexer extension is already installed"
-  exists=$(az k8s-extension list --cluster-name $aks --cluster-type connectedClusters -g $rg --query "[?name=='videoindexer'].name" -otsv)
-  
-  if [[ $exists == "videoindexer" ]]; then
+  if [[ $exists == ${extensionName} ]]; then
     echo -e "\tExtension Found - Updating VI Extension - ***start***"
-    az k8s-extension update --name ${extension_name} \
+    az k8s-extension update --name ${extensionName} \
                           --cluster-name ${connectedClusterName} \
-                          --resource-group ${connectedClusterRg} \
+                          --resource-group ${rg} \
                           --cluster-type connectedClusters \
-                          --release-train ${releaseTrain}  \
-                          --version ${version} \
-                          --auto-upgrade-minor-version false \
+                          --auto-upgrade-minor-version true \
                           --config-protected-settings "speech.endpointUri=${speechEndpoint}" \
                           --config-protected-settings "speech.secret=${speechPrimaryKey}" \
-                          --config-protected-settings "translate.endpointUri=https://eastus.api.cognitive.microsoft.com" \
+                          --config-protected-settings "translate.endpointUri=${translatorEndpoint}" \
                           --config-protected-settings "translate.secret=${translatorPrimaryKey}" \
-                          --config "videoIndexer.accountId=${viAccountId}" \
-                          --config "frontend.endpointUri=https://${EXTERNAL_IP}" \
-                          --config AI.nodeSelector."beta\\.kubernetes\\.io/os"=linux \
-                          --config "speech.resource.requests.cpu=500m" \
-                          --config "speech.resource.requests.mem=2Gi" \
-                          --config "speech.resource.limits.cpu=1" \
-                          --config "speech.resource.limits.mem=4Gi" \
-                          --config "videoIndexer.webapi.resources.requests.mem=4Gi"\
-                          --config "videoIndexer.webapi.resources.limits.mem=8Gi"\
-                          --config "videoIndexer.webapi.resources.limits.cpu=1"\
-                          --config "storage.storageClass=azurefile-csi" \
-                          --config "storage.accessMode=ReadWriteMany" 
+                          --config-protected-settings "ocr.endpointUri=${ocrEndpoint}" \
+                          --config-protected-settings "ocr.secret=${ocrPrimaryKey}"\
+                          --config "videoIndexer.accountId=${accountId}" \
+                          --config "frontend.endpointUri=https://${ENDPOINT_URI}"
     echo -e "\tUpdating VI Extension - ***done***"
-
   else  
     echo -e "\tCreate New VI Extension - ***start***"
-    az k8s-extension create --name ${extension_name} \
+    az k8s-extension create --name ${extensionName} \
                               --extension-type Microsoft.videoindexer \
                               --scope cluster \
                               --release-namespace ${namespace} \
                               --cluster-name ${connectedClusterName} \
-                              --resource-group ${connectedClusterRg} \
+                              --resource-group ${rg} \
                               --cluster-type connectedClusters \
-                              --release-train ${releaseTrain} \
-                              --version ${version} \
-                              --auto-upgrade-minor-version false \
+                              --auto-upgrade-minor-version true \
                               --config-protected-settings "speech.endpointUri=${speechEndpoint}" \
                               --config-protected-settings "speech.secret=${speechPrimaryKey}" \
-                              --config-protected-settings "translate.endpointUri=https://eastus.api.cognitive.microsoft.com" \
+                              --config-protected-settings "translate.endpointUri=${translatorEndpoint}" \
                               --config-protected-settings "translate.secret=${translatorPrimaryKey}" \
-                              --config "videoIndexer.accountId=${viAccountId}" \
-                              --config "frontend.endpointUri=https://${EXTERNAL_IP}" \
-                              --config AI.nodeSelector."beta\\.kubernetes\\.io/os"=linux \
-                              --config "speech.resource.requests.cpu=500m" \
-                              --config "speech.resource.requests.mem=2Gi" \
-                              --config "speech.resource.limits.cpu=1" \
-                              --config "speech.resource.limits.mem=4Gi" \
-                              --config "videoIndexer.webapi.resources.requests.mem=4Gi"\
-                              --config "videoIndexer.webapi.resources.limits.mem=8Gi"\
-                              --config "videoIndexer.webapi.resources.limits.cpu=1"\
+                              --config-protected-settings "ocr.endpointUri=${ocrEndpoint}" \
+                              --config-protected-settings "ocr.secret=${ocrPrimaryKey}"\
+                              --config "videoIndexer.accountId=${accountId}" \
+                              --config "frontend.endpointUri=https://${ENDPOINT_URI}" \
                               --config "storage.storageClass=azurefile-csi" \
                               --config "storage.accessMode=ReadWriteMany" 
     echo -e "\tCreate New VI Extension - ***done***"
@@ -285,6 +292,4 @@ fi
 
 echo "==============================="
 echo "VI Extension is installed"
-echo "Swagger is available at: https://$EXTERNAL_IP/swagger/index.html"
-echo "In order to replace the Extension version run the following command: az k8s-extension update --name videoindexer --cluster-name ${connectedClusterName} --resource-group ${connectedClusterRg} --cluster-type connectedClusters --release-train ${releaseTrain} --version NEW_VERSION --auto-upgrade-minor-version false"
-echo "In order to delete the Extension run the following command: az k8s-extension delete --name videoindexer --cluster-name ${connectedClusterName} --resource-group ${connectedClusterRg} --cluster-type connectedClusters"
+echo "==============================="

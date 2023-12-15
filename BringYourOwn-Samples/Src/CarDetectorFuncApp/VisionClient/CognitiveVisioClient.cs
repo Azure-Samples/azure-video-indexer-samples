@@ -61,7 +61,8 @@ namespace CarDetectorApp.VisionClient
             return new CustomInsights
             {
                 Results = aggregateResults.ToArray(),
-                Name = "Cars"
+                Name = "Cars",
+                DisplayName = "Custom Model - Cars"
             };
         }
 
@@ -83,7 +84,7 @@ namespace CarDetectorApp.VisionClient
                     return new CustomInsightResult
                     {
                         Id =  resultId,
-                        Type = classificationType,
+                        Type = $"{classificationType}_{resultId}",
                         //Metadata is a custom field that can be used for many purposes. here we demonstrate a bounding box data usage.
                         Metadata = $"{{\"BoundingBox\": {detectedObject.BoundingBox}}}",
                         Instances = videoFrame.StartEndPairs.Select(timePair => new Instance

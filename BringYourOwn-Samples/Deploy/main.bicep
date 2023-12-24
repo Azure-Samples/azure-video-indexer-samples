@@ -20,17 +20,6 @@ var eventHubNamespaceName = '${envResourceNamePrefix}-eventhub'
 var eventHubName = 'vilogs'
 var envResourceNamePrefix = toLower(resourceNamePrefix)
 
-
-
-/* App Insights  */
-module viapp_appInsights 'appinsights.bicep' = {
-  name: '${deploymentNameId}-appservice-appinsights'
-  params: {
-    location: location
-    resourcePrefix: envResourceNamePrefix
-  }
-}
-
 /* Storage */
 module viapp_storageAccount 'storage.bicep' = {
   name: '${deploymentNameId}-appservice-storage'
@@ -71,7 +60,6 @@ module viapp_function 'functionApp.bicep' = {
     functionAppName: functionAppName
     deploymentNameId: deploymentNameId
     resourcePrefix: envResourceNamePrefix
-    appInsightsKey: viapp_appInsights.outputs.azAppInsightsInstrumentationKey
     storageAccountName: storageAccountName
     storageAccountKey: viapp_storageAccount.outputs.storageAccountKey
     viAccountId: viapp_videoIndexer.outputs.videoIndexerAccountId
@@ -84,7 +72,6 @@ module viapp_function 'functionApp.bicep' = {
     viapp_eventHubs
     viapp_storageAccount
     viapp_videoIndexer
-
   ]
 }
 
@@ -118,7 +105,6 @@ module viDiagnosticsSetting 'vi-diagnostics-settings.bicep' = {
 
 /* define outputs */
 
-output appInsightsInstrumentionKey string = viapp_appInsights.outputs.azAppInsightsInstrumentationKey
 output functionAppName string = functionAppName
 output eventHubNamespaceName string = eventHubNamespaceName
 output videoIndexerAccountName string = viapp_videoIndexer.outputs.videoIndexerAccountName

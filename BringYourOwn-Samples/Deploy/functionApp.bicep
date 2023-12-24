@@ -1,7 +1,6 @@
 param resourcePrefix string
 param location string
 param deploymentNameId string
-param appInsightsKey string
 param storageAccountName string
 param viAccountId string
 
@@ -19,6 +18,17 @@ param linuxFxVersion string = 'DOTNET|4.27.5.5'
 
 @description('Event Hub Connection String to place as ENV Variable')
 param eventsHubConnectionString string
+
+resource azAppInsights 'Microsoft.Insights/components@2020-02-02' = {
+  name: '${resourcePrefix}-ai'
+  location: location
+  kind: 'web'
+  properties: {
+    Application_Type: 'web'
+    publicNetworkAccessForIngestion: 'Enabled'
+    publicNetworkAccessForQuery: 'Enabled'
+  }
+}
 
 resource azHostingPlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   name: functionAppName
@@ -60,7 +70,7 @@ resource viFunctionApp 'Microsoft.Web/sites@2022-09-01' = {
 module appService_appSettings 'app-config.bicep' = {
   name: '${deploymentNameId}-appservice-config'
   params: {
-    applicationInsightsInstrumentationKey: appInsightsKey
+    applicationInsightsInstrumentationKey: azAppInsights.properties.InstrumentationKey
     storageAccountName: storageAccountName
     storageAccountAccessKey: storageAccountKey
     resorucePrefix: resourcePrefix

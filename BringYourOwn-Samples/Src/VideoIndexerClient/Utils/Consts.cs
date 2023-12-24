@@ -10,7 +10,7 @@ namespace VideoIndexerClient.Utils
         public static readonly string SubscriptionId = Environment.GetEnvironmentVariable("SUBSCIPTION_ID") ;
         public static readonly string ResourceGroup = Environment.GetEnvironmentVariable("VI_RESOURCE_GROUP") ;
 
-        public static readonly string ApiEndpoint = Environment.GetEnvironmentVariable("API_ENDPOINT");
+        public static readonly string ApiEndpoint = Environment.GetEnvironmentVariable("API_ENDPOINT") ?? "https://api.videoindexer.ai";
         public static readonly string Location = Environment.GetEnvironmentVariable("VI_LOCATION") ;
         public static readonly string ViAccountName = Environment.GetEnvironmentVariable("VI_ACCOUNT_NAME") ;
         public static readonly string ViAccountId = Environment.GetEnvironmentVariable("VI_ACCOUNT_ID") ;

@@ -4,14 +4,13 @@ set -e
 export SCRIPT_PATH=$(dirname "$(readlink -f "$0")")
 echo $(dirname 0)
 
-subscription="24237b72-8546-4da5-b204-8c3cb76dd930"
 location=eastus
-resource_prefix=byo2
+resource_prefix=byo
 storage_account="${resource_prefix}sa"
 resource_group="${resource_prefix}-rg"
 application_name="${resource_prefix}-app"
 deploy_name=byodeploy
-deploy_infra=false
+deploy_infra=true
 deploy_app=true
 ZipContainerName=${ZIP_CONTAINER:-functions}
 
@@ -21,8 +20,8 @@ template_file="main.bicep"
 
 
 # Login to Azure
-#az login --use-device-code
-az account set -s $subscription
+az login --use-device-code
+az account set -s "<Place_Your_Subscription_Here>"
 
 if [ $deploy_infra = true ]; then
     echo "Create Resource Group"

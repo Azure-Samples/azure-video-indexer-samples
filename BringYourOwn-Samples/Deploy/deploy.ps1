@@ -34,7 +34,7 @@ if ($deploy_infra) {
 if ($deploy_app) {
     Write-Host "deploy function app"
     Set-Location "$SCRIPT_PATH\..\Src\"
-    Remove-Item -Recurse -Force bin\publish
+    Remove-Item -Recurse -Force bin\publish -ErrorAction SilentlyContinue
     dotnet publish CarDetectorFuncApp\CarDetectorApp.csproj -c Release -o bin\publish
     Write-Host "zipping function app solution"
     Set-Location bin\publish

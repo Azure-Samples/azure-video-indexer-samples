@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Azure.Messaging.EventHubs;
@@ -14,11 +13,11 @@ namespace CarDetectorApp
 {
     public class IndexingEventHandler
     {
-        private const string INDEXING_LOGS_CATEGORY = "IndexingLogs";
-        private const string SUCCESS_RT = "Success";
-        private const string INDEX_FINISH_EVENT = "IndexingFinished";
-        private const string REINDEX_FINISH_EVENT = "ReindexingFinished";
-        private static string[] MonitoredEvents = { INDEX_FINISH_EVENT, REINDEX_FINISH_EVENT };
+        private const string IndexingLogsCategory = "IndexingLogs";
+        private const string SuccessRt = "Success";
+        private const string IndexFinishEvent = "IndexingFinished";
+        private const string ReindexFinishEvent = "ReindexingFinished";
+        private static readonly string[] MonitoredEvents = { IndexFinishEvent, ReindexFinishEvent };
 
         private readonly ILogger _logger;
         private readonly CognitiveVisioClient _cognitiveVisioClient;
@@ -57,7 +56,7 @@ namespace CarDetectorApp
             _logger.LogInformation("Processing Started on VideoId: {0}, Operation: {1}", videoId, operationName);
 
             //Step 1 : Get the Video Insights from the API 
-            var videoInsights = await VideoIndexerClient.GetVideoInsights(videoId);
+            var videoInsights = await VideoIndexerClient.GetVideoIndexInsights(videoId);
             if (videoInsights == null)
             { 
                 _logger.LogError("Could not Fetch Insights Data on VideoId: {0}", videoId);
@@ -69,7 +68,7 @@ namespace CarDetectorApp
                 .SelectMany(insight => insight.DetectedObjects)
                 .Where(dto => dto.Type.Equals(DetectObjectType))
                 .Select(dto=> new FrameData(dto.Id.ToString(), 1,
-                    VideoIndexerClient.GetThumbnailRequestURI(videoId, dto.ThumbnailId),dto.TimePairs))
+                    VideoIndexerClient.GetThumbnailRequestUri(videoId, dto.ThumbnailId),dto.TimePairs))
                 .ToList();
 
             if (!carFrameData.Any())
@@ -77,7 +76,7 @@ namespace CarDetectorApp
                 _logger.LogInformation("No Cars Detected on VideoId: {0}", videoId);
                 return string.Empty;
             }
-            
+
             //Step 2 : Send Each Thumbnail to Florence Model
             _logger.LogInformation("Processing Florence Started on VideoId: {0}, Operation: {1}", videoId, operationName);
             var customInsights = await _cognitiveVisioClient.ExtractCustomInsights(carFrameData);
@@ -85,7 +84,7 @@ namespace CarDetectorApp
 
             // postprocessing for insights 
             _logger.LogInformation("Calling Path Index on Video Indexer API -Started");
-            var pathResultCode = await VideoIndexerClient.PatchIndex(videoId, customInsights);
+            var pathResultCode = await VideoIndexerClient.PatchIndex(videoId, customInsights, videoInsights.HasCustomInsights);
             _logger.LogInformation("Calling Path Index on Video Indexer API -Completed. ResultCode: {0}", pathResultCode);
             return pathResultCode;
         }
@@ -95,8 +94,8 @@ namespace CarDetectorApp
         private static bool HandleRecord(IndexEventRecord record)
         {
             AppLogger.Logger.LogInformation("Got Recrod : category {0}, Operation: {1}, Result: {2} ",record.category,record.operationName,record.resultType);
-            return record.category.Equals(INDEXING_LOGS_CATEGORY)
-                && record.resultType.Equals(SUCCESS_RT)
+            return record.category.Equals(IndexingLogsCategory)
+                && record.resultType.Equals(SuccessRt)
                 && MonitoredEvents.Contains(record.operationName);
         }
         /// <summary>

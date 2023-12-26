@@ -12,8 +12,8 @@ namespace VideoIndexerClient.model
         public string Id { get; set; }
         public string Name { get; set; }
         public string State { get; set; }
-
         public List<VideoInsights> Videos { get; set; }
+        public bool HasCustomInsights => Videos.Any(videoInsight => videoInsight?.Insights?.CustomInsights?.Count > 0);
     }
 
     public class VideoInsights
@@ -23,7 +23,8 @@ namespace VideoIndexerClient.model
 
     public class VideoIndexInsights
     {
-        public List<DetectedObjectInsights> DetectedObjects { get; set; } //DetectedObject is just one Insight. There are many more: Ocr,Labels,Scenes,shots,Blocks,etc
+        public List<DetectedObjectInsights> DetectedObjects { get; set; } 
+        public List<CustomInsights> CustomInsights { get; set; }
     }
 
     public class DetectedObjectInsights

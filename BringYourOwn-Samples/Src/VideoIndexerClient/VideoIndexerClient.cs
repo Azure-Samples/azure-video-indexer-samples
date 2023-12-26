@@ -5,9 +5,7 @@ using VideoIndexerClient.auth;
 using VideoIndexerClient.model;
 using VideoIndexerClient.Utils;
 using static VideoIndexerClient.Utils.Consts;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-#pragma warning disable CS8603 // Possible null reference return.
 
 namespace VideoIndexerClient
 {
@@ -43,19 +41,12 @@ namespace VideoIndexerClient
         }
 
 
-        public string GetThumbnailRequestURI(string videoId, string thumbnailId)
+        public string GetThumbnailRequestUri(string videoId, string thumbnailId)
         {
-            // Send a GET request to the Video Indexer API
-            var queryParams = new Dictionary<string, string>
-            {
-                { "accessToken", _accountAccessToken },
-                { "format" , "Jpeg "}
-            }.CreateQueryString();
-
             try
             {
                 _logger.LogInformation("Getting Thumbnail {0} for Video {1}",videoId,thumbnailId);
-                var requestUrl = $"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos/{videoId}/Thumbnails/{thumbnailId}?{queryParams}";
+                var requestUrl = $"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos/{videoId}/Thumbnails/{thumbnailId}?{GetQueryParams()}";
                 return requestUrl;
             }
             catch (Exception ex)
@@ -65,17 +56,11 @@ namespace VideoIndexerClient
             return string.Empty;
         }
 
-        public async Task<Insights?> GetVideoInsights(string videoId)
+        public async Task<Insights?> GetVideoIndexInsights(string videoId)
         {
-            var queryParams = new Dictionary<string, string>()
-            {
-                {"language", "English"},
-                { "accessToken", _accountAccessToken },
-            }.CreateQueryString();
-
             try
             {
-                var requestUrl = $"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos/{videoId}/Index?{queryParams}";
+                var requestUrl = $"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos/{videoId}/Index?{GetQueryParams()}";
                 var videoGetIndexRequestResult = await _httpClient.GetAsync(requestUrl);
                 videoGetIndexRequestResult.VerifyStatus(System.Net.HttpStatusCode.OK);
                 var videoGetIndexResult = await videoGetIndexRequestResult.Content.ReadAsStringAsync();
@@ -87,40 +72,40 @@ namespace VideoIndexerClient
             }
 
             return null;
-        } 
-
-        public async Task<string> PatchIndex(string videoId, CustomInsights jsonPayload, string embeddedPath = DEFAULT_EMBEDDED_PATH)
-        {
-            var queryParams = new Dictionary<string, string>
-            {
-                { "accessToken", _accountAccessToken },
-            }.CreateQueryString();
-
-            var insights = new CustomInsights[] { jsonPayload };
-            var requestUrl = $"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos/{videoId}/Index?{queryParams}";
-            var pathResponse = await _httpClient.PatchAsync(requestUrl, BuildFlorenceEnrichContent(insights, embeddedPath));
-            var res = pathResponse.Content.ReadAsStringAsync();
-            pathResponse.VerifyStatus(System.Net.HttpStatusCode.OK);
-            return pathResponse.StatusCode.ToString();
         }
 
-        private static HttpContent BuildFlorenceEnrichContent(CustomInsights[] florenceResponse, string embeddedPath)
+        
+
+        public async Task<string> PatchIndex(string videoId, CustomInsights customInsights, bool customInsightsAlreadyExists = false, string embeddedPath = DEFAULT_EMBEDDED_PATH)
         {
-            var operation = "add";
+            //Prepare the Payload request 
+            var requestUrl = $"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos/{videoId}/Index?{GetQueryParams()}";
             var wrapper = new List<object>
             {
                 new
                 {
-                    value = florenceResponse,
+                    op = customInsightsAlreadyExists ? "replace" : "add",
+                    value = new[] { customInsights },
                     path = embeddedPath,
-                    op = operation
                 }
             };
 
             var jsonPayload = JsonConvert.SerializeObject(wrapper);
-            Console.WriteLine("Saving to file ");
-            File.WriteAllText("customInsights.json", jsonPayload);
-            return new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+            var patchContent = new  StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+            var pathResponse = await _httpClient.PatchAsync(requestUrl, patchContent);
+            pathResponse.VerifyStatus(System.Net.HttpStatusCode.OK);
+            return pathResponse.StatusCode.ToString();
+        }
+
+        private string GetQueryParams()
+        {
+            return new Dictionary<string, string>()
+            {
+                { "accessToken", _accountAccessToken },
+                { "language", "English" },
+                { "format" , "Jpeg "}
+            }.CreateQueryString();
         }
     }
 }

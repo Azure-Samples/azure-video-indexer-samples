@@ -69,7 +69,7 @@ namespace VideoIndexerClient.model
         public string DisplayName { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
-        public DisplayType DisplayType { get; set; } = DisplayType.Capsule;
+        public DisplayType DisplayType { get; set; } = DisplayType.CapsuleAndTags;
 
         [JsonRequired]
         public CustomInsightResult[] Results { get; set; }

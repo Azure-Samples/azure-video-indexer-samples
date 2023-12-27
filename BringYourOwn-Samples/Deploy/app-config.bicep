@@ -36,7 +36,6 @@ var BASE_SLOT_APPSETTINGS = {
   VI_ACCOUNT_NAME: viAccountName
   VI_ACCOUNT_ID: viAccountId
   API_ENDPOINT: 'https://api.videoindexer.ai'
-  INTERNAL_API_ENDPOINT: 'https://api.videoindexer.ai/internals'
   VI_LOCATION: 'eastus'
   CS_VISION_ENDPOINT: csVisionEndpoint
   CS_VISION_CUSTOM_MODEL_NAME: csVisionCustomModelName

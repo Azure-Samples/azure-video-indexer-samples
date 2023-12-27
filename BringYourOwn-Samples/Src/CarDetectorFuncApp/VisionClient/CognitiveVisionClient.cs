@@ -13,7 +13,7 @@ using static VideoIndexerClient.Utils.Consts;
 
 namespace CarDetectorApp.VisionClient
 {
-    public class CognitiveVisioClient
+    public class CognitiveVisionClient
     {
         private readonly VisionServiceOptions _serviceOptions;
         private readonly ImageAnalysisOptions _analysisOptions;
@@ -25,7 +25,7 @@ namespace CarDetectorApp.VisionClient
         private const int MaxThreads = 6; // Florence S1 tier support max of 10/TPQ 
         
 
-        public CognitiveVisioClient(ILogger logger)
+        public CognitiveVisionClient(ILogger logger)
         {
             System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12 | System.Net.SecurityProtocolType.Tls13;
             _logger = logger;
@@ -84,6 +84,7 @@ namespace CarDetectorApp.VisionClient
                     {
                         Id = resultId,
                         Type = $"{classificationType}",
+                        SubType = $"{classificationType}_{resultId}",
                         //Metadata is a custom field that can be used for many purposes. here we demonstrate a bounding box data usage.
                         Instances = videoFrame.StartEndPairs.Select(timePair => new Instance
                         {
@@ -108,7 +109,7 @@ namespace CarDetectorApp.VisionClient
                 var result = await analyzer.AnalyzeAsync();
                 if (result?.CustomTags?.Count > 0)
                 {
-                    _logger.LogInformation("Processing Florence on imageUrl {0} Finished with result {1}", filename, result.CustomTags.Count);
+                    _logger.LogInformation("Processing Florence on imageUrl {0} Finished. Detected {1} results", filename, result.CustomTags.Count);
                     return result.CustomTags;
                 }
             }

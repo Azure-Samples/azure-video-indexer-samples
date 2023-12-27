@@ -20,14 +20,14 @@ namespace CarDetectorApp
         private static readonly string[] MonitoredEvents = { IndexFinishEvent, ReindexFinishEvent };
 
         private readonly ILogger _logger;
-        private readonly CognitiveVisioClient _cognitiveVisioClient;
+        private readonly CognitiveVisionClient _cognitiveVisionClient;
         private readonly Lazy<VIClient> _videoIndexerClientLazy = new(InitVideoIndexerClient);
         private VIClient VideoIndexerClient => _videoIndexerClientLazy.Value;
 
         public IndexingEventHandler()
         {
             _logger = AppLogger.Logger;
-            _cognitiveVisioClient = new CognitiveVisioClient(_logger);
+            _cognitiveVisionClient = new CognitiveVisionClient(_logger);
         }
 
         public async Task OnEventReceived(EventData[] events)
@@ -79,7 +79,7 @@ namespace CarDetectorApp
 
             //Step 2 : Send Each Thumbnail to Florence Model
             _logger.LogInformation("Processing Florence Started on VideoId: {0}, Operation: {1}", videoId, operationName);
-            var customInsights = await _cognitiveVisioClient.ExtractCustomInsights(carFrameData);
+            var customInsights = await _cognitiveVisionClient.ExtractCustomInsights(carFrameData);
             _logger.LogInformation("Processing Florence Completed on VideoId: {0}, Operation: {1}", videoId, operationName);
 
             // postprocessing for insights 

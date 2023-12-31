@@ -1,0 +1,15 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "computerVisionEndpoint" : {
+      "value": "<Place_your_computer_vision endpoint_here>"
+    },
+    "computerVisionCustomModelName":{
+      "value": "<Place_your_model_name_here>"
+    },
+    "computerVisionKey" :{
+      "value": "<Place_your_key_here>"
+    }
+  }
+}

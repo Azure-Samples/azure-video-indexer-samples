@@ -30,7 +30,7 @@ namespace CarDetectorApp
             _cognitiveVisionClient = new CognitiveVisionClient(_logger);
         }
 
-        public async Task OnEventReceived(EventData[] events)
+        public async Task OnEventsReceivedAsync(EventData[] events)
         {
             var processors = events.Select(ToIndexEvet)
                 .Where(evt => evt != null)
@@ -42,7 +42,7 @@ namespace CarDetectorApp
 
         public async Task<string> ProcessIndexingRecord(IndexEventRecord idxEventRecord)
         {
-            if (!HandleRecord(idxEventRecord))
+            if (!ShouldHandleRecord(idxEventRecord))
             {
                 return string.Empty;
             }
@@ -91,7 +91,7 @@ namespace CarDetectorApp
 
         private static IndexEvent ToIndexEvet(EventData evt) => JsonConvert.DeserializeObject<IndexEvent>(evt.EventBody.ToString());
 
-        private static bool HandleRecord(IndexEventRecord record)
+        private static bool ShouldHandleRecord(IndexEventRecord record)
         {
             AppLogger.Logger.LogInformation("Got Recrod : category {0}, Operation: {1}, Result: {2} ",record.category,record.operationName,record.resultType);
             return record.category.Equals(IndexingLogsCategory)

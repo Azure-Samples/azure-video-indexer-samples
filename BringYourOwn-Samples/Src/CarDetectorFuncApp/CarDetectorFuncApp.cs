@@ -21,7 +21,7 @@ namespace CarDetectorApp
         {
             log.LogInformation("CarDetectorFunc invoked from EventHubs Listener Trigger {0}", EventHubsName);
             AppLogger.Logger = log;
-            await (new IndexingEventHandler()).OnEventReceived(events);
+            await (new IndexingEventHandler()).OnEventsReceivedAsync(events);
             log.LogInformation("Finished Processing on event Hub {0}", EventHubsName);
         }
     }

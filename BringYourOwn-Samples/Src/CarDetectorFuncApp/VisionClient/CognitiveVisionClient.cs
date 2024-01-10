@@ -64,7 +64,7 @@ namespace CarDetectorApp.VisionClient
 
         private async Task<CustomInsightResult> ToVideoIndederCustomModelObject(FrameData videoFrame)
         {
-            var contentTags = await SingleFrameProcessing(videoFrame.FilePath);
+            var contentTags = await ProcessSingleFrameAsync(videoFrame.FilePath);
             if (contentTags == null || !contentTags.Any())
                 return null;
             
@@ -98,7 +98,7 @@ namespace CarDetectorApp.VisionClient
                 }).First();
         }
 
-        public async Task<ContentTags> SingleFrameProcessing(string imageUrl)
+        public async Task<ContentTags> ProcessSingleFrameAsync(string imageUrl)
         {
             var filename = imageUrl[..imageUrl.IndexOf("?", StringComparison.Ordinal)];
             try

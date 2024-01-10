@@ -17,7 +17,7 @@ For more information visit [Compute Vision Customization](https://learn.microsof
 
 ### What we are building 
 
-<img src="./images/flow.png" width=1024 >
+<img src="./images/flow.jpeg" width=1024 >
 
 In this tutorial we will build the entire Video Indexer components and the backend system using Azure CLI / bicep templates . we will assume the Custom Model is already hosted on Azure AI Computer Vision.
 

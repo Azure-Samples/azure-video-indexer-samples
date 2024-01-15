@@ -1,4 +1,4 @@
-param appServicePrincipalId string
+param principalId string
 param eventHubNamespace string
 
 @description('Contributor role definition ID')
@@ -11,22 +11,23 @@ resource eventHubNs 'Microsoft.EventHub/namespaces@2023-01-01-preview' existing 
   name: eventHubNamespace
 }
 
-@description('Grant Subscription Contributor role to the service principal of Function App - to call Get Arm Access Token')
+@description('Grant Subscription Contributor role to the service principal - to call Get Arm Access Token')
 resource subscription_role 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  name: guid(subscription().subscriptionId, appServicePrincipalId, 'Contributor')
+  name: guid(subscription().subscriptionId, principalId, 'Contributor')
   properties: {
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', contributorRoleDefinitionId)
-    principalId: appServicePrincipalId
+    principalId: principalId
     principalType: 'ServicePrincipal'
   }
 }
 
 resource eventHubRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  name: guid(eventHubNs.id, appServicePrincipalId, eventHubDataContributorRoleDefinitionId)
+  name: guid(eventHubNs.id, principalId, eventHubDataContributorRoleDefinitionId)
   properties: {
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', eventHubDataContributorRoleDefinitionId)
-    principalId: appServicePrincipalId
+    principalId: principalId
     principalType: 'ServicePrincipal'
   }
   scope: eventHubNs
 }
+

@@ -25,12 +25,15 @@ The Following Resources will be installed using the Bicep template:
 
 
 ## Prerequisites
+Before deploying the Bicep items, please ensure that you have the following prerequisites installed:
 
-1. Get the latest version of  [AZ CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) and make sure `az login` is successful
+- Azure subscription with permissions to create Azure resources
+- The latest version of [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli). the latest version already contains the Bicep CLI.
+- *Recommended*: [Bicep Tools](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/install)
+
  
 ## Edit The Properties
 
-1. Open the [main.parameters.json](./main.parameters.json) file and fill in the missing parameters
 2. Open the [deploy.sh](./deploy.sh) script file and fill in subscription Id ,region and resource prefixes names.
 
 ## Deploy the sample
@@ -54,16 +57,14 @@ Run the Following command from Linux shell terminal:
 
 The script will create a resource group if it does not exist and deploy the bicep template to Azure.
 
-## Parameters
+3. wait for the deployment to finish, open Azure Portal and ensure the following resources got created : 
 
-### appServicePrincipalId
-
-
-* Type: string
-
-* Description: Specifies the principal Id (a.k.a ObjectId) of a service Prinicipal that will have a permission to write the VI Logs into the EventHubs namespace stream.
-
-* required: true
+* Storage Account 
+* Azure Media Services Account
+* Azure Video Indexer Account
+* Event Hubs Namespace 
+* Azure Video Indexer Diagnostic settings attached to the Video Indexer Account. The diagnostic setting is configured to send Video Indexer log and audit events to Event Hubs namespace.
+* Azure Event Hub namespace ( to stream the logs into )
 
 
 ### Notes

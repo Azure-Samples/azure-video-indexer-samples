@@ -7,13 +7,12 @@ param resourceNamePrefix string
 @description('Deployment name/id')
 param deploymentNameId string = '0000000000'
 
-@description('The principal Id of user/System MI or App to grant permission on the VI Event hub logs')
-param appServicePrincipalId string
 
-var envResourceNamePrefix = toLower(resourceNamePrefix)
 var storageAccountName = '${envResourceNamePrefix}sa'
+var functionAppName = '${envResourceNamePrefix}-asp'
 var eventHubNamespaceName = '${envResourceNamePrefix}-eventhub'
 var eventHubName = 'vilogs'
+var envResourceNamePrefix = toLower(resourceNamePrefix)
 
 /* Storage */
 module viapp_storageAccount 'storage.bicep' = {
@@ -35,7 +34,7 @@ module viapp_eventHubs 'eventsHub.bicep' = {
 }
 
 /* Video Indexer */
-module viapp_videoIndexer 'videoindexer.bicep' = {
+module media_videoIndexer 'videoindexer.bicep' = {
   name: '${deploymentNameId}-videoIndexer'
   params: {
     stoargeAccountId: viapp_storageAccount.outputs.storageAccountId
@@ -51,11 +50,11 @@ module viapp_videoIndexer 'videoindexer.bicep' = {
 module appSettingsRoleAssignments 'role-assignment.bicep' = {
   name: '${deploymentNameId}-roleAssignment'
   params: {
-    appServicePrincipalId: appServicePrincipalId
+    principalId: media_videoIndexer.outputs.videoIndexerPrincipalId
     eventHubNamespace: eventHubNamespaceName
   }
   dependsOn: [
-    viapp_videoIndexer
+    media_videoIndexer
     viapp_eventHubs
   ]
 }
@@ -69,7 +68,7 @@ module viDiagnosticsSetting 'vi-diagnostics-settings.bicep' = {
     eventHubName: eventHubName
   }
   dependsOn: [
-    viapp_videoIndexer
+    media_videoIndexer
     appSettingsRoleAssignments
     viapp_eventHubs
   ]
@@ -77,5 +76,6 @@ module viDiagnosticsSetting 'vi-diagnostics-settings.bicep' = {
 
 /* define outputs */
 
+output functionAppName string = functionAppName
 output eventHubNamespaceName string = eventHubNamespaceName
-output videoIndexerAccountName string = viapp_videoIndexer.outputs.videoIndexerAccountName
+output videoIndexerAccountName string = media_videoIndexer.outputs.videoIndexerAccountName

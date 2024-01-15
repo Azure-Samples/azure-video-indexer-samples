@@ -5,9 +5,9 @@ export SCRIPT_PATH=$(dirname "$(readlink -f "$0")")
 echo $(dirname 0)
 
 #########Fill In The missing Propperties#########
-subscription="<Place Your Subscription ID Here>"
-location="<Place Your Location Here>"
-resource_prefix='<Place Your Resource Prefix Here>'
+subscription="24237b72-8546-4da5-b204-8c3cb76dd930"
+location="westus2"
+resource_prefix='tspoc22'
 #################################################
 
 resource_group="${resource_prefix}-rg"
@@ -18,7 +18,7 @@ parameters_file="main.parameters.json"
 template_file="main.bicep"
 
 # Login to Azure
-az login --use-device-code
+#az login --use-device-code
 az account set -s $subscription
 
 # Create Resource Group
@@ -29,6 +29,5 @@ az group create -n ${resource_group} -l $location
 echo "Deploy Resources"
 az deployment group create -g $resource_group --name $deploy_name \
                         --template-file $template_file \
-                        --parameters $parameters_file \
                         --parameters deploymentNameId=${deploy_name}-1 resourceNamePrefix=${resource_prefix}
 

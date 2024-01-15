@@ -11,7 +11,7 @@ The resource will be deployed to your subscription and will create the Azure Vid
 > **Note:**
 > this sample is *not* for connecting an existing Azure Video Indexer classic account to an ARM-Based Video Indexer account.
 
-> For full documentation on Azure Video Indexer API, visit the [Developer Portal](https://aka.ms/videoindexer-dev-portal) page.
+> For full documentation on Azure Video Indexer API, visit the [Developer Portal](https://api-portal.videoindexer.ai/) page.
 
 > The current API Version is "2022-08-01". Check this Repo from time to time to get updates on new API Versions.
 

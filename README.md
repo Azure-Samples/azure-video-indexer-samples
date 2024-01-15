@@ -31,7 +31,7 @@ Here you can find code samples and project examples of how to use Video Indexer,
 
 | File/folder                  | Description                                                  | Owner           |
 | ---------------------------- | ------------------------------------------------------------ | --------------- |
-| `Deploy-Samples`     | Quick-Start tutorial to create Azure Video Indexer and all its resource dependencies with ARM, bicep or Terraform| Video Indexer        |
+| `Deploy-Samples`     | Quick-Start tutorial to create Azure Video Indexer and all its resource dependencies with ARM, or bicep | Video Indexer        |
 | `API Samples`        | Sample code of uploading and indexing video using API        | Video Indexer   |
 | `Embedding widgets`          | How to add Video Indexer widgets to your app                 | Video Indexer   |
 | `IntroToVideoIndexer.md`     | An intro lab to Video Indexer with exercises                 | Community       |

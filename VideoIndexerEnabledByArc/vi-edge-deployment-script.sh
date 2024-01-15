@@ -4,6 +4,26 @@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Helper Functions @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #===========================================================================================================#
 
+#######################################
+# region validation
+# Ensure the user uses legal azure region name
+#######################################
+export valid_regions=($(az account list-locations --query "[].name" -o tsv))
+function is_valid_azure_region() {
+    local location=$1
+    for reg in "${valid_regions[@]}"; do
+        if [[ $reg == $location ]]; then
+            return 0
+        fi
+    done
+    
+    return 1
+}
+function print_local_regions() {
+  for reg in "${valid_regions[@]}"; do
+    echo $reg
+  done
+}
 #################################################
 # get_parameter_value 
 # Function to ask a question and read user's input
@@ -122,6 +142,13 @@ get_parameter_value "Provide a unique identifier value during deployment.(this w
 get_parameter_value "What is the Video Indexer extension name ?" "extensionName"
 get_parameter_value "What is the extension kubernetes namespace to install to ?" "namespace"
 
+## Region Name Validation
+region=${region,,}
+if ! is_valid_azure_region "$location"; then
+  echo "Invalid Azure region $region. Use one of the following regions:"
+  print_local_regions
+  exit 1
+fi
 echo "SubscriptionId: $subscriptionId"
 echo "Azure Resource Group: ${resourceGroup}"
 echo "Video Indexer AccountName: $accountName"

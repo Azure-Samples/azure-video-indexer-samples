@@ -228,11 +228,11 @@ resource vmExtensionKubeAdmInstall 'Microsoft.Compute/virtualMachines/extensions
     typeHandlerVersion: '2.0'
     autoUpgradeMinorVersion: true
     protectedSettings: {
-      commandToExecute: 'curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash && curl -s https://raw.githubusercontent.com/killer-sh/cks-course-environment/master/cluster-setup/latest/install_master.sh | sudo bash'
+      commandToExecute: 'curl -sL https://raw.githubusercontent.com/killer-sh/cks-course-environment/master/cluster-setup/latest/install_master.sh | sudo bash && curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash '
     }
   }
-  dependsOn: [
-    userroleAssignment
-  ]
+  // dependsOn: [
+  //   userroleAssignment 
+  // ]
 }
 

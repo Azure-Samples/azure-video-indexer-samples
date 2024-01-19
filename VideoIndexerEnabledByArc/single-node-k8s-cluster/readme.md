@@ -1,58 +1,48 @@
 # Deploy Video Indexer Enabled by Arc to Single Node Kubernetes Cluster (Kubeadm)
 
 ## About
+This document provides the onboarding steps and prerequisites for Cluster Administrators, IT Operators, DevOps, and Engineering teams to enable Video Indexer as an Arc extension on their current local compute layer, not based on Azure Kubernetes Clusters.
 
-The purpose of this document is to present the onboarding steps and pre-requisites required for Cluster Administrator, IT Operator, Dev Ops and Engineering teams to enable Video Indexer as arc extension on their current local compute layer that is not based on Azure Kubenernets Clusters.
+In this tutorial, you will deploy Video Indexer Enabled by Arc into a "Vanilla" Kubernetes cluster with the following characteristics:
 
-In this tutorial you will be deploying Video Indexer Enabled by Arc solution into "Vanila" kubernetes cluster with the following characteristics :
+- Single Node "control-plane" VM running on Linux with 32 Cores and 128GB memory (configurable)
+- Kubeadm based cluster
 
-* Single Node "control-plane" VM running On Linux with 32 Cores and 128G memory ( configurable)
-* Kubeadm based cluster
+**Notes:** Video Indexer Enabled by Arc can be deployed on ANY Kubernetes cluster, whether On-Prem or Cloud-based. For more information on kubeadm configuration and options, visit [Kubernetes Docs](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/).
 
-> **_Notes:_** Video Indexer Enabled by Arc can be deployed on *ANY* Kuberenets cluster whether On-Prem or Cloud based.
-
->  For more information on kubeadm configuration and options visit [k8s Docs](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/).
-
-
-Once the cluster will be created you will SSH into the VM and interact with Azure CLI and Kubectl commands in order to onboard
-Azure Video Indexer Enabled by arc solution.
-
+Once the cluster is created, you will SSH into the VM and interact with Azure CLI and Kubectl commands to onboard Azure Video Indexer Enabled by Arc solution.
 
 ## Prerequisites
-
->NOTE: In order to succesfully deploy the VI Extention it is **mandatory** that we approve your Azure subscription id in advance. Therefore you must first sign up using [this form](https://aka.ms/vi-register).
+**NOTE:** To successfully deploy the VI Extension, it is mandatory to have your Azure subscription ID approved in advance. Sign up using [this form](link_to_form).
 
 - Azure subscription with permissions to create Azure resources
-- Azure Video Indexer Account. The quickest way is using the Azure Portal using this tutorial [Create Video Indexer account](https://learn.microsoft.com/azure/azure-video-indexer/create-account-portal#use-the-azure-portal-to-create-an-azure-video-indexer-account).
-
+- Azure Video Indexer Account. Follow [this tutorial](link_to_tutorial) to create a Video Indexer account.
 - Permission to create Virtual machines on Azure.
 
+## Deployment Steps 
 
-## 1. Create Kubeadm single node Cluster .
+1. **Create Kubeadm Single Node Cluster**
 
-1. Opem the `deploy.sh` script and edit the following varaibles :
+Open the `deploy.sh` script and edit the following variables:
 
-- prefix : a user prefix string to serve as identifier for this tutorial resources.
+- `prefix`: A user prefix string to serve as an identifier for this tutorial resources.
+- `controlPlaneNodeVmSize`: The VM Size to be used as the control-plane single node Kubernetes cluster. Consult your IT Admin to select the right VM Size based on your subscription quota allocations for the deployed region.
+- `location`: The location where your solution will be deployed.
 
-- controlPlaneNodeVmSize : The VM Size to be used as the control-plance single node Kubernetes cluster. consult your IT Admin 
-in order to select the right VM Size according to your subscription quota allocations for the deployed regino.
-
-- location : The location where your solution will be deployed.
-
-**_HINT_** : In order to get a list of allowed location names under your subscription consider using the following snippet: 
+**Hint:** To get a list of allowed location names under your subscription, consider using the following snippet:
 
 ```bash
-    az account list-locations --query "[].name" -o tsv
+az account list-locations --query "[].name" -o tsv
 ```
 
-2. Login to Azure
+Login to Azure
 
 ```bash
 az login --used-device-code
 az account set --subscription <Your_Subscription_ID>
 ```
 
-3. Deploy the script by running the following commands : 
+Deploy the script by running the following commands : 
 
 ```bash
 chmod +x ./deploy.sh

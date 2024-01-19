@@ -4,7 +4,7 @@ echo "Part 1: Deploying Single Node K8s Cluster based on Kubeadm"
 
 #################################################
 # Variables
-prefix="tsk8s"
+prefix="ts-kubeadm33"
 controlPlaneNodeVmSize="Standard_D32a_v4"
 location="eastus"
 ################################################

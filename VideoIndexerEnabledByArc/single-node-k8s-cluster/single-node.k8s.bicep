@@ -170,9 +170,9 @@ resource virtualMachine 'Microsoft.Compute/virtualMachines@2021-07-01' = {
     storageProfile: {
       imageReference: {
         publisher: 'Canonical'
-        offer: '0001-com-ubuntu-server-jammy'
-        sku: '22_04-lts-gen2'
-        version: 'latest'
+        offer: '0001-com-ubuntu-server-focal'
+        sku: '20_04-lts-gen2'
+        version: '20.04.202312080'
       }
       osDisk: {
         createOption: 'fromImage'
@@ -181,6 +181,7 @@ resource virtualMachine 'Microsoft.Compute/virtualMachines@2021-07-01' = {
         }
       }
     }
+    
     networkProfile: {
       networkInterfaces: [
         {
@@ -191,7 +192,33 @@ resource virtualMachine 'Microsoft.Compute/virtualMachines@2021-07-01' = {
   }
 }
 
-resource vmExtension 'Microsoft.Compute/virtualMachines/extensions@2021-07-01' = {
+resource virtualMachineUserLogin 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
+  name: '7f951dda-4ed3-4680-a7ca-43fe172d538d'
+  scope: subscription()
+}
+
+//Grant Virtual Machine User Login to the System Assigned Identity so we can 'az login' to the VM
+resource vmroleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+  name: guid(resourceGroup().id, virtualMachine.name, 'virtualMachineUserLoginForSystemAssignedIdentitys')
+  scope: virtualMachine 
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', virtualMachineUserLogin.name)
+    principalId: virtualMachine.identity.principalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
+resource userroleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+  name: guid(resourceGroup().id, virtualMachine.name, 'virtualMachineUserLoginForUser')
+  scope: virtualMachine 
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', virtualMachineUserLogin.name)
+    principalId: userPrincipalId
+    principalType: 'User'
+  }
+}
+
+resource vmExtensionKubeAdmInstall 'Microsoft.Compute/virtualMachines/extensions@2021-07-01' = {
   parent: virtualMachine
   name: 'customScriptExtension'
   location: location
@@ -204,42 +231,8 @@ resource vmExtension 'Microsoft.Compute/virtualMachines/extensions@2021-07-01' =
       commandToExecute: 'curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash'
     }
   }
+  dependsOn: [
+    userroleAssignment
+  ]
 }
 
-resource vmExtensionAAD 'Microsoft.Compute/virtualMachines/extensions@2021-07-01' = {
-  parent: virtualMachine
-  name: 'AADSSHLoginForLinux'
-  location: location
-  properties: {
-    publisher: 'Microsoft.Azure.ActiveDirectory'
-    type: 'AADSSHLoginForLinux'
-    typeHandlerVersion: '1.0'
-    autoUpgradeMinorVersion: true
-  }
-}
-
-resource virtualMachineUserLogin 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
-  name: '7f951dda-4ed3-4680-a7ca-43fe172d538d'
-  scope: subscription()
-}
-
-//Grant Virtual Machine User Login to the System Assigned Identity so we can 'az login' to the VM
-resource vmroleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  name: guid(resourceGroup().id, virtualMachine.name, 'virtualMachineUserLogin')
-  scope: virtualMachine 
-  properties: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', virtualMachineUserLogin.name)
-    principalId: virtualMachine.identity.principalId
-    principalType: 'ServicePrincipal'
-  }
-}
-
-resource userroleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  name: guid(resourceGroup().id, virtualMachine.name, 'virtualMachineUserLogin')
-  scope: virtualMachine 
-  properties: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', virtualMachineUserLogin.name)
-    principalId: userPrincipalId
-    principalType: 'ServicePrincipal'
-  }
-}

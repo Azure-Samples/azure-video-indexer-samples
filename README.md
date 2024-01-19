@@ -25,6 +25,9 @@ Taxonomies for products and languages: https://review.docs.microsoft.com/new-hop
 
 Welcome to the official Video Indexer (VI) Samples repo. Video indexer builds upon media AI technologies to make it easier to extract insights from videos. Here you can find some great code snippets that you can use to work with Video Indexer API and integrate Video Indexer widgets into your website.
 
+## IMPORTANT: REPO NAME CHANGE
+Due to the retirement of Azure Media Services, this repository's name is going to change to "azure-video-indexer-samples" as early as January 24th and no later than January 26th, 2024. Plan accordingly.
+
 ## Contents
 
 Here you can find code samples and project examples of how to use Video Indexer, integrated it with your product, and expand our out-of-the-box offering by integrating with other products.

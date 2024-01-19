@@ -1,6 +1,7 @@
 param prefix string
 param userPrincipalId string 
 
+@description('Specifies control plane node VM size.')
 param controlPlaneNodeVmSize string = 'Standard_DS32a_v4'
 
 @description('Specifies the location.')
@@ -223,12 +224,22 @@ resource virtualMachineUserLogin 'Microsoft.Authorization/roleDefinitions@2022-0
 }
 
 //Grant Virtual Machine User Login to the System Assigned Identity so we can 'az login' to the VM
-resource roleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+resource vmroleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
   name: guid(resourceGroup().id, virtualMachine.name, 'virtualMachineUserLogin')
   scope: virtualMachine 
   properties: {
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', virtualMachineUserLogin.name)
     principalId: virtualMachine.identity.principalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
+resource userroleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+  name: guid(resourceGroup().id, virtualMachine.name, 'virtualMachineUserLogin')
+  scope: virtualMachine 
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', virtualMachineUserLogin.name)
+    principalId: userPrincipalId
     principalType: 'ServicePrincipal'
   }
 }

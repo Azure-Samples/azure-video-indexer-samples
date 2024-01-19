@@ -4,7 +4,7 @@ echo "Part 1: Deploying Single Node K8s Cluster based on Kubeadm"
 
 #################################################
 # Variables
-prefix="<Place Your Prefix Here>"
+prefix="tsk8s"
 controlPlaneNodeVmSize="Standard_D32a_v4"
 location="eastus"
 ################################################
@@ -28,7 +28,7 @@ echo "deploy Bicep template"
 az deployment group create \
   --name "bicep-deploy" \
   --resource-group $rgName \
-  --template-file "./main.bicep" \
+  --template-file "./single-node.k8s.bicep" \
   --parameters \
     prefix=$prefix \
     userPrincipalId=$userPrincipalId \

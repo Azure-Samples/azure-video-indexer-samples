@@ -48,3 +48,27 @@ Deploy the script by running the following commands :
 chmod +x ./deploy.sh
 ./deploy.sh
 ```
+
+2. **SSH into the Kubernetes control Plane node**
+
+using the Azure Portal Connect to the VM created on previous step.
+Use the SSH Keys created on previous step to connect to the VM.
+
+![vn-conect](image.png)
+
+**Note:** In order to run Kubectl commands on the Cluster, you will need to SSH into the VM
+
+
+after you log into into the vm swith to the root user by running the follwoing command
+
+```
+sudo -i
+```
+
+ensure your cluster is running by typing the following kubectl command
+
+```
+kubectl get pods
+kubectl get nodes
+```
+

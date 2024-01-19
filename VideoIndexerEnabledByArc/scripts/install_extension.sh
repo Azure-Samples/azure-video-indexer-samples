@@ -39,20 +39,9 @@ function get_parameter_value () {
 }
 
 ##############################################
-#  CLI Pre-requisites
+#  Get CS Auth Credentials
 ###############################################
-function install_cli_tools {
-  # https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli
-  echo "ensure you got the latest CLI client and install add ons if needed"
-  echo "https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli"
-  az extension add --name connectedk8s
-  az extension add --name aks-preview
-  az provider register --namespace Microsoft.Kubernetes
-  az provider register --namespace Microsoft.KubernetesConfiguration
-  az provider register --namespace Microsoft.ExtendedLocation
-}
-
-function wait_for_cs_secrets {
+function get_cs_auth_credentials {
   
   getSecretsUri="https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.VideoIndexer/accounts/${accountName}/ListExtensionDependenciesData?api-version=${viApiVersion}"
   numRetries=0
@@ -106,7 +95,7 @@ function create_cognitive_hobo_resources {
     exit 1 
   fi
 
-  wait_for_cs_secrets
+  get_cs_auth_credentials
   echo -e "\t create Cognitive Services On VI RP ***done***"
 }
 
@@ -117,8 +106,6 @@ function create_cognitive_hobo_resources {
 #=============================================#
 #============== Constants           ==========#
 #=============================================#
-install_cli_tools="false"
-register_cli_add_ons="true"
 aksVersion="1.28.2" # https://learn.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli
 viApiVersion="2023-06-02-preview" # VI API version
 
@@ -131,15 +118,10 @@ resourcesPrefix="vi" #default resources prefix , will be override later
 namespace="video-indexer" #default namespace , will be override later
 ENDPOINT_URI="https://127.0.0.1/vi" #default endpoint uri
 
-# Ask questions and read user input
-get_parameter_value "What is the Azure subscription ID during deployment?" "subscriptionId"
-get_parameter_value "What is the name of the Video Indexer resource group during deployment?" "resourceGroup"
-get_parameter_value "What is the name of the Video Indexer account name during deployment?" "accountName"
-get_parameter_value "What is the name of the Video Indexer account Id during deployment?" "accountId"
-get_parameter_value "What is the location of the Video Indexer during deployment?" "region"
-get_parameter_value "Provide a unique identifier value during deployment.(this will be used for Cloud Resources : AKS, DNS names etc)?" "resourcesPrefix"
-get_parameter_value "What is the Video Indexer extension name ?" "extensionName"
-get_parameter_value "What is the extension kubernetes namespace to install to ?" "namespace"
+subscriptionId=""
+resourceGroup=""
+accountName=""
+accountId=""
 
 ## Region Name Validation
 region=${region,,}
@@ -164,10 +146,6 @@ az account set --subscription $subscriptionId
 connectedClusterName="${resourcesPrefix}-connected-aks"
 connectedClusterResourceGroup="${resourcesPrefix}-rg"
 tags="createdBy=vi-arc-extension"
-#=========Install CLI Tools if needed =====================#
-if [[ $install_cli_tools == "true" ]]; then
-  install_cli_tools
-fi
 
 #=============================================#
 #======== Create Connected-ARC Cluster =======#
@@ -181,7 +159,6 @@ if [[ "$connectedResult" == *"ERROR"* ]]; then
 echo "AKS-Arc-connected connectivity Sanity test failed. Exiting"
 exit 1
 fi
-
 
 #=====================================================================================================#
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Deploy Video Indexer Extension @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -202,47 +179,25 @@ echo "==============================="
 echo "Installing VI Extenion into AKS Connected Cluster ${connectedClusterName} on ResourceGroup connectedClusterResourceGroup"
 echo "==============================="
 ######################
-echo "Check If ${extensionName} extension is already installed"
-exists=$(az k8s-extension list --cluster-name ${connectedClusterName} -g ${connectedClusterResourceGroup} --cluster-type $connectedClusters --query "[?name=='${extensionName}'].name" -otsv)
-
-if [[ $exists == ${extensionName} ]]; then
-	echo -e "\tExtension Found - Updating VI Extension - ***start***"
-	az k8s-extension update --name ${extensionName} \
-													--cluster-name ${connectedClusterName} \
-													--resource-group ${connectedClusterResourceGroup} \
-													--cluster-type connectedClusters \
-													--auto-upgrade-minor-version true \
-													--config-protected-settings "speech.endpointUri=${speechEndpoint}" \
-													--config-protected-settings "speech.secret=${speechPrimaryKey}" \
-													--config-protected-settings "translate.endpointUri=${translatorEndpoint}" \
-													--config-protected-settings "translate.secret=${translatorPrimaryKey}" \
-													--config-protected-settings "ocr.endpointUri=${ocrEndpoint}" \
-													--config-protected-settings "ocr.secret=${ocrPrimaryKey}"\
-													--config "videoIndexer.accountId=${accountId}" \
-													--config "frontend.endpointUri=https://${ENDPOINT_URI}"
-	echo -e "\tUpdating VI Extension - ***done***"
-else  
-	echo -e "\tCreate New VI Extension - ***start***"
-	az k8s-extension create --name ${extensionName} \
-														--extension-type Microsoft.videoindexer \
-														--scope cluster \
-														--release-namespace ${namespace} \
-														--cluster-name ${connectedClusterName} \
-														--resource-group ${connectedClusterResourceGroup} \
-														--cluster-type connectedClusters \
-														--auto-upgrade-minor-version true \
-														--config-protected-settings "speech.endpointUri=${speechEndpoint}" \
-														--config-protected-settings "speech.secret=${speechPrimaryKey}" \
-														--config-protected-settings "translate.endpointUri=${translatorEndpoint}" \
-														--config-protected-settings "translate.secret=${translatorPrimaryKey}" \
-														--config-protected-settings "ocr.endpointUri=${ocrEndpoint}" \
-														--config-protected-settings "ocr.secret=${ocrPrimaryKey}"\
-														--config "videoIndexer.accountId=${accountId}" \
-														--config "frontend.endpointUri=https://${ENDPOINT_URI}" \
-														--config "storage.storageClass=azurefile-csi" \
-														--config "storage.accessMode=ReadWriteMany" 
+echo -e "\tCreate New VI Extension - ***start***"
+az k8s-extension create --name ${extensionName} \
+                          --extension-type Microsoft.videoindexer \
+                          --scope cluster \
+                          --release-namespace ${namespace} \
+                          --cluster-name ${connectedClusterName} \
+                          --resource-group ${connectedClusterResourceGroup} \
+                          --cluster-type connectedClusters \
+                          --auto-upgrade-minor-version true \
+                          --config-protected-settings "speech.endpointUri=${speechEndpoint}" \
+                          --config-protected-settings "speech.secret=${speechPrimaryKey}" \
+                          --config-protected-settings "translate.endpointUri=${translatorEndpoint}" \
+                          --config-protected-settings "translate.secret=${translatorPrimaryKey}" \
+                          --config-protected-settings "ocr.endpointUri=${ocrEndpoint}" \
+                          --config-protected-settings "ocr.secret=${ocrPrimaryKey}"\
+                          --config "videoIndexer.accountId=${accountId}" \
+                          --config "frontend.endpointUri=https://${ENDPOINT_URI}" \
+                          --config "storage.accessMode=ReadWriteOnce" 
 	echo -e "\tCreate New VI Extension - ***done***"
-fi  
 
 echo "==============================="
 echo "VI Extension installed Successfully"

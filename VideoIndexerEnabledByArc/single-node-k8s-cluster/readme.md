@@ -75,7 +75,7 @@ you are supposed to see the single node cluster with the status 'Ready'
 
 ![Nodes](./ready.png)
 
-3. cd into the downloaded install_extension.sh file , and open it for edit
+3. open the install_extension.sh file for edit from the following path:
 
 ```bash
 vim /tmp/install_extension.sh

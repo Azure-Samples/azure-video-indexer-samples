@@ -4,6 +4,24 @@
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Helper Functions @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #===========================================================================================================#
 
+##############################################
+#  CLI Tools
+###############################################
+function install_cli_tools {
+  # https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli
+  echo "ensure you got the latest CLI client and install add ons if needed"
+  echo "https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli"
+  az extension add --name connectedk8s
+  az extension add --name k8s-extension
+  az extension add --name aks-preview
+  az provider register --namespace Microsoft.Kubernetes
+  az provider register --namespace Microsoft.KubernetesConfiguration
+  az provider register --namespace Microsoft.ExtendedLocation
+
+  echo "install jq"
+  sudo apt-get update && apt-get install jq -y
+}
+
 #######################################
 # region validation
 # Ensure the user uses legal azure region name
@@ -37,20 +55,6 @@ function get_parameter_value () {
     fi
 }
 
-##############################################
-#  CLI Pre-requisites
-###############################################
-function install_cli_tools {
-  # https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli
-  echo "ensure you got the latest CLI client and install add ons if needed"
-  echo "https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli"
-  az extension add --name connectedk8s
-  az extension add --name aks-preview
-  az provider register --namespace Microsoft.Kubernetes
-  az provider register --namespace Microsoft.KubernetesConfiguration
-  az provider register --namespace Microsoft.ExtendedLocation
-}
-
 #===========================================================================================================#
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Main Script @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #===========================================================================================================#
@@ -58,8 +62,6 @@ function install_cli_tools {
 #=============================================#
 #============== Constants           ==========#
 #=============================================#
-install_cli_tools="true"
-register_cli_add_ons="true"
 aksVersion="1.27.3" # https://learn.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli
 viApiVersion="2023-06-02-preview" # VI API version
 
@@ -97,10 +99,8 @@ nodePoolRg="${aks}-agentpool-rg"
 nodeVmSize="Standard_D4a_v4" # 4 vcpus, 16 GB RAM
 workerVmSize="Standard_D32a_v4" # 32 vcpus, 128 GB RAM
 tags="createdBy=vi-arc-extension"
-#=========Install CLI Tools if needed =====================#
-if [[ $install_cli_tools == "true" ]]; then
-  install_cli_tools
-fi
+#=========Install CLI Tools =====================#
+install_cli_tools
 
 #===========================================================================================================#
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Deploy Infra @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -203,9 +203,14 @@ resource vmExtensionKubeAdmInstall 'Microsoft.Compute/virtualMachines/extensions
     autoUpgradeMinorVersion: true
     protectedSettings: {
       commandToExecute: '''
-      "wget https://gist.githubusercontent.com/tshaiman/44fae4c69deb5fd5a7e5498908087787/raw/c99428b274432e26fa5865063036a435b3d4cc7a/kubeadmin_master.sh -O /tmp/install_master.sh && chmod +x /tmp/install_master.sh && sudo /tmp/install_master.sh && \
-      wget https://aka.ms/InstallAzureCLIDeb -O /tmp/installAzureCli.sh && chmod +x /tmp/installAzureCli.sh && sudo /tmp/installAzureCli.sh && \
-      wget https://gist.githubusercontent.com/tshaiman/9539d29477d260701482ed31d4f6f4fe/raw/4dd3828acac7ae8420cb156163f1fab1a637b152/install_extension.sh -O /tmp/install_extension.sh && chmod +x /tmp/install_extension.sh"
+      wget https://gist.githubusercontent.com/tshaiman/44fae4c69deb5fd5a7e5498908087787/raw/c99428b274432e26fa5865063036a435b3d4cc7a/kubeadmin_master.sh -O /tmp/install_master.sh 
+      chmod +x /tmp/install_master.sh
+      sudo /tmp/install_master.sh
+      wget https://aka.ms/InstallAzureCLIDeb -O /tmp/installAzureCli.sh 
+      chmod +x /tmp/installAzureCli.sh 
+      sudo /tmp/installAzureCli.sh
+      wget https://gist.githubusercontent.com/tshaiman/9539d29477d260701482ed31d4f6f4fe/raw/bb79b053ed762b3e284008057033cd2a4c0af830/install_extension.sh -O /tmp/install_extension.sh 
+      chmod +x /tmp/install_extension.sh
       '''
     }
   }

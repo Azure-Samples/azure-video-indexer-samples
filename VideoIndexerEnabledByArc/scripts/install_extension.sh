@@ -3,6 +3,23 @@
 #===========================================================================================================#
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Helper Functions @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #===========================================================================================================#
+##############################################
+#  CLI Tools
+###############################################
+function install_cli_tools {
+  # https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli
+  echo "ensure you got the latest CLI client and install add ons if needed"
+  echo "https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli"
+  az extension add --name connectedk8s
+  az extension add --name k8s-extension
+  az extension add --name aks-preview
+  az provider register --namespace Microsoft.Kubernetes
+  az provider register --namespace Microsoft.KubernetesConfiguration
+  az provider register --namespace Microsoft.ExtendedLocation
+
+  echo "install jq"
+  sudo apt-get update && apt-get install jq -y
+}
 
 #######################################
 # region validation
@@ -85,7 +102,7 @@ function create_cognitive_hobo_resources {
   responseStatusLine=$(echo "$responseString" | grep 'INFO: Response status:')
   responseStatus=$(echo "$responseStatusLine" | grep -oP '\d+')
   responseCode=$((responseStatus))
-  echo "responseCode: $responseCode"
+  
   if [[ "$responseCode" == 202 ]]; then
     echo "Cognitive Services resources are being created. Waiting for completion"
   elif [[ "$responseCode" == 409 ]]; then
@@ -122,6 +139,8 @@ subscriptionId=""
 resourceGroup=""
 accountName=""
 accountId=""
+
+install_cli_tools
 
 ## Region Name Validation
 region=${region,,}
@@ -179,6 +198,8 @@ echo "==============================="
 echo "Installing VI Extenion into AKS Connected Cluster ${connectedClusterName} on ResourceGroup connectedClusterResourceGroup"
 echo "==============================="
 ######################
+## Remove Taint from the control plane node on single node cluster
+kubectl taint node --all taint node-role.kubernetes.io/control-plane- 
 echo -e "\tCreate New VI Extension - ***start***"
 az k8s-extension create --name ${extensionName} \
                           --extension-type Microsoft.videoindexer \

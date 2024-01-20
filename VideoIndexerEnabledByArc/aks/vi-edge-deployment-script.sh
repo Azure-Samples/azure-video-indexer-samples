@@ -96,7 +96,7 @@ function create_cognitive_hobo_resources {
   responseStatusLine=$(echo "$responseString" | grep 'INFO: Response status:')
   responseStatus=$(echo "$responseStatusLine" | grep -oP '\d+')
   responseCode=$((responseStatus))
-  echo "responseCode: $responseCode"
+  
   if [[ "$responseCode" == 202 ]]; then
     echo "Cognitive Services resources are being created. Waiting for completion"
   elif [[ "$responseCode" == 409 ]]; then

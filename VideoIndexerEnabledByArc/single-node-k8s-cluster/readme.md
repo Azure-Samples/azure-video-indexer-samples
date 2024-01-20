@@ -70,9 +70,12 @@ sudo -i
 ensure your cluster is running by typing the following kubectl command
 
 ```bash
-kubectl get pods
 kubectl get nodes
 ```
+
+you are supposed to see the single node cluster with the status 'Ready' 
+
+![Nodes](./ready.png)
 
 3. cd into the downloaded install_extension.sh file , and open it for edit
 
@@ -81,6 +84,9 @@ vim /tmp/install_extension.sh
 ```
 
 Edit the following parameters starting at line 120
+
+![editScript](edit_script.png)
+
 - subscriptionId : The name of your subscription
 - resourceGroup: The Video Indexer account resource group
 - accountName: The Video Indexer account resource group
@@ -96,3 +102,8 @@ az account set --subscription <Your_Subscription_ID>
 ./install_extension.sh
 ```
 
+5. wait for the installation script to complete
+
+```bash
+kubectl get pods -n video-indexer
+```

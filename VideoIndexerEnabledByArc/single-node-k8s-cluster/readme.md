@@ -3,12 +3,16 @@
 ## About
 This document provides the onboarding steps and prerequisites for Cluster Administrators, IT Operators, DevOps, and Engineering teams to enable Video Indexer as an Arc extension on their current local compute layer, not based on Azure Kubernetes Clusters.
 
-In this tutorial, you will deploy Video Indexer Enabled by Arc into a "Vanilla" Kubernetes cluster with the following characteristics:
+In this tutorial, you will deploy Video Indexer Enabled by Arc into a "Vanilla" Kubernetes cluster based on Kubeadm platform with the following characteristics:
 
 - Single Node "control-plane" VM running on Linux with 32 Cores and 128GB memory (configurable)
 - Kubeadm based cluster
 
-**Notes:** Video Indexer Enabled by Arc can be deployed on ANY Kubernetes cluster, whether On-Prem or Cloud-based. For more information on kubeadm configuration and options, visit [Kubernetes Docs](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/).
+- For more information on kubeadm configuration and options, visit [Kubernetes Docs](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/).
+
+**Note:** In order to run Kubectl commands on the Cluster, you will need to SSH into the VM
+
+**Note:** Video Indexer Enabled by Arc can be deployed on ANY Kubernetes cluster, whether On-Prem or Cloud-based. 
 
 Once the cluster is created, you will SSH into the VM and interact with Azure CLI and Kubectl commands to onboard Azure Video Indexer Enabled by Arc solution.
 
@@ -54,21 +58,41 @@ chmod +x ./deploy.sh
 using the Azure Portal Connect to the VM created on previous step.
 Use the SSH Keys created on previous step to connect to the VM.
 
-![vn-conect](image.png)
-
-**Note:** In order to run Kubectl commands on the Cluster, you will need to SSH into the VM
+![vn-conect](./connect1.png)
 
 
 after you log into into the vm swith to the root user by running the follwoing command
 
-```
+```bash
 sudo -i
 ```
 
 ensure your cluster is running by typing the following kubectl command
 
-```
+```bash
 kubectl get pods
 kubectl get nodes
+```
+
+3. cd into the downloaded install_extension.sh file , and open it for edit
+
+```bash
+vim /tmp/install_extension.sh
+```
+
+Edit the following parameters starting at line 120
+- subscriptionId : The name of your subscription
+- resourceGroup: The Video Indexer account resource group
+- accountName: The Video Indexer account resource group
+- accountId: The Video Indexer account resource group
+
+**Note:** The Arc Enabled Connected Cluster will be deployed under the name of the `resourceGroup` variable.
+
+4. run the video indexer arc enabled extension by running the following command
+
+```bash
+az login --used-device-code
+az account set --subscription <Your_Subscription_ID>
+./install_extension.sh
 ```
 

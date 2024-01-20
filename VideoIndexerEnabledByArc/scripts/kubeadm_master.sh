@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Source: http://kubernetes.io/docs/getting-started-guides/kubeadm
 
@@ -20,6 +20,7 @@ KUBE_VERSION=1.28.2
 
 
 ### setup terminal
+add-apt-repository universe 
 apt-get --allow-unauthenticated update
 apt-get --allow-unauthenticated install -y bash-completion binutils
 echo 'colorscheme ron' >> ~/.vimrc

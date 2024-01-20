@@ -1,5 +1,5 @@
+@description('Azure Resource Name Prefux')
 param prefix string
-param userPrincipalId string 
 
 @description('Specifies control plane node VM size.')
 param controlPlaneNodeVmSize string = 'Standard_DS32a_v4'
@@ -192,32 +192,6 @@ resource virtualMachine 'Microsoft.Compute/virtualMachines@2021-07-01' = {
   }
 }
 
-resource virtualMachineUserLogin 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
-  name: '7f951dda-4ed3-4680-a7ca-43fe172d538d'
-  scope: subscription()
-}
-
-//Grant Virtual Machine User Login to the System Assigned Identity so we can 'az login' to the VM
-resource vmroleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  name: guid(resourceGroup().id, virtualMachine.name, 'virtualMachineUserLoginForSystemAssignedIdentitys')
-  scope: virtualMachine 
-  properties: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', virtualMachineUserLogin.name)
-    principalId: virtualMachine.identity.principalId
-    principalType: 'ServicePrincipal'
-  }
-}
-
-resource userroleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  name: guid(resourceGroup().id, virtualMachine.name, 'virtualMachineUserLoginForUser')
-  scope: virtualMachine 
-  properties: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', virtualMachineUserLogin.name)
-    principalId: userPrincipalId
-    principalType: 'User'
-  }
-}
-
 resource vmExtensionKubeAdmInstall 'Microsoft.Compute/virtualMachines/extensions@2021-07-01' = {
   parent: virtualMachine
   name: 'customScriptExtension'
@@ -228,11 +202,12 @@ resource vmExtensionKubeAdmInstall 'Microsoft.Compute/virtualMachines/extensions
     typeHandlerVersion: '2.0'
     autoUpgradeMinorVersion: true
     protectedSettings: {
-      commandToExecute: 'curl -sL https://raw.githubusercontent.com/killer-sh/cks-course-environment/master/cluster-setup/latest/install_master.sh | sudo bash && curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash '
+      commandToExecute: '''
+      "wget https://gist.githubusercontent.com/tshaiman/44fae4c69deb5fd5a7e5498908087787/raw/c99428b274432e26fa5865063036a435b3d4cc7a/kubeadmin_master.sh -O /tmp/install_master.sh && chmod +x /tmp/install_master.sh && sudo /tmp/install_master.sh && \
+      wget https://aka.ms/InstallAzureCLIDeb -O /tmp/installAzureCli.sh && chmod +x /tmp/installAzureCli.sh && sudo /tmp/installAzureCli.sh && \
+      wget https://gist.githubusercontent.com/tshaiman/9539d29477d260701482ed31d4f6f4fe/raw/4dd3828acac7ae8420cb156163f1fab1a637b152/install_extension.sh -O /tmp/install_extension.sh && chmod +x /tmp/install_extension.sh"
+      '''
     }
   }
-  // dependsOn: [
-  //   userroleAssignment 
-  // ]
 }
 

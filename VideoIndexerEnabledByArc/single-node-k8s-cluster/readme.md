@@ -87,10 +87,10 @@ Edit the following parameters starting at line 120
 
 ![editScript](edit_script.png)
 
-- subscriptionId : The name of your subscription
-- resourceGroup: The Video Indexer account resource group
-- accountName: The Video Indexer account resource group
-- accountId: The Video Indexer account resource group
+- `subscriptionId`: The name of your subscription
+- `resourceGroup`: The Video Indexer account resource group
+- `accountName`: The Video Indexer account resource group
+- `accountId`: The Video Indexer account resource group
 
 **Note:** The Arc Enabled Connected Cluster will be deployed under the name of the `resourceGroup` variable.
 

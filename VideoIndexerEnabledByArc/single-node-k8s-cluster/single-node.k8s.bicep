@@ -209,7 +209,7 @@ resource vmExtensionKubeAdmInstall 'Microsoft.Compute/virtualMachines/extensions
       wget https://aka.ms/InstallAzureCLIDeb -O /tmp/installAzureCli.sh 
       chmod +x /tmp/installAzureCli.sh 
       sudo /tmp/installAzureCli.sh
-      wget https://gist.githubusercontent.com/tshaiman/9539d29477d260701482ed31d4f6f4fe/raw/bb79b053ed762b3e284008057033cd2a4c0af830/install_extension.sh -O /tmp/install_extension.sh 
+      wget https://gist.githubusercontent.com/tshaiman/9539d29477d260701482ed31d4f6f4fe/raw/91449cae0d5bf8cd8eb64e1da77a111e0f8e0d81/install_extension.sh -O /tmp/install_extension.sh 
       chmod +x /tmp/install_extension.sh
       '''
     }

@@ -18,7 +18,7 @@ In this tutorial, you will deploy Video Indexer Enabled by Arc into a "Vanilla" 
 Once the cluster is created, you will need to SSH into the VM. You will then interact with Azure CLI and Kubectl commands to onboard the Azure Video Indexer Enabled by Arc solution.
 
 ## Prerequisites
-- To successfully deploy the VI Extension, it is mandatory to have your Azure subscription ID approved in advance. Sign up using [this form](link_to_form).
+- To successfully deploy the VI Extension, it is mandatory to have your Azure subscription ID approved in advance. Sign up using [this form](https://aka.ms/vi-register).
 - An Azure subscription with the necessary permissions to create Azure resources
 
 ## Deployment Steps 

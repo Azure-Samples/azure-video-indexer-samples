@@ -1,38 +1,29 @@
-
-echo "Part 1: Deploying Single Node K8s Cluster based on Kubeadm"
-# Reference : https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/
+#!/bin/bash
 
 #################################################
+echo "Deploying Single Node K8s Cluster based on Kubeadm"
+# Reference : https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/
+#################################################
 # Variables
-prefix="<your prefix>"
+prefix="<your-prefix>"
+resourceGroupName="${prefix}-rg"
 controlPlaneNodeVmSize="Standard_D32a_v4"
 location="eastus"
 ################################################
 
-# create dummy ssh key and use it as password
+# create ssh key and use it as admin password for the VM
 ssh-keygen -t rsa -b 4096 -f ./id_rsa -q -N ""
 publicSshKey=$(cat ./id_rsa.pub)
-vaultName="${prefix}-kv"
-
-rgName="${prefix}-rg"
-
-
-username=$(az account show  --query user.name -otsv)
-userPrincipalId=$(az ad user show --id $username --query id -otsv)
-echo "found userPrincipalId: $userPrincipalId"
 
 echo "Creating Resource Group"
-az group create --name $rgName --location $location
+az group create --name ${resourceGroupName} --location $location
 
 echo "deploy Bicep template"
 az deployment group create \
   --name "bicep-deploy" \
-  --resource-group $rgName \
+  --resource-group ${resourceGroupName} \
   --template-file "./single-node.k8s.bicep" \
   --parameters \
     prefix=$prefix \
-    userPrincipalId=$userPrincipalId \
     controlPlaneNodeVmSize=$controlPlaneNodeVmSize \
     vmAdminPasswordOrKey="$publicSshKey"
-
-#echo "Part 2: Deploying Video Indexer Enabled by Arc extension to the AKS "

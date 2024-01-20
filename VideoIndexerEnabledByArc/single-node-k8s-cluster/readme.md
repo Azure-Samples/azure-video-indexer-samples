@@ -1,27 +1,25 @@
 # Deploy Video Indexer Enabled by Arc to Single Node Kubernetes Cluster (Kubeadm)
 
-## About
-This document provides the onboarding steps and prerequisites for Cluster Administrators, IT Operators, DevOps, and Engineering teams to enable Video Indexer as an Arc extension on their current local compute layer, not based on Azure Kubernetes Clusters.
+## About This Tutorial
+
+This document provides onboarding steps and prerequisites for Cluster Administrators, IT Operators, DevOps, and Engineering teams. It enables Video Indexer as an Arc extension on their current local compute layer, which is not based on Azure Kubernetes Clusters.
 
 In this tutorial, you will deploy Video Indexer Enabled by Arc into a "Vanilla" Kubernetes cluster based on Kubeadm platform with the following characteristics:
 
-- Single Node "control-plane" VM running on Linux with 32 Cores and 128GB memory (configurable)
+- A single-node "control-plane" VM, running on Linux, with 32 cores and 128GB memory (this is configurable)
 - Kubeadm based cluster
 
-- For more information on kubeadm configuration and options, visit [Kubernetes Docs](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/).
+- For more information on kubeadm configuration and options, visit [Kubernetes Documentation](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/).
 
-**Note:** In order to run Kubectl commands on the Cluster, you will need to SSH into the VM
+> **Notes:**
+> - In order to run Kubectl commands on the Cluster, you will need to SSH into the VM.
+> - Video Indexer Enabled by Arc can be deployed on ANY Kubernetes cluster, whether On-Prem or Cloud-based.
 
-**Note:** Video Indexer Enabled by Arc can be deployed on ANY Kubernetes cluster, whether On-Prem or Cloud-based. 
-
-Once the cluster is created, you will SSH into the VM and interact with Azure CLI and Kubectl commands to onboard Azure Video Indexer Enabled by Arc solution.
+Once the cluster is created, you will need to SSH into the VM. You will then interact with Azure CLI and Kubectl commands to onboard the Azure Video Indexer Enabled by Arc solution.
 
 ## Prerequisites
-**NOTE:** To successfully deploy the VI Extension, it is mandatory to have your Azure subscription ID approved in advance. Sign up using [this form](link_to_form).
-
-- Azure subscription with permissions to create Azure resources
-- Azure Video Indexer Account. Follow [this tutorial](link_to_tutorial) to create a Video Indexer account.
-- Permission to create Virtual machines on Azure.
+- To successfully deploy the VI Extension, it is mandatory to have your Azure subscription ID approved in advance. Sign up using [this form](link_to_form).
+- An Azure subscription with the necessary permissions to create Azure resources
 
 ## Deployment Steps 
 
@@ -92,7 +90,7 @@ Edit the following parameters starting at line 120
 - `accountName`: The Video Indexer account resource group
 - `accountId`: The Video Indexer account resource group
 
-**Note:** The Arc Enabled Connected Cluster will be deployed under the name of the `resourceGroup` variable.
+> **Note:** The Arc Enabled Connected Cluster will be deployed under the name of the `resourceGroup` variable.
 
 4. run the video indexer arc enabled extension by running the following command
 

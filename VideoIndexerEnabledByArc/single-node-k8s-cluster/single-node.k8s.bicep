@@ -203,13 +203,13 @@ resource vmExtensionKubeAdmInstall 'Microsoft.Compute/virtualMachines/extensions
     autoUpgradeMinorVersion: true
     protectedSettings: {
       commandToExecute: '''
-      wget https://gist.githubusercontent.com/tshaiman/44fae4c69deb5fd5a7e5498908087787/raw/c99428b274432e26fa5865063036a435b3d4cc7a/kubeadmin_master.sh -O /tmp/install_master.sh 
+      wget https://gist.githubusercontent.com/tshaiman/3d316471924a94c62d05edce5a7c2d62/raw/9ce30dd9b619ab7ccdfc7cab5a7d5c03f069cbcb/kubeadm_install_master.sh -O /tmp/kubeadm_install_master.sh
       chmod +x /tmp/install_master.sh
       sudo /tmp/install_master.sh
       wget https://aka.ms/InstallAzureCLIDeb -O /tmp/installAzureCli.sh 
       chmod +x /tmp/installAzureCli.sh 
       sudo /tmp/installAzureCli.sh
-      wget https://gist.githubusercontent.com/tshaiman/9539d29477d260701482ed31d4f6f4fe/raw/91449cae0d5bf8cd8eb64e1da77a111e0f8e0d81/install_extension.sh -O /tmp/install_extension.sh 
+      wget https://gist.githubusercontent.com/tshaiman/67625001b09c5c4f4cd339acd5bebb17/raw/88c107fd97582c36ed28af7805004cb14963f0f8/vi_extension_install.sh -O /tmp/vi_extension_install.sh 
       chmod +x /tmp/install_extension.sh
       '''
     }

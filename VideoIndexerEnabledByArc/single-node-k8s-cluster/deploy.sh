@@ -5,11 +5,11 @@ echo "Deploying Single Node K8s Cluster based on Kubeadm"
 # Reference : https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/
 #################################################
 # Variables
-prefix="<your-prefix>"
+prefix="ts-kadm-2"
 resourceGroupName="${prefix}-rg"
 controlPlaneNodeVmSize="Standard_D32a_v4"
 location="eastus"
-################################################
+################################b################
 
 # create ssh key and use it as admin password for the VM
 ssh-keygen -t rsa -b 4096 -f ./id_rsa -q -N ""

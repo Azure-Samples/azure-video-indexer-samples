@@ -6,8 +6,8 @@ echo $(dirname 0)
 
 #########Fill In The missing Propperties#########
 subscription="24237b72-8546-4da5-b204-8c3cb76dd930"
-location="westus2"
-resource_prefix='tspoc22'
+location="westus3"
+resource_prefix='tspoc34'
 #################################################
 
 resource_group="${resource_prefix}-rg"

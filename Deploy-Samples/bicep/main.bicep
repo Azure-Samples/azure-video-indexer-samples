@@ -37,8 +37,8 @@ module viapp_eventHubs 'eventsHub.bicep' = {
 module media_videoIndexer 'videoindexer.bicep' = {
   name: '${deploymentNameId}-videoIndexer'
   params: {
-    stoargeAccountId: viapp_storageAccount.outputs.storageAccountId
     videoIndexerPrefix: envResourceNamePrefix
+    storageAccountName: storageAccountName
     location: location
   }
   dependsOn: [
@@ -46,33 +46,6 @@ module media_videoIndexer 'videoindexer.bicep' = {
   ]
 }
 
-/* Role Assignment */
-module appSettingsRoleAssignments 'role-assignment.bicep' = {
-  name: '${deploymentNameId}-roleAssignment'
-  params: {
-    principalId: media_videoIndexer.outputs.videoIndexerPrincipalId
-    eventHubNamespace: eventHubNamespaceName
-  }
-  dependsOn: [
-    media_videoIndexer
-    viapp_eventHubs
-  ]
-}
-
-/* VI Diagnostic Settings*/
-module viDiagnosticsSetting 'vi-diagnostics-settings.bicep' = {
-  name: '${deploymentNameId}-vi-diagnostics-settings'
-  params: {
-    videoIndexerAccountName: '${envResourceNamePrefix}vi'
-    eventHubNamespace: eventHubNamespaceName
-    eventHubName: eventHubName
-  }
-  dependsOn: [
-    media_videoIndexer
-    appSettingsRoleAssignments
-    viapp_eventHubs
-  ]
-}
 
 /* define outputs */
 

@@ -173,11 +173,11 @@ mkdir -p ~/.kube
 sudo cp -i /etc/kubernetes/admin.conf ~/.kube/config
 
 ### CNI
-kubectl apply -f https://raw.githubusercontent.com/killer-sh/cks-course-environment/master/cluster-setup/calico.yaml
+kubectl apply -f https://raw.githubusercontent.com/Azure-Samples/media-services-video-indexer/master/VideoIndexerEnabledByArc/scripts/calico.yaml
 
 ## Storage Class Local Provisioner
 # Source: https://github.com/rancher/local-path-provisioner
-kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.26/deploy/local-path-storage.yaml
+kubectl apply -f https://raw.githubusercontent.com/Azure-Samples/media-services-video-indexer/master/VideoIndexerEnabledByArc/scripts/local-path-provisioner.yaml
 
 ## Ingress nginx
 # Source: https://kubernetes.github.io/ingress-nginx/deploy/#using-helm

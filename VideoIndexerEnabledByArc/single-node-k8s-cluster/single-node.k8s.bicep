@@ -203,10 +203,10 @@ resource vmExtensionKubeAdmInstall 'Microsoft.Compute/virtualMachines/extensions
     autoUpgradeMinorVersion: true
     protectedSettings: {
       commandToExecute: '''
-      wget https://gist.githubusercontent.com/tshaiman/3d316471924a94c62d05edce5a7c2d62/raw/10ccb171eb5279c95dfaa4c40fabd27442129d5f/kubeadm_install_master.sh -O /tmp/kubeadm_install_master.sh
+      wget https://raw.githubusercontent.com/Azure-Samples/media-services-video-indexer/master/VideoIndexerEnabledByArc/scripts/kubeadm_install_master.sh -O /tmp/kubeadm_install_master.sh
       chmod +x /tmp/kubeadm_install_master.sh
       sudo /tmp/kubeadm_install_master.sh
-      wget https://gist.githubusercontent.com/tshaiman/67625001b09c5c4f4cd339acd5bebb17/raw/31bb6fe8e979aa517f2bb8ca43a5dfc4e5c814de/vi_extension_install.sh -O /tmp/vi_extension_install.sh 
+      wget https://raw.githubusercontent.com/Azure-Samples/media-services-video-indexer/master/VideoIndexerEnabledByArc/scripts/vi_extension_install.sh -O /tmp/vi_extension_install.sh 
       chmod +x /tmp/vi_extension_install.sh
       '''
     }

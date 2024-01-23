@@ -81,7 +81,7 @@ you are supposed to see the single node cluster with the status 'Ready'
 vim /tmp/install_extension.sh
 ```
 
-Edit the following parameters starting at line 120
+Edit the following parameters starting at line 114
 
 ![editScript](edit_script.png)
 
@@ -102,6 +102,9 @@ az account set --subscription <Your_Subscription_ID>
 
 5. wait for the installation script to complete
 
+6. Validate the pods under the namespace are up and running 
+
 ```bash
 kubectl get pods -n video-indexer
 ```
+

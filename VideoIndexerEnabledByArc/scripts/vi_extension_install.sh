@@ -107,13 +107,14 @@ ENDPOINT_URI="127.0.0.1/vi" #default endpoint uri
 version="1.0.41"                    #VI Extension version
 singleNodeStorageClass="local-path" #default storage class for single node cluster
 singleNodeAccessMode="ReadWriteOnce" #default access mode for single node cluster
+region="eastus"
+extensionName="vi-arc"
+namespace="video-indexer"
+
 subscriptionId=""
 resourceGroup=""
 accountName=""
 accountId=""
-region="eastus"
-extensionName="vi-arc"
-namespace="vi"
 
 #=============================================#
 ## Region Name Validation

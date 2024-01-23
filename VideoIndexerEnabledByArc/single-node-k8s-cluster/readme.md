@@ -7,7 +7,7 @@ This document provides onboarding steps and prerequisites for Cluster Administra
 In this tutorial, you will deploy Video Indexer Enabled by Arc into a "Vanilla" Kubernetes cluster based on Kubeadm platform with the following characteristics:
 
 - A single-node "control-plane" VM, running on Linux, with 32 cores and 128GB memory (this is configurable)
-- Kubeadm based cluster
+- Kubeadm based cluster, with Calico CNI Driver 
 
 - For more information on kubeadm configuration and options, visit [Kubernetes Documentation](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/).
 

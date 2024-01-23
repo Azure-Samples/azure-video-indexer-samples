@@ -38,9 +38,9 @@ You can read more on how to set up your cloud shell environment [here](https://l
 In the cloud shell execute these two commands:
 
 ```bash
-curl -SSL https://raw.githubusercontent.com/Azure-Samples/media-services-video-indexer/master/AVIenabledbyArc/vi-edge-deployment-script.sh -o install_vi_arc.sh
+curl -SSL https://raw.githubusercontent.com/Azure-Samples/media-services-video-indexer/master/VideoIndexerEnabledByArc/scripts/vi_extension_install.sh
 
-sh install_vi_arc.sh
+sh vi_extension_install.sh
 ```
 
 During the deployment the script will ask the following questions where you will need to provide your environment specific values. Below table explains each question and the desired value. Some will expect or have default values.

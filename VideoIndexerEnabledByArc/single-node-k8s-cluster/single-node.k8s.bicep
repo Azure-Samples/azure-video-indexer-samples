@@ -20,7 +20,7 @@ var vnetName = 'Vm${prefix}vnet'
 var subnetName = 'Vm${vnetName}-subnet0'
 var nicName = 'Vm${prefix}nic'
 
-var vmName = '${prefix}vm'
+var vmName = 'k8s-master'
 var publicIPName = '${prefix}publicIP'
 
 param tags object = {

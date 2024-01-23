@@ -190,10 +190,10 @@ az k8s-extension create --name ${extensionName} \
   --config "frontend.endpointUri=https://${ENDPOINT_URI}" \
   --config "storage.storageClass=${singleNodeStorageClass}" \
   --config "storage.accessMode=${singleNodeStorageClass}" \
-  --config "storage.indexing.accessModes=[${singleNodeAccessMode}]" \
-  --config "storage.models.accessModes=[${singleNodeAccessMode}]" \
-  --config "storage.mssql.pvc.storageClass=${singleNodeStorageClass}" \
-  
+  --config "storage.indexing.accessModes={${singleNodeAccessMode}}" \
+  --config "storage.models.accessModes={${singleNodeAccessMode}}" \
+  --config "mssql.pvc.storageClass=${singleNodeStorageClass}"
+
 echo -e "\tCreate New VI Extension - ***done***"
 
 echo "==============================="

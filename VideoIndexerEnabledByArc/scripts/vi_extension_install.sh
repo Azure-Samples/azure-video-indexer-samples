@@ -133,6 +133,17 @@ echo "Region: $region"
 echo "Video Indexer Extension Name: $extensionName"
 echo "Video Indexer Extension Namespace: $namespace"
 
+### Azure CLI and required tools for ARC
+# https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli
+echo "ensure you got the latest CLI client and install add ons if needed"
+echo "https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli"
+az extension add --name connectedk8s --allow-preview false
+az extension add --name k8s-extension --allow-preview false
+az extension add --name aks-preview --allow-preview true
+az provider register --namespace Microsoft.Kubernetes
+az provider register --namespace Microsoft.KubernetesConfiguration
+az provider register --namespace Microsoft.ExtendedLocation
+
 echo "switching to $subscriptionId"
 az account set --subscription $subscriptionId
 #=============================================#

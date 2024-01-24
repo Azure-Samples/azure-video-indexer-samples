@@ -38,7 +38,7 @@ You can read more on how to set up your cloud shell environment [here](https://l
 In the cloud shell execute these two commands:
 
 ```bash
-curl -SSL https://raw.githubusercontent.com/Azure-Samples/media-services-video-indexer/master/VideoIndexerEnabledByArc/scripts/vi_extension_install.sh
+curl -SSL https://raw.githubusercontent.com/Azure-Samples/media-services-video-indexer/feature/tshaiman/vanilla-k8s-vi-arc-enabled/VideoIndexerEnabledByArc/scripts/vi_extension_install.sh
 
 sh vi_extension_install.sh
 ```

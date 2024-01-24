@@ -173,11 +173,11 @@ mkdir -p ~/.kube
 sudo cp -i /etc/kubernetes/admin.conf ~/.kube/config
 
 ### CNI
-kubectl apply -f https://raw.githubusercontent.com/Azure-Samples/media-services-video-indexer/master/VideoIndexerEnabledByArc/scripts/calico.yaml
+kubectl apply -f https://raw.githubusercontent.com/Azure-Samples/media-services-video-indexer/feature/tshaiman/vanilla-k8s-vi-arc-enabled/VideoIndexerEnabledByArc/scripts/calico.yaml
 
 ## Storage Class Local Provisioner
 # Source: https://github.com/rancher/local-path-provisioner
-kubectl apply -f https://raw.githubusercontent.com/Azure-Samples/media-services-video-indexer/master/VideoIndexerEnabledByArc/scripts/local-path-provisioner.yaml
+kubectl apply -f https://raw.githubusercontent.com/Azure-Samples/media-services-video-indexer/feature/tshaiman/vanilla-k8s-vi-arc-enabled/VideoIndexerEnabledByArc/scripts/local-path-provisioner.yaml
 
 ## Ingress nginx
 # Source: https://kubernetes.github.io/ingress-nginx/deploy/#using-helm
@@ -204,16 +204,6 @@ kubeadm token create --print-join-command --ttl 0
 wget https://aka.ms/InstallAzureCLIDeb -O /tmp/installAzureCli.sh 
 chmod +x /tmp/installAzureCli.sh 
 sudo /tmp/installAzureCli.sh
-
-# https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli
-echo "ensure you got the latest CLI client and install add ons if needed"
-echo "https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli"
-az extension add --name connectedk8s --allow-preview false
-az extension add --name k8s-extension --allow-preview false
-az extension add --name aks-preview --allow-preview false
-az provider register --namespace Microsoft.Kubernetes
-az provider register --namespace Microsoft.KubernetesConfiguration
-az provider register --namespace Microsoft.ExtendedLocation
 
 echo "install jq"
 sudo apt-get update && apt-get install jq -y

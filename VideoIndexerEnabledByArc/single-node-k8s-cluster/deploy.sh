@@ -5,9 +5,9 @@ echo "Deploying Single Node K8s Cluster based on Kubeadm"
 # Reference : https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/
 #################################################
 # Variables
-prefix="<add your prefix here>"
+prefix="ts2-k8s"
 resourceGroupName="${prefix}-rg"
-controlPlaneNodeVmSize="Standard_D32a_v4"
+controlPlaneNodeVmSize="Standard_D96a_v4"
 location="eastus"
 ################################b################
 

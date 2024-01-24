@@ -245,7 +245,6 @@ if [[ $install_aks_cluster == "true" ]]; then
   #======== Create Connected-ARC Cluster =======#
   #=============================================#
   echo -e "\tConnecting AKS to ARC-AKS -- ***start***"
-  az group create -g ${rg} --location ${region} --tags $tags
   az connectedk8s connect --name ${connectedClusterName} --resource-group $rg --yes
   echo "Performing AKS-Arc-connected connectivity Sanity test"
   connectedResult=$(az connectedk8s show --name ${connectedClusterName} --resource-group $rg 2>&1)
@@ -298,7 +297,6 @@ if [[ $install_extension == "true" ]]; then
     echo -e "\tUpdating VI Extension - ***done***"
   else  
     echo -e "\tCreate New VI Extension - ***start***"
-    az group create -g ${rg} --location ${region}
     az k8s-extension create --name ${extensionName} \
                               --extension-type Microsoft.videoindexer \
                               --scope cluster \

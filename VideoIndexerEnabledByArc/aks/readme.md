@@ -42,6 +42,7 @@ curl -SSL https://raw.githubusercontent.com/Azure-Samples/media-services-video-i
 
 sh vi_extension_install.sh
 ```
+> **Note** : The script aim to run on Ubuntu OS and contains command that uses Ubuntu package manager. 
 
 During the deployment the script will ask the following questions where you will need to provide your environment specific values. Below table explains each question and the desired value. Some will expect or have default values.
 

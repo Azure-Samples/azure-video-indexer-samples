@@ -111,10 +111,10 @@ region="eastus"
 extensionName="vi-arc"
 namespace="video-indexer"
 
-subscriptionId=""
-resourceGroup=""
-accountName=""
-accountId=""
+subscriptionId="24237b72-8546-4da5-b204-8c3cb76dd930"
+resourceGroup="byov3-rg"
+accountName="byov3vi"
+accountId="f0e1b817-801e-455c-a70a-c69a963a6b5c"
 
 #=============================================#
 ## Region Name Validation

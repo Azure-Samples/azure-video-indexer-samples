@@ -5,9 +5,9 @@ export SCRIPT_PATH=$(dirname "$(readlink -f "$0")")
 echo $(dirname 0)
 
 #########Fill In The missing Propperties#########
-subscription="24237b72-8546-4da5-b204-8c3cb76dd930"
-location="westus2"
-resource_prefix='tspoc22'
+subscription="<Add your subscription here>"
+location="<Add your location here>"
+resource_prefix='<Add your resource prefix here>'
 #################################################
 
 resource_group="${resource_prefix}-rg"

@@ -96,7 +96,7 @@ function create_cognitive_hobo_resources {
   responseStatusLine=$(echo "$responseString" | grep 'INFO: Response status:')
   responseStatus=$(echo "$responseStatusLine" | grep -oP '\d+')
   responseCode=$((responseStatus))
-  echo "responseCode: $responseCode"
+  
   if [[ "$responseCode" == 202 ]]; then
     echo "Cognitive Services resources are being created. Waiting for completion"
   elif [[ "$responseCode" == 409 ]]; then
@@ -144,7 +144,7 @@ get_parameter_value "What is the extension kubernetes namespace to install to ?"
 
 ## Region Name Validation
 region=${region,,}
-if ! is_valid_azure_region "$location"; then
+if ! is_valid_azure_region "$region"; then
   echo "Invalid Azure region $region. Use one of the following regions:"
   print_local_regions
   exit 1
@@ -179,78 +179,80 @@ fi
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Deploy Infra @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #===========================================================================================================#
 if [[ $install_aks_cluster == "true" ]]; then
-      echo "================================================================"
-      echo "============= Deploying new ARC Resources ======================"
-      echo "================================================================"
+  echo "================================================================"
+  echo "============= Deploying new ARC Resources ======================"
+  echo "================================================================"
 
-      echo "Deploying Resources: [Resource group: $rg, AKS: $aks, Connected-Cluster Name: ${connectedClusterName}]"
-      echo "create Resource group"
-      az group create --name $rg --location $region --output table --tags $tags
+  echo "Deploying Resources: [Resource group: $rg, AKS: $aks, Connected-Cluster Name: ${connectedClusterName}]"
+  echo "create Resource group"
+  az group create --name $rg --location $region --output table --tags $tags
+#=======================================================================#
+#======== Create AKS Cluster( Simulates User On Prem Infra) ============#
+#=======================================================================#
+  echo -e "\t create aks cluster Name: $aks , Resource Group $rg- ***start***"
+  az aks create -n $aks -g $rg \
+        --enable-managed-identity\
+        --kubernetes-version ${aksVersion} \
+        --enable-oidc-issuer \
+        --nodepool-name system \
+        --os-sku AzureLinux \
+        --node-count 2 \
+        --tier standard \
+        --generate-ssh-keys \
+        --network-plugin kubenet \
+        --tags $tags \
+        --node-resource-group $nodePoolRg \
+        --node-vm-size $nodeVmSize \
+        --node-os-upgrade-channel NodeImage --auto-upgrade-channel node-image
 
-      echo -e "\t create aks cluster Name: $aks , Resource Group $rg- ***start***"
-      az aks create -n $aks -g $rg \
-            --enable-managed-identity\
-            --kubernetes-version ${aksVersion} \
-            --enable-oidc-issuer \
-            --nodepool-name system \
-            --os-sku AzureLinux \
-            --node-count 2 \
-            --tier standard \
-            --generate-ssh-keys \
-            --network-plugin kubenet \
-            --tags $tags \
-            --node-resource-group $nodePoolRg \
-            --node-vm-size $nodeVmSize \
-            --node-os-upgrade-channel NodeImage --auto-upgrade-channel node-image
+  echo -e "\t create aks cluster Name: $aks , Resource Group $rg- ***done***"
+  echo "Adding another worload node pool"
+  az aks nodepool add -g $rg --cluster-name $aks  -n workload \
+          --os-sku AzureLinux \
+          --mode User \
+          --node-vm-size $workerVmSize \
+          --node-osdisk-size 100 \
+          --node-count 0 \
+          --max-count 10 \
+          --min-count 0  \
+          --tags $tags \
+          --enable-cluster-autoscaler \
+          --max-pods 110
+  echo "Adding another workload node pool ***done***"
+  #=============================================#
+  #============== AKS Credentials ==============#
+  #=============================================#
+  echo -e  "\tConnecting to AKS and getting credentials  - ***start***"
+  az aks get-credentials --resource-group $rg --name $aks --admin --overwrite-existing
+  echo "AKS connectivity Sanity test"
+  kubectl get nodes
+  echo -e "\tconnect aks cluster - ***done***"
+  #=============================================#
+  #============== Add ingress controller =======#
+  #=============================================#
+  echo -e "\tAdding ingress controller -- ***start***"
+  kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.4/deploy/static/provider/cloud/deploy.yaml
+  echo -e "\tAdding ingress controller -- ***done***"
+  #=============================================#
+  #========= Patch Public IP DNS Label =========
+  #=============================================#    
+  publicIpResourceId=$(az network public-ip list --resource-group $nodePoolRg --query "[?contains(name, 'kubernetes')].id" -otsv)
+  echo "publicIpResourceId: $publicIpResourceId"
+  az network public-ip update --ids $publicIpResourceId --dns-name ${resourcesPrefix}
+  echo "Public IP DNS Label has been updated to ${resourcesPrefix}"
 
-      echo -e "\t create aks cluster Name: $aks , Resource Group $rg- ***done***"
-      echo "Adding another worload node pool"
-      az aks nodepool add -g $rg --cluster-name $aks  -n workload \
-              --os-sku AzureLinux \
-              --mode User \
-              --node-vm-size $workerVmSize \
-              --node-osdisk-size 100 \
-              --node-count 0 \
-              --max-count 10 \
-              --min-count 0  \
-              --tags $tags \
-              --enable-cluster-autoscaler \
-              --max-pods 110
-      echo "Adding another workload node pool ***done***"
-      #=============================================#
-      #============== AKS Credentials ==============#
-      #=============================================#
-      echo -e  "\tConnecting to AKS and getting credentials  - ***start***"
-      az aks get-credentials --resource-group $rg --name $aks --admin --overwrite-existing
-      echo "AKS connectivity Sanity test"
-      kubectl get nodes
-      echo -e "\tconnect aks cluster - ***done***"
-      #=============================================#
-      #============== Add ingress controller =======#
-      #=============================================#
-      echo -e "\tAdding ingress controller -- ***start***"
-      kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.4/deploy/static/provider/cloud/deploy.yaml
-      echo -e "\tAdding ingress controller -- ***done***"
-      #=============================================#
-      #========= Patch Public IP DNS Label =========
-      #=============================================#    
-      publicIpResourceId=$(az network public-ip list --resource-group $nodePoolRg --query "[?contains(name, 'kubernetes')].id" -otsv)
-      echo "publicIpResourceId: $publicIpResourceId"
-      az network public-ip update --ids $publicIpResourceId --dns-name ${resourcesPrefix}
-      echo "Public IP DNS Label has been updated to ${resourcesPrefix}"
-      
-      #=============================================#
-      #============== Create AKS ARC Cluster =======#
-      #=============================================#
-      echo -e "\tConnecting AKS to ARC-AKS -- ***start***"
-      az connectedk8s connect --name ${connectedClusterName} --resource-group $rg --yes
-      echo "Performing AKS-Arc-connected connectivity Sanity test"
-      connectedResult=$(az connectedk8s show --name ${connectedClusterName} --resource-group $rg 2>&1)
-      if [[ "$connectedResult" == *"ERROR"* ]]; then
-        echo "AKS-Arc-connected connectivity Sanity test failed. Exiting"
-        exit 1
-      fi
-      echo -e "\tconnecting AKS to ARC-AKS -- ***done***"
+  #=============================================#
+  #======== Create Connected-ARC Cluster =======#
+  #=============================================#
+  echo -e "\tConnecting AKS to ARC-AKS -- ***start***"
+  az connectedk8s connect --name ${connectedClusterName} --resource-group $rg --yes
+  echo "Performing AKS-Arc-connected connectivity Sanity test"
+  connectedResult=$(az connectedk8s show --name ${connectedClusterName} --resource-group $rg 2>&1)
+  if [[ "$connectedResult" == *"ERROR"* ]]; then
+    echo "AKS-Arc-connected connectivity Sanity test failed. Exiting"
+    exit 1
+  fi
+  echo -e "\tconnecting AKS to ARC-AKS -- ***done***"
 fi
 
 #===========================================================================================================#

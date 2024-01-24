@@ -2,7 +2,7 @@
 param prefix string
 
 @description('Specifies control plane node VM size.')
-param controlPlaneNodeVmSize string = 'Standard_DS32a_v4'
+param controlPlaneNodeVmSize string = 'Standard_DS96a_v4'
 
 @description('Specifies the location.')
 param location string = resourceGroup().location
@@ -14,11 +14,11 @@ param virtualNetworkAddressPrefixes string = '10.0.0.0/16'
 param vmSubnetAddressPrefix string = '10.0.1.0/24'
 
 @description('Specifies the name of the network security group associated to the subnet hosting the virtual machine.')
-param vmSubnetNsgName string = 'VmSubnetNsg'
+param vmSubnetNsgName string = '${prefix}SubnetNsg'
 
-var vnetName = 'Vm${prefix}vnet'
-var subnetName = 'Vm${vnetName}-subnet0'
-var nicName = 'Vm${prefix}nic'
+var vnetName = '${prefix}vnet'
+var subnetName = '${vnetName}-subnet0'
+var nicName = '${prefix}nic'
 
 var vmName = 'k8s-master'
 var publicIPName = '${prefix}publicIP'

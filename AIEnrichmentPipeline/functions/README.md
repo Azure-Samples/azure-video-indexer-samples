@@ -212,4 +212,4 @@ $uri = "http://localhost:7071/admin/functions/{my-function-name}"
 Invoke-WebRequest -Uri $uri -Headers $header -Body $body -Method "POST"
 ```
 
-> **Note** if calling a deployed function, add the `"x-functions-key" = "{func-master-key-here}"` to the headers object.
+> **_Note_:** if calling a deployed function, add the `"x-functions-key" = "{func-master-key-here}"` to the headers object.

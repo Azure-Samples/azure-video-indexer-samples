@@ -8,7 +8,7 @@ In this Quick-Start you will create an Azure Video Indexer  account by using ARM
 The resource will be deployed to your subscription and will create the Azure Video Indexer resource based on parameters defined in the videoindexer.template file.
 
 
-> **Note:**
+> **_Note_:**
 > this sample is *not* for connecting an existing Azure Video Indexer classic account to an ARM-Based Video Indexer account.
 
 > For full documentation on Azure Video Indexer API, visit the [Developer Portal](https://api-portal.videoindexer.ai/) page.
@@ -51,7 +51,7 @@ New-AzResourceGroup -Name myResourceGroup -Location eastus
 New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile ./videoindexer.template.json
 ```
 
-> **Note:**
+> **_Note_:**
 > If you would like to work with bicep format, inspect the [bicep folder](../bicep/) on this repo.
 
 ## Parameters
@@ -75,7 +75,7 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 * Required: false
 
 
-> **Note:**
+> **_Note_:**
 > You need to deploy Your Azure Video Indexer account in the same location (region) as the associated Azure Media Services(AMS) resource exists.
 
 

@@ -8,7 +8,8 @@ The purpose of this document is to present the onboarding steps and pre-requisit
 
 ## Prerequisites
 
->NOTE: In order to succesfully deploy the VI Extention it is **mandatory** that we approve your Azure subscription id in advance. Therefore you must first sign up using [this form](https://aka.ms/vi-register).
+
+> **_Note_:** In order to succesfully deploy the VI Extention it is **mandatory** that we approve your Azure subscription id in advance. Therefore you must first sign up using [this form](https://aka.ms/vi-register).
 
 - Azure subscription with permissions to create Azure resources
 - Azure Video Indexer Account. The quickest way is using the Azure Portal using this tutorial [Create Video Indexer account](https://learn.microsoft.com/azure/azure-video-indexer/create-account-portal#use-the-azure-portal-to-create-an-azure-video-indexer-account).
@@ -42,7 +43,7 @@ curl -SSL https://raw.githubusercontent.com/Azure-Samples/media-services-video-i
 
 sh vi_extension_install.sh
 ```
-> **Note** : The script aim to run on Ubuntu OS and contains command that uses Ubuntu package manager. 
+> **_Note_:** The script aim to run on Ubuntu OS and contains command that uses Ubuntu package manager. 
 
 During the deployment the script will ask the following questions where you will need to provide your environment specific values. Below table explains each question and the desired value. Some will expect or have default values.
 
@@ -65,7 +66,7 @@ Follow these steps to deploy the Video Indexer Arc Extention to your Arc K8S Ena
 ### Minumum Hardware Requirements
 
 The following is the minumum and recommended requirements if the extension contains single Languge support.
-> **_Note:_** If you install multiple Speech and Translation containers with several languages, ensure to increase the hardware requirements accordingly.
+> **_Note_:** If you install multiple Speech and Translation containers with several languages, ensure to increase the hardware requirements accordingly.
 
 | Configuration | VM Count | Node CPU Cores Count  | Node Ram | Node Storage | Remarks
 | --- | --- | --- | --- | --- | --- |
@@ -73,9 +74,9 @@ The following is the minumum and recommended requirements if the extension conta
 | Recommended | 2 | 48-64 Cores | 256 GB | 100 GB | Storage needs to support `ReadWriteMany` Storage Class
 
 
-> **_Note:_** at least 2-node cluster is recommended for high availability and scalability. 
+> **_Note_:** at least 2-node cluster is recommended for high availability and scalability. 
 
-> **_Tip:_** We recommend creating a dedicate node-pool / auto-scaling groups to host the VI Solution
+> **_Tip_:** We recommend creating a dedicate node-pool / auto-scaling groups to host the VI Solution
 
 
 ### Minimum Software Requirements
@@ -91,7 +92,7 @@ The following is the minumum and recommended requirements if the extension conta
 
 ### Step 1 - Create Azure Arc Kubernetes Cluster and connect it to your cluster
 
->  **_Note:_** 
+> **_Note_:** 
 > -The following command assumes you have a kubernetes cluster and that the Current Contenxt on your ./kube/config file points to it.
 
 Run the following command to connect your cluster. This command deploys the Azure Arc agents to the cluster and installs Helm v. 3.6.3 to the .azure folder of the deployment machine. This Helm 3 installation is only used for Azure Arc, and it does not remove or change any previously installed versions of Helm on the machine.
@@ -108,7 +109,7 @@ az connectedk8s connect --name myAKSCluster --resource-group myResourceGroup
 
 ### Step 2 - Create Cognitive Services Resources for the extension
 
->  **_Note:_** 
+> **_Note_:**
 > - The resources are created once per each subscription, and used by all the extenions under that subscription. 
 
 One of the prerequisites to installing a VI Arc extension are speech and translator resources. Once the resources are created, their key and endpoint need to be provided in the installation process. 
@@ -229,22 +230,7 @@ example deploy script :
 kubectl get pods -n video-indexer
 ```
 
-## Updating the extension
+you will see the video indexer pods are up and running. 
 
-In case updates are required to the extension, the following command can be used to update the extension with either another version or with different configuration parameters
+> **_Note_:** It might take few minutes for all the pods to become available and running .
 
-
-```bash
-           az k8s-extension update --name videoindexer \
-                            --cluster-name ${connectedClusterName} \
-                            --resource-group ${connectedClusterRg} \
-                            --cluster-type connectedClusters \
-                            --release-train ${releaseTrain}  \
-                            --version ${version} \
-                            --config "speech.resource.requests.cpu=500m"
-
-                            
-```
-> **Notes:_** You must specify the cluster name and resulrce group name in order to update the extension.
-
-## This concludes the documentation. Below file contains the deployment script used in step one.

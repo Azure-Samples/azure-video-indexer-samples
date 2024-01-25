@@ -203,6 +203,7 @@ if [[ $install_aks_cluster == "true" ]]; then
         --tags $tags \
         --node-resource-group $nodePoolRg \
         --node-vm-size $nodeVmSize \
+        --enable-image-cleaner --image-cleaner-interval-hours 24 \
         --node-os-upgrade-channel NodeImage --auto-upgrade-channel node-image
 
   echo -e "\t create aks cluster Name: $aks , Resource Group $rg- ***done***"
@@ -231,7 +232,7 @@ if [[ $install_aks_cluster == "true" ]]; then
   #============== Add ingress controller =======#
   #=============================================#
   echo -e "\tAdding ingress controller -- ***start***"
-  kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.4/deploy/static/provider/cloud/deploy.yaml
+  kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.5/deploy/static/provider/cloud/deploy.yaml
   echo -e "\tAdding ingress controller -- ***done***"
   #=============================================#
   #========= Patch Public IP DNS Label =========

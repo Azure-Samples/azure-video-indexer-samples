@@ -38,10 +38,11 @@ You can read more on how to set up your cloud shell environment [here](https://l
 In the cloud shell execute these two commands:
 
 ```bash
-curl -SSL https://raw.githubusercontent.com/Azure-Samples/media-services-video-indexer/master/AVIenabledbyArc/vi-edge-deployment-script.sh -o install_vi_arc.sh
+curl -SSL https://raw.githubusercontent.com/Azure-Samples/media-services-video-indexer/master/VideoIndexerEnabledByArc/aks/vi_extension_install.sh
 
-sh install_vi_arc.sh
+sh vi_extension_install.sh
 ```
+> **Note** : The script aim to run on Ubuntu OS and contains command that uses Ubuntu package manager. 
 
 During the deployment the script will ask the following questions where you will need to provide your environment specific values. Below table explains each question and the desired value. Some will expect or have default values.
 

@@ -13,7 +13,7 @@ The resource will be deployed to your subscription and will create the following
 - Managed Identity
 - Azure Video Indexer
 
-> **Notes**:
+> **_Notes_:**
 >
 > - This sample is *not* for connecting an existing Azure Video Indexer classic account to an ARM-Based Video Indexer account.
 > - This sample does not cover the usage of Terraform and its various CLI options. For more information about Terraform please visit [Introduction to Terraform](https://www.terraform.io/intro).
@@ -42,7 +42,7 @@ The resource will be deployed to your subscription and will create the following
 - `environment`: The environment name, used to name all resources.
 - `location`: The location of all resources.
 
-> **Notes:**
+> **_Notes_:**
 >
 > The sample assumes you are authenticated to your Azure Subscription and has the permissions to deploy resources.
 > For more information about how terraform client authenticates to Azure visit [Authenticating to Azure](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#authenticating-to-azure) on the terraform docs.

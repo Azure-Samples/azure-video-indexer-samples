@@ -17,10 +17,10 @@ The Following Resources will be installed using the Bicep template:
 - Roles and Permission for the Event Hubs Writing and for the Video Indexer on the Media Service Account.
 
 
-> **Note:**
+> **_Note_:**
 > On June 30, 2023, Azure Media Services announced the planned retirement of their product. Please read Video Indexer's updated release notes to understand the impact of the Azure Media Services retirement on your Video Indexer account.[AMS Retirement Impact](https://learn.microsoft.com/en-us/azure/azure-video-indexer/release-notes#june-2023)
 
-> **Note:**
+> **_Note_:**
 > this sample is *not* for connecting an existing Azure Video Indexer classic account to an ARM-Based Video Indexer account.
 
 

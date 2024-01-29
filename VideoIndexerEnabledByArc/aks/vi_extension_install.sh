@@ -294,7 +294,7 @@ if [[ $install_extension == "true" ]]; then
                           --config-protected-settings "ocr.endpointUri=${ocrEndpoint}" \
                           --config-protected-settings "ocr.secret=${ocrPrimaryKey}"\
                           --config "videoIndexer.accountId=${accountId}" \
-                          --config "frontend.endpointUri=https://${ENDPOINT_URI}"
+                          --config "videoIndexer.endpointUri=https://${ENDPOINT_URI}"
     echo -e "\tUpdating VI Extension - ***done***"
   else  
     echo -e "\tCreate New VI Extension - ***start***"
@@ -313,7 +313,7 @@ if [[ $install_extension == "true" ]]; then
                               --config-protected-settings "ocr.endpointUri=${ocrEndpoint}" \
                               --config-protected-settings "ocr.secret=${ocrPrimaryKey}"\
                               --config "videoIndexer.accountId=${accountId}" \
-                              --config "frontend.endpointUri=https://${ENDPOINT_URI}" \
+                              --config "videoIndexer.endpointUri=https://${ENDPOINT_URI}" \
                               --config "storage.storageClass=azurefile-csi" \
                               --config "storage.accessMode=ReadWriteMany" 
     echo -e "\tCreate New VI Extension - ***done***"

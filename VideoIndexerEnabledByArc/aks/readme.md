@@ -36,10 +36,12 @@ You can read more on how to set up your cloud shell environment [here](https://l
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://shell.azure.com/bash?url=)
 
-In the cloud shell execute these two commands:
+In the cloud shell execute the following command:
 
 ```bash
-curl -SSL https://raw.githubusercontent.com/Azure-Samples/media-services-video-indexer/master/VideoIndexerEnabledByArc/aks/vi_extension_install.sh
+wget -SSL https://raw.githubusercontent.com/Azure-Samples/media-services-video-indexer/master/VideoIndexerEnabledByArc/aks/vi_extension_install.sh
+
+chmod +x ./vi_extension_install.sh
 
 sh vi_extension_install.sh
 ```

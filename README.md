@@ -38,12 +38,6 @@ Here you can find code samples and project examples of how to use Video Indexer,
 | `API Samples`        | Sample code of uploading and indexing video using API        | Video Indexer   |
 | `VideoIndexerEnabledByArc`        | Video Indexer Enabled By Arc Sample And deploy tutorials        | Video Indexer   |
 | `Embedding widgets`          | How to add Video Indexer widgets to your app                 | Video Indexer   |
-| `IntroToVideoIndexer.md`     | An intro lab to Video Indexer with exercises                 | Community       |
-| `VideoDescriptionSample`     | Display an automatic description of VI thumbnails            | Community       |
-| `VideoProcessingWorkflow`    | Complete video processing workflow using VI, AF, and logic app| Community       |
-| `VideoTranscriptClassification`    | Process video/audio files in Azure Video Indexer to extract transcripts and build text classification model to classify videos/audio | Community |
-| `AIEnrichmentPipeline`       | Complete sample for processing text, image and video files through a full enrichment pipeline with event grid, service bus, functions, logic apps, cognitive services and video indexer | Community     |
-| `Partners`                   | Examples for collaboration projects with partners            |  Partners       |
 | `media`                      | media used for md files                                      |                 |
 | `.gitignore`                 | Define what to ignore at commit time                         |                 |
 | `CHANGELOG.md`               | List of changes to the sample                                |                 |

@@ -3,23 +3,28 @@
 
 ## Overview
 
-In this Quick-Start you will create an Azure Video Indexer  account by using ARM template (PREVIEW)
+In this Quick-Start you will create an Azure Video Indexer account by using ARM template
 
-The resource will be deployed to your subscription and will create the Azure Video Indexer resource based on parameters defined in the videoindexer.template file.
+The resource will be deployed to your subscription and will create the Azure Video Indexer resource based on parameters defined in the [videoindexer.parameters.json](./videoindexer.parameters.json)
 
+The Following Resources will be installed using the Bicep template:
 
+- Azure Storage Account
+- Azure Video Indexer Account with connection to the Storage Account using System Assigned Identity
+- The `Storage Blob Data Contributor` Role Assignment for Video Indexer Account on the Storage Account.
+<br></br>
 > **_Note_:**
-> this sample is *not* for connecting an existing Azure Video Indexer classic account to an ARM-Based Video Indexer account.
+> On June 30, 2023, Azure Media Services announced the planned retirement of their product. Please read Video Indexer's updated release notes to understand the impact of the Azure Media Services retirement on your Video Indexer account.[AMS Retirement Impact](https://learn.microsoft.com/en-us/azure/azure-video-indexer/release-notes#june-2023)
 
 > For full documentation on Azure Video Indexer API, visit the [Developer Portal](https://api-portal.videoindexer.ai/) page.
 
-> The current API Version is "2022-08-01". Check this Repo from time to time to get updates on new API Versions.
+> The current API Version is "2024-01-01". Check this Repo from time to time to get updates on new API Versions.
 
 ## Prerequisites
+Before deploying the Bicep items, please ensure that you have the following prerequisites installed:
 
-* An Azure Media Services (AMS) account. You can create one for free through the [Create AMS Account](https://docs.microsoft.com/en-us/azure/media-services/latest/account-create-how-to).
-
-* In case you are interested in creating the Full End-To-End Media Solution that Creates Azure Media Service Account, Storage Account with all the permissions correctly wired, please check the [Create Media Solution - Terraform](../Create-Media-Solution-Terraform/) Demo. 
+- Azure subscription with permissions to create Azure resources
+- The latest version of [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli). 
 
 ## Deploy the sample
 
@@ -27,28 +32,31 @@ The resource will be deployed to your subscription and will create the Azure Vid
 
 ### Option 1: Click the "Deploy To Azure Button", and fill in the missing parameters
 
-
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fmedia-services-video-indexer%2Fmaster%2FDeploy-Samples%2FArmTemplates%2Fvideoindexer.template.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fazure-video-indexer-samples%2Fmaster%2FDeploy-Samples%2FArmTemplates%2Fvideoindexer.template.json)
 
 ----
 
-### Option 2 : Deploy using Power Shell Script
+### Option 2 : Deploy using Az CLI
 
 1. Open The [Template File](videoindexer.template.json) file and inspect its content.
-2. Fill in the required parameters (see below)
-3. Run the Following Power Shell commands:
+2. Open The [Parameter File](videoindexer.parameters.json) file and Fill in the required parameters (see below).
+3. Run the Following Az CLi Command:
 
 * Create a new Resource group on the same location as your Azure Video Indexer account, using the [New-AzResourceGroup](https://docs.microsoft.com/en-us/powershell/module/az.resources/new-azresourcegroup) cmdlet.
 
 
-```powershell
-New-AzResourceGroup -Name myResourceGroup -Location eastus
+```shell
+az group create -n myResourceGroup -l eastus 
 ```
 
-* Deploy the template to the resoruce group using the [New-AzResourceGroupDeployment](https://docs.microsoft.com/en-us/powershell/module/az.resources/new-azresourcegroupdeployment) cmdlet.
+* Deploy the template to the resoruce group using the [az deployment group create](https://learn.microsoft.com/en-us/cli/azure/deployment/group?view=azure-cli-latest#az-deployment-group-create) command.
 
-```powershell
-New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile ./videoindexer.template.json
+```shell
+az deployment group create \
+--resource-group myResourceGroup \
+--template-file .\videoindexer.template.json \
+--parameters=.\videoindexer.parameters.json  
+
 ```
 
 > **_Note_:**
@@ -65,34 +73,12 @@ New-AzResourceGroupDeployment -ResourceGroupName myResourceGroup -TemplateFile .
 
 * required: true
 
-### location
 
-
-* Type: string
-
-* Description: Specifies the Azure location where the Azure Video Indexer account should be created.
-
-* Required: false
-
-
-> **_Note_:**
-> You need to deploy Your Azure Video Indexer account in the same location (region) as the associated Azure Media Services(AMS) resource exists.
-
-
-### mediaServiceAccountResourceId
+### storageAccountName
 
 * Type: string
 
-* Description: The Resource ID of the Azure Media Services(AMS) resource.
-
-* Required: true
-
-
-### managedIdentityId
-
-* Type: string
-
-* Description: The Resource ID of the Managed Identity used to grant access between Azure Media Services(AMS) resource and the Azure Video Indexer account.
+* Description: The Name of the storageAccount that will be used by Video Indexer Account.
 
 * Required: true
 

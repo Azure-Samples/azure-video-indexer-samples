@@ -32,7 +32,7 @@ Before deploying the Bicep items, please ensure that you have the following prer
 
 ### Option 1: Click the "Deploy To Azure Button", and fill in the missing parameters
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fazure-video-indexer-samples%2Fmaster%2FDeploy-Samples%2FArmTemplates%2Fvideoindexer.template.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fazure-video-indexer-samples%2Ffeature%2Ftshaiman%2Famsless-arm-template%2FDeploy-Samples%2FArmTemplates%2Fvideoindexer.template.json)
 
 ----
 

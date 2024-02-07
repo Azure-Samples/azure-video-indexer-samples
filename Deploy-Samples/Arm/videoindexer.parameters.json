@@ -3,10 +3,10 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "name": {
-      "value": "tsvi34"
+      "value": "<Your Video Indexer Name>"
     },
     "storageAccountName": {
-      "value": "tsvi34sa"
+      "value": "<Your Storage Account Name>"
     }
   }
 }

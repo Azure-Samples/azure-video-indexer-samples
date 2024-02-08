@@ -59,7 +59,6 @@
         }
       }
     },
-    
     {
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2020-04-01-preview",

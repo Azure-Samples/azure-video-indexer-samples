@@ -29,7 +29,7 @@ resource videoIndexerAccount 'Microsoft.VideoIndexer/accounts@2024-01-01' = {
   }
 }
 
-@description('Grant video Indexer Principal Id Contributor role to the Media Services')
+@description('Grant video Indexer Identity the BlobDataContributor role to the Storage Account')
 resource vi_mediaservices_role 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
   name: guid(videoIndexerAccountName, storageAccountName, 'StorageBlobDataContributorRoleAssignment')
   properties: {

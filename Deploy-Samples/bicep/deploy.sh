@@ -2,12 +2,11 @@
 #!/bin/bash
 set -e
 export SCRIPT_PATH=$(dirname "$(readlink -f "$0")")
-echo $(dirname 0)
 
 #########Fill In The missing Propperties#########
-subscription="<Add your subscription here>"
-location="<Add your location here>"
-resource_prefix='<Add your resource prefix here>'
+subscription="24237b72-8546-4da5-b204-8c3cb76dd930"
+location="eastus"
+resource_prefix='tsdemo57'
 #################################################
 
 resource_group="${resource_prefix}-rg"

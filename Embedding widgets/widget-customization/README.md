@@ -20,7 +20,7 @@ This repo contains the Azure Video Indexer widgets package. Below you can find d
 
 ## Introduction
 
-[Video Indexer](https://docs.microsoft.com/en-us/azure/azure-video-analyzer/video-analyzer-for-media-docs)  is a cloud application, part of Azure Applied AI Services, built on Azure Media Services and Azure Cognitive Services (such as the Face, Translator, Computer Vision, and Speech). It enables you to extract the insights from your videos using Video Indexer video and audio models.
+[Video Indexer](https://docs.microsoft.com/en-us/azure/azure-video-analyzer/video-analyzer-for-media-docs)  is a cloud application, part of Azure Applied AI Services. It enables you to extract the insights from your videos using Video Indexer video and audio models.
 
 The material in this repository is designed to help in embedding Azure Video Indexer widgets in your own service and customize its style and data.
 

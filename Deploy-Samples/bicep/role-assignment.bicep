@@ -1,5 +1,6 @@
 param principalId string
 param eventHubNamespace string
+param storageAccountName string
 
 @description('Contributor role definition ID')
 var contributorRoleDefinitionId = 'b24988ac-6180-42a0-ab88-20f7382dd24c'
@@ -8,14 +9,14 @@ var contributorRoleDefinitionId = 'b24988ac-6180-42a0-ab88-20f7382dd24c'
 var eventHubDataContributorRoleDefinitionId = 'f526a384-b230-433a-b45c-95f59c4a2dec'
 
 @description('Storage Blob Data Contributor Role Id')
-var storageBlobDataContributorRoleId = 'b24988ac-6180-42a0-ab88-20f7382dd24c'
+var storageBlobDataContributorRoleId = 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
 
 resource eventHubNs 'Microsoft.EventHub/namespaces@2023-01-01-preview' existing = {
   name: eventHubNamespace
 }
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' existing = {
-  name: 'storageaccountname'
+  name: storageAccountName
 }
 
 @description('Grant Subscription Contributor role to the service principal - to call Get Arm Access Token')

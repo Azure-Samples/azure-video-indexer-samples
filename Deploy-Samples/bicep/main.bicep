@@ -40,6 +40,7 @@ module appSettingsRoleAssignments 'role-assignment.bicep' = {
   params: {
     principalId: media_videoIndexer.outputs.videoIndexerPrincipalId
     eventHubNamespace: eventHubNamespaceName
+    storageAccountName: storageAccountName
   }
   dependsOn: [
     media_videoIndexer

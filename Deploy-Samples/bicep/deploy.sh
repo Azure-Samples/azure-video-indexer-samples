@@ -2,7 +2,6 @@
 #!/bin/bash
 set -e
 export SCRIPT_PATH=$(dirname "$(readlink -f "$0")")
-echo $(dirname 0)
 
 #########Fill In The missing Propperties#########
 subscription="<Add your subscription here>"

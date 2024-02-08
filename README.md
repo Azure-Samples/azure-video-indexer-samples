@@ -13,7 +13,7 @@ description: "Video Indexer Official Samples"
 urlFragment: "https://www.videoindexer.ai/"
 ---
 
-# Official Azure Media Services | Video Indexer Samples
+# Official Video Indexer Samples
 
 <!-- 
 Guidelines on README format: https://review.docs.microsoft.com/help/onboard/admin/samples/concepts/readme-template?branch=master

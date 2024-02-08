@@ -2,52 +2,30 @@
 param videoIndexerPrefix string
 
 param location string
-param stoargeAccountId string 
-var mediaServicesAccountName = '${videoIndexerPrefix}ms'
+param storageAccountName string
 var videoIndexerAccountName = '${videoIndexerPrefix}vi'
 
-@description('Contributor role definition ID')
-var contributorRoleDefinitionId = 'b24988ac-6180-42a0-ab88-20f7382dd24c'
 
 
-resource media_mediaService 'Microsoft.Media/mediaservices@2021-06-01' = {
-  name: mediaServicesAccountName
+resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' = {
+  name: storageAccountName
   location: location
-  properties: {
-    storageAccounts: [
-      {
-        id: stoargeAccountId
-        type: 'Primary'
-      }
-    ]
+  kind: 'StorageV2'
+  sku: {
+    name: 'Standard_LRS'
   }
 }
-
-resource media_videoIndexerAccount 'Microsoft.VideoIndexer/accounts@2022-08-01' = {
+resource videoIndexerAccount 'Microsoft.VideoIndexer/accounts@2024-01-01' = {
   name: videoIndexerAccountName
   location: location
   identity: {
     type: 'SystemAssigned'
   }
   properties: {
-    mediaServices: {
-      resourceId: media_mediaService.id
+    storageServices: {
+      resourceId: storageAccount.id
     }
   }
 }
 
-@description('Grant video Indexer Principal Id Contributor role to the Media Services')
-resource vi_mediaservices_role 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  name: guid(videoIndexerAccountName, mediaServicesAccountName, 'Contributor')
-  properties: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', contributorRoleDefinitionId)
-    principalId: media_videoIndexerAccount.identity.principalId
-    principalType: 'ServicePrincipal'
-  }
-  scope: media_mediaService
-}
-
-output videoIndexerAccountName string = media_videoIndexerAccount.name
-output videoIndexerPrincipalId string = media_videoIndexerAccount.identity.principalId
-output mediaServiceAccountName string = media_mediaService.name
-output videoIndexerAccountId string = media_videoIndexerAccount.properties.accountId
+output videoIndexerPrincipalId string = videoIndexerAccount.identity.principalId

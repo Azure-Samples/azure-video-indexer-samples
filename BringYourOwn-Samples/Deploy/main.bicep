@@ -21,7 +21,7 @@ var eventHubName = 'vilogs'
 var envResourceNamePrefix = toLower(resourceNamePrefix)
 
 /* Storage */
-module viapp_storageAccount 'storage.bicep' = {
+module storageAccount 'storage.bicep' = {
   name: '${deploymentNameId}-appservice-storage'
   params: {
     location: location
@@ -30,7 +30,7 @@ module viapp_storageAccount 'storage.bicep' = {
 }
 
 /* event Hubs */
-module viapp_eventHubs 'eventsHub.bicep' = {
+module eventHubs 'eventsHub.bicep' = {
   name: '${deploymentNameId}-eventsHub'
   params: {
     location: location
@@ -40,15 +40,15 @@ module viapp_eventHubs 'eventsHub.bicep' = {
 }
 
 /* Video Indexer */
-module viapp_videoIndexer 'videoindexer.bicep' = {
+module videoIndexer 'videoindexer.bicep' = {
   name: '${deploymentNameId}-videoIndexer'
   params: {
-    stoargeAccountId: viapp_storageAccount.outputs.storageAccountId
+    storageAccountName: storageAccountName
     videoIndexerPrefix: envResourceNamePrefix
     location: location
   }
   dependsOn: [
-    viapp_storageAccount
+    storageAccount
   ]
 }
 
@@ -61,17 +61,17 @@ module viapp_function 'functionApp.bicep' = {
     deploymentNameId: deploymentNameId
     resourcePrefix: envResourceNamePrefix
     storageAccountName: storageAccountName
-    storageAccountKey: viapp_storageAccount.outputs.storageAccountKey
-    viAccountId: viapp_videoIndexer.outputs.videoIndexerAccountId
-    eventsHubConnectionString: viapp_eventHubs.outputs.eventHubNamespaceConnectionString
+    storageAccountKey: storageAccount.outputs.storageAccountKey
+    viAccountId: videoIndexer.outputs.videoIndexerAccountId
+    eventsHubConnectionString: eventHubs.outputs.eventHubNamespaceConnectionString
     computerVisionEndpoint: computerVisionEndpoint
     computerVisionKey: computerVisionKey
     computerVisionCustomModelName: computerVisionCustomModelName
   }
   dependsOn: [
-    viapp_eventHubs
-    viapp_storageAccount
-    viapp_videoIndexer
+    eventHubs
+    storageAccount
+    videoIndexer
   ]
 }
 
@@ -81,10 +81,12 @@ module appSettingsRoleAssignments 'role-assignment.bicep' = {
   params: {
     appServicePrincipalId: viapp_function.outputs.appServicePrincipalId
     eventHubNamespace: eventHubNamespaceName
+    storageAccountName:  storageAccountName
+    videoIndexerPrincipalId: videoIndexer.outputs.videoIndexerPrincipalId
   }
   dependsOn: [
-    viapp_videoIndexer
-    viapp_eventHubs
+    videoIndexer
+    eventHubs
   ]
 }
 
@@ -97,9 +99,9 @@ module viDiagnosticsSetting 'vi-diagnostics-settings.bicep' = {
     eventHubName: eventHubName
   }
   dependsOn: [
-    viapp_videoIndexer
+    videoIndexer
     appSettingsRoleAssignments
-    viapp_eventHubs
+    eventHubs
   ]
 }
 
@@ -107,4 +109,4 @@ module viDiagnosticsSetting 'vi-diagnostics-settings.bicep' = {
 
 output functionAppName string = functionAppName
 output eventHubNamespaceName string = eventHubNamespaceName
-output videoIndexerAccountName string = viapp_videoIndexer.outputs.videoIndexerAccountName
+output videoIndexerAccountName string = videoIndexer.outputs.videoIndexerAccountName

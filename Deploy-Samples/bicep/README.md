@@ -10,11 +10,10 @@ The resource will be deployed to your subscription and will create the Azure Vid
 The Following Resources will be installed using the Bicep template:
 
 - Azure Storage Account
-- Azure Media Services Account that uses the Storage Account
-- Azure Video Indexer Account with connection to the Media Services using System Assigned Identity
-- Azure EventHubs Namesapce with an EventHub instance to store incoming Video indexer Logs
+- Azure Video Indexer Account which uses System Assigned Identity and connects to the Storage Account.
+- Azure EventHubs namesapce with an EventHub instance to store Video Indexer Logs.
 - Diagnostics Settings attached to the Azure Video Indexer to direct the Video Indexer Logs into the EventsHub namespace
-- Roles and Permission for the Event Hubs Writing and for the Video Indexer on the Media Service Account.
+- Roles and Permission for the Video Indexer identity in order to access the Storage account and write event logs to the event Hubs namespace.
 
 
 > **_Note_:**
@@ -36,18 +35,17 @@ Before deploying the Bicep items, please ensure that you have the following prer
 
 2. Open the [deploy.sh](./deploy.sh) script file and fill in subscription Id ,region and resource prefixes names.
 
+```bash
+#########Fill In The missing Propperties#########
+subscription="<Add your subscription here>"
+location="<Add your location here>"
+resource_prefix='<Add your resource prefix here>'
+#################################################
+```
+
 ## Deploy the sample
 
 ----
-
-### Option 1: Click the "Deploy To Azure Button", and fill in the missing parameters
-
-
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fmedia-services-video-indexer%2Fmaster%2FDeploy-Samples%2FArm%2Fmain.bicep)
-
-----
-
-### Option 2 : Manual Deploy
 
 Run the Following command from Linux shell terminal:
 
@@ -56,15 +54,6 @@ Run the Following command from Linux shell terminal:
 ```
 
 The script will create a resource group if it does not exist and deploy the bicep template to Azure.
-
-3. wait for the deployment to finish, open Azure Portal and ensure the following resources got created : 
-
-* Storage Account 
-* Azure Media Services Account
-* Azure Video Indexer Account
-* Event Hubs Namespace 
-* Azure Video Indexer Diagnostic settings attached to the Video Indexer Account. The diagnostic setting is configured to send Video Indexer log and audit events to Event Hubs namespace.
-* Azure Event Hub namespace ( to stream the logs into )
 
 
 ### Notes

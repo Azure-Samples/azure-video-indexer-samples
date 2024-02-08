@@ -63,7 +63,7 @@ To upload Video, the Client uses the Upload Video URL, with the following url Pa
         map.put("streamingPreset","NoStreaming");
 ```
 
-Note that when `streamingPreset` is set to `NoStreaming` the index operation skips the Azure Media Services encoding and creation of a new file for streaming, which expedites the completion of the indexing.
+Note that when `streamingPreset` is set to `NoStreaming` the index operation skips the media encoding streaming, which expedites the completion of the indexing.
 
 The sample uses Busy Wait loop to Poll on completion status of the indexed videos.
 

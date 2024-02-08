@@ -29,7 +29,7 @@ public static async Task Sample()
             Console.WriteLine("Response id to log: " + result.Headers.GetValues("x-ms-request-id").FirstOrDefault()); // Log the response id so you can include it in case you wish to report an issue for API errors or unexpected API behavior
             var accessToken = (await result.Content.ReadAsStringAsync()).Trim('"'); // The access token is returned as JSON value surrounded by double-quotes
 
-            // Upload and index the video from URL - this is best practice and very robust compared to uploading a video from local file. Uploading from existing Azure Media Services asset even better.
+            // Upload and index the video from URL - this is best practice and very robust compared to uploading a video from local file.
             var videoUrl = "VIDEO_URL"; // replace with the video URL, MUST BE HTTPS
 
             // To receive push notification when indexing completed (succesfully or otherwise) you can provide a callback URL, that will be invoked with the following query string:

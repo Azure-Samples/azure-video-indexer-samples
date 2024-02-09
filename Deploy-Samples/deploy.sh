@@ -3,14 +3,14 @@
 set -e
 export SCRIPT_PATH=$(dirname "$(readlink -f "$0")")
 
+deploy_name=videploy
 #########Fill In The missing Propperties#########
-subscription="<Add your subscription here>"
-location="<Add your location here>"
-resource_prefix='<Add your resource prefix here>'
+subscription="24237b72-8546-4da5-b204-8c3cb76dd930"
+location="eastus"
+resource_group="tsviddeploy-99-rg"
 #################################################
 
-resource_group="${resource_prefix}-rg"
-deploy_name=videploy
+
 
 #Template
 parameters_file="main.parameters.json"
@@ -28,5 +28,5 @@ az group create -n ${resource_group} -l $location
 echo "Deploy Resources"
 az deployment group create -g $resource_group --name $deploy_name \
                         --template-file $template_file \
-                        --parameters deploymentNameId=${deploy_name}-1 resourceNamePrefix=${resource_prefix}
+                        --parameters $parameters_file
 

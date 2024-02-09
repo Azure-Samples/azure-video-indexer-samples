@@ -3,9 +3,9 @@
 
 ## Overview
 
-In this Quick-Start you will create an Azure Video Indexer account by using ARM template
+In this Quick-Start you will create an Azure Video Indexer account by using bicep (ARM) template
 
-The resource will be deployed to your subscription and will create the Azure Video Indexer resource based on parameters defined in the [videoindexer.parameters.json](./videoindexer.parameters.json)
+The resource will be deployed to your subscription and will create the Azure Video Indexer resource based on parameters defined in the [main.parameters.json](./main.parameters.json)
 
 The Following Resources will be installed using the Bicep template:
 
@@ -25,6 +25,7 @@ Before deploying the Bicep items, please ensure that you have the following prer
 
 - Azure subscription with permissions to create Azure resources
 - The latest version of [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli). 
+- *Recommended*: [Bicep Tools](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/install)
 
 ## Deploy the sample
 
@@ -32,18 +33,17 @@ Before deploying the Bicep items, please ensure that you have the following prer
 
 ### Option 1: Click the "Deploy To Azure Button", and fill in the missing parameters
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fazure-video-indexer-samples%2Fmaster%2FDeploy-Samples%2FArm%2Fvideoindexer.template.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fazure-video-indexer-samples%2Fmaster%2FDeploy-Samples%2FArm%main.template.json)
 
 ----
 
 ### Option 2 : Deploy using Az CLI
 
-1. Open The [Template File](videoindexer.template.json) file and inspect its content.
-2. Open The [Parameter File](videoindexer.parameters.json) file and Fill in the required parameters (see below).
-3. Run the Following Az CLi Command:
+1. Open The [Template File](main.template.json) file and inspect its content.
+2. Open The [Parameter File](main.parameters.json) file and Fill in the required parameters (see below).
+3. Run the Following Az CLi Commands:
 
-* Create a new Resource group on the same location as your Azure Video Indexer account, using the [New-AzResourceGroup](https://docs.microsoft.com/en-us/powershell/module/az.resources/new-azresourcegroup) cmdlet.
-
+* Create a new Resource group on the same location as your Azure Video Indexer account.
 
 ```shell
 az group create -n myResourceGroup -l eastus 
@@ -54,17 +54,14 @@ az group create -n myResourceGroup -l eastus
 ```shell
 az deployment group create \
 --resource-group myResourceGroup \
---template-file .\videoindexer.template.json \
---parameters=.\videoindexer.parameters.json  
+--template-file .\main.template.json \
+--parameters=.\main.parameters.json  
 
 ```
 
-> **_Note_:**
-> If you would like to work with bicep format, inspect the [bicep folder](../bicep/) on this repo.
-
 ## Parameters
 
-### name
+### videoIndexerAccountName
 
 
 * Type: string
@@ -82,17 +79,6 @@ az deployment group create \
 
 * Required: true
 
-
-### tags
-
-
-* Type: object
-
-* Description: Array of objects that represents custom user tags on the Azure Video Indexer account
-
- Required: false
-
-
 ### Notes
 
 ## Reference Documentation
@@ -108,5 +94,5 @@ If you're new to Azure Video Indexer , see:
 If you're new to template deployment, see:
 
 * [Azure Resource Manager documentation](https://docs.microsoft.com/azure/azure-resource-manager/)
-* [Deploy Resources with ARM Template](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-powershell)
+* [Deploy Resources with ARM Template and Azure CLI](https://learn.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-cli)
 * [Deploy Resources with Bicep and Azure CLI](https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/deploy-cli)

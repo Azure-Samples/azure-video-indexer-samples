@@ -1,0 +1,3 @@
+requests
+azure-identity
+python-dotnet

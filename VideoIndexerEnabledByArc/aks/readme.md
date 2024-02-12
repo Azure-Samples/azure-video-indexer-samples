@@ -39,7 +39,7 @@ You can read more on how to set up your cloud shell environment [here](https://l
 In the cloud shell execute the following command:
 
 ```bash
-wget -SSL https://raw.githubusercontent.com/Azure-Samples/media-services-video-indexer/master/VideoIndexerEnabledByArc/aks/vi_extension_install.sh
+wget -SSL https://raw.githubusercontent.com/Azure-Samples/media-services-video-indexer/master/VideoIndexerEnabledByArc/aks/vi_extension_install.sh -O vi_extension_install.sh
 
 chmod +x ./vi_extension_install.sh
 

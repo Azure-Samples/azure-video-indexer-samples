@@ -136,7 +136,7 @@ namespace="video-indexer" #default namespace , will be override later
 get_parameter_value "What is the Azure subscription ID during deployment?" "subscriptionId"
 get_parameter_value "What is the name of the Video Indexer resource group during deployment?" "resourceGroup"
 get_parameter_value "What is the name of the Video Indexer account name during deployment?" "accountName"
-get_parameter_value "What is the name of the Video Indexer account Id during deployment?" "accountId"
+get_parameter_value "What is the Video Indexer account Id during deployment?" "accountId"
 get_parameter_value "What is the location of the Video Indexer during deployment?" "region"
 get_parameter_value "Provide a unique identifier value during deployment.(this will be used for Cloud Resources : AKS, DNS names etc)?" "resourcesPrefix"
 get_parameter_value "What is the Video Indexer extension name ?" "extensionName"

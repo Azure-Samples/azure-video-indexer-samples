@@ -3,10 +3,10 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "videoIndexerAccountName": {
-      "value": "ts90vi"
+      "value": "<Video Indexer Account Name>"
     },
     "storageAccountName": {
-      "value": "ts90sa"
+      "value": "<Azure Storage Account Name>"
     }
   }
 }

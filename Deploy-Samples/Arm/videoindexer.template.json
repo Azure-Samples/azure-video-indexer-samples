@@ -40,6 +40,9 @@
       "location": "[resourceGroup().location]",
       "tags": "[parameters('tags')]",
       "kind": "[variables('strorageAccountKind')]",
+      "properties": {
+        "minimumTlsVersion": "TLS1_2"
+      },
       "sku": {
         "name": "[variables('storageAccountSku')]"
       }

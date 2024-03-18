@@ -14,7 +14,8 @@ resource roleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-prev
   scope: storageAccount 
   properties: {
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', storageBlobDataContributorRoleId) 
-    principalId: servicePrincipalObjectId 
+    principalId: servicePrincipalObjectId
+    principalType: 'ServicePrincipal'
   }
 }
 

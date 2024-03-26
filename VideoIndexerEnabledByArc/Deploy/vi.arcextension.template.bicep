@@ -13,7 +13,7 @@ var tags  = {
   CreatedBy: 'VI Azure Arc Samples'
 }
 
-var createDependentResoruceUri = 'https://gist.githubusercontent.com/tshaiman/b6e3818b1ae70642d713db88bdcb828d/raw/2d678b7208a9067d06e43b9dd34bc237b16bde79/get_hobo_secret.ps1'
+var createDependentResoruceUri = 'https://raw.githubusercontent.com/Azure-Samples/azure-video-indexer-samples/master/VideoIndexerEnabledByArc/Deploy/createDependencies.ps1'
 
 resource CreateDependentResouces 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
   name: 'CreateDependentResouces'

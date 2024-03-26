@@ -15,6 +15,7 @@ if ($result.StatusCode -ne [System.Net.HttpStatusCode]::Conflict -and $result.St
     return
 }
 
+
 $DeploymentScriptOutputs['result'] = $accountResourceId
 $getSecretsUri = "https://management.azure.com/${accountResourceId}/ListExtensionDependenciesData?api-version=${apiVersion}"
 echo $getSecretsUri

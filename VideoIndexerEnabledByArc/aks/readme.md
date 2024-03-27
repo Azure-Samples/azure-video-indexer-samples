@@ -25,7 +25,7 @@ az provider register -n 'Microsoft.ExtendedLocation'
 ```
 
 ## 1. One-Click Deploy Sample to Azure
-**This step is optional.** If you would like to test Video Indexer Edge Extention on a sample edge devide this deployment script can be used to quickly set up a K8S cluster and all pods to run VI on Edge. This script will deploy the following resources:
+**This step is optional.** If you would like to test Video Indexer Edge Extention on a sample edge device this deployment script can be used to quickly set up a K8S cluster and all pods to run VI on Edge. This script will deploy the following resources:
 - Small 2 node AKS Cluster (costs are ~$0.80/hour)
 - Enable ARC Extension on top of the cluster
 - Add Video Indexer Arc Extension
@@ -108,6 +108,7 @@ az connectedk8s connect --name myAKSCluster --resource-group myResourceGroup
 
 [4]: https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli
 
+> **_Note:_** Starting from this step, you have the option to continue the deployment using the Bicep template. If you prefer to use the Bicep template, you can skip to step 4.
 
 ### Step 2 - Create Cognitive Services Resources for the extension
 
@@ -162,25 +163,25 @@ The following parameters will be used as input to the extension creation command
 | translate.endpointUri |  | Translation Service Url Endpoint  |
 | translate.secret |  | Translation Service secret |
 | videoIndexer.accountId |  | Video Indexer Account Id |
-| frontend.endpointUri |  | Video Indexer Dns Name to be used as the Portal endpoint |
+| videoIndexer.endpointUri |  | Video Indexer Dns Name to be used as the Portal endpoint |
 
 ```bash
-                        az k8s-extension create --name videoindexer \
-                            --extension-type Microsoft.videoindexer \
-                            --scope cluster \
-                            --release-namespace ${namespace} \
-                            --cluster-name ${connectedClusterName} \
-                            --resource-group ${connectedClusterRg} \
-                            --cluster-type connectedClusters \
-                            --release-train viextensiondemo  \
-                            --version ${version} \
-                            --auto-upgrade-minor-version false \
-                            --config-protected-settings "speech.endpointUri=${speechUri}" \
-                            --config-protected-settings "speech.secret=${speechSecret}" \
-                            --config-protected-settings "translate.endpointUri=${translateUri}" \
-                            --config-protected-settings "translate.secret=${translateSecret}" \
-                            --config "videoIndexer.accountId=${viAccountId}" \
-                            --config "frontend.endpointUri=${dnsName}" 
+az k8s-extension create --name videoindexer \
+    --extension-type Microsoft.videoindexer \
+    --scope cluster \
+    --release-namespace ${namespace} \
+    --cluster-name ${connectedClusterName} \
+    --resource-group ${connectedClusterRg} \
+    --cluster-type connectedClusters \
+    --release-train viextensiondemo  \
+    --version ${version} \
+    --auto-upgrade-minor-version false \
+    --config-protected-settings "speech.endpointUri=${speechUri}" \
+    --config-protected-settings "speech.secret=${speechSecret}" \
+    --config-protected-settings "translate.endpointUri=${translateUri}" \
+    --config-protected-settings "translate.secret=${translateSecret}" \
+    --config "videoIndexer.accountId=${viAccountId}" \
+    --config "videoIndexer.endpointUri=${dnsName}" 
 
 ```
 
@@ -210,23 +211,47 @@ There are some additional Parameters that can be used in order to have a fine gr
 example deploy script : 
 
 ```bash
-                        az k8s-extension create --name videoindexer \
-                            --extension-type Microsoft.videoindexer \
-                            .......
-                            
-                            --config AI.nodeSelector."beta\\.kubernetes\\.io/os"=linux
-                            --config "speech.resource.requests.cpu=500m" \
-                            --config "speech.resource.requests.mem=2Gi" \
-                            --config "speech.resource.limits.cpu=1" \
-                            --config "speech.resource.limits.mem=4Gi" \
-                            --config "videoIndexer.webapi.resources.requests.mem=4Gi"\
-                            --config "videoIndexer.webapi.resources.limits.mem=8Gi"\
-                            --config "videoIndexer.webapi.resources.limits.cpu=1"\
-                            --config "storage.storageClass=azurefile-csi" 
+az k8s-extension create --name videoindexer \
+    --extension-type Microsoft.videoindexer \
+    .......
+    
+    --config AI.nodeSelector."beta\\.kubernetes\\.io/os"=linux
+    --config "speech.resource.requests.cpu=500m" \
+    --config "speech.resource.requests.mem=2Gi" \
+    --config "speech.resource.limits.cpu=1" \
+    --config "speech.resource.limits.mem=4Gi" \
+    --config "videoIndexer.webapi.resources.requests.mem=4Gi"\
+    --config "videoIndexer.webapi.resources.limits.mem=8Gi"\
+    --config "videoIndexer.webapi.resources.limits.cpu=1"\
+    --config "storage.storageClass=azurefile-csi" 
 
 ```
 
-### Step 4 - Verify Deployment
+### Step 4 (Optional) - Deploy Using Bicep Template
+
+In case you do not wish to use Az CLI Commands to deploy the video indexer arc extension , you can use the bicep deployment
+provided on the current folder.
+> **_Note:_**: This Step replaces the need to run Step 2 + 3 above
+
+> **_Note:_**: In order to deploy the Bicep template you will need to use user-assigned Managed Identity with a 'Contributor' Role Assignment on the Subscription.
+
+1. Open The [Template File](vi.arcextension.template.bicep) file  and Fill in the required parameters (see below).
+3. Run the Following Az CLi Commands in order to deploy the template using the [az deployment group create](https://learn.microsoft.com/en-us/cli/azure/deployment/group?view=azure-cli-latest#az-deployment-group-create) command.
+
+```shell
+az deployment group create --resource-group myResourceGroup --template-file .\vi.arcextension.template.bicep
+```
+## Parameters
+
+| Parameter | Type | Description |
+|-----------|---------|-------------|
+| accountResourceId |  string | The Video Indexer Full Resource Id that will be connected to the Arc Extension
+| accountId  | string | The Video Indexer Account Id
+| videoIndexerEndpointUri | string | Video Indexer Dns Name to be used as the Portal endpoint
+| arcConnectedClusterName | string | The Azure Arc Kubernetes Cluster Created at Step 1
+| identityId  | string | a User Assigned Managed Identity with 'Contributor' Role Assignment on your subscription
+
+### Step 5 - Verify Deployment
 
 ```bash
 kubectl get pods -n video-indexer

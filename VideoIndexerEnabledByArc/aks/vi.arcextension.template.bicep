@@ -1,9 +1,10 @@
 
-param endpointUri string = '<enter_endpoint_uri>'
-param arcClusterName string = '<enter_arc_cluster_name>'
 param accountResourceId string = '<enter_vi_account_resource_id>'
-param identityId string = '<enter_identity_resource_id>'
 param accountId string = '<enter_vi_account_id>'
+param videoIndexerEndpointUri string = '<enter_endpoint_uri>'
+param arcConnectedClusterName string = '<enter_arc_cluster_name>'
+param identityId string = '<enter_identity_resource_id>'
+
 param forceUpdateTag string = utcNow()
 param location string = resourceGroup().location
 
@@ -13,7 +14,7 @@ var tags  = {
   CreatedBy: 'VI Azure Arc Samples'
 }
 
-var createDependentResoruceUri = 'https://raw.githubusercontent.com/Azure-Samples/azure-video-indexer-samples/master/VideoIndexerEnabledByArc/Deploy/createDependencies.ps1'
+var createDependentResoruceUri = 'https://raw.githubusercontent.com/Azure-Samples/azure-video-indexer-samples/master/VideoIndexerEnabledByArc/aks/createDependencies.ps1'
 
 resource CreateDependentResouces 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
   name: 'CreateDependentResouces'
@@ -38,7 +39,7 @@ resource CreateDependentResouces 'Microsoft.Resources/deploymentScripts@2020-10-
 }
 
 resource connectedCluster 'Microsoft.Kubernetes/connectedClusters@2024-01-01' existing = {
-  name: arcClusterName
+  name: arcConnectedClusterName
 
 }
 resource extension 'Microsoft.KubernetesConfiguration/extensions@2022-11-01' = {
@@ -54,7 +55,7 @@ resource extension 'Microsoft.KubernetesConfiguration/extensions@2022-11-01' = {
       cluster: {}
     }
     configurationSettings: {
-      'videoIndexer.endpointUri': endpointUri
+      'videoIndexer.endpointUri': videoIndexerEndpointUri
       'videoIndexer.accountId': accountId
       'storage.storageClass': storageClass
       'storage.accessMode': 'ReadWriteMany'

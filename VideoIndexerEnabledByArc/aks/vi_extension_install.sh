@@ -11,8 +11,8 @@
 export valid_regions=($(az account list-locations --query "[].name" -o tsv))
 function is_valid_azure_region() {
     local location=$1
-    for reg in "${valid_regions[@]}"; do
-        if [[ $reg == $location ]]; then
+    for region in "${valid_regions[@]}"; do
+        if [[ $region == $location ]]; then
             return 0
         fi
     done
@@ -20,8 +20,8 @@ function is_valid_azure_region() {
     return 1
 }
 function print_local_regions() {
-  for reg in "${valid_regions[@]}"; do
-    echo $reg
+  for region in "${valid_regions[@]}"; do
+    echo $region
   done
 }
 #################################################
@@ -86,7 +86,7 @@ function wait_for_cs_secrets {
 
 }
 ##################################################################
-# Create Cognitive Services HOBO (On Behalf Of the User ) Resources
+# Create Cognitive Services HOBO (Host On Behalf Of ) Resources
 ##################################################################
 function create_cognitive_hobo_resources {
   echo -e "\t create Cognitive Services On VI RP ***start***"
@@ -192,6 +192,7 @@ if [[ $install_aks_cluster == "true" ]]; then
   echo -e "\t create aks cluster Name: $aks , Resource Group $rg- ***start***"
   az aks create -n $aks -g $rg \
         --enable-managed-identity\
+            --enable-workload-identity \
         --kubernetes-version ${aksVersion} \
         --enable-oidc-issuer \
         --nodepool-name system \
@@ -278,9 +279,9 @@ if [[ $install_extension == "true" ]]; then
   ######################
   ENDPOINT_URI=$(az network public-ip list --resource-group $nodePoolRg --query "[?contains(name, 'kubernetes')].dnsSettings.fqdn" -otsv)
   echo "Check If ${extensionName} extension is already installed"
-  exists=$(az k8s-extension list --cluster-name ${connectedClusterName} --cluster-type connectedClusters -g $rg --query "[?name=='${extensionName}'].name" -otsv)
+  exists=$(az k8s-extension list --cluster-name ${connectedClusterName} --cluster-type connectedClusters -g $rg --query "[?extensionType=='microsoft.videoindexer'].name" -otsv)
   
-  if [[ $exists == ${extensionName} ]]; then
+  if [[ ! -z $exists ]]; then
     echo -e "\tExtension Found - Updating VI Extension - ***start***"
     az k8s-extension update --name ${extensionName} \
                           --cluster-name ${connectedClusterName} \

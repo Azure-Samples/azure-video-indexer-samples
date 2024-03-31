@@ -9,13 +9,21 @@
   <body>
     <button id="myButton">Jump to (sec)</button>
     <input type="text" value="30.5" name="time" id="time" />
+
+    <button id="playButton">Play</button>
+    <button id="pauseButton">Pause</button>
+
     <iframe
+      style="display: flex; padding: 12px 0;"
       id="viPlayer"
       width="560"
       height="315"
       src="https://www.videoindexer.ai/embed/player/00000000-0000-0000-0000-000000000000/4dc0aa32bf"
       frameborder="0"
     ></iframe>
+
+    <label>Player status</label>
+    <input type="text" id="playerStatus" />
     <script src="script.js"></script>
   </body>
 </html>

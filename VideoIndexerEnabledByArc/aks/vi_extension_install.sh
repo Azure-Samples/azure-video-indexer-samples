@@ -121,7 +121,6 @@ install_aks_cluster="true"
 install_extension="true"
 install_cli_tools="true"
 register_cli_add_ons="true"
-aksVersion="1.27.3" # https://learn.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli
 viApiVersion="2023-06-02-preview" # VI API version
 
 #=============================================#
@@ -149,6 +148,8 @@ if ! is_valid_azure_region "$region"; then
   print_local_regions
   exit 1
 fi
+$aksVersion=$(az aks get-versions --location $region --query "values[].patchVersions.keys(@)[][] | sort(@) | [-1]"  | tr -d '"')
+
 echo "SubscriptionId: $subscriptionId"
 echo "Azure Resource Group: ${resourceGroup}"
 echo "Video Indexer AccountName: $accountName"
@@ -157,6 +158,7 @@ echo "Azure Resource prefixes: ${resourcesPrefix}"
 echo "Region: $region"
 echo "Video Indexer Extension Name: $extensionName"
 echo "Video Indexer Extension Namespace: $namespace"
+echo "Latest AKS Version: $aksVersion"
 
 echo "switching to $subscriptionId"
 az account set --subscription $subscriptionId

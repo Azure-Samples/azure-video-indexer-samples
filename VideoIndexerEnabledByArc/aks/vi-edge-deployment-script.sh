@@ -148,7 +148,7 @@ if ! is_valid_azure_region "$region"; then
   print_local_regions
   exit 1
 fi
-$aksVersion=$(az aks get-versions --location $region --query "values[].patchVersions.keys(@)[][] | sort(@) | [-1]")
+$aksVersion=$(az aks get-versions --location $region --query "values[].patchVersions.keys(@)[][] | sort(@) | [-1]"  | tr -d '"')
 
 echo "SubscriptionId: $subscriptionId"
 echo "Azure Resource Group: ${resourceGroup}"

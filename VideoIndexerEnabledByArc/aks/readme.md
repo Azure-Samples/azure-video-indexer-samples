@@ -11,11 +11,12 @@ The purpose of this document is to present the onboarding steps and pre-requisit
 
 > **_Note_:** In order to succesfully deploy the VI Extention it is **mandatory** that we approve your Azure subscription id in advance. Therefore you must first sign up using [this form](https://aka.ms/vi-register).
 
+
 - Azure subscription with permissions to create Azure resources
 - Azure Video Indexer Account. The quickest way is using the Azure Portal using this tutorial [Create Video Indexer account](https://learn.microsoft.com/azure/azure-video-indexer/create-account-portal#use-the-azure-portal-to-create-an-azure-video-indexer-account).
 - The AKS cluster that will contain the Video Indexer extension must be in the East US region.
-- The latest version of [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli). You can skip if you're using cloud shell.
-- The latest version of connectedk8s Azure CLI extension, installed by running the following command. **You can skip if you're using the Cloud Shell** option:
+- The latest version of [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli). (**You can skip if you're using the Cloud Shell**).
+- The latest version of connectedk8s Azure CLI extension, installed by running the following command. (**You can skip if you're using the Cloud Shell**):
 
 ```bash
 az extension add --name connectedk8s
@@ -23,6 +24,7 @@ az provider register -n 'Microsoft.Kubernetes'
 az provider register -n 'Microsoft.KubernetesConfiguration' 
 az provider register -n 'Microsoft.ExtendedLocation'
 ```
+
 
 ## 1. One-Click Deploy Sample to Azure
 **This step is optional.** If you would like to test Video Indexer Edge Extention on a sample edge device this deployment script can be used to quickly set up a K8S cluster and all pods to run VI on Edge. This script will deploy the following resources:

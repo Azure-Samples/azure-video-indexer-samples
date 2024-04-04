@@ -136,7 +136,7 @@ get_parameter_value "What is the Azure subscription ID during deployment?" "subs
 get_parameter_value "What is the name of the Video Indexer resource group during deployment?" "resourceGroup"
 get_parameter_value "What is the name of the Video Indexer account name during deployment?" "accountName"
 get_parameter_value "What is the Video Indexer account Id during deployment?" "accountId"
-get_parameter_value "What is the location of the Video Indexer during deployment?" "region"
+get_parameter_value "What is the location of the Video Indexer Extension running on ARC Connected Cluster?" "region"
 get_parameter_value "Provide a unique identifier value during deployment.(this will be used for Cloud Resources : AKS, DNS names etc)?" "resourcesPrefix"
 get_parameter_value "What is the Video Indexer extension name ?" "extensionName"
 get_parameter_value "What is the extension kubernetes namespace to install to ?" "namespace"
@@ -148,7 +148,7 @@ if ! is_valid_azure_region "$region"; then
   print_local_regions
   exit 1
 fi
-$aksVersion=$(az aks get-versions --location $region --query "values[].patchVersions.keys(@)[][] | sort(@) | [-1]"  | tr -d '"')
+aksVersion=$(az aks get-versions --location $region --query "values[].patchVersions.keys(@)[][] | sort(@) | [-1]"  | tr -d '"')
 
 echo "SubscriptionId: $subscriptionId"
 echo "Azure Resource Group: ${resourceGroup}"
@@ -159,6 +159,11 @@ echo "Region: $region"
 echo "Video Indexer Extension Name: $extensionName"
 echo "Video Indexer Extension Namespace: $namespace"
 echo "Latest AKS Version: $aksVersion"
+if [[ -z $aksVersion ]]; then
+  echo "aksVersion is null or empty.Run `az aks get-versions --location $region` to get the latest AKS version on the selected region"
+  exit 1
+fi
+
 
 echo "switching to $subscriptionId"
 az account set --subscription $subscriptionId

@@ -54,7 +54,7 @@ function install_cli_tools {
 
 function wait_for_cs_secrets {
   
-  getSecretsUri="https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.VideoIndexer/accounts/${accountName}/ListExtensionDependenciesData?api-version=${viApiVersion}"
+  getSecretsUri="https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${viResourceGroup}/providers/Microsoft.VideoIndexer/accounts/${accountName}/ListExtensionDependenciesData?api-version=${viApiVersion}"
   numRetries=0
   sleepDuration=10
   maxNumRetries=30
@@ -91,7 +91,7 @@ function wait_for_cs_secrets {
 function create_cognitive_hobo_resources {
   echo -e "\t create Cognitive Services On VI RP ***start***"
   sleepDuration=10
-  createResourceUri="https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.VideoIndexer/accounts/${accountName}/CreateExtensionDependencies?api-version=${viApiVersion}"
+  createResourceUri="https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${viResourceGroup}/providers/Microsoft.VideoIndexer/accounts/${accountName}/CreateExtensionDependencies?api-version=${viApiVersion}"
   responseString=$(az rest --method post --uri $createResourceUri --verbose 2>&1 >/dev/null || true)
   responseStatusLine=$(echo "$responseString" | grep 'INFO: Response status:')
   responseStatus=$(echo "$responseStatusLine" | grep -oP '\d+')
@@ -133,13 +133,14 @@ namespace="video-indexer" #default namespace , will be override later
 
 # Ask questions and read user input
 get_parameter_value "What is the Azure subscription ID during deployment?" "subscriptionId"
-get_parameter_value "What is the name of the Video Indexer resource group during deployment?" "resourceGroup"
+get_parameter_value "What is the name of the Video Indexer resource group during deployment?" "viResourceGroup"
 get_parameter_value "What is the name of the Video Indexer account name during deployment?" "accountName"
 get_parameter_value "What is the Video Indexer account Id during deployment?" "accountId"
 get_parameter_value "What is the location of the Video Indexer Extension running on ARC Connected Cluster?" "region"
 get_parameter_value "Provide a unique identifier value during deployment.(this will be used for Cloud Resources : AKS, DNS names etc)?" "resourcesPrefix"
 get_parameter_value "What is the Video Indexer extension name ?" "extensionName"
 get_parameter_value "What is the extension kubernetes namespace to install to ?" "namespace"
+
 
 ## Region Name Validation
 region=${region,,}
@@ -150,16 +151,16 @@ if ! is_valid_azure_region "$region"; then
 fi
 aksVersion=$(az aks get-versions --location $region --query "values[].patchVersions.keys(@)[][] | sort(@) | [-1]"  | tr -d '"')
 
-echo "SubscriptionId: $subscriptionId"
-echo "Azure Resource Group: ${resourceGroup}"
-echo "Video Indexer AccountName: $accountName"
-echo "Video Indexer AccountId: $accountId"
+echo "SubscriptionId: ${subscriptionId}"
+echo "Video Indexer AccountName: ${accountName}"
+echo "Video Indexer Resource Group: ${viResourceGroup}"
+echo "Video Indexer AccountId: ${accountId}"
 echo "Azure Resource prefixes: ${resourcesPrefix}"
 echo "Region: $region"
-echo "Video Indexer Extension Name: $extensionName"
-echo "Video Indexer Extension Namespace: $namespace"
-echo "Latest AKS Version: $aksVersion"
-if [[ -z $aksVersion ]]; then
+echo "Video Indexer Extension Name: ${extensionName}"
+echo "Video Indexer Extension Namespace: ${namespace}"
+echo "Latest AKS Version: ${aksVersion}"
+if [[ -z ${aksVersion} ]]; then
   echo "aksVersion is null or empty.Run `az aks get-versions --location $region` to get the latest AKS version on the selected region"
   exit 1
 fi
@@ -190,8 +191,8 @@ if [[ $install_aks_cluster == "true" ]]; then
   echo "============= Deploying new ARC Resources ======================"
   echo "================================================================"
 
-  echo "Deploying Resources: [Resource group: $rg, AKS: $aks, Connected-Cluster Name: ${connectedClusterName}]"
-  echo "create Resource group"
+  echo "Deploying Kubernetes Resources: [AKS Name: $aks, AKS ResourceGroup: $rg,  Connected-Cluster Name: ${connectedClusterName}, Region: $region ]"
+  echo "Create Kubernetes Resource group"
   az group create --name $rg --location $region --output table --tags $tags
 #=======================================================================#
 #======== Create AKS Cluster( Simulates User On Prem Infra) ============#
@@ -215,7 +216,7 @@ if [[ $install_aks_cluster == "true" ]]; then
         --node-os-upgrade-channel NodeImage --auto-upgrade-channel node-image
 
   echo -e "\t create aks cluster Name: $aks , Resource Group $rg- ***done***"
-  echo "Adding another worload node pool"
+  echo "Adding another workload node pool"
   az aks nodepool add -g $rg --cluster-name $aks  -n workload \
           --os-sku AzureLinux \
           --mode User \
@@ -245,8 +246,24 @@ if [[ $install_aks_cluster == "true" ]]; then
   #=============================================#
   #========= Patch Public IP DNS Label =========
   #=============================================#    
-  publicIpResourceId=$(az network public-ip list --resource-group $nodePoolRg --query "[?contains(name, 'kubernetes')].id" -otsv)
-  echo "publicIpResourceId: $publicIpResourceId"
+  echo "Querying Public IP Resource Id for AKS Cluster. [Resource Group: $nodePoolRg]"
+  retries=0
+  while [[ $retries -lt 5 ]]; do
+    publicIpResourceId=$(az network public-ip list --resource-group $nodePoolRg --query "[?contains(name, 'kubernetes')].id" -otsv)
+    if [[ -z ${publicIpResourceId} ]]; then
+      echo "Could not fetch Public IP Resource Id. Retrying..."
+      retries=$((retries+1))
+    else
+      break
+    fi
+  done
+
+  if [[ $retries -eq 5 ]]; then
+    echo "Could not fetch Public IP Resource Id after 5 attempts. Exiting"
+    exit 1
+  fi
+
+  echo "Found Public Ip ResourceId: $publicIpResourceId. Updating DNS Label to ${resourcesPrefix}"
   az network public-ip update --ids $publicIpResourceId --dns-name ${resourcesPrefix}
   echo "Public IP DNS Label has been updated to ${resourcesPrefix}"
 

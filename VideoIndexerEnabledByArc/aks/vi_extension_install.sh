@@ -54,7 +54,7 @@ function install_cli_tools {
 
 function wait_for_cs_secrets {
   
-  getSecretsUri="https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.VideoIndexer/accounts/${accountName}/ListExtensionDependenciesData?api-version=${viApiVersion}"
+  getSecretsUri="https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${viResourceGroup}/providers/Microsoft.VideoIndexer/accounts/${accountName}/ListExtensionDependenciesData?api-version=${viApiVersion}"
   numRetries=0
   sleepDuration=10
   maxNumRetries=30
@@ -91,7 +91,7 @@ function wait_for_cs_secrets {
 function create_cognitive_hobo_resources {
   echo -e "\t create Cognitive Services On VI RP ***start***"
   sleepDuration=10
-  createResourceUri="https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.VideoIndexer/accounts/${accountName}/CreateExtensionDependencies?api-version=${viApiVersion}"
+  createResourceUri="https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${viResourceGroup}/providers/Microsoft.VideoIndexer/accounts/${accountName}/CreateExtensionDependencies?api-version=${viApiVersion}"
   responseString=$(az rest --method post --uri $createResourceUri --verbose 2>&1 >/dev/null || true)
   responseStatusLine=$(echo "$responseString" | grep 'INFO: Response status:')
   responseStatus=$(echo "$responseStatusLine" | grep -oP '\d+')
@@ -140,6 +140,7 @@ get_parameter_value "What is the location of the Video Indexer Extension running
 get_parameter_value "Provide a unique identifier value during deployment.(this will be used for Cloud Resources : AKS, DNS names etc)?" "resourcesPrefix"
 get_parameter_value "What is the Video Indexer extension name ?" "extensionName"
 get_parameter_value "What is the extension kubernetes namespace to install to ?" "namespace"
+
 
 ## Region Name Validation
 region=${region,,}

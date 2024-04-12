@@ -174,7 +174,7 @@ aks="${resourcesPrefix}-aks"
 rg="${resourcesPrefix}-rg"
 connectedClusterName="${resourcesPrefix}-connected-aks"
 nodePoolRg="${aks}-agentpool-rg"
-nodeVmSize="Standard_D4a_v4" # 4 vcpus, 16 GB RAM
+nodeVmSize="Standard_D7a_v9" # 4 vcpus, 16 GB RAM
 workerVmSize="Standard_D32a_v4" # 32 vcpus, 128 GB RAM
 tags="createdBy=vi-arc-extension"
 #=========Install CLI Tools if needed =====================#
@@ -198,7 +198,7 @@ if [[ $install_aks_cluster == "true" ]]; then
 #======== Create AKS Cluster( Simulates User On Prem Infra) ============#
 #=======================================================================#
   echo -e "\t create aks cluster Name: $aks , Resource Group $rg- ***start***"
-  aks_create_output=$(az aks create -n $aks -g $rg \
+  aks_create_result=$(az aks create -n $aks -g $rg \
     --enable-managed-identity\
         --enable-workload-identity \
     --kubernetes-version ${aksVersion} \
@@ -218,29 +218,29 @@ if [[ $install_aks_cluster == "true" ]]; then
   if [[ $? -eq 0 ]]; then
     echo "AKS cluster creation succeeded"
   else
-    echo "AKS cluster creation failed"
+    echo "AKS cluster creation failed. Reason : $aks_create_result"
     exit 1
   fi
 
   echo -e "\t create aks cluster Name: $aks , Resource Group $rg- ***done***"
   echo "Adding another workload node pool"
-  aks_nodecreate_output=$(az aks nodepool add -g $rg --cluster-name $aks  -n workload \
-          --os-sku AzureLinux \
-          --mode User \
-          --node-vm-size $workerVmSize \
-          --node-osdisk-size 100 \
-          --node-count 0 \
-          --max-count 10 \
-          --min-count 0  \
-          --tags $tags \
-          --enable-cluster-autoscaler \
-          --max-pods 110
-  if [[ $? -eq 0 ]]; then
-    echo "AKS cluster creation succeeded"
-  else
-    echo "AKS cluster creation failed"
-    exit 1
-  fi
+  # aks_nodecreate_output=$(az aks nodepool add -g $rg --cluster-name $aks  -n workload \
+  #         --os-sku AzureLinux \
+  #         --mode User \
+  #         --node-vm-size $workerVmSize \
+  #         --node-osdisk-size 100 \
+  #         --node-count 0 \
+  #         --max-count 10 \
+  #         --min-count 0  \
+  #         --tags $tags \
+  #         --enable-cluster-autoscaler \
+  #         --max-pods 110
+  # if [[ $? -eq 0 ]]; then
+  #   echo "AKS cluster creation succeeded"
+  # else
+  #   echo "AKS cluster creation failed"
+  #   exit 1
+  # fi
   echo "Adding another workload node pool ***done***"
   #=============================================#
   #============== AKS Credentials ==============#

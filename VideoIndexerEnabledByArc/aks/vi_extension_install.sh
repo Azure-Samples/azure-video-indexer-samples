@@ -174,7 +174,7 @@ aks="${resourcesPrefix}-aks"
 rg="${resourcesPrefix}-rg"
 connectedClusterName="${resourcesPrefix}-connected-aks"
 nodePoolRg="${aks}-agentpool-rg"
-nodeVmSize="Standard_D7a_v9" # 4 vcpus, 16 GB RAM
+nodeVmSize="Standard_D4a_v4" # 4 vcpus, 16 GB RAM
 workerVmSize="Standard_D32a_v4" # 32 vcpus, 128 GB RAM
 tags="createdBy=vi-arc-extension"
 #=========Install CLI Tools if needed =====================#
@@ -197,50 +197,63 @@ if [[ $install_aks_cluster == "true" ]]; then
 #=======================================================================#
 #======== Create AKS Cluster( Simulates User On Prem Infra) ============#
 #=======================================================================#
-  echo -e "\t create aks cluster Name: $aks , Resource Group $rg- ***start***"
-  aks_create_result=$(az aks create -n $aks -g $rg \
-    --enable-managed-identity\
-        --enable-workload-identity \
-    --kubernetes-version ${aksVersion} \
-    --enable-oidc-issuer \
-    --nodepool-name system \
-    --os-sku AzureLinux \
-    --node-count 2 \
-    --tier standard \
-    --generate-ssh-keys \
-    --network-plugin kubenet \
-    --tags $tags \
-    --node-resource-group $nodePoolRg \
-    --node-vm-size $nodeVmSize \
-    --enable-image-cleaner --image-cleaner-interval-hours 24 \
-    --node-os-upgrade-channel NodeImage --auto-upgrade-channel node-image)
-
-  if [[ $? -eq 0 ]]; then
-    echo "AKS cluster creation succeeded"
+  ## check if the cluster already exists 
+  clusterExists=$(az aks show -n $aks -g $rg --query "name" -o tsv)
+  if [[ ! -z $clusterExists ]]; then
+    echo "AKS Cluster $aks already exists. Skipping AKS Cluster creation"
   else
-    echo "AKS cluster creation failed. Reason : $aks_create_result"
-    exit 1
+    echo -e "\t create aks cluster Name: $aks , Resource Group $rg- ***start***"
+    aks_create_result=$(az aks create -n $aks -g $rg \
+      --enable-managed-identity\
+          --enable-workload-identity \
+      --kubernetes-version ${aksVersion} \
+      --enable-oidc-issuer \
+      --nodepool-name system \
+      --os-sku AzureLinux \
+      --node-count 2 \
+      --tier standard \
+      --generate-ssh-keys \
+      --network-plugin kubenet \
+      --tags $tags \
+      --node-resource-group $nodePoolRg \
+      --node-vm-size $nodeVmSize \
+      --enable-image-cleaner --image-cleaner-interval-hours 24 \
+      --node-os-upgrade-channel NodeImage --auto-upgrade-channel node-image)
+
+      if [[ $? -eq 0 ]]; then
+        echo "AKS cluster creation succeeded"
+      else
+        echo "AKS cluster creation failed."
+        exit 1
+      fi
   fi
 
   echo -e "\t create aks cluster Name: $aks , Resource Group $rg- ***done***"
   echo "Adding another workload node pool"
-  # aks_nodecreate_output=$(az aks nodepool add -g $rg --cluster-name $aks  -n workload \
-  #         --os-sku AzureLinux \
-  #         --mode User \
-  #         --node-vm-size $workerVmSize \
-  #         --node-osdisk-size 100 \
-  #         --node-count 0 \
-  #         --max-count 10 \
-  #         --min-count 0  \
-  #         --tags $tags \
-  #         --enable-cluster-autoscaler \
-  #         --max-pods 110
-  # if [[ $? -eq 0 ]]; then
-  #   echo "AKS cluster creation succeeded"
-  # else
-  #   echo "AKS cluster creation failed"
-  #   exit 1
-  # fi
+  #Check if the node pool already exists
+  nodePoolExists=$(az aks nodepool show -g $rg --cluster-name $aks -n workload --query "name" -o tsv)
+  if [[ ! -z $nodePoolExists ]]; then
+    echo "Workload node pool already exists. Skipping node pool creation"
+  else
+    echo "Adding another workload node pool"
+    aks_nodecreate_output=$(az aks nodepool add -g $rg --cluster-name $aks  -n workload \
+            --os-sku AzureLinux \
+            --mode User \
+            --node-vm-size $workerVmSize \
+            --node-osdisk-size 100 \
+            --node-count 0 \
+            --max-count 10 \
+            --min-count 0  \
+            --tags $tags \
+            --enable-cluster-autoscaler \
+            --max-pods 110)
+    if [[ $? -eq 0 ]]; then
+      echo "Adding secondary node pool succeeded"
+    else
+      echo "Adding secondary node pool Failed. Exiting"
+      exit 1
+    fi
+  fi
   echo "Adding another workload node pool ***done***"
   #=============================================#
   #============== AKS Credentials ==============#

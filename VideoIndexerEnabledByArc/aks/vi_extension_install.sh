@@ -198,26 +198,33 @@ if [[ $install_aks_cluster == "true" ]]; then
 #======== Create AKS Cluster( Simulates User On Prem Infra) ============#
 #=======================================================================#
   echo -e "\t create aks cluster Name: $aks , Resource Group $rg- ***start***"
-  az aks create -n $aks -g $rg \
-        --enable-managed-identity\
-            --enable-workload-identity \
-        --kubernetes-version ${aksVersion} \
-        --enable-oidc-issuer \
-        --nodepool-name system \
-        --os-sku AzureLinux \
-        --node-count 2 \
-        --tier standard \
-        --generate-ssh-keys \
-        --network-plugin kubenet \
-        --tags $tags \
-        --node-resource-group $nodePoolRg \
-        --node-vm-size $nodeVmSize \
-        --enable-image-cleaner --image-cleaner-interval-hours 24 \
-        --node-os-upgrade-channel NodeImage --auto-upgrade-channel node-image
+  aks_create_output=$(az aks create -n $aks -g $rg \
+    --enable-managed-identity\
+        --enable-workload-identity \
+    --kubernetes-version ${aksVersion} \
+    --enable-oidc-issuer \
+    --nodepool-name system \
+    --os-sku AzureLinux \
+    --node-count 2 \
+    --tier standard \
+    --generate-ssh-keys \
+    --network-plugin kubenet \
+    --tags $tags \
+    --node-resource-group $nodePoolRg \
+    --node-vm-size $nodeVmSize \
+    --enable-image-cleaner --image-cleaner-interval-hours 24 \
+    --node-os-upgrade-channel NodeImage --auto-upgrade-channel node-image)
+
+  if [[ $? -eq 0 ]]; then
+    echo "AKS cluster creation succeeded"
+  else
+    echo "AKS cluster creation failed"
+    exit 1
+  fi
 
   echo -e "\t create aks cluster Name: $aks , Resource Group $rg- ***done***"
   echo "Adding another workload node pool"
-  az aks nodepool add -g $rg --cluster-name $aks  -n workload \
+  aks_nodecreate_output=$(az aks nodepool add -g $rg --cluster-name $aks  -n workload \
           --os-sku AzureLinux \
           --mode User \
           --node-vm-size $workerVmSize \
@@ -228,12 +235,23 @@ if [[ $install_aks_cluster == "true" ]]; then
           --tags $tags \
           --enable-cluster-autoscaler \
           --max-pods 110
+  if [[ $? -eq 0 ]]; then
+    echo "AKS cluster creation succeeded"
+  else
+    echo "AKS cluster creation failed"
+    exit 1
+  fi
   echo "Adding another workload node pool ***done***"
   #=============================================#
   #============== AKS Credentials ==============#
   #=============================================#
   echo -e  "\tConnecting to AKS and getting credentials  - ***start***"
-  az aks get-credentials --resource-group $rg --name $aks --admin --overwrite-existing
+  if az aks get-credentials --resource-group $rg --name $aks --admin --overwrite-existing; then
+    echo "AKS credentials retrieved successfully"
+  else
+    echo "Failed to retrieve AKS credentials"
+    exit 1
+  fi
   echo "AKS connectivity Sanity test"
   kubectl get nodes
   echo -e "\tconnect aks cluster - ***done***"

@@ -3,10 +3,10 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "videoIndexerAccountName": {
-      "value": "<Video Indexer Account Name>"
+      "value": "ts-pe-vi"
     },
     "storageAccountName": {
-      "value": "<Azure Storage Account Name>"
+      "value": "tspevistorage"
     }
   }
 }

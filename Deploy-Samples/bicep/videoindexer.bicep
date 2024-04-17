@@ -22,7 +22,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' = {
   }
 }
 
-resource videoIndexer 'Microsoft.VideoIndexer/accounts@2024-01-01' = {
+resource videoIndexer 'Microsoft.VideoIndexer/accounts@2023-11-01-preview' = {
   name: videoIndexerAccountName
   location: location
   identity: {

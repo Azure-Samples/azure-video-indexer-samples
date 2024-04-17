@@ -5,9 +5,9 @@ export SCRIPT_PATH=$(dirname "$(readlink -f "$0")")
 
 deploy_name=videploy
 #########Fill In The missing Propperties#########
-subscription="<Your Subscription ID>"
-resource_group="<Your Resource Group Name>"
-location="eastus"
+subscription="24237b72-8546-4da5-b204-8c3cb76dd930"
+resource_group="ts-pe-rg"
+location="canadaeast"
 #################################################
 
 #Template
@@ -15,7 +15,7 @@ parameters_file="main.parameters.json"
 template_file="main.bicep"
 
 # Login to Azure
-az login --use-device-code
+#az login --use-device-code
 az account set -s $subscription
 
 # Create Resource Group

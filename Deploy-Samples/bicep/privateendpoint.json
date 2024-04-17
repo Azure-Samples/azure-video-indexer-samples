@@ -1,0 +1,45 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+      "location": {
+          "type": "String",
+          "defaultValue": "[resourceGroup().location]"
+      },
+      "privateEndpointName": {
+          "type": "String",
+          "defaultValue": "ts-pe-vi1"
+      },
+      "privateLinkResource": {
+          "type": "String",
+          "defaultValue": "/subscriptions/24237b72-8546-4da5-b204-8c3cb76dd930/resourceGroups/ts-pe-rg/providers/Microsoft.VideoIndexer/accounts/ts-pe-vi"
+      },
+      "subnet": {
+          "type": "String",
+          "defaultValue": "/subscriptions/24237b72-8546-4da5-b204-8c3cb76dd930/resourceGroups/ts-pe-rg/providers/Microsoft.Network/virtualNetworks/ts-pe-net/subnets/default"
+      }
+  },
+  "resources": [
+      {
+          "type": "Microsoft.Network/privateEndpoints",
+          "apiVersion": "2021-05-01",
+          "name": "[parameters('privateEndpointName')]",
+          "location": "[parameters('location')]",
+          "properties": {
+              "subnet": {
+                  "id": "[parameters('subnet')]"
+              },
+              "customNetworkInterfaceName": "ts-pe-vi1-nic",
+              "privateLinkServiceConnections": [
+                  {
+                      "name": "[parameters('privateEndpointName')]",
+                      "properties": {
+                          "privateLinkServiceId": "[parameters('privateLinkResource')]",
+                          "groupIds": [ "account" ]
+                      }
+                  }
+              ]
+          }
+      }
+  ]
+}

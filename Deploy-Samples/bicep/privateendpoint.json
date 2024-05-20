@@ -8,7 +8,7 @@
       },
       "privateEndpointName": {
           "type": "String",
-          "defaultValue": "ts-pe-stg-vi28"
+          "defaultValue": "ts-stg1"
       },
       "privateLinkResource": {
           "type": "String",
@@ -29,7 +29,7 @@
               "subnet": {
                   "id": "[parameters('subnet')]"
               },
-              "customNetworkInterfaceName": "ts-pe-stg-vi28-nic",
+              "customNetworkInterfaceName": "ts-stg1-nic",
               "privateLinkServiceConnections": [
                   {
                       "name": "[parameters('privateEndpointName')]",

@@ -3,10 +3,10 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "videoIndexerAccountName": {
-      "value": "ts-pe-vi"
+      "value": "ts-arc-6-vi"
     },
     "storageAccountName": {
-      "value": "tspevistorage"
+      "value": "viarcdevsa"
     }
   }
 }

@@ -6,8 +6,8 @@ export SCRIPT_PATH=$(dirname "$(readlink -f "$0")")
 deploy_name=videploy
 #########Fill In The missing Propperties#########
 subscription="24237b72-8546-4da5-b204-8c3cb76dd930"
-resource_group="ts-pe-rg"
-location="canadaeast"
+resource_group="vi-arc-dev-rg"
+location="eastus"
 #################################################
 
 #Template

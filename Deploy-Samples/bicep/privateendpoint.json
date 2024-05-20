@@ -8,15 +8,15 @@
       },
       "privateEndpointName": {
           "type": "String",
-          "defaultValue": "ts-pe-vi4"
+          "defaultValue": "ts-pe-stg-vi28"
       },
       "privateLinkResource": {
           "type": "String",
-          "defaultValue": "/subscriptions/24237b72-8546-4da5-b204-8c3cb76dd930/resourceGroups/ts-pe-rg/providers/Microsoft.VideoIndexer/accounts/ts-pe-vi"
+          "defaultValue": "/subscriptions/24237b72-8546-4da5-b204-8c3cb76dd930/resourceGroups/ts-pe-stg-rg/providers/Microsoft.VideoIndexer/accounts/ts-pe-stg-vi"
       },
       "subnet": {
           "type": "String",
-          "defaultValue": "/subscriptions/24237b72-8546-4da5-b204-8c3cb76dd930/resourceGroups/ts-pe-rg/providers/Microsoft.Network/virtualNetworks/ts-pe-net/subnets/default"
+          "defaultValue": "/subscriptions/24237b72-8546-4da5-b204-8c3cb76dd930/resourceGroups/ts-pe-stg-rg/providers/Microsoft.Network/virtualNetworks/ts-pe-staging-net/subnets/default"
       }
   },
   "resources": [
@@ -29,7 +29,7 @@
               "subnet": {
                   "id": "[parameters('subnet')]"
               },
-              "customNetworkInterfaceName": "ts-pe-vi4-nic",
+              "customNetworkInterfaceName": "ts-pe-stg-vi28-nic",
               "privateLinkServiceConnections": [
                   {
                       "name": "[parameters('privateEndpointName')]",

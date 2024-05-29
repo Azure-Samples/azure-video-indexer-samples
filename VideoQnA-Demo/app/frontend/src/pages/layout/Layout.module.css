@@ -1,0 +1,155 @@
+.layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.header {
+    background-color: #222222;
+    color: #f2f2f2;
+}
+
+.headerContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 46px;
+}
+
+.headerTitleContainer {
+    display: flex;
+    align-items: center;
+    margin-right: 40px;
+    color: #f2f2f2;
+    text-decoration: none;
+}
+
+.headerLogo {
+    height: 40px;
+}
+
+.headerTitle {
+    margin-left: 40px;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.headerNavList {
+    display: flex;
+    list-style: none;
+    padding-left: 0;
+}
+
+.headerNavPageLink {
+    color: #f2f2f2;
+    text-decoration: none;
+    opacity: 0.75;
+
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    transition-duration: 500ms;
+    transition-property: opacity;
+}
+
+.headerNavPageLink:hover {
+    opacity: 1;
+}
+
+.headerNavPageLinkActive {
+    color: #f2f2f2;
+    text-decoration: none;
+}
+
+.headerNavLeftMargin {
+    margin-left: 20px;
+}
+
+.headerRightText {
+    font-weight: normal;
+    margin-left: 40px;
+    margin-right: 40px;
+    font-size: 14px;
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: 14px;
+}
+
+.microsoftLogo {
+    height: 23px;
+    font-weight: 600;
+}
+
+.githubLogo {
+    height: 20px;
+}
+
+.footer {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    margin-top: 40px;
+}
+
+.footerText {
+    margin-left: 40px;
+    margin-right: 40px;
+    font-family: Segoe UI;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    padding: 18px 0;
+}
+
+.footerText a {
+    color: #0078d4;
+    text-decoration-line: underline;
+}
+
+nav {
+    display: none;
+}
+
+@media only screen and (max-width: 720px) {
+    .headerTitle {
+        margin-left: 24px;
+        margin-top: 0;
+        margin-bottom: 0;
+        line-height: 16px;
+    }
+
+    .headerRightText {
+        margin-left: 0;
+        margin-right: 24px;
+    }
+
+    .headerTitleContainer {
+        margin-right: 8px;
+    }
+
+    .footerText {
+        margin-left: 24px;
+        margin-right: 24px;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .headerContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        margin: 9px 0;
+    }
+
+    .headerTitle {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    .headerRightText {
+        margin-top: 8px;
+        margin-left: 24px;
+        margin-bottom: 0;
+    }
+}

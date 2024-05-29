@@ -1,0 +1,127 @@
+.oneshotContainer {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.oneshotTopSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.oneshotBottomSection {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: flex-start;
+    width: 100%;
+    margin-top: 16px;
+}
+
+.oneshotTitle {
+    color: var(--type-primary, rgba(0, 0, 0, 0.8));
+    font-size: 40px;
+    font-family: Segoe UI;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-top: 130px;
+    margin-bottom: 16px;
+}
+
+.oneshotSubTitle {
+    color: var(--type-primary, var(--typography-type-primary, rgba(0, 0, 0, 0.8)));
+    text-align: center;
+    font-family: Segoe UI;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+    margin-bottom: 24px;
+    max-width: 669px;
+    margin-left: 24px;
+    margin-top: 0;
+    margin-right: 24px;
+}
+
+.oneshotQuestionInput {
+    max-width: 720px;
+    width: 100%;
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
+.oneshotAnswerContainer {
+    max-width: 720px;
+    width: 100%;
+    padding: 0 24px;
+    margin-top: 16px;
+}
+
+.oneshotAnalysisPanel {
+    max-width: 720px;
+    width: 100%;
+    padding: 0 24px;
+}
+
+.oneshotSettingsSeparator {
+    margin-top: 16px;
+}
+
+.commandsContainer {
+    padding-left: 40px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    position: absolute;
+    right: 0;
+    left: 0;
+    top: 0;
+    display: flex;
+    background-color: white;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.loadingIndexes {
+    margin-top: 80px;
+}
+
+.commandButton {
+    margin-right: 20px;
+}
+
+@media only screen and (max-width: 720px) {
+    .oneshotTitle {
+        margin: 80px 24px 16px 24px;
+        font-size: 32px;
+    }
+
+    .oneshotBottomSection {
+        margin-top: 8px;
+    }
+
+    .commandsContainer {
+        padding-left: 24px;
+    }
+
+    .oneshotSubTitle {
+        font-size: 13px;
+    }
+}
+
+@media only screen and (max-width: 452px) {
+    .oneshotSubTitle div {
+        display: inline;
+    }
+}
+
+@media only screen and (max-width: 380px) {
+    .oneshotSubTitle {
+        text-align: left;
+    }
+}

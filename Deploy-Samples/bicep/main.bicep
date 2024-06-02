@@ -1,9 +1,10 @@
 param location string = resourceGroup().location
 
 @description('Storage Account Name')
-param storageAccountName string
+param storageAccountName string = 'pstsintstorage'
 @description('Video Indexer Account Name')
-param videoIndexerAccountName string
+param videoIndexerAccountName string = 'pe-ts-int7'
+
 
 module videoIndexer 'videoIndexer.bicep' = {
   name: 'videoIndexer.bicep'
@@ -15,11 +16,23 @@ module videoIndexer 'videoIndexer.bicep' = {
 }
 
 // Role Assignment must be on a separate resource 
-module roleAssignment 'role-assignment.bicep' = {
+module roleAssignment 'roleAssignment.bicep' = {
   name: 'grant-storage-blob-data-contributor'
   params: {
     servicePrincipalObjectId: videoIndexer.outputs.servicePrincipalId
     storageAccountName: storageAccountName
+  }
+  dependsOn: [
+    videoIndexer
+  ]
+}
+
+module privateEndpoint 'privateEndpoint.bicep' = {
+  name: 'privateEndpoint.bicep'
+  params: {
+    location: location
+    privateEndpointName: 'ts-pe-7'
+    privateLinkResource: videoIndexer.id
   }
   dependsOn: [
     videoIndexer

@@ -4,7 +4,8 @@ param location string = resourceGroup().location
 param storageAccountName string = 'pstsintstorage'
 @description('Video Indexer Account Name')
 param videoIndexerAccountName string = 'pe-ts-int7'
-
+@description('Private Endpoint Name')
+var privateEndpointName  = '${videoIndexerAccountName}-pe'
 
 module videoIndexer 'videoIndexer.bicep' = {
   name: 'videoIndexer.bicep'
@@ -31,8 +32,8 @@ module privateEndpoint 'privateEndpoint.bicep' = {
   name: 'privateEndpoint.bicep'
   params: {
     location: location
-    privateEndpointName: 'ts-pe-7'
-    privateLinkResource: videoIndexer.id
+    privateEndpointName: privateEndpointName
+    privateLinkResource: videoIndexer.outputs.videoIndexerResourceId
   }
   dependsOn: [
     videoIndexer

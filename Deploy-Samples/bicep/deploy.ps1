@@ -12,14 +12,12 @@ $template_file="main.bicep"
 
 # Login to Azure
 #az login --use-device-code
-az account set -s $subscription
+#az account set -s $subscription
 
 # Create Resource Group
 echo "Create Resource Group"
-az group create -n ${resource_group} -l $location
+#az group create -n ${resource_group} -l $location
 
 # Deploy the bicep file
 echo "Deploy Resources"
-az deployment group create -g $resource_group --name $deploy_name `
-                        --template-file $template_file `
-                        --parameters $parameters_file
+az deployment group create -g $resource_group --name $deploy_name --template-file $template_file

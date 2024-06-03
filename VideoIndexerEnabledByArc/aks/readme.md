@@ -61,7 +61,9 @@ During the deployment the script will ask the following questions where you will
 
 Once deployed you will get a URL to the Data Plane API of your new Video Indexer on Edge extension which is now running on the AKS cluster. You can use this API to perform indexing jobs and test Video Indexer on Edge. Please note that this is **not** meant as a path to production and only provided to quickly test Video Indexer on Edge functionality. This concludes the demo script and you are done. Below are the steps if you want to deploy VI on Edge manually.
 
-ollow these steps to deploy the Video Indexer Arc Extention to your Arc K8S Enabled cluster. 
+## 2. Manual deployment steps start here
+
+Follow these steps to deploy the Video Indexer Arc Extention to your Arc K8S Enabled cluster. 
 
 ### Hardware and Software Requirements
 
@@ -195,7 +197,38 @@ There are some additional Parameters that can be used in order to have a fine gr
 | speech.resource.limits.cpu | 2 | The limits number of cores for the speech pod. must be > speech.resource.requests.cpu  |
 | speech.resource.limits.mem | 3Gi | The limits memory capactiy for the speech pod. must be > speech.resource.requests.mem  |
 | translate.resource.requests.cpu | 1 | The requested number of cores for the translate pod |
-| t
+| translate.resource.requests.mem | 16Gi | The requested memory capactiy for the translate pod |
+| translateeech.resource.limits.cpu | -- | The limits number of cores for the translate pod. must be > translate.resource.requests.cpu  |
+| translate.resource.limits.mem | -- | The limits memory capactiy for the translate pod. must be > translate.resource.requests.mem  |
+| videoIndexer.webapi.resources.requests.cpu | 0.5 | The request number of cores for the web api pod  |
+| videoIndexer.webapi.resources.requests.mem | 4Gi | The request memory capactiy for the web api pod  |
+| videoIndexer.webapi.resources.limits.cpu | 1 | The limits number of cores for the web api pod  |
+| videoIndexer.webapi.resources.limits.mem | 6Gi | The limits memory capactiy for the web api pod  |
+| videoIndexer.webapi.resources.limits.mem | 6Gi | The limits memory capactiy for the web api pod  |
+| storage.storageClass | "" | The storage class to be used |
+| storage.useExternalPvc | false | determines whether an external PVC is used. if true, the VideoIndexer PVC will not be installed |
+
+
+
+example deploy script : 
+
+```bash
+az k8s-extension create --name videoindexer \
+    --extension-type Microsoft.videoindexer \
+    .......
+    
+    --config AI.nodeSelector."beta\\.kubernetes\\.io/os"=linux
+    --config "speech.resource.requests.cpu=500m" \
+    --config "speech.resource.requests.mem=2Gi" \
+    --config "speech.resource.limits.cpu=1" \
+    --config "speech.resource.limits.mem=4Gi" \
+    --config "videoIndexer.webapi.resources.requests.mem=4Gi"\
+    --config "videoIndexer.webapi.resources.limits.mem=8Gi"\
+    --config "videoIndexer.webapi.resources.limits.cpu=1"\
+    --config "storage.storageClass=azurefile-csi" 
+
+```
+
 ### Step 4 (Optional) - Deploy Using Bicep Template
 
 In case you do not wish to use Az CLI Commands to deploy the video indexer arc extension , you can use the bicep deployment

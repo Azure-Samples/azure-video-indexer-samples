@@ -46,6 +46,7 @@ function install_cli_tools {
   echo "ensure you got the latest CLI client and install add ons if needed"
   echo "https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli"
   az extension add --name connectedk8s
+  az extension add --name k8s-extension
   az extension add --name aks-preview
   az provider register --namespace Microsoft.Kubernetes
   az provider register --namespace Microsoft.KubernetesConfiguration

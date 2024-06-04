@@ -74,21 +74,21 @@ The repo includes sample data so it's ready to try end-to-end. The sample we use
    1. Index videos in VI account.
    1. Make all videos public access.
    1. Define the following azd parameters using `azd env set <Config Key> <Config Value>`:
-     - AZURE_OPENAI_API_KEY (Azure OpenAI API key)
-     - AZURE_OPENAI_CHATGPT_DEPLOYMENT (Azure OpenAI Chat LLM deployment name}
-     - AZURE_OPENAI_EMBEDDINGS_DEPLOYMENT {Azure OpenAI embeddings model deployment name)
-     - AZURE_OPENAI_RESOURCE_GROUP (Resource Group name of the Azure OpenAI resource)
-     - AZURE_OPENAI_SERVICE (Azure OpenAI resource name)
+      - AZURE_OPENAI_API_KEY (Azure OpenAI API key)
+      - AZURE_OPENAI_CHATGPT_DEPLOYMENT (Azure OpenAI Chat LLM deployment name}
+      - AZURE_OPENAI_EMBEDDINGS_DEPLOYMENT {Azure OpenAI embeddings model deployment name)
+      - AZURE_OPENAI_RESOURCE_GROUP (Resource Group name of the Azure OpenAI resource)
+      - AZURE_OPENAI_SERVICE (Azure OpenAI resource name)
 
-     - AZURE_SEARCH_KEY (Azure AI Search API key)
-     - AZURE_SEARCH_SERVICE (Azure AI Search resource name)
-     - AZURE_SEARCH_LOCATION (Azure AI Search instance location, e.g. ukwest)
-     - AZURE_SEARCH_SERVICE_RESOURCE_GROUP (Resource Group name of the Azure AI Search resource)
-     - AZURE_TENANT_ID (Azure Tenant ID)
+      - AZURE_SEARCH_KEY (Azure AI Search API key)
+      - AZURE_SEARCH_SERVICE (Azure AI Search resource name)
+      - AZURE_SEARCH_LOCATION (Azure AI Search instance location, e.g. ukwest)
+      - AZURE_SEARCH_SERVICE_RESOURCE_GROUP (Resource Group name of the Azure AI Search resource)
+      - AZURE_TENANT_ID (Azure Tenant ID)
 
-     - LANGUAGE_MODEL ("openai")
-     - PROMPT_CONTENT_DB (Either: "azure_search" / "chromadb")
-     - PROMPT_CONTENT_DB_NAME (Some DB name with this format "vi-db-name-index")
+      - LANGUAGE_MODEL ("openai")
+      - PROMPT_CONTENT_DB (Either: "azure_search" / "chromadb")
+      - PROMPT_CONTENT_DB_NAME (Some DB name with this format "vi-db-name-index")
 
    1. Index the archive into a new Azure AI Search index (Vector DB) by following these steps:
 

@@ -92,13 +92,18 @@ The repo includes sample data so it's ready to try end-to-end. The sample we use
 
    1. Index the archive into a new Azure AI Search index (Vector DB) by following these steps:
 
-     1. Install python dependencies: `pip install -r .\app\backend\requirements.txt`
+     1. Install python dependencies with:
+
+         `pip install -r .\app\backend\requirements.txt`
+     
      1. Create a `.env` file that holds your Azure AI Video Indexer details (taken from Azure portal) in the following format:
+        
         ```
         AccountName='YOUR_VI_ACCOUNT_NAME'
         ResourceGroup='RESOURCE_GROUP_NAME'
         SubscriptionId='SUBSCRIPTION_ID'
         ```
+        
      1. Optionally make changes in `.\app\backend\vi_search\prep_db.py` <!-- why? -->
      1. Save and run the following commands in PowerShell from the workspace root directory:
         - `$env:PYTHONPATH += ";$(Get-Location)"` (to add the current directory to the Python path)

@@ -44,6 +44,7 @@ chmod +x ./vi_extension_install.sh
 
 sh vi_extension_install.sh
 ```
+
 > **_Note_:** The script aim to run on Ubuntu OS and contains command that uses Ubuntu package manager. 
 
 During the deployment the script will ask the following questions where you will need to provide your environment specific values. Below table explains each question and the desired value. Some will expect or have default values.
@@ -153,7 +154,7 @@ You will recieve a response of the following format:
 
 Use this data in the next step.
 
-### Step 3 - Create Azure Arc Video Indexer Extension
+### Step 3 - Create Azure Arc Video Indexer Extension using CLI
 
 The following parameters will be used as input to the extension creation command:
 
@@ -194,24 +195,67 @@ az k8s-extension create --name videoindexer \
 
 There are some additional Parameters that can be used in order to have a fine grain control on the extension creation
 
-| Parameter | Default | Description |
+| Parameter | Default | Description
+|-----------|---------|-------------
+| AI.nodeSelector | - | The node Selector label on which the AI Pods (speech and translate)  will be assigned to
+| speech.resource.requests.cpu | 1 | The requested number of cores for the speech pod
+| speech.resource.requests.mem | 2Gi | The requested memory capactiy for the speech pod
+| speech.resource.limits.cpu | 2 | The limits number of cores for the speech pod. must be > speech.resource.requests.cpu
+| speech.resource.limits.mem | 3Gi | The limits memory capactiy for the speech pod. must be > speech.resource.requests.mem
+| translate.resource.requests.cpu | 1 | The requested number of cores for the translate pod
+| translate.resource.requests.mem | 16Gi | The requested memory capactiy for the translate pod
+| translateeech.resource.limits.cpu | -- | The limits number of cores for the translate pod. must be > translate.resource.requests.cpu
+| translate.resource.limits.mem | -- | The limits memory capactiy for the translate pod. must be > translate.resource.requests.mem
+| videoIndexer.webapi.resources.requests.cpu | 0.5 | The request number of cores for the web api pod
+| videoIndexer.webapi.resources.requests.mem | 4Gi | The request memory capactiy for the web api pod
+| videoIndexer.webapi.resources.limits.cpu | 1 | The limits number of cores for the web api pod
+| videoIndexer.webapi.resources.limits.mem | 6Gi | The limits memory capactiy for the web api pod
+| videoIndexer.webapi.resources.limits.mem | 6Gi | The limits memory capactiy for the web api pod
+| storage.storageClass | "" | The storage class to be used
+| storage.useExternalPvc | false | determines whether an external PVC is used. if true, the VideoIndexer PVC will not be installed
+
+example deploy script :
+
+```bash
+az k8s-extension create --name videoindexer \
+    --extension-type Microsoft.videoindexer \
+    .......
+
+    --config AI.nodeSelector."beta\\.kubernetes\\.io/os"=linux
+    --config "speech.resource.requests.cpu=500m" \
+    --config "speech.resource.requests.mem=2Gi" \
+    --config "speech.resource.limits.cpu=1" \
+    --config "speech.resource.limits.mem=4Gi" \
+    --config "videoIndexer.webapi.resources.requests.mem=4Gi"\
+    --config "videoIndexer.webapi.resources.limits.mem=8Gi"\
+    --config "videoIndexer.webapi.resources.limits.cpu=1"\
+    --config "storage.storageClass=azurefile-csi" 
+
+```
+
+### Step 3 (Alternative) - Deploy Using Bicep Template
+
+In case you do not wish to use Az CLI Commands to deploy the video indexer arc extension , you can use the bicep deployment
+provided on the current folder.
+> **_Note:_**: This Step replaces the need to run Step 2 + 3 above
+> **_Note:_**: In order to deploy the Bicep template you will need to use user-assigned Managed Identity with a 'Contributor' Role Assignment on the Subscription.
+
+1. Open The [Template File](vi.arcextension.template.bicep) file and Fill in the required parameters (see below).
+2. Run the Following Az CLi Commands in order to deploy the template using the [az deployment group create](https://learn.microsoft.com/en-us/cli/azure/deployment/group?view=azure-cli-latest#az-deployment-group-create) command.
+
+```shell
+az deployment group create --resource-group myResourceGroup --template-file .\vi.arcextension.template.bicep
+```
+
+## Parameters
+
+| Parameter | Type | Description |
 |-----------|---------|-------------|
-| AI.nodeSelector | - | The node Selector label on which the AI Pods (speech and translate)  will be assigned to | 
-| speech.resource.requests.cpu | 1 | The requested number of cores for the speech pod |
-| speech.resource.requests.mem | 2Gi | The requested memory capactiy for the speech pod |
-| speech.resource.limits.cpu | 2 | The limits number of cores for the speech pod. must be > speech.resource.requests.cpu  |
-| speech.resource.limits.mem | 3Gi | The limits memory capactiy for the speech pod. must be > speech.resource.requests.mem  |
-| translate.resource.requests.cpu | 1 | The requested number of cores for the translate pod |
-| translate.resource.requests.mem | 16Gi | The requested memory capactiy for the translate pod |
-| translateeech.resource.limits.cpu | -- | The limits number of cores for the translate pod. must be > translate.resource.requests.cpu  |
-| translate.resource.limits.mem | -- | The limits memory capactiy for the translate pod. must be > translate.resource.requests.mem  |
-| videoIndexer.webapi.resources.requests.cpu | 0.5 | The request number of cores for the web api pod  |
-| videoIndexer.webapi.resources.requests.mem | 4Gi | The request memory capactiy for the web api pod  |
-| videoIndexer.webapi.resources.limits.cpu | 1 | The limits number of cores for the web api pod  |
-| videoIndexer.webapi.resources.limits.mem | 6Gi | The limits memory capactiy for the web api pod  |
-| videoIndexer.webapi.resources.limits.mem | 6Gi | The limits memory capactiy for the web api pod  |
-| storage.storageClass | "" | The storage class to be used |
-| storage.useExternalPvc | false | determines whether an external PVC is used. if true, the VideoIndexer PVC will not be installed |
+| accountResourceId |  string | The Video Indexer Full Resource Id that will be connected to the Arc Extension
+| accountId  | string | The Video Indexer Account Id
+| videoIndexerEndpointUri | string | Video Indexer Dns Name to be used as the Portal endpoint
+| arcConnectedClusterName | string | The Azure Arc Kubernetes Cluster Created at Step 1
+| identityId  | string | a User Assigned Managed Identity with 'Contributor' Role Assignment on your subscription
 
 ### Step 4 - Verify Deployment
 
@@ -219,6 +263,6 @@ There are some additional Parameters that can be used in order to have a fine gr
 kubectl get pods -n video-indexer
 ```
 
-you will see the video indexer pods are up and running. 
+you will see the video indexer pods are up and running.
 
 > **_Note_:** It might take few minutes for all the pods to become available and running .

@@ -103,7 +103,7 @@ The repo includes sample data so it's ready to try end-to-end. The sample we use
         ResourceGroup='RESOURCE_GROUP_NAME'
         SubscriptionId='SUBSCRIPTION_ID'
         ```
-        
+
      1. Optionally make changes in `.\app\backend\vi_search\prep_db.py` <!-- why? -->
      1. Save and run the following commands in PowerShell from the workspace root directory:
         - `$env:PYTHONPATH += ";$(Get-Location)"` (to add the current directory to the Python path)
@@ -112,10 +112,10 @@ The repo includes sample data so it's ready to try end-to-end. The sample we use
      1. If you are using Chroma DB, which is now configured to save the DB locally, make sure it will be available to the deployment as well.
 
 1. **Deploy**
-   - Install and use PowerShell from https://www.microsoft.com/store/productId/9MZ1SNWT0N5D?ocid=pdpshare
-   - Run `azd up` command to setup the app service resources.
-   - Select subscription and location where to create the app service deployment.
-   - Run `azd deploy` command to deploy the app service and any further changes in the python app service code.
+   1. Install and use PowerShell from https://www.microsoft.com/store/productId/9MZ1SNWT0N5D?ocid=pdpshare
+   1. Run `azd up` command to setup the app service resources.
+   1. Select subscription and location where to create the app service deployment.
+   1. Run `azd deploy` command to deploy the app service and any further changes in the python app service code.
 
 ## FAQ
 

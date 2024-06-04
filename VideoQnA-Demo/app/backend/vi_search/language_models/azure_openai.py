@@ -57,9 +57,18 @@ class OpenAI(LanguageModels):
         embeddings_vector = response.data[0].embedding
         return embeddings_vector
 
-    def chat(self, prompt: str, temperature: float, top_p: float = 1.0) -> str:
-        messages = [{"role":"system", "content":"You are a helpful assistant."},
-                    {"role":"user", "content": prompt},]
+    def chat(self, sys_prompt: str, user_prompt: str, temperature: float, top_p: float = 1.0) -> str:
+        ''' Chat with the OpenAI model.
+
+        :param sys_prompt: The system prompt to chat with
+        :param user_prompt: The user prompt to chat with
+        :param temperature: The temperature to use for chat
+        :param top_p: The top_p to use for chat
+        :return: The response from the chat model
+        '''
+
+        messages = [{"role": "system", "content": sys_prompt},
+                    {"role": "user", "content": user_prompt},]
 
         res = self.client.chat.completions.create(model=self.azure_openai_chatgpt_deployment,
                                                   messages=messages,

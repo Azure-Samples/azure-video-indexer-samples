@@ -1,6 +1,9 @@
+# Prompt example
 # Do no ident as it changes the string
+# Notice: current code expects 2 key-value pairs for each prompt example
+#         Only the key prefix may vary, the suffix should be 'system_prompt' and 'user_template'
 ask_templates = {
-    'default':
+    'default_system_prompt':
 """You are an intelligent assistant helping customers with their video questions.
 Use 'you' to refer to the individual asking the questions even if they ask with 'I'.
 Answer the following question using only the data provided in the sources below.
@@ -28,7 +31,9 @@ Employee Training Video Chapter 2: Overlake is the name of the area that include
 
 Answer:
 In-network deductibles are $500 for employee and $1000 for family [Employee Training Video Chapter 5] and Overlake is in-network for the employee plan [Employee Training Video Chapter 2][Employee Training Video Chapter 3].
-
+""",
+    'default_user_template':
+"""
 ###
 Question: '{q}'?
 
@@ -36,7 +41,9 @@ Sources:
 {retrieved}
 
 Answer:
+
 """,
-    # Placeholder for adding more templates
-    "REPLACE_ME_WITH_NEW_ASK_TEMPLATE_KEY": """{q} {retrieved}"""
+    # Placeholder for adding more prompts
+    "new_name_system_prompt": """Explain how the system should behave, it's recommended to include an example. """,
+    "new_name_user_template": """{q} {retrieved}"""
 }

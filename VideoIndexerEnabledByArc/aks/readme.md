@@ -71,7 +71,7 @@ The following is the minumum and recommended requirements if the extension conta
 
 | Configuration | VM Count | Node CPU Cores Count*  | Node Ram | Node Storage | Remarks
 | --- | --- | --- | --- | --- | --- |
-| Minimum | 1 | 8 Cores | 16 GB | 50 GB | Process **one** video in **basic audio** preset
+| Minimum | 1 | 8 Cores | 16 GB | 50 GB | Process **on** video in **basic audio** preset
 | Recommended | 2 | 48-64 Cores | 256 GB | 100 GB | Processing **10 videos** in parallel in **basic video** preset
 
 *Storage needs to support **ReadWriteMany** Storage Class

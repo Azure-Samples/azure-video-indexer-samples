@@ -1,21 +1,28 @@
-@minLength(3)
-param videoIndexerPrefix string
+param location string = resourceGroup().location
 
-param location string
+@description('Storage Account Name')
 param storageAccountName string
-var videoIndexerAccountName = '${videoIndexerPrefix}vi'
+@description('Video Indexer Account Name')
+param videoIndexerAccountName string
 
-
+@description('Storage Account Kind')
+var storageKind = 'StorageV2'
+@description('Storage Account Sku')
+var storageSku = 'Standard_LRS'
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' = {
   name: storageAccountName
   location: location
-  kind: 'StorageV2'
+  kind: storageKind
+  properties: {
+    minimumTlsVersion: 'TLS1_2'
+  }
   sku: {
-    name: 'Standard_LRS'
+    name: storageSku
   }
 }
-resource videoIndexerAccount 'Microsoft.VideoIndexer/accounts@2024-01-01' = {
+
+resource videoIndexer 'Microsoft.VideoIndexer/accounts@2024-01-01' = {
   name: videoIndexerAccountName
   location: location
   identity: {
@@ -28,4 +35,6 @@ resource videoIndexerAccount 'Microsoft.VideoIndexer/accounts@2024-01-01' = {
   }
 }
 
-output videoIndexerPrincipalId string = videoIndexerAccount.identity.principalId
+output storageAccountName string = storageAccount.name
+output accountName string = videoIndexer.name
+output servicePrincipalId string = videoIndexer.identity.principalId

@@ -1,0 +1,47 @@
+.thoughtProcess {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+    word-wrap: break-word;
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+.citationTab {
+    margin-top: 10px;
+}
+
+.citationVideoTitle {
+    color: var(--type-primary, rgba(0, 0, 0, .8));
+    font-size: 16px;
+    font-family: Segoe UI;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 22px;
+    margin-block-start: 0;
+    margin-block-end: 0;
+    margin-top: 16px;
+}
+
+.citationVideoTime {
+    color: var(--type-primary, rgba(0, 0, 0, .8));
+    font-size: 14px;
+    font-family: Segoe UI;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+    margin-block-start: 0;
+    margin-block-end: 0;
+    margin: 4px 0;
+}
+
+.playerContainer {
+    padding-top: 56.25%;
+    position: relative;
+}
+
+.playerIframe {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+}

@@ -1,0 +1,62 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    background: #f2f2f2;
+
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+    height: 100%;
+}
+
+@font-face {
+    font-family: "Segoe UI";
+    font-display: swap;
+    src: local("Segoe UI"), url("./assets/fonts/segoeui.woff2") format("woff2"), url("./assets/fonts/segoeui.woff") format("woff"),
+        url("./assets/fonts/segoeui.ttf") format("truetype"), url("./assets/fonts/segoeui.svg") format("svg"), url("./assets/fonts/segoeui.eot") format("eot");
+    font-weight: 400;
+}
+@font-face {
+    font-family: "Segoe UI";
+    font-display: swap;
+    src: local("Segoe UI Light"), url("./assets/fonts/segoeuil.woff2") format("woff2"), url("./assets/fonts/segoeuil.woff") format("woff"),
+        url("./assets/fonts/segoeuil.ttf") format("truetype"), url("./assets/fonts/segoeuil.eot") format("eot"),
+        url("./assets/fonts/segoeuil.svg") format("svg");
+    font-weight: 100;
+}
+@font-face {
+    font-family: "Segoe UI";
+    font-display: swap;
+    src: local("Segoe UI Semilight"), url("./assets/fonts/segoeuisl.woff2") format("woff2"), url("./assets/fonts/segoeuisl.woff") format("woff"),
+        url("./assets/fonts/segoeuisl.ttf") format("truetype"), url("./assets/fonts/segoeuisl.eot") format("eot"),
+        url("./assets/fonts/segoeuisl.svg") format("svg");
+    font-weight: 200;
+}
+@font-face {
+    font-family: "Segoe UI";
+    font-display: swap;
+    src: local("Segoe UI Semibold"), url("./assets/fonts/seguisb.woff2") format("woff2"), url("./assets/fonts/seguisb.woff") format("woff"),
+        url("./assets/fonts/seguisb.ttf") format("truetype"), url("./assets/fonts/seguisb.eot") format("eot"), url("./assets/fonts/seguisb.svg") format("svg");
+    font-weight: 600;
+}
+@font-face {
+    font-family: "Segoe UI";
+    font-display: swap;
+    src: local("Segoe UI Bold"), url("./assets/fonts/segoeuib.woff2") format("woff2"), url("./assets/fonts/segoeuib.woff") format("woff"),
+        url("./assets/fonts/segoeuib.ttf") format("truetype"), url("./assets/fonts/segoeuib.eot") format("eot"),
+        url("./assets/fonts/segoeuib.svg") format("svg");
+    font-weight: 700;
+}

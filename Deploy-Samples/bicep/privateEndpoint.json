@@ -1,0 +1,77 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.27.1.19265",
+      "templateHash": "2775178815024856287"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string"
+    },
+    "privateEndpointName": {
+      "type": "string"
+    },
+    "privateLinkResource": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "subnet": "/subscriptions/24237b72-8546-4da5-b204-8c3cb76dd930/resourceGroups/pe-ts-int-rg/providers/Microsoft.Network/virtualNetworks/pe-ts-int-vnet/subnets/default",
+    "viZone": "privatelink.api.videoindexer.ai"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/privateEndpoints",
+      "apiVersion": "2021-05-01",
+      "name": "[parameters('privateEndpointName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "subnet": {
+          "id": "[variables('subnet')]"
+        },
+        "customNetworkInterfaceName": "[format('{0}-nic', parameters('privateEndpointName'))]",
+        "privateLinkServiceConnections": [
+          {
+            "name": "[parameters('privateEndpointName')]",
+            "properties": {
+              "privateLinkServiceId": "[parameters('privateLinkResource')]",
+              "groupIds": [
+                "account"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/privateDnsZones",
+      "apiVersion": "2020-06-01",
+      "name": "[variables('viZone')]",
+      "location": "global",
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+      "apiVersion": "2020-03-01",
+      "name": "[format('{0}/{1}', parameters('privateEndpointName'), 'default')]",
+      "properties": {
+        "privateDnsZoneConfigs": [
+          {
+            "name": "variables['viZone']",
+            "properties": {
+              "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', variables('viZone'))]"
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateDnsZones', variables('viZone'))]",
+        "[resourceId('Microsoft.Network/privateEndpoints', parameters('privateEndpointName'))]"
+      ]
+    }
+  ]
+}

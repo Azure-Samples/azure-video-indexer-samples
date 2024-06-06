@@ -9,8 +9,8 @@ export type ExampleModel = {
 
 const EXAMPLES: ExampleModel[] = [
     {
-        text: "Which AI Insights can Video Indexer detect?",
-        value: "Which AI Insights can Video Indexer detect?"
+        text: "What insights are included with Azure AI Video Indexer?",
+        value: "What insights are included with Azure AI Video Indexer?"
     },
     {
         text: "What is OCR?",

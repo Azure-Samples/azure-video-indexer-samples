@@ -14,12 +14,6 @@ The repo includes sample data so it's ready to try end-to-end. The sample we use
 * Player integration to jump directly to the answer relevant part in the video.
 
 
-<!-- Change the text in the interface -->
-<!-- Change from "Which insights Video Indexer support?" to "What insights are included with Azure AI Video Indexer?" -->
-<!--
-![Chat screen](docs/qa_ui.png)
--->
-
 ## Getting Started
 
 **IMPORTANT:** To deploy and run this example, you must have an **Azure subscription with access enabled for the Azure OpenAI service**. You can request access [here](https://aka.ms/oaiapply). You can also visit [this page](https://azure.microsoft.com/free/cognitive-search/) to get some free Azure credits to get you started.
@@ -34,7 +28,7 @@ The repo includes sample data so it's ready to try end-to-end. The sample we use
 - [Azure Developer CLI](https://aka.ms/azure-dev/install)
 - [Python 3+](https://www.python.org/downloads/)
     - **Important**: Python and the pip package manager must be in the path in Windows for the setup scripts to work.
-    - **Important**: Ensure you can run `python --version` from console to check that you have the correct version. 
+    - **Important**: Ensure you can run `python --version` from console to check that you have the correct version.
     - **Important**: On Ubuntu, you might need to run `sudo apt install python-is-python3` to link `python` to `python3`.
 - [Node.js](https://nodejs.org/en/download/)
 - [Git](https://git-scm.com/downloads)
@@ -53,7 +47,7 @@ The repo includes sample data so it's ready to try end-to-end. The sample we use
 1. **Set up Azure AI Search**
 
    1. Change pricing tier to Basic.
-      
+
       ![basic tier](docs/create_search_service.png)
 
    1. Enter the newly created resource, and note the API key under Settings > Keys, to be used later in the process. You will use the admin key for write permissions to create new indexes.
@@ -65,7 +59,7 @@ The repo includes sample data so it's ready to try end-to-end. The sample we use
    1. Create Azure OpenAI instance.
    1. Create model deployments:
       1. text-embedding-ada-002 for embeddings
-      1. gpt3.5 turbo or gpt4 turbo or gpt-4o as the LLM model. 
+      1. gpt3.5 turbo or gpt4 turbo or gpt-4o as the LLM model.
    1. Note the deployment names to be used later in the process.
    1. Note API key under Resource management -> Keys and Endpoint to be used later in the process.
 
@@ -95,9 +89,9 @@ The repo includes sample data so it's ready to try end-to-end. The sample we use
      1. Install python dependencies with:
 
          `pip install -r .\app\backend\requirements.txt`
-     
+
      1. Create a `.env` file that holds your Azure AI Video Indexer details (taken from Azure portal) in the following format:
-        
+
         ```
         AccountName='YOUR_VI_ACCOUNT_NAME'
         ResourceGroup='RESOURCE_GROUP_NAME'
@@ -125,11 +119,11 @@ The repo includes sample data so it's ready to try end-to-end. The sample we use
 
 ## Troubleshooting
 
-If you see this error while running `azd deploy`: 
+If you see this error while running `azd deploy`:
 
-   `read /tmp/azd1992237260/backend_env/lib64: is a directory` 
+   `read /tmp/azd1992237260/backend_env/lib64: is a directory`
 
-delete the `./app/backend/backend_env folder` and re-run the `azd deploy` command.  
+delete the `./app/backend/backend_env folder` and re-run the `azd deploy` command.
 
 This issue is being tracked here: https://github.com/Azure/azure-dev/issues/1237
 

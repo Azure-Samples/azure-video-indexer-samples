@@ -1,4 +1,4 @@
-# Video Indexer Archive Q&A using LLM, Vector DB, OpenAI, Azure AI Search, and ChromaDB
+# Video Indexer Archive Q&A using LLM, Vector DB, Azure OpenAI, Azure AI Search, and ChromaDB
 
 
 This sample is a Video Archive Q&A that uses the Retrieval Augmented Generation (RAG) pattern with your own Azure AI Video Indexer indexed data. It uses Azure OpenAI Service to access the ChatGPT model, and Azure AI Search or ChromaDB for data indexing and retrieval.

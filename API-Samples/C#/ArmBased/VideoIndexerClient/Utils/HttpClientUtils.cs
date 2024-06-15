@@ -12,6 +12,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient.Utils
             var handler = new HttpClientHandler
             {
                 AllowAutoRedirect = false,
+                ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) => true
             };
             var httpClient = new HttpClient(handler);
             return httpClient;

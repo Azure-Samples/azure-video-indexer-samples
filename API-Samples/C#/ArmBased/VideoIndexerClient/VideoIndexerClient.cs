@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -25,6 +26,8 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
         public VideoIndexerClient()
         {
             System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12 | System.Net.SecurityProtocolType.Tls13;
+            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
             _httpClient = HttpClientUtils.CreateHttpClient();
 
         }
@@ -68,6 +71,8 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
                 var jsonResponseBody = await result.Content.ReadAsStringAsync();
                 var account = JsonSerializer.Deserialize<Account>(jsonResponseBody);
                 VerifyValidAccount(account, accountName);
+                if (account.Location.Equals("southafricanorth"))
+                    account.Location = "westus2";
                 Console.WriteLine($"[Account Details] Id:{account.Properties.Id}, Location: {account.Location}");
                 _account = account;
                 return account;
@@ -199,6 +204,29 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
                 var searchRequestResult = await _httpClient.GetAsync(requestUrl);
                 searchRequestResult.VerifyStatus(System.Net.HttpStatusCode.OK);
                 var searchResult = await searchRequestResult.Content.ReadAsStringAsync();
+                Console.WriteLine($"Here are the search results: \n{searchResult}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+        public async Task ListVideosAsync()
+        {
+            Console.WriteLine($"List videos in account {_account.Properties.Id}.");
+            try
+            {
+                var queryDictionary = new Dictionary<string, string>
+                {
+                    { "accessToken" , _accountAccessToken },
+                };
+                var queryParams = queryDictionary.CreateQueryString();
+
+                var requestUrl = $"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos?{queryParams}";
+                var listVideosResult = await _httpClient.GetAsync(requestUrl);
+                listVideosResult.VerifyStatus(System.Net.HttpStatusCode.OK);
+                var searchResult = await listVideosResult.Content.ReadAsStringAsync();
                 Console.WriteLine($"Here are the search results: \n{searchResult}");
             }
             catch (Exception ex)

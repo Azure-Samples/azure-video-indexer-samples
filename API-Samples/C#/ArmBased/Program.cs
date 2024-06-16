@@ -51,8 +51,24 @@ namespace VideoIndexingARMAccounts
             Console.WriteLine("Sample1- Get Account Basic Details");
             await client.GetAccountAsync(Consts.ViAccountName);
 
-            // Sample 2: Search for the video and get insights
-            Console.WriteLine("Sample 2 - List Videos");
+            //2. Sample 2 :  Upload a video , do not wait for the index operation to complete. 
+            Console.WriteLine("Sample2- Index a Video from URL");
+            var videoId = await client.UploadUrlAsync(VideoUrl, "ts-" + Guid.NewGuid().ToString("N").Substring(0, 6), ExcludedAI, false);
+
+
+            //2A. Sample 2A : Upload From Local File 
+            if (File.Exists(LocalVideoPath))
+            {
+                Console.WriteLine("Sample 2A - Index a video From File");
+                var fileVideoId = await client.FileUploadAsync("my-other-video-name", LocalVideoPath);
+            }
+
+            // Sample 3 : Wait for the video index to finish ( Polling method)
+            Console.WriteLine("Sample 3 - Polling on Video Completion Event");
+            await client.WaitForIndexAsync(videoId);
+
+            // Sample 4: Search for the video and get insights
+            Console.WriteLine("Sample 4 - List Videos");
             await client.ListVideosAsync();
 
 

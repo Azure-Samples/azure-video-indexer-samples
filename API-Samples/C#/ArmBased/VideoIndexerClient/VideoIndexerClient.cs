@@ -159,6 +159,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
                 var queryParams = new Dictionary<string, string>()
                 {
                     {"language", "English"},
+                    { "accessToken" , _accountAccessToken },
                 }.CreateQueryString();
 
                 var requestUrl = $"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos/{videoId}/Index?{queryParams}";
@@ -196,6 +197,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
             var queryParams = new Dictionary<string, string>()
             {
                 {"id", videoId},
+                { "accessToken" , _accountAccessToken },
             }.CreateQueryString();
 
             try
@@ -245,6 +247,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
                 { "name", videoName },
                 { "description", "video_description" },
                 { "privacy", "private" },
+                { "accessToken" , _accountAccessToken },
                 { "partition", "partition" }
             }.CreateQueryString();
             
@@ -284,6 +287,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
             {
                 {"widgetType", "Keywords"},
                 {"allowEdit", "true"},
+                { "accessToken" , _accountAccessToken },
             }.CreateQueryString();
             try
             {
@@ -312,7 +316,6 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
             {
                 var requestUrl = $"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos/{videoId}/PlayerWidget";
                 var playerWidgetRequestResult = await _httpClient.GetAsync(requestUrl);
-
                 var playerWidgetLink = playerWidgetRequestResult.Headers.Location;
                 playerWidgetRequestResult.VerifyStatus(System.Net.HttpStatusCode.MovedPermanently);
                 Console.WriteLine($"Got the player widget URL: \n{playerWidgetLink}");

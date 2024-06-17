@@ -5,7 +5,7 @@
 - [Overview](#overview)
 - [Prerequisites](#prerequisites)
 - [Start Here](#start-here)
-- [BYO GPT4o ClassifyObjects](#byo-gpt4o-classifyobjects)
+- [Classify objects with BYO GPT4o](#classify-objects-with-byo-gpt4o)
 - [Upload Video](#upload-video)
 
 ## Overview
@@ -32,7 +32,7 @@ To deploy the Bicep items, follow these steps:
   - endpoint: the base URL to be used for API calls, this can either point to the cloud account https://api.videoindexer.ai/<account_region>, or to a Video Indexer Arc extention endpoint.
   - subscription_id: the subscription id for the Video Indexer account.
 
-## BYO-GPT4o-ClassifyObjects
+## Classify objects with BYO GPT4o
 
 In this LogicApp flow sample, you will learn how to add aditional details on the cars detected in an indexed video, the sample leverage Video Indexer's [BYO capability](https://learn.microsoft.com/en-us/azure/azure-video-indexer/arc/azure-video-indexer-enabled-by-arc-bring-your-own-model-overview) and [detected objects](https://learn.microsoft.com/en-us/azure/azure-video-indexer/object-detection?tabs=webportal) in additon to Azure OpenAI.
 

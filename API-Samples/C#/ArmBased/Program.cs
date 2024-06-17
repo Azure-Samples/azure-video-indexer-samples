@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Threading.Tasks;
+// ReSharper disable All
 
 namespace VideoIndexingARMAccounts
 {
@@ -36,8 +37,7 @@ namespace VideoIndexingARMAccounts
 
             if (!Consts.Valid())
             {
-                throw new Exception(
-                    "Please Fill In SubscriptionId, Account Name and Resource Group on the Constant Class !");
+                throw new Exception("Please Fill In SubscriptionId, Account Name and Resource Group on the Constant Class !");
             }
             
             // Create Video Indexer Client

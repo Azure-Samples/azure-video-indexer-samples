@@ -86,6 +86,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
         /// <param name="videoName"> The Asset name to be used </param>
         /// <param name="exludedAIs"> The ExcludeAI list to run </param>
         /// <param name="waitForIndex"> should this method wait for index operation to complete </param>
+        /// <exception cref="Exception"></exception>
         /// <returns> Video Id of the video being indexed, otherwise throws excpetion</returns>
         public async Task<string> UploadUrlAsync(string videoUrl , string videoName, string exludedAIs = null, bool waitForIndex = false )
         {
@@ -145,6 +146,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
         /// Calls getVideoIndex API in 10 second intervals until the indexing state is 'processed'(https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Get-Video-Index)
         /// </summary>
         /// <param name="videoId"> The video id </param>
+        /// <exception cref="Exception"></exception>
         /// <returns> Prints video index when the index is complete, otherwise throws exception </returns>
         public async Task WaitForIndexAsync(string videoId)
         {
@@ -154,13 +156,14 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
                 var queryParams = new Dictionary<string, string>()
                 {
                     {"language", "English"},
+                    { "accessToken" , _accountAccessToken },
                 }.CreateQueryString();
 
                 var requestUrl = $"{ApiEndpoint}/{_account.Location}/Accounts/{_account.Properties.Id}/Videos/{videoId}/Index?{queryParams}";
                 var videoGetIndexRequestResult = await _httpClient.GetAsync(requestUrl);
                 videoGetIndexRequestResult.VerifyStatus(System.Net.HttpStatusCode.OK);
                 var videoGetIndexResult = await videoGetIndexRequestResult.Content.ReadAsStringAsync();
-                string processingState = JsonSerializer.Deserialize<Video>(videoGetIndexResult).State;
+                var processingState = JsonSerializer.Deserialize<Video>(videoGetIndexResult).State;
 
                 // If job is finished
                 if (processingState == ProcessingState.Processed.ToString())
@@ -191,6 +194,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
             var queryParams = new Dictionary<string, string>()
             {
                 {"id", videoId},
+                { "accessToken" , _accountAccessToken },
             }.CreateQueryString();
 
             try
@@ -217,6 +221,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
                 { "name", videoName },
                 { "description", "video_description" },
                 { "privacy", "private" },
+                { "accessToken" , _accountAccessToken },
                 { "partition", "partition" }
             }.CreateQueryString();
             
@@ -255,6 +260,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient
             var queryParams = new Dictionary<string, string>()
             {
                 {"widgetType", "Keywords"},
+                { "accessToken" , _accountAccessToken },
                 {"allowEdit", "true"},
             }.CreateQueryString();
             try

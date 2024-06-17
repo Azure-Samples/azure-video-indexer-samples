@@ -1,0 +1,118 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Get_Access_Token": {
+                "inputs": {
+                    "authentication": {
+                        "audience": "https://management.core.windows.net",
+                        "type": "ManagedServiceIdentity"
+                    },
+                    "body": {
+                        "permissionType": "Contributor",
+                        "scope": "Account"
+                    },
+                    "method": "POST",
+                    "uri": "https://management.azure.com/subscriptions/@{parameters('subscription_id')}/resourceGroups/@{parameters('account_name')}/providers/Microsoft.VideoIndexer/accounts/Contoso/generateAccessToken?api-version=2024-01-01"
+                },
+                "runAfter": {},
+                "runtimeConfiguration": {
+                    "contentTransfer": {
+                        "transferMode": "Chunked"
+                    }
+                },
+                "type": "Http"
+            },
+            "Parse_JSON": {
+                "inputs": {
+                    "content": "@body('Get_Access_Token')",
+                    "schema": {
+                        "properties": {
+                            "accessToken": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "runAfter": {
+                    "Get_Access_Token": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ParseJson"
+            },
+            "Upload_file": {
+                "inputs": {
+                    "method": "POST",
+                    "uri": "@{parameters('endpoint')}/Accounts/@{parameters('account_id')}/Videos?name=@{parameters('videoName')}&videoUrl=@{encodeUriComponent(parameters('videoURL'))}&accessToken=@{body('Parse_JSON')?['accessToken']}&callbackUrl=@{encodeUriComponent(parameters('callbackURL'))}"
+                },
+                "runAfter": {
+                    "Parse_JSON": [
+                        "Succeeded"
+                    ]
+                },
+                "runtimeConfiguration": {
+                    "contentTransfer": {
+                        "transferMode": "Chunked"
+                    }
+                },
+                "type": "Http"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            },
+            "account_id": {
+                "defaultValue": "",
+                "type": "String"
+            },
+            "account_name": {
+                "defaultValue": "",
+                "type": "String"
+            },
+            "callbackURL": {
+                "defaultValue": "",
+                "type": "String"
+            },
+            "endpoint": {
+                "defaultValue": "",
+                "type": "String"
+            },
+            "subscription_id": {
+                "defaultValue": "",
+                "type": "String"
+            },
+            "videoName": {
+                "defaultValue": "",
+                "type": "String"
+            },
+            "videoURL": {
+                "defaultValue": "",
+                "type": "String"
+            }
+        },
+        "triggers": {
+            "Recurrence": {
+                "evaluatedRecurrence": {
+                    "frequency": "Week",
+                    "interval": 3
+                },
+                "recurrence": {
+                    "frequency": "Week",
+                    "interval": 3
+                },
+                "type": "Recurrence"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "value": {}
+        }
+    }
+}

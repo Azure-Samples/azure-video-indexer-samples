@@ -1,0 +1,1183 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Extract_Access_Token": {
+                "inputs": {
+                    "content": "@body('Get_Access_Token')",
+                    "schema": {
+                        "properties": {
+                            "accessToken": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "runAfter": {
+                    "Get_Access_Token": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ParseJson"
+            },
+            "Extract_Objects": {
+                "inputs": {
+                    "content": "@body('Get_Video_Index')",
+                    "schema": {
+                        "properties": {
+                            "accountId": {
+                                "type": "string"
+                            },
+                            "created": {
+                                "type": "string"
+                            },
+                            "description": {},
+                            "duration": {
+                                "type": "string"
+                            },
+                            "durationInSeconds": {
+                                "type": "integer"
+                            },
+                            "id": {
+                                "type": "string"
+                            },
+                            "isBase": {
+                                "type": "boolean"
+                            },
+                            "isEditable": {
+                                "type": "boolean"
+                            },
+                            "isOwned": {
+                                "type": "boolean"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "partition": {},
+                            "privacyMode": {
+                                "type": "string"
+                            },
+                            "state": {
+                                "type": "string"
+                            },
+                            "summarizedInsights": {},
+                            "userName": {
+                                "type": "string"
+                            },
+                            "videos": {
+                                "items": {
+                                    "properties": {
+                                        "accountId": {
+                                            "type": "string"
+                                        },
+                                        "detectSourceLanguage": {
+                                            "type": "boolean"
+                                        },
+                                        "excludedAIs": {
+                                            "type": "array"
+                                        },
+                                        "externalId": {},
+                                        "externalUrl": {},
+                                        "failureMessage": {
+                                            "type": "string"
+                                        },
+                                        "height": {
+                                            "type": "integer"
+                                        },
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "indexingPreset": {
+                                            "type": "string"
+                                        },
+                                        "insights": {
+                                            "properties": {
+                                                "detectedObjects": {
+                                                    "items": {
+                                                        "properties": {
+                                                            "displayName": {
+                                                                "type": "string"
+                                                            },
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "instances": {
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "adjustedEnd": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "adjustedStart": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "confidence": {
+                                                                            "type": "number"
+                                                                        },
+                                                                        "end": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "start": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    "required": [
+                                                                        "confidence",
+                                                                        "adjustedStart",
+                                                                        "adjustedEnd",
+                                                                        "start",
+                                                                        "end"
+                                                                    ],
+                                                                    "type": "object"
+                                                                },
+                                                                "type": "array"
+                                                            },
+                                                            "thumbnailId": {
+                                                                "type": "string"
+                                                            },
+                                                            "type": {
+                                                                "type": "string"
+                                                            },
+                                                            "wikiDataId": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "type",
+                                                            "thumbnailId",
+                                                            "displayName",
+                                                            "wikiDataId",
+                                                            "instances"
+                                                        ],
+                                                        "type": "object"
+                                                    },
+                                                    "type": "array"
+                                                },
+                                                "duration": {
+                                                    "type": "string"
+                                                },
+                                                "framePatterns": {
+                                                    "items": {
+                                                        "properties": {
+                                                            "confidence": {
+                                                                "type": "integer"
+                                                            },
+                                                            "displayName": {},
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "instances": {
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "adjustedEnd": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "adjustedStart": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "end": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "start": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    "required": [
+                                                                        "adjustedStart",
+                                                                        "adjustedEnd",
+                                                                        "start",
+                                                                        "end"
+                                                                    ],
+                                                                    "type": "object"
+                                                                },
+                                                                "type": "array"
+                                                            },
+                                                            "patternType": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "patternType",
+                                                            "confidence",
+                                                            "displayName",
+                                                            "instances"
+                                                        ],
+                                                        "type": "object"
+                                                    },
+                                                    "type": "array"
+                                                },
+                                                "labels": {
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "instances": {
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "adjustedEnd": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "adjustedStart": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "confidence": {
+                                                                            "type": "number"
+                                                                        },
+                                                                        "end": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "start": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    "required": [
+                                                                        "confidence",
+                                                                        "adjustedStart",
+                                                                        "adjustedEnd",
+                                                                        "start",
+                                                                        "end"
+                                                                    ],
+                                                                    "type": "object"
+                                                                },
+                                                                "type": "array"
+                                                            },
+                                                            "language": {
+                                                                "type": "string"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            },
+                                                            "referenceId": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "name",
+                                                            "language",
+                                                            "instances"
+                                                        ],
+                                                        "type": "object"
+                                                    },
+                                                    "type": "array"
+                                                },
+                                                "language": {
+                                                    "type": "string"
+                                                },
+                                                "languages": {
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": "array"
+                                                },
+                                                "ocr": {
+                                                    "items": {
+                                                        "properties": {
+                                                            "angle": {
+                                                                "type": "integer"
+                                                            },
+                                                            "confidence": {
+                                                                "type": "number"
+                                                            },
+                                                            "height": {
+                                                                "type": "integer"
+                                                            },
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "instances": {
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "adjustedEnd": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "adjustedStart": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "end": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "start": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    "required": [
+                                                                        "adjustedStart",
+                                                                        "adjustedEnd",
+                                                                        "start",
+                                                                        "end"
+                                                                    ],
+                                                                    "type": "object"
+                                                                },
+                                                                "type": "array"
+                                                            },
+                                                            "language": {
+                                                                "type": "string"
+                                                            },
+                                                            "left": {
+                                                                "type": "integer"
+                                                            },
+                                                            "text": {
+                                                                "type": "string"
+                                                            },
+                                                            "top": {
+                                                                "type": "integer"
+                                                            },
+                                                            "width": {
+                                                                "type": "integer"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "text",
+                                                            "confidence",
+                                                            "left",
+                                                            "top",
+                                                            "width",
+                                                            "height",
+                                                            "angle",
+                                                            "language",
+                                                            "instances"
+                                                        ],
+                                                        "type": "object"
+                                                    },
+                                                    "type": "array"
+                                                },
+                                                "scenes": {
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "instances": {
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "adjustedEnd": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "adjustedStart": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "end": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "start": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    "required": [
+                                                                        "adjustedStart",
+                                                                        "adjustedEnd",
+                                                                        "start",
+                                                                        "end"
+                                                                    ],
+                                                                    "type": "object"
+                                                                },
+                                                                "type": "array"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "instances"
+                                                        ],
+                                                        "type": "object"
+                                                    },
+                                                    "type": "array"
+                                                },
+                                                "shots": {
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "instances": {
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "adjustedEnd": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "adjustedStart": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "end": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "start": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    "required": [
+                                                                        "adjustedStart",
+                                                                        "adjustedEnd",
+                                                                        "start",
+                                                                        "end"
+                                                                    ],
+                                                                    "type": "object"
+                                                                },
+                                                                "type": "array"
+                                                            },
+                                                            "keyFrames": {
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "integer"
+                                                                        },
+                                                                        "instances": {
+                                                                            "items": {
+                                                                                "properties": {
+                                                                                    "adjustedEnd": {
+                                                                                        "type": "string"
+                                                                                    },
+                                                                                    "adjustedStart": {
+                                                                                        "type": "string"
+                                                                                    },
+                                                                                    "end": {
+                                                                                        "type": "string"
+                                                                                    },
+                                                                                    "start": {
+                                                                                        "type": "string"
+                                                                                    },
+                                                                                    "thumbnailId": {
+                                                                                        "type": "string"
+                                                                                    }
+                                                                                },
+                                                                                "required": [
+                                                                                    "thumbnailId",
+                                                                                    "adjustedStart",
+                                                                                    "adjustedEnd",
+                                                                                    "start",
+                                                                                    "end"
+                                                                                ],
+                                                                                "type": "object"
+                                                                            },
+                                                                            "type": "array"
+                                                                        }
+                                                                    },
+                                                                    "required": [
+                                                                        "id",
+                                                                        "instances"
+                                                                    ],
+                                                                    "type": "object"
+                                                                },
+                                                                "type": "array"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "keyFrames",
+                                                            "instances"
+                                                        ],
+                                                        "type": "object"
+                                                    },
+                                                    "type": "array"
+                                                },
+                                                "sourceLanguage": {
+                                                    "type": "string"
+                                                },
+                                                "sourceLanguages": {
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": "array"
+                                                },
+                                                "statistics": {
+                                                    "properties": {
+                                                        "correspondenceCount": {
+                                                            "type": "integer"
+                                                        },
+                                                        "speakerLongestMonolog": {
+                                                            "properties": {},
+                                                            "type": "object"
+                                                        },
+                                                        "speakerNumberOfFragments": {
+                                                            "properties": {},
+                                                            "type": "object"
+                                                        },
+                                                        "speakerTalkToListenRatio": {
+                                                            "properties": {},
+                                                            "type": "object"
+                                                        },
+                                                        "speakerWordCount": {
+                                                            "properties": {},
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "version": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "isAdult": {
+                                            "type": "boolean"
+                                        },
+                                        "language": {
+                                            "type": "string"
+                                        },
+                                        "languageAutoDetectMode": {
+                                            "type": "string"
+                                        },
+                                        "languages": {
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "type": "array"
+                                        },
+                                        "linguisticModelId": {
+                                            "type": "string"
+                                        },
+                                        "logoGroupId": {},
+                                        "metadata": {},
+                                        "moderationState": {
+                                            "type": "string"
+                                        },
+                                        "personModelId": {
+                                            "type": "string"
+                                        },
+                                        "privacyMode": {
+                                            "type": "string"
+                                        },
+                                        "processingProgress": {
+                                            "type": "string"
+                                        },
+                                        "publishedProxyUrl": {},
+                                        "publishedUrl": {
+                                            "type": "string"
+                                        },
+                                        "reviewState": {
+                                            "type": "string"
+                                        },
+                                        "sourceLanguage": {
+                                            "type": "string"
+                                        },
+                                        "sourceLanguages": {
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "type": "array"
+                                        },
+                                        "state": {
+                                            "type": "string"
+                                        },
+                                        "streamingPreset": {
+                                            "type": "string"
+                                        },
+                                        "thumbnailId": {
+                                            "type": "string"
+                                        },
+                                        "viewToken": {
+                                            "type": "string"
+                                        },
+                                        "width": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "required": [
+                                        "accountId",
+                                        "id",
+                                        "state",
+                                        "moderationState",
+                                        "reviewState",
+                                        "privacyMode",
+                                        "processingProgress",
+                                        "failureMessage",
+                                        "externalId",
+                                        "externalUrl",
+                                        "metadata",
+                                        "insights",
+                                        "thumbnailId",
+                                        "width",
+                                        "height",
+                                        "detectSourceLanguage",
+                                        "languageAutoDetectMode",
+                                        "sourceLanguage",
+                                        "sourceLanguages",
+                                        "language",
+                                        "languages",
+                                        "indexingPreset",
+                                        "streamingPreset",
+                                        "linguisticModelId",
+                                        "personModelId",
+                                        "logoGroupId",
+                                        "isAdult",
+                                        "excludedAIs",
+                                        "publishedUrl",
+                                        "publishedProxyUrl",
+                                        "viewToken"
+                                    ],
+                                    "type": "object"
+                                },
+                                "type": "array"
+                            },
+                            "videosRanges": {
+                                "items": {
+                                    "properties": {
+                                        "range": {
+                                            "properties": {
+                                                "end": {
+                                                    "type": "string"
+                                                },
+                                                "start": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "videoId": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "videoId",
+                                        "range"
+                                    ],
+                                    "type": "object"
+                                },
+                                "type": "array"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "runAfter": {
+                    "Get_Video_Index": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ParseJson"
+            },
+            "For_Each_Videos": {
+                "actions": {
+                    "For_each_Object": {
+                        "actions": {
+                            "Condition": {
+                                "actions": {
+                                    "Call_GPT4o": {
+                                        "inputs": {
+                                            "body": {
+                                                "frequency_penalty": 0,
+                                                "max_tokens": 800,
+                                                "messages": [
+                                                    {
+                                                        "content": [
+                                                            {
+                                                                "text": "@parameters('prompt')",
+                                                                "type": "text"
+                                                            },
+                                                            {
+                                                                "image_url": {
+                                                                    "url": "@{parameters('endpoint')}/Accounts/@{parameters('account_id')}/Videos/@{variables('video_id')}/Thumbnails/@{body('Detected_Object')?['thumbnailId']}?format=Jpeg&accessToken=@{body('Extract_Access_Token')?['accessToken']}"
+                                                                },
+                                                                "type": "image_url"
+                                                            }
+                                                        ],
+                                                        "role": "user"
+                                                    }
+                                                ],
+                                                "presence_penalty": 0,
+                                                "stop": null,
+                                                "stream": false,
+                                                "temperature": 0.7,
+                                                "top_p": 0.95
+                                            },
+                                            "headers": {
+                                                "Content-Type": "application/json",
+                                                "api-key": "@{parameters('GPT_appkey')}"
+                                            },
+                                            "method": "POST",
+                                            "queries": {
+                                                "api-version": "2024-02-15-preview"
+                                            },
+                                            "uri": "@{parameters('GPT_endpoint')}/openai/deployments/@{parameters('GPT_deployment_name')}/chat/completions"
+                                        },
+                                        "runtimeConfiguration": {
+                                            "contentTransfer": {
+                                                "transferMode": "Chunked"
+                                            }
+                                        },
+                                        "type": "Http"
+                                    },
+                                    "Extract_GPT_response": {
+                                        "inputs": {
+                                            "content": "@body('Call_GPT4o')",
+                                            "schema": {
+                                                "properties": {
+                                                    "choices": {
+                                                        "items": {
+                                                            "properties": {
+                                                                "content_filter_results": {
+                                                                    "properties": {
+                                                                        "hate": {
+                                                                            "properties": {
+                                                                                "filtered": {
+                                                                                    "type": "boolean"
+                                                                                },
+                                                                                "severity": {
+                                                                                    "type": "string"
+                                                                                }
+                                                                            },
+                                                                            "type": "object"
+                                                                        },
+                                                                        "self_harm": {
+                                                                            "properties": {
+                                                                                "filtered": {
+                                                                                    "type": "boolean"
+                                                                                },
+                                                                                "severity": {
+                                                                                    "type": "string"
+                                                                                }
+                                                                            },
+                                                                            "type": "object"
+                                                                        },
+                                                                        "sexual": {
+                                                                            "properties": {
+                                                                                "filtered": {
+                                                                                    "type": "boolean"
+                                                                                },
+                                                                                "severity": {
+                                                                                    "type": "string"
+                                                                                }
+                                                                            },
+                                                                            "type": "object"
+                                                                        },
+                                                                        "violence": {
+                                                                            "properties": {
+                                                                                "filtered": {
+                                                                                    "type": "boolean"
+                                                                                },
+                                                                                "severity": {
+                                                                                    "type": "string"
+                                                                                }
+                                                                            },
+                                                                            "type": "object"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                },
+                                                                "finish_reason": {
+                                                                    "type": "string"
+                                                                },
+                                                                "index": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "logprobs": {},
+                                                                "message": {
+                                                                    "properties": {
+                                                                        "content": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "role": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "content_filter_results",
+                                                                "finish_reason",
+                                                                "index",
+                                                                "logprobs",
+                                                                "message"
+                                                            ],
+                                                            "type": "object"
+                                                        },
+                                                        "type": "array"
+                                                    },
+                                                    "created": {
+                                                        "type": "integer"
+                                                    },
+                                                    "id": {
+                                                        "type": "string"
+                                                    },
+                                                    "model": {
+                                                        "type": "string"
+                                                    },
+                                                    "object": {
+                                                        "type": "string"
+                                                    },
+                                                    "prompt_filter_results": {
+                                                        "items": {
+                                                            "properties": {
+                                                                "content_filter_result": {
+                                                                    "properties": {
+                                                                        "custom_blocklists": {
+                                                                            "properties": {
+                                                                                "details": {
+                                                                                    "type": "array"
+                                                                                },
+                                                                                "filtered": {
+                                                                                    "type": "boolean"
+                                                                                }
+                                                                            },
+                                                                            "type": "object"
+                                                                        },
+                                                                        "jailbreak": {
+                                                                            "properties": {
+                                                                                "detected": {
+                                                                                    "type": "boolean"
+                                                                                },
+                                                                                "filtered": {
+                                                                                    "type": "boolean"
+                                                                                }
+                                                                            },
+                                                                            "type": "object"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                },
+                                                                "prompt_index": {
+                                                                    "type": "integer"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "prompt_index",
+                                                                "content_filter_result"
+                                                            ],
+                                                            "type": "object"
+                                                        },
+                                                        "type": "array"
+                                                    },
+                                                    "system_fingerprint": {
+                                                        "type": "string"
+                                                    },
+                                                    "usage": {
+                                                        "properties": {
+                                                            "completion_tokens": {
+                                                                "type": "integer"
+                                                            },
+                                                            "prompt_tokens": {
+                                                                "type": "integer"
+                                                            },
+                                                            "total_tokens": {
+                                                                "type": "integer"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "runAfter": {
+                                            "Call_GPT4o": [
+                                                "Succeeded"
+                                            ]
+                                        },
+                                        "runtimeConfiguration": {
+                                            "staticResult": {
+                                                "name": "Extract_GPT_response0",
+                                                "staticResultOptions": "Disabled"
+                                            }
+                                        },
+                                        "type": "ParseJson"
+                                    },
+                                    "For_each": {
+                                        "actions": {
+                                            "Append_to_array_variable": {
+                                                "inputs": {
+                                                    "name": "InsightsJSON",
+                                                    "value": {
+                                                        "Id": "@variables('ObjectId')",
+                                                        "Instances": "@body('Detected_Object')?['instances']",
+                                                        "Type": "@{items('For_each')?['message']?['content']}"
+                                                    }
+                                                },
+                                                "type": "AppendToArrayVariable"
+                                            },
+                                            "Increment_variable": {
+                                                "inputs": {
+                                                    "name": "ObjectId",
+                                                    "value": 1
+                                                },
+                                                "runAfter": {
+                                                    "Append_to_array_variable": [
+                                                        "Succeeded"
+                                                    ]
+                                                },
+                                                "type": "IncrementVariable"
+                                            }
+                                        },
+                                        "foreach": "@outputs('Extract_GPT_response')?['body']?['choices']",
+                                        "runAfter": {
+                                            "Extract_GPT_response": [
+                                                "Succeeded"
+                                            ]
+                                        },
+                                        "type": "Foreach"
+                                    }
+                                },
+                                "else": {
+                                    "actions": {}
+                                },
+                                "expression": {
+                                    "and": [
+                                        {
+                                            "equals": [
+                                                "@body('Detected_Object')?['type']",
+                                                "@parameters('object_type')"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "runAfter": {
+                                    "Detected_Object": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                "type": "If"
+                            },
+                            "Detected_Object": {
+                                "inputs": {
+                                    "content": "@items('For_each_Object')",
+                                    "schema": {
+                                        "properties": {
+                                            "displayName": {
+                                                "type": "string"
+                                            },
+                                            "id": {
+                                                "type": "integer"
+                                            },
+                                            "instances": {
+                                                "items": {
+                                                    "properties": {
+                                                        "adjustedEnd": {
+                                                            "type": "string"
+                                                        },
+                                                        "adjustedStart": {
+                                                            "type": "string"
+                                                        },
+                                                        "confidence": {
+                                                            "type": "number"
+                                                        },
+                                                        "end": {
+                                                            "type": "string"
+                                                        },
+                                                        "start": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "confidence",
+                                                        "adjustedStart",
+                                                        "adjustedEnd",
+                                                        "start",
+                                                        "end"
+                                                    ],
+                                                    "type": "object"
+                                                },
+                                                "type": "array"
+                                            },
+                                            "thumbnailId": {
+                                                "type": "string"
+                                            },
+                                            "type": {
+                                                "type": "string"
+                                            },
+                                            "wikiDataId": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "ParseJson"
+                            }
+                        },
+                        "foreach": "@items('For_Each_Videos')?['insights']?['detectedObjects']",
+                        "type": "Foreach"
+                    }
+                },
+                "foreach": "@outputs('Extract_Objects')?['body']?['videos']",
+                "runAfter": {
+                    "Extract_Objects": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Foreach"
+            },
+            "Get_Access_Token": {
+                "inputs": {
+                    "authentication": {
+                        "audience": "https://management.core.windows.net",
+                        "type": "ManagedServiceIdentity"
+                    },
+                    "body": {
+                        "permissionType": "Contributor",
+                        "scope": "Account"
+                    },
+                    "method": "POST",
+                    "uri": "https://management.azure.com/subscriptions/@{parameters('subscription_id')}/resourceGroups/@{parameters('account_name')}/providers/Microsoft.VideoIndexer/accounts/Contoso/generateAccessToken?api-version=2024-01-01"
+                },
+                "runAfter": {
+                    "Initialize_InsightsJSON": [
+                        "Succeeded"
+                    ]
+                },
+                "runtimeConfiguration": {
+                    "contentTransfer": {
+                        "transferMode": "Chunked"
+                    }
+                },
+                "type": "Http"
+            },
+            "Get_Video_Index": {
+                "inputs": {
+                    "method": "GET",
+                    "uri": "@{parameters('endpoint')}/Accounts/@{parameters('account_id')}/Videos/@{variables('video_id')}/Index?accessToken=@{body('Extract_Access_Token')?['accessToken']}"
+                },
+                "runAfter": {
+                    "Extract_Access_Token": [
+                        "Succeeded"
+                    ]
+                },
+                "runtimeConfiguration": {
+                    "contentTransfer": {
+                        "transferMode": "Chunked"
+                    }
+                },
+                "type": "Http"
+            },
+            "Initialize_InsightsJSON": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "InsightsJSON",
+                            "type": "array"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_ObjectId": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_ObjectId": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "ObjectId",
+                            "type": "integer",
+                            "value": 1
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_Video_Id": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_Video_Id": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "video_id",
+                            "type": "string",
+                            "value": "@{triggerOutputs()?['queries']['id']}"
+                        }
+                    ]
+                },
+                "runAfter": {},
+                "type": "InitializeVariable"
+            },
+            "Patch_Video_Object": {
+                "inputs": {
+                    "body": [
+                        {
+                            "op": "add",
+                            "path": "/videos/0/insights/customInsights",
+                            "value": [
+                                {
+                                    "DisplayName": "Cars",
+                                    "DisplayType": "Capsule",
+                                    "Name": "cars",
+                                    "Results": "@variables('InsightsJSON')"
+                                }
+                            ]
+                        }
+                    ],
+                    "method": "PATCH",
+                    "uri": "@{parameters('endpoint')}/Accounts/@{parameters('account_id')}/Videos/@{variables('video_id')}/Index?accessToken=@{body('Extract_Access_Token')?['accessToken']}"
+                },
+                "runAfter": {
+                    "For_Each_Videos": [
+                        "Succeeded"
+                    ]
+                },
+                "runtimeConfiguration": {
+                    "contentTransfer": {
+                        "transferMode": "Chunked"
+                    }
+                },
+                "type": "Http"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            },
+            "GPT_appkey": {
+                "defaultValue": "",
+                "type": "String"
+            },
+            "GPT_deployment_name": {
+                "defaultValue": "",
+                "type": "String"
+            },
+            "GPT_endpoint": {
+                "defaultValue": "",
+                "type": "String"
+            },
+            "account_id": {
+                "defaultValue": "",
+                "type": "String"
+            },
+            "account_name": {
+                "defaultValue": "",
+                "type": "String"
+            },
+            "endpoint": {
+                "defaultValue": "",
+                "type": "String"
+            },
+            "object_type": {
+                "defaultValue": "car",
+                "type": "String"
+            },
+            "prompt": {
+                "defaultValue": "Identify and classify the car in the image. Classify the car in less than four words.",
+                "type": "String"
+            },
+            "subscription_id": {
+                "defaultValue": "",
+                "type": "String"
+            }
+        },
+        "triggers": {
+            "When_a_HTTP_request_is_received": {
+                "inputs": {
+                    "method": "POST"
+                },
+                "kind": "Http",
+                "type": "Request"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "value": {}
+        }
+    }
+}

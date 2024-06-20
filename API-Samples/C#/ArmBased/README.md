@@ -53,6 +53,52 @@ For more information visit [here](https://docs.microsoft.com/en-us/azure/media-s
 Outline the required components and tools that a user might need to have on their machine in order to run the sample. This can be anything from frameworks, SDKs, OS versions or IDE releases.
 -->
 
+# Authentication Model
+
+This sample presents two way to authenticate the running code to the video indexer account . 
+
+1. Using Default Azure Credentials - Uses the logged in User ( or User Assigned Managed Identity/ System Assigned Identity ) that is logged to the running host.
+2. Using Service Principal Authentication ( Entra App Registration)
+
+
+
+## Authentication with Default Azure Credetials 
+
+1. Ensure you are logged in to your azure subscription by running the `az login`  command
+2. In case you run with the same user on multiple Tenants , set the tenantId variable under the `AccountTokenProvider.cs` class .
+3. Extract the logged in user or MI object Id and move on to Section 3 below.
+
+
+## Authentication with Default Azure Credetials 
+
+1. create Azure Entra Id App that will be used as service principal 
+
+```
+az ad sp create-for-rbac --role Owner --display-name $appName --scopes /subscriptions/$SUBSCRIPTION_ID 
+```
+
+2. Extract the Service Principla Id ,and continue to section 3 below.
+
+
+```
+servicePrincipalId=$(az ad sp list --display-name $appName --query "[0].id" -o tsv)
+```
+
+3. In Both cases, the logged in service principal ( either user, Managed Identity or Entra App) need to have the `contributor` role on the video indexer account.
+replace the SUBSCRIPTION_ID,RESOURCE_GROUP and VIDEO_INDEXER_ACCOUNT_NAME and servicePrincipalId with your values, and run the following command :
+
+```
+videoIndexerId="/subscriptions/SUBSCRIPTION_ID/resourceGroups/RESOURCE_GROUP/providers/Microsoft.VideoIndexer/accounts/VIDEO_INDEXER_ACCOUNT_NAME"
+az role assignment create --assignee $servicePrincipalId --role "Contributor" --scope $videoIndexerId
+```
+
 ## Usage
 
 Run dotnet run
+
+# Additional Reading
+- [Authenticate with Azure CLI](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli)
+- [Create Entra Id App for Rbac Permission](https://learn.microsoft.com/en-us/entra/identity-platform/howto-create-service-principal-portal)
+
+
+

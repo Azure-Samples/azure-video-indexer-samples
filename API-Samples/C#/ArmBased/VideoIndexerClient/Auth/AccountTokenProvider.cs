@@ -14,7 +14,7 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient.Auth
 
     public static class AccountTokenProvider
     {
-        private static readonly string TenantId = Environment.GetEnvironmentVariable("TENANT_ID") ?? "";
+        private static readonly string TenantId = Environment.GetEnvironmentVariable("TENANT_ID");
         private static readonly string ClientId = Environment.GetEnvironmentVariable("CLIENT_ID");
         private static readonly string ClientSecret = Environment.GetEnvironmentVariable("CLIENT_SECRET");
 

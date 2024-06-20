@@ -74,7 +74,11 @@ This sample demonstrates two methods for authenticating the code to the Video In
 az ad sp create-for-rbac --role Owner --display-name $appName --scopes /subscriptions/$SUBSCRIPTION_ID
 ```
 
-2. Extract the Service Principal ID and continue to Section 3 below.
+2. After the command finishes, write down the values for appId (clientId) and password that will be used in your code.
+
+
+![](entra_app.png){: width="300" height="300"}
+
 
 ```
 servicePrincipalId=$(az ad sp list --display-name $appName --query "[0].id" -o tsv)
@@ -87,6 +91,22 @@ videoIndexerId="/subscriptions/SUBSCRIPTION_ID/resourceGroups/RESOURCE_GROUP/pro
 az role assignment create --assignee $servicePrincipalId --role "Contributor" --scope $videoIndexerId
 ```
 
+3. Open the `AccountTokenProvider.cs` and fill in the following variables, from the values received on step 2
+
+- TenantId 
+- ClientId
+- ClientSecret
+
+```
+ public static class AccountTokenProvider
+ {
+     private static readonly string TenantId = Environment.GetEnvironmentVariable("TENANT_ID");
+     private static readonly string ClientId = Environment.GetEnvironmentVariable("CLIENT_ID");
+     private static readonly string ClientSecret = Environment.GetEnvironmentVariable("CLIENT_SECRET");
+
+  ...
+ }
+```
 
 ## Usage
 

@@ -63,7 +63,7 @@ This sample demonstrates two methods for authenticating the code to the Video In
 1. Using Default Azure Credentials: This method utilizes the logged-in user or a User Assigned Managed Identity/System Assigned Identity associated with the running host.
 2. Using Service Principal Authentication (Entra App Registration)
 
-### Authentication with DefaultAzureCredentials
+### Authentication with User,Group or Managed Identity
 
 1. Ensure that you are logged in to your Azure subscription by running the `az login` command.
 
@@ -72,7 +72,7 @@ This sample demonstrates two methods for authenticating the code to the Video In
 3. Extract the Object Id of the logged-in user or Managed Identity and proceed to [Grant Role Assignment](#grant-role-assignment) section below.
 
 
-### Authentication with Service Principal
+### Authentication with Entra App for RBAC flow 
 
 1. Create an Azure Entra ID App that will be used as a service principal.
 

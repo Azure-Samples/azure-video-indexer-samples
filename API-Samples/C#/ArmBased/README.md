@@ -106,6 +106,7 @@ servicePrincipalId=$(az ad sp list --display-name $appName --query "[0].id" -o t
   ...
  }
 ```
+> **Note**: The term "ClientId" is another name for AAD Application Id. It refers to the same value that was received during the creation phase and is also known as "appId".
 
 <h3 id="grant-role-assignment">Grant Role Assignment</h3>
 

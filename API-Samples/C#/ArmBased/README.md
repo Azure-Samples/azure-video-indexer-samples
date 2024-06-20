@@ -63,7 +63,7 @@ This sample demonstrates two methods for authenticating the code to the Video In
 1. Using Default Azure Credentials: This method utilizes the logged-in user or a User Assigned Managed Identity/System Assigned Identity associated with the running host.
 2. Using Service Principal Authentication (Entra App Registration)
 
-### Authentication with Default Azure Credentials
+### Authentication with DefaultAzureCredentials
 
 1. Ensure that you are logged in to your Azure subscription by running the `az login` command.
 

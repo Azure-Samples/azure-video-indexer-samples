@@ -77,7 +77,7 @@ az ad sp create-for-rbac --role Owner --display-name $appName --scopes /subscrip
 2. After the command finishes, write down the values for appId (clientId) and password that will be used in your code.
 
 
-![](entra_app.png){: width="300" height="300"}
+![entra_app](entra_app.png)
 
 
 ```

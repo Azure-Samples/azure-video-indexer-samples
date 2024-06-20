@@ -33,19 +33,22 @@ Make sure to read the inline comments and notice our best practices advices.
 
 Instructions:
 
-1. Go to Program.cs and populate `SubscriptionId` with your subscription id
-2. Go to Program.cs and populate `ResourceGroup` with your resource group
-3. Go to Program.cs and populate `ViAccountName` with your account name
-4. Go to Program.cs and populate `VideoUrl` with your video url
-5. Go to Program.cs and Populate `ExcludedAI` with the AI's you want to exclude from the indexing job.
-6. Go to Program.cs and Populate `VideoUrl` and `LocalVideoPath` with publicly accessed video Url and/or with local path to video file.
-7. Review the VideoIndexerClient/VideoIndexerClient.cs file to learn about the implementation of the API. The Client is a convineint Http Wrapper 
-around REST calls, and can be replaced easily with your custom behavior.  Note the section of issuing Video Indexer Access Token.
-(The Token is Valid for 30 minutes) .
+1. Go to Program.cs and populate the following variables:
+  - `SubscriptionId` with your subscription id
+  - `ResourceGroup` with your resource group
+  - `ViAccountName` with your account name
+  - `VideoUrl` with your video url, in case you want to use the video from publicly accessed URL, or `LocalVideoPath` with local path to video file.
+  - `ExcludedAI` with the AI's you want to exclude from the indexing job.
 
-8. make sure dotnet 6.0 is installed. if not, please install https://dotnet.microsoft.com/download/dotnet/6.0
-9. Open your terminal and navigate to "ApiUsage\ArmBased" folder
-10. Run dotnet build
+2. Review the VideoIndexerClient/VideoIndexerClient.cs file to learn about the implementation of the API. 
+<br>
+The Client is a convineint Http Wrapper around REST calls, and can be replaced easily with your custom behavior.  Note the section of issuing Video Indexer Access Token.
+(The Token is Valid for 30 minutes) .
+</br>
+
+3. make sure dotnet 6.0 is installed. if not, please install https://dotnet.microsoft.com/download/dotnet/6.0
+4. Open your terminal and navigate to "ApiUsage\ArmBased" folder
+5. Run dotnet build
 
 For more information visit [here](https://docs.microsoft.com/en-us/azure/media-services/video-indexer/video-indexer-use-apis)
 
@@ -53,20 +56,23 @@ For more information visit [here](https://docs.microsoft.com/en-us/azure/media-s
 Outline the required components and tools that a user might need to have on their machine in order to run the sample. This can be anything from frameworks, SDKs, OS versions or IDE releases.
 -->
 
-# Authentication Model
+## Authentication Model
 
 This sample demonstrates two methods for authenticating the code to the Video Indexer account.
 
 1. Using Default Azure Credentials: This method utilizes the logged-in user or a User Assigned Managed Identity/System Assigned Identity associated with the running host.
 2. Using Service Principal Authentication (Entra App Registration)
 
-## Authentication with Default Azure Credentials
+### Authentication with Default Azure Credentials
 
 1. Ensure that you are logged in to your Azure subscription by running the `az login` command.
-2. If you are using the same user across multiple tenants, set the `tenantId` variable under the `AccountTokenProvider.cs` class.
-3. Extract the Object ID of the logged-in user or Managed Identity and proceed to Section 3 below.
 
-## Authentication with Service Principal
+2. If you are using the same user across multiple tenants, set the `tenantId` variable under the `AccountTokenProvider.cs` class.
+
+3. Extract the Object Id of the logged-in user or Managed Identity and proceed to [Grant Role Assignment](#grant-role-assignment) section below.
+
+
+### Authentication with Service Principal
 
 1. Create an Azure Entra ID App that will be used as a service principal.
 
@@ -79,19 +85,12 @@ az ad sp create-for-rbac --role Owner --display-name $appName --scopes /subscrip
 
 ![entra_app](entra_app.png)
 
+3. Run the following command to extract the servicePrincipalId to be used it on [Grant Role Assignment](#grant-role-assignment) section below.
 
 ```
 servicePrincipalId=$(az ad sp list --display-name $appName --query "[0].id" -o tsv)
 ```
-
-3. In both cases, the logged-in service principal (user, Managed Identity, or Entra App) must have the `Contributor` role assigned to the Video Indexer account. Replace the `SUBSCRIPTION_ID`, `RESOURCE_GROUP`, `VIDEO_INDEXER_ACCOUNT_NAME`, and `servicePrincipalId` with your values, and run the following command:
-
-```
-videoIndexerId="/subscriptions/SUBSCRIPTION_ID/resourceGroups/RESOURCE_GROUP/providers/Microsoft.VideoIndexer/accounts/VIDEO_INDEXER_ACCOUNT_NAME"
-az role assignment create --assignee $servicePrincipalId --role "Contributor" --scope $videoIndexerId
-```
-
-3. Open the `AccountTokenProvider.cs` and fill in the following variables, from the values received on step 2
+4. Open the `AccountTokenProvider.cs` and fill in the following variables, from the values received on step 2
 
 - TenantId 
 - ClientId
@@ -107,6 +106,16 @@ az role assignment create --assignee $servicePrincipalId --role "Contributor" --
   ...
  }
 ```
+
+<h3 id="grant-role-assignment">Grant Role Assignment</h3>
+
+In both cases, the logged-in service principal (user, Managed Identity, or Entra App) must have the `Contributor` role assigned to the Video Indexer account. Replace the `SUBSCRIPTION_ID`, `RESOURCE_GROUP`, `VIDEO_INDEXER_ACCOUNT_NAME`, and `servicePrincipalId` with your values, and run the following command:
+
+```
+videoIndexerId="/subscriptions/SUBSCRIPTION_ID/resourceGroups/RESOURCE_GROUP/providers/Microsoft.VideoIndexer/accounts/VIDEO_INDEXER_ACCOUNT_NAME"
+az role assignment create --assignee $servicePrincipalId --role "Contributor" --scope $videoIndexerId
+```
+
 
 ## Usage
 

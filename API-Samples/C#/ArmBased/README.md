@@ -55,42 +55,38 @@ Outline the required components and tools that a user might need to have on thei
 
 # Authentication Model
 
-This sample presents two way to authenticate the running code to the video indexer account . 
+This sample demonstrates two methods for authenticating the code to the Video Indexer account.
 
-1. Using Default Azure Credentials - Uses the logged in User ( or User Assigned Managed Identity/ System Assigned Identity ) that is logged to the running host.
-2. Using Service Principal Authentication ( Entra App Registration)
+1. Using Default Azure Credentials: This method utilizes the logged-in user or a User Assigned Managed Identity/System Assigned Identity associated with the running host.
+2. Using Service Principal Authentication (Entra App Registration)
 
+## Authentication with Default Azure Credentials
 
+1. Ensure that you are logged in to your Azure subscription by running the `az login` command.
+2. If you are using the same user across multiple tenants, set the `tenantId` variable under the `AccountTokenProvider.cs` class.
+3. Extract the Object ID of the logged-in user or Managed Identity and proceed to Section 3 below.
 
-## Authentication with Default Azure Credetials 
+## Authentication with Service Principal
 
-1. Ensure you are logged in to your azure subscription by running the `az login`  command
-2. In case you run with the same user on multiple Tenants , set the tenantId variable under the `AccountTokenProvider.cs` class .
-3. Extract the logged in user or MI object Id and move on to Section 3 below.
-
-
-## Authentication with Default Azure Credetials 
-
-1. create Azure Entra Id App that will be used as service principal 
+1. Create an Azure Entra ID App that will be used as a service principal.
 
 ```
-az ad sp create-for-rbac --role Owner --display-name $appName --scopes /subscriptions/$SUBSCRIPTION_ID 
+az ad sp create-for-rbac --role Owner --display-name $appName --scopes /subscriptions/$SUBSCRIPTION_ID
 ```
 
-2. Extract the Service Principla Id ,and continue to section 3 below.
-
+2. Extract the Service Principal ID and continue to Section 3 below.
 
 ```
 servicePrincipalId=$(az ad sp list --display-name $appName --query "[0].id" -o tsv)
 ```
 
-3. In Both cases, the logged in service principal ( either user, Managed Identity or Entra App) need to have the `contributor` role on the video indexer account.
-replace the SUBSCRIPTION_ID,RESOURCE_GROUP and VIDEO_INDEXER_ACCOUNT_NAME and servicePrincipalId with your values, and run the following command :
+3. In both cases, the logged-in service principal (user, Managed Identity, or Entra App) must have the `Contributor` role assigned to the Video Indexer account. Replace the `SUBSCRIPTION_ID`, `RESOURCE_GROUP`, `VIDEO_INDEXER_ACCOUNT_NAME`, and `servicePrincipalId` with your values, and run the following command:
 
 ```
 videoIndexerId="/subscriptions/SUBSCRIPTION_ID/resourceGroups/RESOURCE_GROUP/providers/Microsoft.VideoIndexer/accounts/VIDEO_INDEXER_ACCOUNT_NAME"
 az role assignment create --assignee $servicePrincipalId --role "Contributor" --scope $videoIndexerId
 ```
+
 
 ## Usage
 

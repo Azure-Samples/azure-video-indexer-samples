@@ -14,14 +14,19 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient.Auth
 
     public static class AccountTokenProvider
     {
-
+        private static readonly string TenantId = Environment.GetEnvironmentVariable("TENANT_ID");
+        private static readonly string ClientId = Environment.GetEnvironmentVariable("CLIENT_ID");
+        private static readonly string ClientSecret = Environment.GetEnvironmentVariable("CLIENT_SECRET");
 
         public static async Task<string> GetArmAccessTokenAsync(CancellationToken ct = default)
         {
+
+            var credentials = GetTokenCredential();
             var tokenRequestContext = new TokenRequestContext(new[] { $"{Consts.AzureResourceManager}/.default" });
-            var tokenRequestResult = await new DefaultAzureCredential().GetTokenAsync(tokenRequestContext, ct);
+            var tokenRequestResult = await credentials.GetTokenAsync(tokenRequestContext, ct);
             return tokenRequestResult.Token;
         }
+
 
         public static async Task<string> GetAccountAccessTokenAsync(string armAccessToken, ArmAccessTokenPermission permission = ArmAccessTokenPermission.Contributor, ArmAccessTokenScope scope = ArmAccessTokenScope.Account, CancellationToken ct = default)
         {
@@ -54,6 +59,27 @@ namespace VideoIndexingARMAccounts.VideoIndexerClient.Auth
                 throw;
             }
         }
+
+        private static TokenCredential GetTokenCredential()
+        {
+            if (!string.IsNullOrEmpty(ClientId) && !string.IsNullOrEmpty(ClientSecret))
+            {
+                return new ClientSecretCredential(TenantId, ClientId, ClientSecret);
+            }
+            else
+            {
+                var credentialOptions = TenantId == null ? new DefaultAzureCredentialOptions() : new DefaultAzureCredentialOptions
+                {
+                    VisualStudioTenantId = TenantId,
+                    VisualStudioCodeTenantId = TenantId,
+                    SharedTokenCacheTenantId = TenantId,
+                    InteractiveBrowserTenantId = TenantId
+                };
+
+                return new DefaultAzureCredential(credentialOptions);
+            }
+        }
+
 
     }
 }

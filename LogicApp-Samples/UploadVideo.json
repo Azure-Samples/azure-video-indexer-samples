@@ -13,7 +13,7 @@
                         "scope": "Account"
                     },
                     "method": "POST",
-                    "uri": "https://management.azure.com/subscriptions/@{parameters('subscription_id')}/resourceGroups/@{parameters('account_name')}/providers/Microsoft.VideoIndexer/accounts/Contoso/generateAccessToken?api-version=2024-01-01"
+                    "uri": "https://management.azure.com/subscriptions/@{parameters('subscription_id')}/resourceGroups/@{parameters('account_rg')}/providers/Microsoft.VideoIndexer/accounts/@{parameters('account_name')}/generateAccessToken?api-version=2024-01-01"
                 },
                 "runAfter": {},
                 "runtimeConfiguration": {
@@ -72,6 +72,10 @@
                 "type": "String"
             },
             "account_name": {
+                "defaultValue": "",
+                "type": "String"
+            },
+            "account_rg": {
                 "defaultValue": "",
                 "type": "String"
             },

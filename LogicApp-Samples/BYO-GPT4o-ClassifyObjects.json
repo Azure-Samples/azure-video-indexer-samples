@@ -1148,12 +1148,16 @@
                 "defaultValue": "",
                 "type": "String"
             },
+            "account_rg": {
+                "defaultValue": "",
+                "type": "String"
+            },
             "endpoint": {
                 "defaultValue": "",
                 "type": "String"
             },
             "object_type": {
-                "defaultValue": "car",
+                "defaultValue": "Car",
                 "type": "String"
             },
             "prompt": {

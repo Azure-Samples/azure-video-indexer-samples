@@ -1093,7 +1093,7 @@
                 "inputs": {
                     "body": [
                         {
-                            "op": "replace",
+                            "op": "add",
                             "path": "/videos/0/insights/customInsights",
                             "value": [
                                 {

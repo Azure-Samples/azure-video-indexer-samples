@@ -84,19 +84,19 @@
                 "type": "String"
             },
             "endpoint": {
-                "defaultValue": "https://api.videoindexer.ai/eastus",
+                "defaultValue": "",
                 "type": "String"
             },
             "subscription_id": {
-                "defaultValue": "1fb314ae-ebec-4d24-bca1-6c4567587237",
+                "defaultValue": "",
                 "type": "String"
             },
             "videoName": {
-                "defaultValue": "sampleVidoe",
+                "defaultValue": "",
                 "type": "String"
             },
             "videoURL": {
-                "defaultValue": "https://vi2kusto.blob.core.windows.net/videofile/cars2.mp4?sp=r&st=2024-06-19T14:10:32Z&se=2024-06-19T22:10:32Z&skoid=aebc593a-46c5-4301-9f0d-42f78f6a8964&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2024-06-19T14:10:32Z&ske=2024-06-19T22:10:32Z&sks=b&skv=2022-11-02&spr=https&sv=2022-11-02&sr=b&sig=6GDw50TWKyeMROwMJAGCLMI4dbbKUMZZhsbYZFBMWcQ%3D",
+                "defaultValue": "",
                 "type": "String"
             }
         },

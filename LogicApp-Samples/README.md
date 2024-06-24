@@ -10,8 +10,9 @@
 
 ## Overview
 
-This folder contains Azure LogicApp samples to automate Azure Video Indexer flows, each flow will demonstrate how to run one basic flow, all the flows can be modified to suite the specific buisness case and should be tested before moving to prodcution.  
+This folder contains Azure LogicApp samples to automate Azure Video Indexer flows, each flow will demonstrate how to run one basic flow, all the flows can be modified to suite the specific buisness case and should be tested before moving to prodcution.
 You can also view the video toturial on our [YouTube channel](https://www.youtube.com/watch?v=yMqJufR9Rfs)
+
 
 ## Prerequisites
 
@@ -41,7 +42,6 @@ The following are the commun configuraitons for the sample LogicApps:
   - Click on _Azure role assignments_
   - Click on _Add role assignment_, set scope to "resource group", select the Video Indexer account resource group and set the role to "contributor".
   - Click _Save_.
-
 
 ## Classify objects with BYO GPT4o
 

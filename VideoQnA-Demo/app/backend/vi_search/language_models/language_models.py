@@ -32,5 +32,5 @@ class LanguageModels(ABC):
         pass
 
     @abstractmethod
-    def chat(self, prompt: str, temperature: float, top_p: float = 1.0) -> str:
+    def chat(self, sys_prompt: str, user_prompt: str, temperature: float, top_p: float = 1.0) -> str:
         pass

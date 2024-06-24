@@ -33,12 +33,14 @@ class DummyLanguageModels(LanguageModels):
         assert len(vector) == self.embeddings_size
         return vector
 
-    def chat(self, prompt: str, temperature: float, top_p: float = 1.0) -> str:
+    def chat(self, sys_prompt: str, user_prompt: str, temperature: float, top_p: float = 1.0) -> str:
         ''' Dummy chat model - echo back the input prompt.
 
-        :param prompt: The prompt to chat with
+        :param sys_prompt: The system prompt to chat with
+        :param user_prompt: The user prompt to chat with
         :param temperature: The temperature to use for chat
+        :param top_p: The top_p to use for chat
         '''
 
-        response = f"Hello, how can I help you?\nYou said: [{prompt}], [{temperature=}]"
+        response = f"Let me just repeat your input:\n[{sys_prompt=}], [{user_prompt=}], [{temperature=}], [{top_p=}]"
         return response

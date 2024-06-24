@@ -1082,7 +1082,7 @@
                         {
                             "name": "video_id",
                             "type": "string",
-                            "value": "wnkjcf2tr9"
+                            "value": "@{triggerOutputs()?['queries']['id']}"
                         }
                     ]
                 },

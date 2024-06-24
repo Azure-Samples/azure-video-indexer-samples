@@ -1082,7 +1082,7 @@
                         {
                             "name": "video_id",
                             "type": "string",
-                            "value": "@{triggerOutputs()?['queries']['id']}"
+                            "value": "wnkjcf2tr9"
                         }
                     ]
                 },
@@ -1093,7 +1093,7 @@
                 "inputs": {
                     "body": [
                         {
-                            "op": "add",
+                            "op": "replace",
                             "path": "/videos/0/insights/customInsights",
                             "value": [
                                 {
@@ -1148,12 +1148,16 @@
                 "defaultValue": "",
                 "type": "String"
             },
+            "account_rg": {
+                "defaultValue": "",
+                "type": "String"
+            },
             "endpoint": {
                 "defaultValue": "",
                 "type": "String"
             },
             "object_type": {
-                "defaultValue": "car",
+                "defaultValue": "Car",
                 "type": "String"
             },
             "prompt": {

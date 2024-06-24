@@ -11,6 +11,7 @@
 ## Overview
 
 This folder contains Azure LogicApp samples to automate Azure Video Indexer flows, each flow will demonstrate how to run one basic flow, all the flows can be modified to suite the specific buisness case and should be tested before moving to prodcution.  
+You can also view the video toturial on our [YouTube channel](https://www.youtube.com/watch?v=yMqJufR9Rfs)
 
 ## Prerequisites
 
@@ -22,15 +23,25 @@ Please ensure that you have the following prerequisites:
 
 ## Start here
 
-To deploy the Bicep items, follow these steps:
+The following are the commun configuraitons for the sample LogicApps:
 
 - Go to the LogicApp resource, expend the and _Development Tools_ select _Logic app code view_. Copy the sample code to code pane, click _Save_.
 - Select _Logic app designer_, the code sample flow should apear in the designer.
 - Click on _Parameters_, fill the following parameters **Note**: some of the flows requires additional parameters)
   - account_id: Azure Video Indexer account id.
   - account_name: Azure Video Indexer account name.
+  - account_rg: Azure Video Indexer resource group name.
   - endpoint: the base URL to be used for API calls, this can either point to the cloud account https://api.videoindexer.ai/<account_region>, or to a Video Indexer Arc extention endpoint.
   - subscription_id: the subscription id for the Video Indexer account.
+  
+  You will also need to configure a Managed Identity, this for the "Get Access Token" HTTP action:
+
+  - Expend the _Settings_ on the left pane and select _Identity_
+  - Under _System assinged_ change the _status_ to "On" and click _Save_
+  - Click on _Azure role assignments_
+  - Click on _Add role assignment_, set scope to "resource group", select the Video Indexer account resource group and set the role to "contributor".
+  - Click _Save_.
+
 
 ## BYO-GPT4o-ClassifyObjects
 

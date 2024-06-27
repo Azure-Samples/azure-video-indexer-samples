@@ -82,7 +82,7 @@ class CustomEncoder(json.JSONEncoder):
         return super().default(obj)  # Use default serialization for other types
 
 
-def prepate_db(db_name, data_dir, language_models: LanguageModels, prompt_content_db: PromptContentDB,
+def prepare_db(db_name, data_dir, language_models: LanguageModels, prompt_content_db: PromptContentDB,
                use_videos_ids_cache=True, video_ids_cache_file='videos_ids_cache.json', verbose=False):
 
     videos = list(data_dir.glob('*.mp4'))
@@ -181,7 +181,7 @@ def main():
     else:
         raise ValueError(f"Unknown language model: {lang_model}")
 
-    prepate_db(db_name, DATA_DIR, language_models, prompt_content_db, verbose=verbose)
+    prepare_db(db_name, DATA_DIR, language_models, prompt_content_db, verbose=verbose)
 
 
 if __name__ == "__main__":

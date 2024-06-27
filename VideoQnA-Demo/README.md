@@ -127,6 +127,8 @@ The repo includes sample data so it's ready to try end-to-end. The sample we use
       python .\app\backend\vi_search\prepare_db.py # (to run the indexing into vector db script)
       ```
 
+      The script will upload the videos in the `data` folder to Azure AI Video Indexer and then index the archive into Azure AI Search or Chroma DB.
+
    1. Wait for the Vector DB indexing to finish. The process can take some time, as it calls Azure OpenAI to create embeddings of the entire archive, and persists it to Azure AI Search or Chroma DB in batches of 100.
    1. If you are using Chroma DB, which is now configured to save the DB locally, make sure it will be available to the deployment as well.
 

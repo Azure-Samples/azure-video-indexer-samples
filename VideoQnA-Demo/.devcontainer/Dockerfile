@@ -1,4 +1,4 @@
-ARG VARIANT=bullseye
+ARG VARIANT=3.10-buster
 FROM --platform=amd64 mcr.microsoft.com/vscode/devcontainers/base:0-${VARIANT}
 RUN export DEBIAN_FRONTEND=noninteractive \
      && apt-get update && apt-get install -y xdg-utils \

@@ -1,6 +1,6 @@
-param location string 
-param privateEndpointName string 
-param privateLinkResource string 
+param location string = 'southafricanorth'
+param privateEndpointName string = 'e2'
+param privateLinkResource string = '/subscriptions/24237b72-8546-4da5-b204-8c3cb76dd930/resourceGroups/pe-ts-int-rg/providers/Microsoft.VideoIndexer/accounts/pe-ts-int8'
 
 var subnet = '/subscriptions/24237b72-8546-4da5-b204-8c3cb76dd930/resourceGroups/pe-ts-int-rg/providers/Microsoft.Network/virtualNetworks/pe-ts-int-vnet/subnets/default'
 var viZone = 'privatelink.api.videoindexer.ai'

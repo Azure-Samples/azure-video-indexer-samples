@@ -177,6 +177,7 @@ connectedClusterName="${resourcesPrefix}-connected-aks"
 nodePoolRg="${aks}-agentpool-rg"
 nodeVmSize="Standard_D4a_v4" # 4 vcpus, 16 GB RAM
 workerVmSize="Standard_D32a_v4" # 32 vcpus, 128 GB RAM
+summarizationWorkerVmSize="Standard_F32s_v2" # 32 vcpus, 64 GB RAM
 tags="createdBy=vi-arc-extension"
 #=========Install CLI Tools if needed =====================#
 if [[ $install_cli_tools == "true" ]]; then
@@ -230,13 +231,13 @@ if [[ $install_aks_cluster == "true" ]]; then
   fi
 
   echo -e "\t create aks cluster Name: $aks , Resource Group $rg- ***done***"
-  echo "Adding another workload node pool"
+  echo "Adding two new node pool types, workload and workloadf32"
   #Check if the node pool already exists
   nodePoolExists=$(az aks nodepool show -g $rg --cluster-name $aks -n workload --query "name" -o tsv)
   if [[ ! -z $nodePoolExists ]]; then
     echo "Workload node pool already exists. Skipping node pool creation"
   else
-    echo "Adding another workload node pool"
+    echo "Adding workload node pool"
     aks_nodecreate_output=$(az aks nodepool add -g $rg --cluster-name $aks  -n workload \
             --os-sku AzureLinux \
             --mode User \
@@ -249,13 +250,39 @@ if [[ $install_aks_cluster == "true" ]]; then
             --enable-cluster-autoscaler \
             --max-pods 110)
     if [[ $? -eq 0 ]]; then
-      echo "Adding secondary node pool succeeded"
+      echo "Adding workload node pool succeeded"
     else
-      echo "Adding secondary node pool Failed. Exiting"
+      echo "Adding workload node pool Failed. Exiting"
+      exit 1
+    fi
+  fi  
+
+  nodePoolSummarizationExists=$(az aks nodepool show -g $rg --cluster-name $aks -n workloadf32 --query "name" -o tsv)
+  if [[ ! -z $nodePoolSummarizationExists ]]; then
+    echo "workloadf32 node pool already exists. Skipping node pool creation"
+  else
+    echo "Adding workloadf32 node pool"
+    aks_nodecreate_output_summary=$(az aks nodepool add -g $rg --cluster-name $aks  -n workloadf32 \
+            --os-sku AzureLinux \
+            --mode User \
+            --node-vm-size $summarizationWorkerVmSize \
+            --node-osdisk-size 100 \
+            --node-count 0 \
+            --max-count 5 \
+            --min-count 0  \
+            --tags $tags \
+            --enable-cluster-autoscaler \
+            --labels workload=summarization \
+            --max-pods 110)
+    if [[ $? -eq 0 ]]; then
+      echo "Adding workloadf32 node pool succeeded"
+    else
+      echo "Adding workloadf32 node pool Failed. Exiting"
       exit 1
     fi
   fi
-  echo "Adding another workload node pool ***done***"
+  echo "Adding two new node pool types, workload and workloadf32 ***done***"
+  
   #=============================================#
   #============== AKS Credentials ==============#
   #=============================================#

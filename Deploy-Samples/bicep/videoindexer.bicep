@@ -16,6 +16,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' = {
   kind: storageKind
   properties: {
     minimumTlsVersion: 'TLS1_2'
+    allowSharedKeyAccess: false
   }
   sku: {
     name: storageSku

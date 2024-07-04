@@ -12,8 +12,8 @@ namespace VideoIndexingARMAccounts
         public const string AzureResourceManager = "https://management.azure.com";
         public static readonly string SubscriptionId = Environment.GetEnvironmentVariable("SUBSCIPTION_ID") ?? "24237b72-8546-4da5-b204-8c3cb76dd930";
         public static readonly string ResourceGroup = Environment.GetEnvironmentVariable("VI_RESOURCE_GROUP") ?? "pe-ts-int-rg";
-        public static readonly string ViAccountName = Environment.GetEnvironmentVariable("VI_ACCOUNT_NAME") ?? "pe-ts-int8";
-        public static readonly string ApiEndpoint = Environment.GetEnvironmentVariable("API_ENDPOINT") ?? "https://pe-ts-int8.privatelink.api.videoindexer.ai";
+        public static readonly string ViAccountName = Environment.GetEnvironmentVariable("VI_ACCOUNT_NAME") ?? "pe-ts-int9";
+        public static readonly string ApiEndpoint = Environment.GetEnvironmentVariable("API_ENDPOINT") ?? "https://pe-ts-int9.privatelink.api.videoindexer.ai";
 
         public static bool Valid() => !string.IsNullOrWhiteSpace(SubscriptionId) &&
                                !string.IsNullOrWhiteSpace(ResourceGroup) &&
@@ -40,7 +40,7 @@ namespace VideoIndexingARMAccounts
                 throw new Exception(
                     "Please Fill In SubscriptionId, Account Name and Resource Group on the Constant Class !");
             }
-            GetDNSInfo("pe-ts-int8.privatelink.api.videoindexer.ai");
+            GetDNSInfo("pe-ts-int9.privatelink.api.videoindexer.ai");
 
             // Create Video Indexer Client
             var client = new VideoIndexerClient.VideoIndexerClient();

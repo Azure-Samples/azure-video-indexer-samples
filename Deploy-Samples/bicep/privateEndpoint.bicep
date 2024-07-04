@@ -1,16 +1,35 @@
 param location string = 'southafricanorth'
-param privateEndpointName string = 'e2'
-param privateLinkResource string = '/subscriptions/24237b72-8546-4da5-b204-8c3cb76dd930/resourceGroups/pe-ts-int-rg/providers/Microsoft.VideoIndexer/accounts/pe-ts-int8'
+param privateEndpointName string
+param privateLinkResource string 
 
-var subnet = '/subscriptions/24237b72-8546-4da5-b204-8c3cb76dd930/resourceGroups/pe-ts-int-rg/providers/Microsoft.Network/virtualNetworks/pe-ts-int-vnet/subnets/default'
 var viZone = 'privatelink.api.videoindexer.ai'
+
+resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
+  name: 'pe-ts-int-vnet'
+  location: location
+  properties: {
+    addressSpace: {
+      addressPrefixes: [
+        '10.0.0.0/16'
+      ]
+    }
+    subnets: [
+      {
+        name: 'default'
+        properties: {
+          addressPrefix: '10.0.0.0/24'
+        }
+      }
+    ]
+  }
+}
 
 resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
   name: privateEndpointName
   location: location
   properties: {
     subnet: {
-      id: subnet
+      id: '${vnet.id}/subnets/default'
     }
     customNetworkInterfaceName: '${privateEndpointName}-nic'
     privateLinkServiceConnections: [

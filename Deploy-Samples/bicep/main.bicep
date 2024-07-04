@@ -1,9 +1,9 @@
 param location string = resourceGroup().location
 
 @description('Storage Account Name')
-param storageAccountName string = 'pstsintstorage'
+param storageAccountName string = 'tspestgsa'
 @description('Video Indexer Account Name')
-param videoIndexerAccountName string = 'pe-ts-int8'
+param videoIndexerAccountName string = 'ts-pe-stg-1'
 @description('Private Endpoint Name')
 var privateEndpointName  = '${videoIndexerAccountName}-pe'
 

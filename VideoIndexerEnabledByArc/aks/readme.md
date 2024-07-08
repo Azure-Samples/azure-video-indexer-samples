@@ -22,6 +22,28 @@ az provider register -n 'Microsoft.KubernetesConfiguration'
 az provider register -n 'Microsoft.ExtendedLocation'
 ```
 
+## Parameters
+
+| Parameter | Type | Description |
+|-----------|---------|-------------|
+| accountResourceId |  string | The Video Indexer Full Resource Id that will be connected to the Arc Extension
+| accountId  | string | The Video Indexer Account Id
+| videoIndexerEndpointUri | string | Video Indexer Dns Name to be used as the Portal endpoint
+| arcConnectedClusterName | string | The Azure Arc Kubernetes Cluster Created at Step 1
+| identityId  | string | a User Assigned Managed Identity with 'Contributor' Role Assignment on your subscription
+
+The Video Indexer API is a Kubernetes service that needs to be exposed in order to be accessible from outside the cluster. This can be achieved by configuring an appropriate external address (DNS/IP) to route incoming traffic to the cluster.
+Here are the common methods for exposing the service:
+
+- NodePort:
+Use the IP address of the node and a NodePort. This approach exposes the service on a specific port on all nodes in the cluster. External traffic can access the service by using the node's IP address and the assigned NodePort.
+- LoadBalancer:
+In environments that support external load balancers (such as MetalLB for OnPrem clusters), you can use the LoadBalancer service type. This will provision an external IP address that routes traffic to your service.
+- Ingress:
+Use an Ingress resource in conjunction with an Ingress controller. This method provides a single point of access to multiple services within the cluster, typically using a DNS name. The Ingress controller can handle SSL termination, load balancing, and path-based routing.
+- Dedicated Pod IP (Relay Traffic):
+If relay traffic is enabled, a dedicated Pod IP can be used to route traffic. This method is less common and typically used in specialized network configurations.
+
 ## 1. One-Click Deploy Sample to Azure
 **This step is optional.** If you would like to test Video Indexer Edge Extention on a sample edge devide this deployment script can be used to quickly set up a K8S cluster and all pods to run VI on Edge. This script will deploy the following resources:
 - Small 2 node AKS Cluster (costs are ~$0.80/hour)
@@ -245,16 +267,6 @@ provided on the current folder.
 ```shell
 az deployment group create --resource-group myResourceGroup --template-file .\vi.arcextension.template.bicep
 ```
-
-## Parameters
-
-| Parameter | Type | Description |
-|-----------|---------|-------------|
-| accountResourceId |  string | The Video Indexer Full Resource Id that will be connected to the Arc Extension
-| accountId  | string | The Video Indexer Account Id
-| videoIndexerEndpointUri | string | Video Indexer Dns Name to be used as the Portal endpoint
-| arcConnectedClusterName | string | The Azure Arc Kubernetes Cluster Created at Step 1
-| identityId  | string | a User Assigned Managed Identity with 'Contributor' Role Assignment on your subscription
 
 ### Step 4 - Verify Deployment
 

@@ -2,7 +2,7 @@
 
 ## About
 
-Video Indexer Arc Enabled Solution is an Azure Arc Extension Enabled Service aimed at running Video and Audio Analysis on Edge Devices. The solution is designed to run on Azure Stack Edge Profile, a heavy edge device, and supports three video formats, including MP4 and four additional common formats. The solution supports three Azure languages (English, German, Spanish) in all basic audio-related models and assumes that one VI resource is mapped to one extension.
+Video Indexer Arc Enabled Solution is an Azure Arc Extension Enabled Service aimed at running Video and Audio Analysis on Edge Devices. The solution is designed to run on Azure Arc-enabled Kubernetes and supports three video formats, including MP4 and four additional common formats. The solution supports three Azure languages (English, German, Spanish) in all basic audio-related models and assumes that one VI resource is mapped to one extension.
 
 The purpose of this document is to present the onboarding steps and pre-requisites required for Cluster Administrator, IT Operator, Dev Ops and Engineering teams to enable Video Indexer as arc extension on their current Infrastructure.
 
@@ -12,7 +12,6 @@ The purpose of this document is to present the onboarding steps and pre-requisit
 
 - Azure subscription with permissions to create Azure resources
 - Azure Video Indexer Account. The quickest way is using the Azure Portal using this tutorial [Create Video Indexer account](https://learn.microsoft.com/azure/azure-video-indexer/create-account-portal#use-the-azure-portal-to-create-an-azure-video-indexer-account).
-- The AKS cluster that will contain the Video Indexer extension must be in the East US region.
 - The latest version of [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli). You can skip if you're using cloud shell.
 - The latest version of connectedk8s Azure CLI extension, installed by running the following command. **You can skip if you're using the Cloud Shell** option:
 
@@ -72,7 +71,7 @@ The following is the minumum and recommended requirements if the extension conta
 
 | Configuration | VM Count | Node CPU Cores Count*  | Node Ram | Node Storage | Remarks
 | --- | --- | --- | --- | --- | --- |
-| Minimum | 1 | 8 Cores | 16 GB | 50 GB | Process **on** video in **basic audio** preset
+| Minimum | 1 | 16 Cores | 16 GB | 50 GB | Process **on** video in **basic audio** preset
 | Recommended | 2 | 48-64 Cores | 256 GB | 100 GB | Processing **10 videos** in parallel in **basic video** preset
 
 *Storage needs to support **ReadWriteMany** Storage Class
@@ -121,7 +120,7 @@ Run the following commands:
 $Subscription="<your subscription ID>"
 $ResourceGroup="<your resource group name"
 $AccountName="<your account name>"
-az rest --method post --verbose --uri https://management.azure.com/subscriptions/${Subscription}/resourceGroups/${ResourceGroup}/providers/Microsoft.VideoIndexer/accounts/${AccountName}/CreateExtensionDependencies?api-version=2024-01-01
+az rest --method post --verbose --uri https://management.azure.com/subscriptions/${Subscription}/resourceGroups/${ResourceGroup}/providers/Microsoft.VideoIndexer/accounts/${AccountName}/CreateExtensionDependencies?api-version=2023-06-02-preview
 ```
 If the response is 202 (accepted), the resources are being created. You can track their provisioning state by polling the location header returned in the response from the previous call as demonstrated in the below example, or simply wait for 1 minute, and proceed to the next step.
 
@@ -134,7 +133,7 @@ If the response is 409 (conflict), it means the resources already exist for your
 Once the resources have been created, get their data using this command:
 
 ```bash
-az rest --method post --uri  https://management.azure.com/subscriptions/${Subscription}/resourceGroups/${ResourceGroup}/providers/Microsoft.VideoIndexer/accounts/${AccountName}/ListExtensionDependenciesData?api-version=2024-01-01
+az rest --method post --uri  https://management.azure.com/subscriptions/${Subscription}/resourceGroups/${ResourceGroup}/providers/Microsoft.VideoIndexer/accounts/${AccountName}/ListExtensionDependenciesData?api-version=2023-06-02-preview
 ```
 
 You will recieve a response of the following format:

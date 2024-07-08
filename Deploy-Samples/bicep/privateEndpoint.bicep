@@ -1,11 +1,12 @@
 param location string = 'southafricanorth'
-param privateEndpointName string
-param privateLinkResource string 
+param privateEndpointName string = 'pe-back'
+param privateLinkResource string = '/subscriptions/24237b72-8546-4da5-b204-8c3cb76dd930/resourceGroups/ts-pe-stg-rg/providers/Microsoft.VideoIndexer/accounts/ts-pe-stg-vi'
+param vnetName string = 'vnet-back'
 
 var viZone = 'privatelink.api.videoindexer.ai'
 
 resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
-  name: 'pe-ts-int-vnet'
+  name: vnetName
   location: location
   properties: {
     addressSpace: {
@@ -52,7 +53,7 @@ resource privateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
   properties: {}
 }
 
-resource privateEndpointName_default 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-03-01' = {
+resource zoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-03-01' = {
   parent: privateEndpoint
   name: 'default'
   properties: {

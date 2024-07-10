@@ -207,7 +207,7 @@ if [[ $install_aks_cluster == "true" ]]; then
     echo -e "\t create aks cluster Name: $aks , Resource Group $rg- ***start***"
     aks_create_result=$(az aks create -n $aks -g $rg \
       --enable-managed-identity\
-          --enable-workload-identity \
+      --enable-workload-identity \
       --kubernetes-version ${aksVersion} \
       --enable-oidc-issuer \
       --nodepool-name system \
@@ -228,6 +228,9 @@ if [[ $install_aks_cluster == "true" ]]; then
         echo "AKS cluster creation failed."
         exit 1
       fi
+    ## Add maintanence window
+    az aks maintenanceconfiguration add --resource-group $rg --cluster-name $aks --name aksManagedAutoUpgradeSchedule --schedule-type Weekly --day-of-week Friday --interval-weeks 3 --duration 8 --utc-offset +05:30 --start-time 00:00
+    az aks maintenanceconfiguration add --resource-group $rg --cluster-name $aks --name aksManagedNodeOSUpgradeSchedule  --schedule-type Weekly --day-of-week Friday --interval-weeks 1 --duration 8 --utc-offset +05:30 --start-time 00:00
   fi
 
   echo -e "\t create aks cluster Name: $aks , Resource Group $rg- ***done***"
@@ -300,7 +303,7 @@ if [[ $install_aks_cluster == "true" ]]; then
   #============== Add ingress controller =======#
   #=============================================#
   echo -e "\tAdding ingress controller -- ***start***"
-  kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.5/deploy/static/provider/cloud/deploy.yaml
+  kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.0/deploy/static/provider/cloud/deploy.yaml
   echo -e "\tAdding ingress controller -- ***done***"
   #=============================================#
   #========= Patch Public IP DNS Label =========

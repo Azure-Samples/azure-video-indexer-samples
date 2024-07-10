@@ -45,7 +45,8 @@ class RetrieveThenReadVectorApproach(Approach):
         self.prompt_content_db = prompt_content_db
         self.language_models = language_models
         self.extract_references = extract_references
-        self.ask_template = ask_templates[ask_template_key]
+        self.system_prompt = ask_templates[f"{ask_template_key}_system_prompt"]
+        self.user_template = ask_templates[f"{ask_template_key}_user_template"]
         self.temperature = temperature
         self.top_p = top_p
         self.top_n = top_n
@@ -66,16 +67,18 @@ class RetrieveThenReadVectorApproach(Approach):
         docs_by_id, results_content = self.prompt_content_db.vector_search(embeddings_vector, n_results=retrieval_n)
         all_content = "\n".join(results_content)
 
-        prompt = (overrides.get("prompt_template", self.ask_template)).format(q=q, retrieved=all_content)
+        sys_prompt = overrides.get("sys_prompt", self.system_prompt)
+        user_prompt = (overrides.get("user_template", self.user_template)).format(q=q, retrieved=all_content)
 
         temperature = overrides.get("temperature", self.temperature)
         top_p = overrides.get("top_p", self.top_p)
 
-        completion = self.language_models.chat(prompt=prompt, temperature=temperature, top_p=top_p)
+        completion = self.language_models.chat(sys_prompt=sys_prompt, user_prompt=user_prompt, temperature=temperature,
+                                               top_p=top_p)
 
         result = {"data_points": results_content,  # List of search results
                   "answer": completion,    # Chat GPT answer
-                  "thoughts": f"Question:<br>{q}<br><br>Prompt:<br>" + prompt.replace('\n', '<br>'),  # Question + Prompt
+                  "thoughts": f"Question:<br>{q}<br><br>Prompt:<br>" + sys_prompt.replace('\n', '<br>'),  # Question + Prompt
                   "docs_by_id": docs_by_id,  # Same as data_points, but dict indexed by ID
                   }
 

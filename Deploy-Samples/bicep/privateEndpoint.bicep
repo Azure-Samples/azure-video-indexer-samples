@@ -1,9 +1,9 @@
-param location string = 'southafricanorth'
-param privateEndpointName string = 'pe-back'
-param privateLinkResource string = '/subscriptions/24237b72-8546-4da5-b204-8c3cb76dd930/resourceGroups/ts-pe-stg-rg/providers/Microsoft.VideoIndexer/accounts/ts-pe-stg-vi'
-param vnetName string = 'vnet-back'
-
+param location string
+param privateEndpointName string
+param privateLinkResource string
+param vnetName string 
 var viZone = 'privatelink.api.videoindexer.ai'
+param deployPrivateEndpoint bool
 
 resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
   name: vnetName
@@ -25,7 +25,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' = {
   }
 }
 
-resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
+resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = if (deployPrivateEndpoint) {
   name: privateEndpointName
   location: location
   properties: {
@@ -47,13 +47,13 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
   }
 }
 
-resource privateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
+resource privateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = if (deployPrivateEndpoint) {
   name: viZone
   location: 'global'
   properties: {}
 }
 
-resource zoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-03-01' = {
+resource zoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-03-01' = if (deployPrivateEndpoint) {
   parent: privateEndpoint
   name: 'default'
   properties: {
@@ -70,5 +70,3 @@ resource zoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020
     privateDnsZone
   ]
 }
-
-

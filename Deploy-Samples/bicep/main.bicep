@@ -1,11 +1,14 @@
 param location string = resourceGroup().location
 
-@description('Storage Account Name')
-param storageAccountName string = 'tspestgsa'
-@description('Video Indexer Account Name')
-param videoIndexerAccountName string = 'ts-pe-stg-1'
-@description('Private Endpoint Name')
-var privateEndpointName  = '${videoIndexerAccountName}-pe'
+param resourcePrefix string = 'ts-pe-02'
+var storageAccountNameUnformatted  = '${resourcePrefix}sa'
+var storageAccountName = toLower(replace(storageAccountNameUnformatted, '-', ''))
+var videoIndexerAccountName = '${resourcePrefix}-vi'
+var privateEndpointName  = '${resourcePrefix}-pe'
+var vnetName = '${resourcePrefix}-vnet'
+var publicNetworkAccess = 'Disabled'
+var deployPrivteEndpoint = true
+
 
 module videoIndexer 'videoIndexer.bicep' = {
   name: 'videoIndexer.bicep'
@@ -13,10 +16,11 @@ module videoIndexer 'videoIndexer.bicep' = {
     location: location
     storageAccountName: storageAccountName
     videoIndexerAccountName: videoIndexerAccountName
+    publicNetworkAccess: publicNetworkAccess
   }
 }
 
-// Role Assignment must be on a separate resource 
+ // Role Assignment must be on a separate resource 
 module roleAssignment 'roleAssignment.bicep' = {
   name: 'grant-storage-blob-data-contributor'
   params: {
@@ -32,8 +36,10 @@ module privateEndpoint 'privateEndpoint.bicep' = {
   name: 'privateEndpoint.bicep'
   params: {
     location: location
+    vnetName: vnetName
     privateEndpointName: privateEndpointName
     privateLinkResource: videoIndexer.outputs.videoIndexerResourceId
+    deployPrivateEndpoint: deployPrivteEndpoint
   }
   dependsOn: [
     videoIndexer

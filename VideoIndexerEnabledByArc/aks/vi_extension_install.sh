@@ -303,7 +303,7 @@ if [[ $install_aks_cluster == "true" ]]; then
   #           --tags $tags \
   #           --enable-cluster-autoscaler \
   #           --skip-gpu-driver-install \
-  #           --node-taints sku=gpu:NoSchedule \
+  #           --node-taints nvidia.com/gpu=true:NoSchedule \
   #           --max-pods 110)
   #   if [[ $? -eq 0 ]]; then
   #     echo "Adding workloadncv3 node pool succeeded"

@@ -302,7 +302,6 @@ if [[ $install_aks_cluster == "true" ]]; then
   #           --min-count 0  \
   #           --tags $tags \
   #           --enable-cluster-autoscaler \
-  #           --skip-gpu-driver-install \
   #           --node-taints nvidia.com/gpu=true:NoSchedule \
   #           --labels workload=summarization \
   #           --max-pods 110)
@@ -310,7 +309,7 @@ if [[ $install_aks_cluster == "true" ]]; then
   #     echo "Adding workloadncv3 node pool succeeded"
   #     # add nvidia GPU operator
   #     helm repo add nvidia https://helm.ngc.nvidia.com/nvidia && helm repo update
-  #     helm install --wait --generate-name -n gpu-operator --create-namespace nvidia/gpu-operator
+  #     helm upgrade -i gpu-operator --wait -n gpu-operator --create-namespace nvidia/gpu-operator
   #   else
   #     echo "Adding workloadncv3 node pool Failed. Exiting"
   #     exit 1

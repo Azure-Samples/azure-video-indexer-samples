@@ -399,7 +399,7 @@ class VideoIndexerClient:
         url = response.url
         print(f'Got the player widget URL: {url}')
 
-    def get_textual_summary(self, video_id:str, deployment_name:str, lenght:str, style:str, timeout_sec:Optional[int]=None) -> None:
+    def get_textual_summary(self, video_id:str, deployment_name:str, lenght:str, style:str, timeout_sec:Optional[int]=None) -> Optional[dict]:
         '''
         Calls the TextualSummarization API. First a call is made with the POST method, to create the video summary:
         (https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Create-Video-Summary)
@@ -408,8 +408,8 @@ class VideoIndexerClient:
 
         :param video_id: The video ID
         :param deploymentName: The name of the deployment
-        :param length: The length of the summary
-        :param style: The style of the summary
+        :param length: The length of the summary. Allowed values: Medium / Short / Long
+        :param style: The style of the summary. Allowed values: Neutral / Casual / Formal
         '''
 
         self.get_account_async()  # if account is not initialized, get it
@@ -453,8 +453,8 @@ class VideoIndexerClient:
                 print(f"Error getting video summary status: {e}")
                 return
             if video_state == 'Processed':
-                print(f'Here is the textual summary of the video: \n{video_result}')
-                break
+                print('Here is the textual summary of the video: \n')
+                return video_result
             elif video_state == 'Failed':
                 print(f"Text summary failed for video ID {video_id}.")
                 break

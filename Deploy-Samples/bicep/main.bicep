@@ -1,10 +1,10 @@
 param location string = resourceGroup().location
 
-param resourcePrefix string = 'ts-pe-02'
+param resourcePrefix string = '10spades'
 var storageAccountNameUnformatted  = '${resourcePrefix}sa'
 var storageAccountName = toLower(replace(storageAccountNameUnformatted, '-', ''))
 var videoIndexerAccountName = '${resourcePrefix}-vi'
-var privateEndpointName  = '${resourcePrefix}-pe'
+var privateEndpointName  = '${resourcePrefix}-pe2'
 var vnetName = '${resourcePrefix}-vnet'
 var publicNetworkAccess = 'Disabled'
 var deployPrivteEndpoint = true

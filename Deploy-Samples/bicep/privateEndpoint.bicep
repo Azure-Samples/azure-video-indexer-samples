@@ -33,7 +33,7 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = if (d
       id: '${vnet.id}/subnets/default'
     }
     customNetworkInterfaceName: '${privateEndpointName}-nic'
-    privateLinkServiceConnections: [
+    manualPrivateLinkServiceConnections: [
       {
         name: privateEndpointName
         properties: {
@@ -59,7 +59,7 @@ resource zoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020
   properties: {
     privateDnsZoneConfigs: [
       {
-        name: 'variables[\'viZone\']'
+        name: viZone
         properties: {
           privateDnsZoneId: resourceId('Microsoft.Network/privateDnsZones', viZone)
         }

@@ -8,12 +8,12 @@ namespace VideoIndexingARMAccounts
 {
     public static class Consts
     {
-        public const string ApiVersion = "2023-11-01-preview";
+        public const string ApiVersion = "2024-06-01-preview";
         public const string AzureResourceManager = "https://management.azure.com";
         public static readonly string SubscriptionId = Environment.GetEnvironmentVariable("SUBSCIPTION_ID") ?? "24237b72-8546-4da5-b204-8c3cb76dd930";
-        public static readonly string ResourceGroup = Environment.GetEnvironmentVariable("VI_RESOURCE_GROUP") ?? "pe-ts-int-rg";
-        public static readonly string ViAccountName = Environment.GetEnvironmentVariable("VI_ACCOUNT_NAME") ?? "pe-ts-int9";
-        public static readonly string ApiEndpoint = Environment.GetEnvironmentVariable("API_ENDPOINT") ?? "https://pe-ts-int9.privatelink.api.videoindexer.ai";
+        public static readonly string ResourceGroup = Environment.GetEnvironmentVariable("VI_RESOURCE_GROUP") ?? "tshaiman02-rg";
+        public static readonly string ViAccountName = Environment.GetEnvironmentVariable("VI_ACCOUNT_NAME") ?? "tshaiman02-vi";
+        public static readonly string ApiEndpoint = Environment.GetEnvironmentVariable("API_ENDPOINT") ?? "https://tshaiman02-vi.privatelink.api.videoindexer.ai";
 
         public static bool Valid() => !string.IsNullOrWhiteSpace(SubscriptionId) &&
                                !string.IsNullOrWhiteSpace(ResourceGroup) &&
@@ -23,7 +23,7 @@ namespace VideoIndexingARMAccounts
     public class Program
     {
         //Choose public Access Video URL or File Path
-        private const string VideoUrl = "https://vimaptestfilessa.blob.core.windows.net/benchmark-tests/object_detection/od_quality_runtime_02/FAST%20!!!%20AMTRAK%20TRAINS.mp4?sv=2023-01-03&st=2024-02-23T18%3A32%3A39Z&se=2025-02-24T18%3A32%3A00Z&sr=b&sp=r&sig=d%2BPEZOamAk3jGb6QxOQw5OWJHnzvf8tVfS4gpe%2BVc9U%3D"; 
+        private const string VideoUrl = "https://vimaptestfilessa.blob.core.windows.net/map-test-files/integration/short.mp4?sv=2023-01-03&st=2024-08-01T09%3A15%3A32Z&se=2024-08-08T09%3A15%3A00Z&skoid=2e75b6ee-e85f-4515-a74a-9fe890501e2e&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2024-08-01T09%3A15%3A32Z&ske=2024-08-08T09%3A15%3A00Z&sks=b&skv=2023-01-03&sr=b&sp=r&sig=NWjJhxFDAnssQ72ZWHpbtAqiOYVMK%2B6BkGHg14PH7DQ%3D"; 
         //OR 
         private const string LocalVideoPath = "<Your Video File Path Here>";
         

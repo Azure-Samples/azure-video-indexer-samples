@@ -1,16 +1,21 @@
-$rg="pe-ts-int-rg"
-$peName="pe7"
-$peConnectionName="pe7-connection"
+$rg="10spades-rg"
+$peName="10spades-pe2"
+$peConnectionName="10spades-pe2"
 $location="southafricanorth"
-$resourceId="/subscriptions/24237b72-8546-4da5-b204-8c3cb76dd930/resourceGroups/pe-ts-int-rg/providers/Microsoft.VideoIndexer/accounts/pe-ts-int9"
+$viName="10spades-vi"
+
+az network private-endpoint-connection approve -g $rg -n $peName `
+ --resource-name $viName `
+ --type Microsoft.VideoIndexer/accountsA --description "Approved"
 
 ## Az CLI Version
-az network private-endpoint create `
-  --resource-group $rg `
-  --name $peName `
-  --vnet-name 'pe-ts-int-vnet' `
-  --subnet 'default' `
-  --private-connection-resource-id  $resourceId `
-  --group-ids 'account' `
-  --connection-name $peConnectionName `
-  --location $location
+# az network private-endpoint create `
+#   --resource-group $rg `
+#   --name $peName `
+#   --vnet-name 'aci-vnet' `
+#   --subnet 'pe-subnet' `
+#   --private-connection-resource-id  $resourceId `
+#   --group-ids 'blob' `
+#   --connection-name $peConnectionName `
+#   --manual-request y `
+#   --location $location

@@ -96,7 +96,8 @@ The following is the minumum and recommended requirements if the extension conta
 | Minimum | 1 | 16 Cores | 16 GB | 50 GB | Process **on** video in **basic audio** preset
 | Recommended | 2 | 48-64 Cores | 256 GB | 100 GB | Processing **10 videos** in parallel in **basic video** preset
 
-*Storage needs to support **ReadWriteMany** Storage Class
+*Storage needs to support **ReadWriteMany** Storage Class  
+**VM CPU must support [AVX2](https://en.m.wikipedia.org/wiki/Advanced_Vector_Extensions) extensions**  
 
 > **_Note_:** at least 2-node cluster is recommended for high availability and scalability.
 

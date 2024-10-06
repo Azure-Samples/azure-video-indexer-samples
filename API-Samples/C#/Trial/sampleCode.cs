@@ -8,7 +8,7 @@ public static async Task Sample()
             var apiUrl = "https://api.videoindexer.ai";
             var apiKey = "API_KEY"; // replace with API key taken from https://aka.ms/viapi
             var accountId = "ACCOUNT_ID"; // replace with your VI account id (guid)
-            var accountLocation = "trial"; // If you have a paid account the location will be different, named after the Azure region the account is in
+            var accountLocation = "trial";
 
             // TLS 1.2 (or above) is required to send requests
             var httpHandler = new SocketsHttpHandler();

@@ -38,6 +38,10 @@ Here you can find code samples and project examples of how to use Video Indexer,
 | `API Samples`        | Sample code of uploading and indexing video using API        | Video Indexer   |
 | `VideoIndexerEnabledByArc`        | Video Indexer Enabled By Arc Sample And deploy tutorials        | Video Indexer   |
 | `Embedding widgets`          | How to add Video Indexer widgets to your app                 | Video Indexer   |
+| `BringYourOwn-Samples` | Bring-Your-Own Model with Video Indexer API and Complete Custom Model Flow | Video Indexer |
+| `VideoQnA-Demo` | Video Indexer Archive Q&A using LLM, Vector DB, Azure OpenAI, Azure AI Search, and ChromaDB | Video Indexer |
+| `LogicApp-Samples` | Bring Your Own AI using Logic Apps to classify objects using GPT4o | Video Indexer |
+| `ExportVideoDataToADX` | Exporting video index data to Azure Data Explorer using Logic Apps | Video Indexer |
 | `media`                      | media used for md files                                      |                 |
 | `.gitignore`                 | Define what to ignore at commit time                         |                 |
 | `CHANGELOG.md`               | List of changes to the sample                                |                 |

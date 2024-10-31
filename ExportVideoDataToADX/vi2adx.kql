@@ -1,0 +1,300 @@
+
+.execute database script with (ContinueOnErrors=true)
+<|
+.create table audioEffects (['id']: string, audioEffectsId: string, audioEffectsType: string, audioEffectsConfidence: real, audioEffectsStart: timespan, audioEffectsEnd: timespan, audioEffectsAdjustedStart: timespan, audioEffectsAdjustedEnd: timespan);
+.create table Blocks (['id']: string, BlockId: string, blocksStart: timespan, blocksEnd: timespan, blocksAdjustedStart: timespan, blocksAdjustedEnd: timespan);
+.create table Brands (['id']: string, BrandId: string, BrandreferenceType: string, Brandname: string, BrandreferenceId: string, BrandreferenceUrl: string, Branddescription: string, BrandTags: dynamic, BrandConfidence: real, BrandIsCustome: bool, instanceSource: string, brandsStart: timespan, brandsEnd: timespan, brandsAdjustedStart: timespan, brandsAdjustedEnd: timespan);
+.create table Emotions (['id']: string, EmotionsId: string, EmotionsType: string, emotionsStart: timespan, emotionsEnd: timespan, emotionsAdjustedStart: timespan, emotionsAdjustedEnd: timespan);
+.create table Faces (['id']: string, FaceId: string, FaceName: string, FaceDescription: string, FaceConfidence: real, FacethumbnailId: string, Facetitle: string, FaceimageUrl: string, facesStart: timespan, facesEnd: timespan, facesAdjustedStart: timespan, facesAdjustedEnd: timespan, facesthumbnailsIds: dynamic)
+.create table Indexer (created: datetime, accountId: guid, ['id']: string, userName: string, name: string, description: string, durationInSeconds: int, summarizedInsights: dynamic, ['state']: string, privacyMode: string, isOwned: bool, isEditable: bool, isBase: bool, duration: timespan, ['partition']: string, detectSourceLanguage: string, externalId: string, externalUrl: string, failureCode: string, failureMessage: string, indexingPreset: string, ['metadata']: dynamic, isAdult: bool, language: string, languageAutoDetectMode: string, languages: dynamic, linguisticModelId: string, personModelId: string, logoGroupId: string, moderationState: string, processingProgress: string, publishedProxyUrl: string, publishedUrl: string, reviewState: string, sourceLanguage: string, sourceLanguages: dynamic, thumbnailId: string, viewToken: string, audioEffects: dynamic, blocks: dynamic, brands: dynamic, emotions: dynamic, faces: dynamic, framePatterns: dynamic, keywords: dynamic, labels: dynamic, namedLocations: dynamic, namedPeople: dynamic, ocr: dynamic, scenes: dynamic, sentiments: dynamic, shots: dynamic, speakers: dynamic, ['statistics']: dynamic, textualContentModeration: dynamic, topics: dynamic, transcript: dynamic, visualContentModeration: dynamic, videosRanges: dynamic)
+.create table General (created: datetime, accountId: guid, ['id']: string, name: string, userName: string, description: string, duration: timespan, language: string, failureCode: string, failureMessage: string, indexingPreset: string, isAdult: bool, languageAutoDetectMode: string, linguisticModelId: string, personModelId: string, logoGroupId: string, moderationState: string, processingProgress: string, publishedProxyUrl: string, reviewState: string, thumbnailId: string)
+.create table Keywords (['id']: string, keywordId: string, keywordtext: string, keywordlanguage: string, keywordConfidence: real, keywordsStart: timespan, keywordsEnd: timespan, keywordsAdjustedStart: timespan, keywordsAdjustedEnd: timespan)
+.create table Labels (['id']: string, labelId: string, labelname: string, labellanguage: string, labelreferenceId: string, labelsStart: timespan, labelsEnd: timespan, labelsAdjustedStart: timespan, labelsAdjustedEnd: timespan, labelConfidence: real)
+.create table namedLocations (['id']: string, namedLocationId: string, namedLocationName: string, namedLocationdescription: string, namedLocationreferenceId: string, namedLocationreferenceUrl: string, namedLocationconfidence: real, namedLocationisCustom: bool, namedLocationstags: dynamic, namedLocationsStart: timespan, namedLocationsEnd: timespan, namedLocationsAdjustedStart: timespan, namedLocationsAdjustedEnd: timespan, namedLocationinstanceSource: string)
+.create table namedPeople (['id']: string, namedPeopleId: string, namedPeopleName: string, namedPeopledescription: string, namedPeoplereferenceId: string, namedPeoplereferenceUrl: string, namedPeopleconfidence: real, namedPeopleisCustom: bool, namedPeopletags: dynamic, namedPeopleStart: timespan, namedPeopleEnd: timespan, namedPeopleAdjustedStart: timespan, namedPeopleAdjustedEnd: timespan, namedPeopleinstanceSource: string)
+.create table Ocr (['id']: string, ocrId: string, ocrtext: string, ocrdeleft: real, ocrtop: real, ocrwidth: real, ocrheight: real, ocrangle: real, ocrconfidence: real, ocrlanguage: string, ocrStart: timespan, ocrEnd: timespan, ocrAdjustedStart: timespan, ocrAdjustedEnd: timespan) 
+.create table Scenes (['id']: string, sceneId: string, scenesStart: timespan, scenesEnd: timespan, scenesAdjustedStart: timespan, scenesAdjustedEnd: timespan)
+.create table Sentiments (['id']: string, sentimentId: string, sentimentsentimentType: string, sentimentaverageScore: real, sentimentsStart: timespan, sentimentsEnd: timespan, sentimentsAdjustedStart: timespan, sentimentsAdjustedEnd: timespan, sentimentConfidence: real)
+.create table Shots (['id']: string, shotId: string, shottags: dynamic, shotkeyFrames: dynamic, shotsStart: timespan, shotsEnd: timespan, shotsAdjustedStart: timespan, shotsAdjustedEnd: timespan, shotConfidence: real) 
+.create table Speakers (['id']: string, speakerId: string, speakername: string, speakersStart: timespan, speakersEnd: timespan, speakersAdjustedStart: timespan, speakersAdjustedEnd: timespan)
+.create table Topics (['id']: string, topicId: string, topicname: string, topicreferenceId: string, topicreferenceType: string, topiciptcName: string, topiciabName: string, topiclanguage: string, topicconfidence: real, topicsStart: timespan, topicsEnd: timespan, topicsAdjustedStart: timespan, topicsAdjustedEnd: timespan)
+.create table Transcript (['id']: string, transcriptId: string, transcripttext: string, transcriptspeakerId: string, transcriptreferenceType: string, transcriptlanguage: string, transcriptconfidence: real, transcriptStart: timespan, transcriptEnd: timespan, transcriptAdjustedStart: timespan, transcriptAdjustedEnd: timespan)   
+.create-or-alter function  GeneralUP() {
+Indexer | project created, accountId, id, name, userName, description, duration, language, failureCode, failureMessage, indexingPreset, isAdult, languageAutoDetectMode, linguisticModelId, personModelId, logoGroupId, moderationState, processingProgress, publishedProxyUrl, reviewState, thumbnailId
+}
+.create-or-alter function  audioEffectsUp() {
+Indexer | project id, audioEffects | mv-expand audioEffects | extend audioEffectsId = tostring(audioEffects.id) | extend audioEffectsType = tostring(audioEffects.type) | extend audioEffectsinstances = todynamic(audioEffects.instances) | project-away audioEffects | mv-expand audioEffectsinstances | extend audioEffectsConfidence = todouble(audioEffectsinstances.confidence) | extend audioEffectsStart = totimespan(audioEffectsinstances.start) | extend audioEffectsEnd = totimespan(audioEffectsinstances.end) | extend audioEffectsAdjustedStart = totimespan(audioEffectsinstances.adjustedStart) | extend audioEffectsAdjustedEnd = totimespan(audioEffectsinstances.adjustedEnd) | project-away audioEffectsinstances | order  by id, audioEffectsId asc,audioEffectsStart asc  
+}
+.create-or-alter function  ocrUp() {
+Indexer | project id, ocr | mv-expand ocr | extend ocrId = tostring(ocr.id) | extend ocrtext = tostring(ocr.text) | extend ocrdeleft = todouble(ocr.left) | extend ocrtop = todouble(ocr.['top']) | extend ocrwidth = todouble(ocr.width) | extend ocrheight = todouble(ocr.height) | extend ocrangle = todouble(ocr.angle) | extend ocrconfidence = todouble(ocr.confidence) | extend ocrlanguage = tostring(ocr.language) | extend instances = ocr.instances | mv-expand instances | extend ocrStart = totimespan(instances.start) | extend ocrEnd = totimespan(instances.end) | extend ocrAdjustedStart = totimespan(instances.adjustedStart) | extend ocrAdjustedEnd = totimespan(instances.adjustedEnd) | project-away ocr, instances | order by id, ocrId asc , ocrStart asc 
+}
+.create-or-alter function  scenesUp() {
+Indexer | project id, scenes | mv-expand scenes | extend sceneId = tostring(scenes.id) | extend instances = scenes.instances | mv-expand instances | extend scenesStart = totimespan(instances.start) | extend scenesEnd = totimespan(instances.end) | extend scenesAdjustedStart = totimespan(instances.adjustedStart) | extend scenesAdjustedEnd = totimespan(instances.adjustedEnd) | project-away scenes, instances | order by id, sceneId asc , scenesStart asc 
+}
+.create-or-alter function  sentimentsUp() {
+Indexer | project id, sentiments | mv-expand sentiments | extend sentimentId = tostring(sentiments.id) | extend sentimentsentimentType = tostring(sentiments.sentimentType) | extend sentimentaverageScore = todouble(sentiments.averageScore) | extend instances = sentiments.instances | mv-expand instances | extend sentimentsStart = totimespan(instances.start) | extend sentimentsEnd = totimespan(instances.end) | extend sentimentsAdjustedStart = totimespan(instances.adjustedStart) | extend sentimentsAdjustedEnd = totimespan(instances.adjustedEnd) | extend sentimentConfidence = todouble(instances.confidence) | project-away sentiments, instances | order by id, sentimentId asc , sentimentsStart asc 
+}
+.create-or-alter function  shotsUp() {
+Indexer | project id, shots | mv-expand shots | extend shotId = tostring(shots.id) | extend shottags = todynamic(shots.tags) | extend shotkeyFrames = todynamic(shots.keyFrames) | extend instances = shots.instances | mv-expand instances | extend shotsStart = totimespan(instances.start) | extend shotsEnd = totimespan(instances.end) | extend shotsAdjustedStart = totimespan(instances.adjustedStart) | extend shotsAdjustedEnd = totimespan(instances.adjustedEnd) | extend shotConfidence = todouble(instances.confidence) | mv-expand shotkeyFrames | project-away shots, instances | order by id, shotId asc , shotsStart asc 
+}
+ 
+.create-or-alter function  speakersUp() {
+Indexer | project id, speakers | mv-expand speakers | extend speakerId = tostring(speakers.id) | extend speakername = tostring(speakers.name) | extend instances = speakers.instances | mv-expand instances | extend speakersStart = totimespan(instances.start) | extend speakersEnd = totimespan(instances.end) | extend speakersAdjustedStart = totimespan(instances.adjustedStart) | extend speakersAdjustedEnd = totimespan(instances.adjustedEnd) | project-away speakers, instances | order by id, speakerId asc , speakersStart asc 
+}
+.create-or-alter function  topicsUp() {
+Indexer | project id, topics | mv-expand topics | extend topicId = tostring(topics.id) | extend topicname = tostring(topics.name) | extend topicreferenceId = tostring(topics.referenceId) | extend topicreferenceType = tostring(topics.referenceType) | extend topiciptcName = tostring(topics.iptcName) | extend topiciabName = tostring(topics.iabName) | extend topiclanguage = tostring(topics.language) | extend topicconfidence = todouble(topics.confidence) | extend instances = topics.instances | mv-expand instances | extend topicsStart = totimespan(instances.start) | extend topicsEnd = totimespan(instances.end) | extend topicsAdjustedStart = totimespan(instances.adjustedStart) | extend topicsAdjustedEnd = totimespan(instances.adjustedEnd) | project-away topics, instances | order by id, topicId asc , topicsStart asc
+}
+.create-or-alter function  transcriptUp() {
+Indexer | project id, transcript | mv-expand transcript | extend transcriptId = tostring(transcript.id) | extend transcripttext = tostring(transcript.text) | extend transcriptspeakerId = tostring(transcript.speakerId) | extend transcriptreferenceType = tostring(transcript.referenceType) | extend transcriptlanguage = tostring(transcript.language) | extend transcriptconfidence = todouble(transcript.confidence) | extend instances = transcript.instances | mv-expand instances | extend transcriptStart = totimespan(instances.start) | extend transcriptEnd = totimespan(instances.end) | extend transcriptAdjustedStart = totimespan(instances.adjustedStart) | extend transcriptAdjustedEnd = totimespan(instances.adjustedEnd) | project-away transcript, instances | order by id, transcriptId asc , transcriptStart asc
+}
+.create-or-alter function  BlocksUp() {
+Indexer | project id, blocks | mv-expand blocks | extend BlockId = tostring(blocks.id) | extend instances = blocks.instances | mv-expand instances | extend blocksStart = totimespan(instances.start) | extend blocksEnd = totimespan(instances.end) | extend blocksAdjustedStart = totimespan(instances.adjustedStart) | extend blocksAdjustedEnd = totimespan(instances.adjustedEnd) | project-away blocks, instances | order by id, BlockId asc , blocksStart asc
+}
+.create-or-alter function  BrandsUp() {
+Indexer | project id, brands | mv-expand brands | extend BrandId = tostring(brands.id) | extend BrandreferenceType = tostring(brands.referenceType) | extend Brandname = tostring(brands.name) | extend BrandreferenceId = tostring(brands.referenceId) | extend BrandreferenceUrl = tostring(brands.referenceUrl) | extend Branddescription = tostring(brands.description) | extend BrandTags = todynamic(brands.tags) | extend BrandConfidence = todouble(brands.confidence) | extend BrandIsCustome = tobool(brands.isCustom) | extend instances = brands.instances | mv-expand instances | extend instanceSource = tostring(instances.instanceSource) | extend brandsStart = totimespan(instances.start) | extend brandsEnd = totimespan(instances.end) | extend brandsAdjustedStart = totimespan(instances.adjustedStart) | extend brandsAdjustedEnd = totimespan(instances.adjustedEnd) | project-away brands, instances | order by id, BrandId asc , brandsStart asc  
+}
+.create-or-alter function  emotionsUp() {
+Indexer | project id, emotions | mv-expand emotions | extend EmotionsId = tostring(emotions.id) | extend EmotionsType = tostring(emotions.type) | extend instances = emotions.instances | mv-expand instances | extend emotionsStart = totimespan(instances.start) | extend emotionsEnd = totimespan(instances.end) | extend emotionsAdjustedStart = totimespan(instances.adjustedStart) | extend emotionsAdjustedEnd = totimespan(instances.adjustedEnd) | project-away emotions, instances | order by id, EmotionsId asc , emotionsStart asc   
+}
+.create-or-alter function  facesUp() {
+Indexer | project id, faces | mv-expand faces | extend FaceId = tostring(faces.id) | extend FaceName = tostring(faces.name) | extend FaceDescription = tostring(faces.description) | extend FaceConfidence = todouble(faces.confidence) | extend FacethumbnailId = tostring(faces.thumbnailId) | extend Facetitle = tostring(faces.['title']) | extend FaceimageUrl = tostring(faces.imageUrl) | extend instances = faces.instances | mv-expand instances | extend facesStart = totimespan(instances.start) | extend facesEnd = totimespan(instances.end) | extend facesAdjustedStart = totimespan(instances.adjustedStart) | extend facesAdjustedEnd = totimespan(instances.adjustedEnd) | extend facesthumbnailsIds = todynamic(instances.thumbnailsIds) | project-away faces, instances | order by id, FaceId asc , facesStart asc
+}
+.create-or-alter function  keywordsUp() {
+Indexer | project id, keywords | mv-expand keywords | extend keywordId = tostring(keywords.id) | extend keywordtext = tostring(keywords.text) | extend keywordlanguage = tostring(keywords.language) | extend keywordConfidence = todouble(keywords.confidence) | extend instances = keywords.instances | mv-expand instances | extend keywordsStart = totimespan(instances.start) | extend keywordsEnd = totimespan(instances.end) | extend keywordsAdjustedStart = totimespan(instances.adjustedStart) | extend keywordsAdjustedEnd = totimespan(instances.adjustedEnd) | project-away keywords, instances | order by id, keywordId asc , keywordsStart asc
+}
+.create-or-alter function  labelsUp() {
+Indexer | project id, labels | mv-expand labels | extend labelId = tostring(labels.id) | extend labelname = tostring(labels.name) | extend labellanguage = tostring(labels.language) | extend labelreferenceId = tostring(labels.referenceId) | extend instances = labels.instances | mv-expand instances| extend labelsStart = totimespan(instances.start) | extend labelsEnd = totimespan(instances.end) | extend labelsAdjustedStart = totimespan(instances.adjustedStart) | extend labelsAdjustedEnd = totimespan(instances.adjustedEnd) | extend labelConfidence = todouble(instances.confidence) | project-away labels, instances | order by id, labelId asc , labelsStart asc
+}
+.create-or-alter function  namedLocationsUp() {
+Indexer | project id, namedLocations | mv-expand namedLocations | extend namedLocationId = tostring(namedLocations.id) | extend namedLocationName = tostring(namedLocations.name) | extend namedLocationdescription = tostring(namedLocations.description) | extend namedLocationreferenceId = tostring(namedLocations.referenceId) | extend namedLocationreferenceUrl = tostring(namedLocations.referenceUrl) | extend namedLocationconfidence = todouble(namedLocations.confidence) | extend namedLocationisCustom = tobool(namedLocations.isCustom) | extend namedLocationstags = todynamic(namedLocations.tags) | extend instances = namedLocations.instances | mv-expand instances | extend namedLocationsStart = totimespan(instances.start) | extend namedLocationsEnd = totimespan(instances.end) | extend namedLocationsAdjustedStart = totimespan(instances.adjustedStart) | extend namedLocationsAdjustedEnd = totimespan(instances.adjustedEnd) | extend namedLocationinstanceSource = tostring(instances.instanceSource) | project-away namedLocations, instances | order by id, namedLocationId asc , namedLocationsStart asc
+}
+.create-or-alter function  namedPeopleUp() {
+Indexer | project id, namedPeople | mv-expand namedPeople | extend namedPeopleId = tostring(namedPeople.id) | extend namedPeopleName = tostring(namedPeople.name) | extend namedPeopledescription = tostring(namedPeople.description) | extend namedPeoplereferenceId = tostring(namedPeople.referenceId) | extend namedPeoplereferenceUrl = tostring(namedPeople.referenceUrl) | extend namedPeopleconfidence = todouble(namedPeople.confidence) | extend namedPeopleisCustom = tobool(namedPeople.isCustom) | extend namedPeopletags = todynamic(namedPeople.tags) | extend instances = namedPeople.instances | mv-expand instances | extend namedPeopleStart = totimespan(instances.start) | extend namedPeopleEnd = totimespan(instances.end) | extend namedPeopleAdjustedStart = totimespan(instances.adjustedStart) | extend namedPeopleAdjustedEnd = totimespan(instances.adjustedEnd) | extend namedPeopleinstanceSource = tostring(instances.instanceSource) | project-away namedPeople, instances | order by id, namedPeopleId asc , namedPeopleStart asc
+}
+.alter table General policy update
+```
+[
+  {
+    "IsEnabled": true,
+    "Source": "Indexer",
+    "Query": "GeneralUP",
+    "IsTransactional": true,
+    "PropagateIngestionProperties": false,
+    "ManagedIdentity": null
+  }
+]
+```
+.alter table audioEffects policy update
+```
+[
+  {
+    "IsEnabled": true,
+    "Source": "Indexer",
+    "Query": "audioEffectsUp",
+    "IsTransactional": true,
+    "PropagateIngestionProperties": false,
+    "ManagedIdentity": null
+  }
+]
+```
+.alter table Blocks policy update
+```
+[
+  {
+    "IsEnabled": true,
+    "Source": "Indexer",
+    "Query": "BlocksUp",
+    "IsTransactional": true,
+    "PropagateIngestionProperties": false,
+    "ManagedIdentity": null
+  }
+]
+```
+.alter table Brands policy update
+```
+[
+  {
+    "IsEnabled": true,
+    "Source": "Indexer",
+    "Query": "BrandsUp",
+    "IsTransactional": true,
+    "PropagateIngestionProperties": false,
+    "ManagedIdentity": null
+  }
+]
+```
+.alter table Emotions policy update
+```
+[
+  {
+    "IsEnabled": true,
+    "Source": "Indexer",
+    "Query": "emotionsUp",
+    "IsTransactional": true,
+    "PropagateIngestionProperties": false,
+    "ManagedIdentity": null
+  }
+]
+```
+.alter table Faces policy update
+```
+[
+  {
+    "IsEnabled": true,
+    "Source": "Indexer",
+    "Query": "facesUp",
+    "IsTransactional": true,
+    "PropagateIngestionProperties": false,
+    "ManagedIdentity": null
+  }
+]
+```
+.alter table Keywords policy update
+```
+[
+  {
+    "IsEnabled": true,
+    "Source": "Indexer",
+    "Query": "keywordsUp",
+    "IsTransactional": true,
+    "PropagateIngestionProperties": false,
+    "ManagedIdentity": null
+  }
+]
+```
+.alter table Labels policy update
+```
+[
+  {
+    "IsEnabled": true,
+    "Source": "Indexer",
+    "Query": "labelsUp",
+    "IsTransactional": true,
+    "PropagateIngestionProperties": false,
+    "ManagedIdentity": null
+  }
+]
+```
+.alter table namedLocations policy update
+```
+[
+  {
+    "IsEnabled": true,
+    "Source": "Indexer",
+    "Query": "namedLocationsUp",
+    "IsTransactional": true,
+    "PropagateIngestionProperties": false,
+    "ManagedIdentity": null
+  }
+]
+```
+.alter table namedPeople policy update
+```
+[
+  {
+    "IsEnabled": true,
+    "Source": "Indexer",
+    "Query": "namedPeopleUp",
+    "IsTransactional": true,
+    "PropagateIngestionProperties": false,
+    "ManagedIdentity": null
+  }
+]
+```
+.alter table Ocr policy update
+```
+[
+  {
+    "IsEnabled": true,
+    "Source": "Indexer",
+    "Query": "ocrUp",
+    "IsTransactional": true,
+    "PropagateIngestionProperties": false,
+    "ManagedIdentity": null
+  }
+]
+```
+.alter table Scenes policy update
+```
+[
+  {
+    "IsEnabled": true,
+    "Source": "Indexer",
+    "Query": "scenesUp",
+    "IsTransactional": true,
+    "PropagateIngestionProperties": false,
+    "ManagedIdentity": null
+  }
+]
+```
+.alter table Sentiments policy update
+```
+[
+  {
+    "IsEnabled": true,
+    "Source": "Indexer",
+    "Query": "sentimentsUp",
+    "IsTransactional": true,
+    "PropagateIngestionProperties": false,
+    "ManagedIdentity": null
+  }
+]
+```
+.alter table Shots policy update
+```
+[
+  {
+    "IsEnabled": true,
+    "Source": "Indexer",
+    "Query": "shotsUp",
+    "IsTransactional": true,
+    "PropagateIngestionProperties": false,
+    "ManagedIdentity": null
+  }
+]
+```
+.alter table Speakers policy update
+```
+[
+  {
+    "IsEnabled": true,
+    "Source": "Indexer",
+    "Query": "speakersUp",
+    "IsTransactional": true,
+    "PropagateIngestionProperties": false,
+    "ManagedIdentity": null
+  }
+]
+```
+.alter table Topics policy update
+```
+[
+  {
+    "IsEnabled": true,
+    "Source": "Indexer",
+    "Query": "topicsUp",
+    "IsTransactional": true,
+    "PropagateIngestionProperties": false,
+    "ManagedIdentity": null
+  }
+]
+```
+.alter table Transcript policy update
+```
+[
+  {
+    "IsEnabled": true,
+    "Source": "Indexer",
+    "Query": "transcriptUp",
+    "IsTransactional": true,
+    "PropagateIngestionProperties": false,
+    "ManagedIdentity": null
+  }
+]
+```
+
+.create table Indexer ingestion json mapping "Indexer_mapping"
+```
+[{"column":"partition","path":"$.partition","datatype":""},{"column":"description","path":"$.description","datatype":""},{"column":"privacyMode","path":"$.privacyMode","datatype":""},{"column":"state","path":"$.state","datatype":""},{"column":"accountId","path":"$.accountId","datatype":""},{"column":"id","path":"$.id","datatype":""},{"column":"name","path":"$.name","datatype":""},{"column":"userName","path":"$.userName","datatype":""},{"column":"created","path":"$.created","datatype":""},{"column":"isOwned","path":"$.isOwned","datatype":""},{"column":"isEditable","path":"$.isEditable","datatype":""},{"column":"isBase","path":"$.isBase","datatype":""},{"column":"durationInSeconds","path":"$.durationInSeconds","datatype":""},{"column":"duration","path":"$.duration","datatype":""},{"column":"summarizedInsights","path":"$.summarizedInsights","datatype":""},{"column":"detectSourceLanguage","path":"$.videos[0].detectSourceLanguage","datatype":""},{"column":"externalId","path":"$.videos[0].externalId","datatype":""},{"column":"externalUrl","path":"$.videos[0].externalUrl","datatype":""},{"column":"failureCode","path":"$.videos[0].failureCode","datatype":""},{"column":"failureMessage","path":"$.videos[0].failureMessage","datatype":""},{"column":"indexingPreset","path":"$.videos[0].indexingPreset","datatype":""},{"column":"metadata","path":"$.videos[0].metadata","datatype":""},{"column":"isAdult","path":"$.videos[0].isAdult","datatype":""},{"column":"language","path":"$.videos[0].language","datatype":""},{"column":"languageAutoDetectMode","path":"$.videos[0].languageAutoDetectMode","datatype":""},{"column":"languages","path":"$.videos[0].languages","datatype":""},{"column":"linguisticModelId","path":"$.videos[0].linguisticModelId","datatype":""},{"column":"logoGroupId","path":"$.videos[0].logoGroupId","datatype":""},{"column":"moderationState","path":"$.videos[0].moderationState","datatype":""},{"column":"processingProgress","path":"$.videos[0].processingProgress","datatype":""},{"column":"publishedProxyUrl","path":"$.videos[0].publishedProxyUrl","datatype":""},{"column":"publishedUrl","path":"$.videos[0].publishedUrl","datatype":""},{"column":"reviewState","path":"$.videos[0].reviewState","datatype":""},{"column":"sourceLanguage","path":"$.videos[0].sourceLanguage","datatype":""},{"column":"sourceLanguages","path":"$.videos[0].sourceLanguages","datatype":""},{"column":"thumbnailId","path":"$.videos[0].thumbnailId","datatype":""},{"column":"viewToken","path":"$.videos[0].viewToken","datatype":""},{"column":"audioEffects","path":"$.videos[0].insights.audioEffects","datatype":""},{"column":"blocks","path":"$.videos[0].insights.blocks","datatype":""},{"column":"brands","path":"$.videos[0].insights.brands","datatype":""},{"column":"emotions","path":"$.videos[0].insights.emotions","datatype":""},{"column":"faces","path":"$.videos[0].insights.faces","datatype":""},{"column":"framePatterns","path":"$.videos[0].insights.framePatterns","datatype":""},{"column":"keywords","path":"$.videos[0].insights.keywords","datatype":""},{"column":"labels","path":"$.videos[0].insights.labels","datatype":""},{"column":"namedLocations","path":"$.videos[0].insights.namedLocations","datatype":""},{"column":"namedPeople","path":"$.videos[0].insights.namedPeople","datatype":""},{"column":"ocr","path":"$.videos[0].insights.ocr","datatype":""},{"column":"scenes","path":"$.videos[0].insights.scenes","datatype":""},{"column":"sentiments","path":"$.videos[0].insights.sentiments","datatype":""},{"column":"shots","path":"$.videos[0].insights.shots","datatype":""},{"column":"speakers","path":"$.videos[0].insights.speakers","datatype":""},{"column":"statistics","path":"$.videos[0].insights.statistics","datatype":""},{"column":"textualContentModeration","path":"$.videos[0].insights.textualContentModeration","datatype":""},{"column":"topics","path":"$.videos[0].insights.topics","datatype":""},{"column":"transcript","path":"$.videos[0].insights.transcript","datatype":""},{"column":"visualContentModeration","path":"$.videos[0].insights.visualContentModeration","datatype":""},{"column":"personModelId","path":"$.videos[0].personModelId","datatype":""}]
+```
+

@@ -43,7 +43,7 @@ The following are the commun configuraitons for the sample LogicApps:
   - Click on _Add role assignment_, set scope to "resource group", select the Video Indexer account resource group and set the role to "contributor".
   - Click _Save_.
 
-## Classify objects with GPT4o
+## Classify deteccted objects with VLM
 
 In this LogicApp flow sample, you will learn how to add aditional details on the cars detected in an indexed video, the sample leverage Video Indexer's [BYO capability](https://learn.microsoft.com/en-us/azure/azure-video-indexer/arc/azure-video-indexer-enabled-by-arc-bring-your-own-model-overview) and [detected objects](https://learn.microsoft.com/en-us/azure/azure-video-indexer/object-detection?tabs=webportal) in additon to Azure OpenAI.
 

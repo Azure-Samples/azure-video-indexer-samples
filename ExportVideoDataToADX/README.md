@@ -7,6 +7,8 @@ A step-by-step guide to export video insights from [Video Indexer](https://azure
 Video indexer is a cloud service that uses AI to analyse and index video and audio content. It can get insights like faces, emotions, topics, keywords, transcripts, and more. You can use video indexer to improve your video content, make searchable metadata, create captions, and build engaging apps.  In this code sample, we will show you how to make a logic app flow that exports the indexed videos insights from a specific account and store them in a blob storage and Azure Data Explorer and create a dashboard displaying the account data.
 You can also view a video tutorial on our [YouTube channel](https://www.youtube.com/watch?v=yMqJufR9Rfs), this video tutorial will demonstrate how to set up the Logic App and run operations against a Video Indexer account.
 
+![image info](./AccountDashboard.png)
+
 ## Prerequisites ##
 
 - An Azure account with an active subscription. If you don't have one, you can create a [free account](https://azure.microsoft.com/free/?ref=microsoft.com&utm_source=microsoft.com&utm_medium=docs&utm_campaign=visualstudio).

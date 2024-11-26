@@ -83,7 +83,7 @@ class VideoIndexerClient:
         }
 
         if len(excluded_ai) > 0:
-            params['excludedAI'] = ','.join(excluded_ai)
+            params['excludedAI'] = excluded_ai
 
         response = requests.post(url, params=params)
 
@@ -133,7 +133,7 @@ class VideoIndexerClient:
         }
 
         if len(excluded_ai) > 0:
-            params['excludedAI'] = ','.join(excluded_ai)
+            params['excludedAI'] = excluded_ai
 
         print('Uploading a local file using multipart/form-data post request..')
 

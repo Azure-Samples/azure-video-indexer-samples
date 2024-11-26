@@ -27,24 +27,27 @@ For more API abilities, please visit our [API documentation](https://api-portal.
 The sample code demonstrates important aspect of uploading and indexing a video for ARM-based accounts, availble from December 2021.
 Following the code will give you a good idea of how to use our API for basic functionalities.
 Make sure to read the inline comments and notice our best practices advices.
+The main program to run the API samples is provided as a Jupyter notebook - video_indexer_api_samples.ipynb
+
+This notebook provides samples for the following operations in Video Indexer:
+
+1. Get account details.   
+2. Upload a video from URL.   
+2A. Upload a video from local file.   
+3. Wait for the video to finish indexing.   
+4. Search for video and get insights.
+5. Use the Widgets API.   
 
 ## Prerequisites
 
 Instructions:
 
-The main program to run the API samples is provided as a Jupyter notebook - video_indexer_api_samples.ipynb
-
-1. Go to video_indexer_api_samples.ipynb and populate `SubscriptionId` with your subscription id
-2. Go to video_indexer_api_samples.ipynb and populate `ResourceGroup` with your resource group
-3. Go to video_indexer_api_samples.ipynb and populate `AccountName` with your account name
-4. Go to video_indexer_api_samples.ipynb and populate `VideoUrl` with your video url
-5. Go to video_indexer_api_samples.ipynb and populate `ExcludedAI` with the AI's you want to exclude from the indexing job.
-6. Go to video_indexer_api_samples.ipynb and populate `VideoUrl` and `LocalVideoPath` with publicly accessed video Url and/or with local path to video file.
-7. Review the VideoIndexerClient/VideoIndexerClient.py file to learn about the implementation of the API. The Client can be replaced easily with your custom behavior.  Note the section of issuing Video Indexer Access Token.
+1. Make sure you're logged-in with `az` to authenticate your account.   
+2. Copy the `.env.example` file to a new file named `.env`, and update the values with your own account settings.
+3. Make sure all requirements are installed. The list of requirements is provided in the file requirements.txt
+4. Review the VideoIndexerClient/VideoIndexerClient.py file to learn about the implementation of the API. The Client can be replaced easily with your custom behavior.  Note the section of issuing Video Indexer Access Token.
 (The Token is Valid for 30 minutes).
-
-8. Make sure all requirements are installed. The list of requirements is provided in the file requirements.txt
-9. Run the cells in the Jupyter notebook - video_indexer_api_samples.ipynb
+5. Run the cells in the Jupyter notebook - video_indexer_api_samples.ipynb
 
 For more information visit [here](https://docs.microsoft.com/en-us/azure/media-services/video-indexer/video-indexer-use-apis)
 

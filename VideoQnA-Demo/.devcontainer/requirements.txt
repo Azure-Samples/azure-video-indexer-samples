@@ -1,6 +1,6 @@
 tenacity==8.2.2
 requests>=2.31.0
-azure-identity==1.15.0
+azure-identity==1.16.1
 azure-search-documents==11.6.0b1
 Flask==3.0.3
 Flask-Limiter==3.6.0

@@ -286,6 +286,37 @@ if [[ $install_aks_cluster == "true" ]]; then
   fi
   echo "Adding two new node pool types, workload and workloadf32 ***done***"
   
+  # Uncoment the next section to add GPU nodepool of type Standard_NC6s_v3
+  # nodePoolGPUExists=$(az aks nodepool show -g $rg --cluster-name $aks -n workloadncv3 --query "name" -o tsv)
+  # if [[ ! -z $nodePoolGPUExists ]]; then
+  #   echo "workloadncv3 node pool already exists. Skipping node pool creation"
+  # else
+  #   echo "Adding workloadncv3 node pool"
+  #   aks_nodecreate_output_summary=$(az aks nodepool add -g $rg --cluster-name $aks  -n workloadncv3 \
+  #           --os-sku AzureLinux \
+  #           --mode User \
+  #           --node-vm-size Standard_NC6s_v3 \
+  #           --node-osdisk-size 100 \
+  #           --node-count 0 \
+  #           --max-count 1 \
+  #           --min-count 0  \
+  #           --tags $tags \
+  #           --enable-cluster-autoscaler \
+  #           --node-taints nvidia.com/gpu=true:NoSchedule \
+  #           --labels workload=summarization \
+  #           --max-pods 110)
+  #   if [[ $? -eq 0 ]]; then
+  #     echo "Adding workloadncv3 node pool succeeded"
+  #     # add nvidia GPU operator
+  #     helm repo add nvidia https://helm.ngc.nvidia.com/nvidia && helm repo update
+  #     helm upgrade -i gpu-operator --wait -n gpu-operator --create-namespace nvidia/gpu-operator
+  #   else
+  #     echo "Adding workloadncv3 node pool Failed. Exiting"
+  #     exit 1
+  #   fi
+  # fi
+
+
   #=============================================#
   #============== AKS Credentials ==============#
   #=============================================#
@@ -303,7 +334,7 @@ if [[ $install_aks_cluster == "true" ]]; then
   #============== Add ingress controller =======#
   #=============================================#
   echo -e "\tAdding ingress controller -- ***start***"
-  kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.0/deploy/static/provider/cloud/deploy.yaml
+  kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.1/deploy/static/provider/cloud/deploy.yaml
   echo -e "\tAdding ingress controller -- ***done***"
   #=============================================#
   #========= Patch Public IP DNS Label =========

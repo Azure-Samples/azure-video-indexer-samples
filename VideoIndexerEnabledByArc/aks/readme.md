@@ -262,7 +262,7 @@ you will see the video indexer pods are up and running.
 > **_Note_:** It might take few minutes for all the pods to become available and running .
 
 # How To Acccess the extension :
-
+```bash
 subscription="<your azure subscription>"
 rg="<your vi account rg>"
 viaccountName="your vi account name"
@@ -281,3 +281,4 @@ response=$(az rest --method post \
 extensionAccessToken=$(echo $response | jq -r '.accessToken')
 
 echo $extensionAccessToken
+```

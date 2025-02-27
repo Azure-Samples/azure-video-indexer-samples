@@ -260,3 +260,24 @@ kubectl get pods -n video-indexer
 you will see the video indexer pods are up and running.
 
 > **_Note_:** It might take few minutes for all the pods to become available and running .
+
+# How To Acccess the extension :
+
+subscription="<your azure subscription>"
+rg="<your vi account rg>"
+viaccountName="your vi account name"
+azToken=$(az account get-access-token --resource https://management.azure.com/ --query accessToken -o tsv)
+
+response=$(az rest --method post \
+    --uri "https://management.azure.com/subscriptions/$subscription/resourcegroups/$rg/providers/Microsoft.VideoIndexer/accounts/$viaccountName/generateExtensionAccessToken?api-version=2023-06-02-preview" \
+    --headers "accept=application/json" "Authorization=Bearer $azToken" "Content-Type=application/json" \
+    --body '{
+        "permissionType": "Contributor",
+        "scope": "Account",
+        "extensionId": "<your azure extension id from the azure portal or by az cli>"
+    }')
+
+## Extract the access token from the response
+extensionAccessToken=$(echo $response | jq -r '.accessToken')
+
+echo $extensionAccessToken

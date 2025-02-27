@@ -262,6 +262,7 @@ you will see the video indexer pods are up and running.
 > **_Note_:** It might take few minutes for all the pods to become available and running .
 
 # How To Acccess the extension :
+**_Note_:** Please make sure your end of line sequence is LF and not CRLF for the script to work right away.
 ```bash
 subscription="<your azure subscription>"
 rg="<your vi account rg>"

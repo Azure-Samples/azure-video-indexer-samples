@@ -2,13 +2,13 @@
 
 ## About
 
-Video Indexer Arc Enabled Solution is an Azure Arc Extension Enabled Service aimed at running Video and Audio Analysis on Edge Devices. The solution is designed to run on Azure Arc-enabled Kubernetes and supports three video formats, including MP4 and four additional common formats. The solution supports three Azure languages (English, German, Spanish) in all basic audio-related models and assumes that one VI resource is mapped to one extension.
+Video Indexer Arc Enabled Solution is an Azure Arc Extension Enabled Service aimed at running Video and Audio Analysis on Edge Devices. The solution is designed to run on Azure Arc-enabled Kubernetes and supports many video formats, including MP4 and four additional common formats. The solution supports many languages in all basic audio-related models and assumes that one VI resource is mapped to one extension.
 
 The purpose of this document is to present the onboarding steps and pre-requisites required for Cluster Administrator, IT Operator, Dev Ops and Engineering teams to enable Video Indexer as arc extension on their current Infrastructure.
 
 ## Prerequisites
 
-> **_Note_:** In order to succesfully deploy the VI Extention it is **mandatory** that we approve your Azure subscription id in advance. Therefore you must first sign up using [this form](https://aka.ms/vi-register).
+> **_Note_:** In order to successfully deploy the VI Extension, you **must first** submit your subscription for approval and be approved. Please use this application link. [this form](https://aka.ms/vi-register).
 
 - Azure subscription with permissions to create Azure resources
 - Azure Video Indexer Account. The quickest way is using the Azure Portal using this tutorial [Create Video Indexer account](https://learn.microsoft.com/azure/azure-video-indexer/create-account-portal#use-the-azure-portal-to-create-an-azure-video-indexer-account).
@@ -45,11 +45,10 @@ Use an Ingress resource in conjunction with an Ingress controller. This method p
 If relay traffic is enabled, a dedicated Pod IP can be used to route traffic. This method is less common and typically used in specialized network configurations.
 
 ## 1. One-Click Deploy Sample to Azure
-**This step is optional.** If you would like to test Video Indexer Edge Extention on a sample edge devide this deployment script can be used to quickly set up a K8S cluster and all pods to run VI on Edge. This script will deploy the following resources:
+**This step is optional.** If you would like to test Video Indexer Edge Extension on a sample edge device, this deployment script can be used to quickly set up a K8S cluster and all pods to run VI on Edge. This script will deploy the following resources:
 - Small 2 node AKS Cluster (costs are ~$0.80/hour)
 - Enable ARC Extension on top of the cluster
 - Add Video Indexer Arc Extension
-- Add Video Indexer and Cognitive Services Speech + Translation containers
 - Expose the Video Indexer Swagger API for dataplane operations
 
 You can read more on how to set up your cloud shell environment [here](https://learn.microsoft.com/azure/cloud-shell/quickstart?tabs=azurecli).
@@ -88,8 +87,7 @@ Follow these steps to deploy the Video Indexer Arc Extention to your Arc K8S Ena
 
 ### Minumum Hardware Requirements
 
-The following is the minumum and recommended requirements if the extension contains single Languge support.
-> **_Note_:** If you install multiple Speech and Translation containers with several languages, ensure to increase the hardware requirements accordingly.
+The following are the minimum and recommended requirements respectively.
 
 | Configuration | VM Count | Node CPU Cores Count*  | Node Ram | Node Storage | Remarks
 | --- | --- | --- | --- | --- | --- |
@@ -117,7 +115,7 @@ The following is the minumum and recommended requirements if the extension conta
 ### Step 1 - Create Azure Arc Kubernetes Cluster and connect it to your cluster
 
 > **_Note_:**
-> The following command assumes you have a kubernetes cluster and that the Current Contenxt on your ./kube/config file points to it.
+> The following command assumes you have a kubernetes cluster and that the Current Context on your ./kube/config file points to it.
 
 Run the following command to connect your cluster. This command deploys the Azure Arc agents to the cluster and installs Helm v. 3.6.3 to the .azure folder of the deployment machine. This Helm 3 installation is only used for Azure Arc, and it does not remove or change any previously installed versions of Helm on the machine.
 
@@ -130,22 +128,6 @@ az connectedk8s connect --name myAKSCluster --resource-group myResourceGroup
 
 [4]: https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli
 
-
-### Step 2 - Create Cognitive Services Resources for the extension
-
-> **_Note_:**
-> The resources are created once per each subscription, and used by all the extenions under that subscription.
-
-One of the prerequisites to installing a VI Arc extension are speech and translator resources. Once the resources are created, their key and endpoint need to be provided in the installation process.
-The resources are created once per subscription.
-Run the following commands:
-```bash
-$Subscription="<your subscription ID>"
-$ResourceGroup="<your resource group name"
-$AccountName="<your account name>"
-az rest --method post --verbose --uri https://management.azure.com/subscriptions/${Subscription}/resourceGroups/${ResourceGroup}/providers/Microsoft.VideoIndexer/accounts/${AccountName}/CreateExtensionDependencies?api-version=2023-06-02-preview
-```
-If the response is 202 (accepted), the resources are being created. You can track their provisioning state by polling the location header returned in the response from the previous call as demonstrated in the below example, or simply wait for 1 minute, and proceed to the next step.
 
 ```bash
 az rest --method get --uri <the uri from the location response header>
@@ -176,7 +158,7 @@ You will recieve a response of the following format:
 
 Use this data in the next step.
 
-### Step 3 - Create Azure Arc Video Indexer Extension using CLI
+### Step 2 - Create Azure Arc Video Indexer Extension using CLI
 
 The following parameters will be used as input to the extension creation command:
 
@@ -221,18 +203,18 @@ There are some additional Parameters that can be used in order to have a fine gr
 |-----------|---------|-------------
 | AI.nodeSelector | - | The node Selector label on which the AI Pods (speech and translate)  will be assigned to
 | speech.resource.requests.cpu | 1 | The requested number of cores for the speech pod
-| speech.resource.requests.mem | 2Gi | The requested memory capactiy for the speech pod
+| speech.resource.requests.mem | 2Gi | The requested memory capacity for the speech pod
 | speech.resource.limits.cpu | 2 | The limits number of cores for the speech pod. must be > speech.resource.requests.cpu
-| speech.resource.limits.mem | 3Gi | The limits memory capactiy for the speech pod. must be > speech.resource.requests.mem
+| speech.resource.limits.mem | 3Gi | The limits memory capacity for the speech pod. must be > speech.resource.requests.mem
 | translate.resource.requests.cpu | 1 | The requested number of cores for the translate pod
-| translate.resource.requests.mem | 16Gi | The requested memory capactiy for the translate pod
+| translate.resource.requests.mem | 16Gi | The requested memory capacity for the translate pod
 | translateeech.resource.limits.cpu | -- | The limits number of cores for the translate pod. must be > translate.resource.requests.cpu
-| translate.resource.limits.mem | -- | The limits memory capactiy for the translate pod. must be > translate.resource.requests.mem
+| translate.resource.limits.mem | -- | The limits memory capacity for the translate pod. must be > translate.resource.requests.mem
 | videoIndexer.webapi.resources.requests.cpu | 0.5 | The request number of cores for the web api pod
-| videoIndexer.webapi.resources.requests.mem | 4Gi | The request memory capactiy for the web api pod
+| videoIndexer.webapi.resources.requests.mem | 4Gi | The request memory capacity for the web api pod
 | videoIndexer.webapi.resources.limits.cpu | 1 | The limits number of cores for the web api pod
-| videoIndexer.webapi.resources.limits.mem | 6Gi | The limits memory capactiy for the web api pod
-| videoIndexer.webapi.resources.limits.mem | 6Gi | The limits memory capactiy for the web api pod
+| videoIndexer.webapi.resources.limits.mem | 6Gi | The limits memory capacity for the web api pod
+| videoIndexer.webapi.resources.limits.mem | 6Gi | The limits memory capacity for the web api pod
 | storage.storageClass | "" | The storage class to be used
 | storage.useExternalPvc | false | determines whether an external PVC is used. if true, the VideoIndexer PVC will not be installed
 

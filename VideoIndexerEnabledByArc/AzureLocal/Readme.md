@@ -40,7 +40,6 @@ spec:
   defaultDiskStorageClasses:
     - "default"
   serviceMesh: "osm"
-````
 2. To apply this .yaml file, run:
 ```bash
 kubectl apply -f edgeConfig.yaml

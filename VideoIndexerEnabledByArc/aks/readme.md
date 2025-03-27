@@ -191,10 +191,6 @@ az k8s-extension create --name videoindexer \
     .......
 
     --config AI.nodeSelector."beta\\.kubernetes\\.io/os"=linux
-    --config "speech.resource.requests.cpu=500m" \
-    --config "speech.resource.requests.mem=2Gi" \
-    --config "speech.resource.limits.cpu=1" \
-    --config "speech.resource.limits.mem=4Gi" \
     --config "videoIndexer.webapi.resources.requests.mem=4Gi"\
     --config "videoIndexer.webapi.resources.limits.mem=8Gi"\
     --config "videoIndexer.webapi.resources.limits.cpu=1"\

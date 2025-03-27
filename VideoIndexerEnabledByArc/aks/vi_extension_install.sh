@@ -64,7 +64,7 @@ install_aks_cluster="true"
 install_extension="true"
 install_cli_tools="true"
 register_cli_add_ons="true"
-viApiVersion="2023-06-02-preview" # VI API version
+viApiVersion="2025-03-01" # VI API version
 
 #=============================================#
 #============== Parameters Customization =====#

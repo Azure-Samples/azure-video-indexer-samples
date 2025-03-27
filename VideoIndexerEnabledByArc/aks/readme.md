@@ -91,8 +91,8 @@ The following are the minimum and recommended requirements respectively.
 
 | Configuration | VM Count | Node CPU Cores Count*  | Node Ram | Node Storage | Remarks
 | --- | --- | --- | --- | --- | --- |
-| Minimum | 1 | 16 Cores | 16 GB | 50 GB | Process **on** video in **basic audio** preset
-| Recommended | 2 | 48-64 Cores | 256 GB | 100 GB | Processing **10 videos** in parallel in **basic video** preset
+| Minimum | 1 | 32 Cores | 64 GB | 50 GB | Process **on** video in **basic audio** preset
+| Recommended | 3 | 48-64 Cores | 256 GB | 100 GB | Processing **10 videos** in parallel in **basic video** preset
 
 *Storage needs to support **ReadWriteMany** Storage Class  
 **VM CPU must support [AVX2](https://en.m.wikipedia.org/wiki/Advanced_Vector_Extensions) extensions**  
@@ -107,8 +107,8 @@ The following are the minimum and recommended requirements respectively.
 | Component |  Minimum Requirements
 | --- | ---
 | Operating System | Ubuntu 22.04 LTS or any Linux Compatible OS
-| Kubernetes | > 1.26
-| Azure CLI | > 2.48.0
+| Kubernetes | > 1.29
+| Azure CLI | > 2.64.0
 
 ## Installation Steps
 
@@ -135,28 +135,6 @@ az rest --method get --uri <the uri from the location response header>
 
 If the response is 409 (conflict), it means the resources already exist for your subscription and you can proceed to the below command without waiting.
 
-Once the resources have been created, get their data using this command:
-
-```bash
-az rest --method post --uri  https://management.azure.com/subscriptions/${Subscription}/resourceGroups/${ResourceGroup}/providers/Microsoft.VideoIndexer/accounts/${AccountName}/ListExtensionDependenciesData?api-version=2023-06-02-preview
-```
-
-You will recieve a response of the following format:
-
-```yaml
-{
-    "speechCognitiveServicesPrimaryKey": "<key>",
-    "speechCognitiveServicesSecondaryKey": "<key>",
-    "translatorCognitiveServicesPrimaryKey": "<key>",
-    "translatorCognitiveServicesSecondaryKey": "<key>",
-    "speechCognitiveServicesEndpoint": "<uri>",
-    "translatorCognitiveServicesEndpoint": "<uri>"
-    "ocrCognitiveServicesEndpoint": "<uri>",
-    "ocrCognitiveServicesEndpoint": "<uri>"
-}
-```
-
-Use this data in the next step.
 
 ### Step 2 - Create Azure Arc Video Indexer Extension using CLI
 
@@ -168,12 +146,6 @@ The following parameters will be used as input to the extension creation command
 | cluster-name | | The kubernetes azure arc instance name
 | resource-group | | The kubernetes azure arc resource group name
 | version | latest | Video Indexer Extension version
-| speech.endpointUri |  | Speech Service Url Endpoint
-| speech.secret |  | Speech Instance secret
-| translate.endpointUri |  | Translation Service Url Endpoint
-| translate.secret |  | Translation Service secret
-| ocr.endpointUri |  | OCR Service Url Endpoint
-| ocr.secret |  | OCR Service secret
 | videoIndexer.accountId |  | Video Indexer Account Id
 | videoIndexer.endpointUri |  | Video Indexer Dns Name to be used as the Portal endpoint
 
@@ -186,14 +158,14 @@ az k8s-extension create --name videoindexer \
     --resource-group ${connectedClusterRg} \
     --cluster-type connectedClusters \
     --auto-upgrade-minor-version true \
-    --config-protected-settings "speech.endpointUri=${speechUri}" \
-    --config-protected-settings "speech.secret=${speechSecret}" \
-    --config-protected-settings "translate.endpointUri=${translateUri}" \
-    --config-protected-settings "translate.secret=${translateSecret}" \
-    --config-protected-settings "ocr.endpointUri=${ocrUri}" \
-    --config-protected-settings "ocr.secret=${ocrSecret}" \
     --config "videoIndexer.accountId=${viAccountId}" \
     --config "videoIndexer.endpointUri=${dnsName}" 
+    --config "storage.storageClass=azurefile-csi" \
+    --config "storage.accessMode=ReadWriteMany" \
+    --config "ViAi.gpu.enabled=true" \
+    --config "ViAi.gpu.tolerations.key=nvidia.com/gpu" \
+    --config "ViAi.gpu.nodeSelector.workload=summarization" \
+    --config "scaling.ai.maxReplicaCount=${maxAiReplicaCount}
 
 ```
 
@@ -202,14 +174,7 @@ There are some additional Parameters that can be used in order to have a fine gr
 | Parameter | Default | Description
 |-----------|---------|-------------
 | AI.nodeSelector | - | The node Selector label on which the AI Pods (speech and translate)  will be assigned to
-| speech.resource.requests.cpu | 1 | The requested number of cores for the speech pod
-| speech.resource.requests.mem | 2Gi | The requested memory capacity for the speech pod
-| speech.resource.limits.cpu | 2 | The limits number of cores for the speech pod. must be > speech.resource.requests.cpu
-| speech.resource.limits.mem | 3Gi | The limits memory capacity for the speech pod. must be > speech.resource.requests.mem
-| translate.resource.requests.cpu | 1 | The requested number of cores for the translate pod
-| translate.resource.requests.mem | 16Gi | The requested memory capacity for the translate pod
-| translateeech.resource.limits.cpu | -- | The limits number of cores for the translate pod. must be > translate.resource.requests.cpu
-| translate.resource.limits.mem | -- | The limits memory capacity for the translate pod. must be > translate.resource.requests.mem
+resource.requests.mem
 | videoIndexer.webapi.resources.requests.cpu | 0.5 | The request number of cores for the web api pod
 | videoIndexer.webapi.resources.requests.mem | 4Gi | The request memory capacity for the web api pod
 | videoIndexer.webapi.resources.limits.cpu | 1 | The limits number of cores for the web api pod

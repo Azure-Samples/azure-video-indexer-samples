@@ -7,12 +7,14 @@ param useGpuForSummarization bool = false
 param nodeSelectorForSummarization object = { }
 param tolerationsKeyForGpu string = 'nvidia.com/gpu'
 param liveStreamEnabled bool = true
+param mediaFilesEnabled bool = true
 
 var storageClass = 'azurefile-csi'
 
 var extensionConfigProperties = {
   'videoIndexer.endpointUri': videoIndexerEndpointUri
   'videoIndexer.accountId': accountId
+  'videoIndexer.mediaFilesEnabled': string(mediaFilesEnabled)
   'videoIndexer.liveStreamEnabled': string(liveStreamEnabled)
   'storage.storageClass': storageClass
   'storage.accessMode': 'ReadWriteMany'

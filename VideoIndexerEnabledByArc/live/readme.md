@@ -2,7 +2,7 @@
 
 ## About
 
-Video Indexer is now supports two modes: **Media Files Enabled** and **Live Enabled** solution. The Live Enabled solution is an Azure Arc Extension Enabled Service aimed at running live Video Analysis on Edge Devices. The solution is designed to run on Azure Arc-enabled Kubernetes and supports many camera vendors. The solution assumes that one VI resource is mapped to one extension.
+Video Indexer supports two modes: **Media Files Enabled** and **Live Enabled** solution. The Live Enabled solution is an Azure Arc Extension Enabled Service aimed at running live Video Analysis on Edge Devices. The solution is designed to run on Azure Arc-enabled Kubernetes and supports many camera vendors. The solution assumes that one VI resource is mapped to one extension.
 
 The purpose of this document is to present the onboarding steps and pre-requisites required for Cluster Administrator, IT Operator, Dev Ops and Engineering teams to enable Video Indexer Live Enabled as arc extension on their current Infrastructure.
 
@@ -77,7 +77,7 @@ you will see the video indexer pods are up and running.
 
 > **_Note_:** It might take few minutes for all the pods to become available and running .
 
-# How To Acccess the extension :
+# How To Access the extension :
 **_Note_:** Please make sure your end of line sequence is LF and not CRLF for the script to work right away.
 ```bash
  ./aio_vi_cli.sh 
@@ -102,10 +102,10 @@ Creating asset endpoint profiles and assets can be done from the [aio dashboard]
 ```
 
 This command will create the following: 
-1. asset endpoint profile
-2. asset
-3. preset
-4. camera 
+1. asset endpoint profile (AIO)
+2. asset (AIO)
+3. preset (VI)
+4. camera (VI)
 
 The assets are created in AIO, while the preset and camera will be created in Video Indexer.  
 

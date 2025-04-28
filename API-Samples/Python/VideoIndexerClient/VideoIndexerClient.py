@@ -398,3 +398,70 @@ class VideoIndexerClient:
 
         url = response.url
         print(f'Got the player widget URL: {url}')
+
+    def get_textual_summary(self, video_id:str, deployment_name:str, lenght:str, style:str, timeout_sec:Optional[int]=None) -> Optional[dict]:
+        '''
+        Calls the TextualSummarization API. First a call is made with the POST method, to create the video summary:
+        (https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Create-Video-Summary)
+        Then, a call is made with the get method to retrieve the video summary and the function returns it.
+        (https://api-portal.videoindexer.ai/api-details#api=Operations&operation=Get-Video-Summary)
+
+        :param video_id: The video ID
+        :param deploymentName: The name of the deployment
+        :param length: The length of the summary. Allowed values: Medium / Short / Long
+        :param style: The style of the summary. Allowed values: Neutral / Casual / Formal
+        '''
+
+        self.get_account_async()  # if account is not initialized, get it
+
+        # POST request to create video summary
+        url_create = f'{self.consts.ApiEndpoint}/{self.account["location"]}/Accounts/{self.account["properties"]["accountId"]}/' + \
+            f'Videos/{video_id}/Summaries/Textual?'
+        params = {
+            'accessToken':  self.vi_access_token,
+            'deploymentName': deployment_name,
+            'length': lenght,
+            'style': style,
+            'Cache-Control': 'no-cache'
+        }
+
+        try:
+            response = requests.post(url_create, params=params)
+            response.raise_for_status()
+            summary_id = response.json().get('id')
+        except requests.exceptions.RequestException as e:
+            print(f"Error creating video summary: {e}")
+            return
+        
+        # GET request to get video summary
+        url_get = f'{self.consts.ApiEndpoint}/{self.account["location"]}/Accounts/{self.account["properties"]["accountId"]}/' + \
+            f'Videos/{video_id}/Summaries/Textual/{summary_id}'
+        params = {
+            'accessToken':  self.vi_access_token,
+            'Cache-Control': 'no-cache'
+        }
+        start_time = time.time()
+        backoff = 10
+
+        while True:
+            try:
+                response = requests.get(url_get, params=params)
+                response.raise_for_status()
+                video_result = response.json()
+                video_state = video_result.get('state')
+            except requests.exceptions.RequestException as e:
+                print(f"Error getting video summary status: {e}")
+                return
+            if video_state == 'Processed':
+                print('Here is the textual summary of the video: \n')
+                return video_result
+            elif video_state == 'Failed':
+                print(f"Text summary failed for video ID {video_id}.")
+                break
+            else:
+                print(f'Text summary status for the video is {video_state}')
+            if timeout_sec is not None and time.time() - start_time > timeout_sec:
+                print(f'The {timeout_sec} seconds timeout was reached. Exiting...')
+                break
+            print(f'Waiting {backoff} seconds before trying again....')
+            time.sleep(backoff)

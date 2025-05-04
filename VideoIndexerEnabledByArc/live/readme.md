@@ -95,7 +95,21 @@ Connecting cameras to AIO requires two main keypoints: asset endpoint profiles a
 
 Creating asset endpoint profiles and assets can be done from the [aio dashboard](https://iotoperations.azure.com/sites) or by using the `az cli`. This guide will show how to use the `az cli`.
 
-#### Creating camera
+
+#### Creating camera without AIO
+
+```bash
+ ./aio_vi_cli.sh create camera_vi
+```
+
+This command will create the following: 
+1. preset (VI)
+2. camera (VI)
+
+The preset and camera will be created in Video Indexer.  
+
+
+#### Creating camera with AIO
 
 ```bash
  ./aio_vi_cli.sh create camera

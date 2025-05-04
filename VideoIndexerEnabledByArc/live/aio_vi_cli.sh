@@ -13,8 +13,10 @@
 # Cluster parameters
 clusterName="vi-arc-6-wus2-connected-aks"
 clusterResourceGroup="vi-arc-6-wus2-rg"
-accountName="VI-FE-ARC-2"
-accountResourceGroup="vi-fe-arc"
+# accountName="VI-FE-ARC-2"
+# accountResourceGroup="vi-fe-arc"
+accountName="vi-arc-dev"
+accountResourceGroup="vi-arc-dev-rg"
 liveStreamEnabled="true"
 mediaFilesEnabled="true"
 
@@ -50,7 +52,6 @@ RESET="\033[0m"
 RED="\033[0;31m"
 GREEN="\033[0;32m"
 YELLOW="\033[0;33m"
-BLUE="\033[0;34m"
 CYAN="\033[0;36m"
 BOLD="\033[1m"
 
@@ -87,10 +88,11 @@ show_help() {
     echo "Usage: $0 <command> <subcommand> [options]"
     echo
     echo "Commands:"
-    echo "  create camera         Create asset endpoint profile, asset, preset and camera"
-    echo "  create camera_vi      Create only a camera in vi."
-    echo "  create aep            Create asset endpoint profile."
-    echo "  create asset          Create asset."
+    echo "  create aio camera     Create asset endpoint profile, asset, preset and camera"
+    echo "  create aio aep        Create asset endpoint profile."
+    echo "  create aio asset      Create asset."
+    echo "  create vi camera      Create a camera and preset in vi."
+    echo "  create vi preset      Create a preset in vi."
     echo "  upgrade extension     Upgrade extension."
     echo "  show extension        Show extension"
     echo "  show account          Show user account."
@@ -105,6 +107,7 @@ show_help() {
 parse_arguments() {
     skipPrompt=false
     skipPrerequisites=false
+    interactiveMode=false
 
     while [[ $# -gt 0 ]]; do
       case "$1" in
@@ -112,12 +115,16 @@ parse_arguments() {
             skipPrompt=true
             shift
             ;;
-        -h|--help)
-            show_help
-            ;;
         -s|--skip)
             skipPrerequisites=true
             shift
+            ;;
+        -it|--interactive)
+            interactiveMode=true
+            shift
+            ;;
+        -h|--help)
+            show_help
             ;;
         *)
             log_error_exit "Unknown option: $1"
@@ -391,7 +398,7 @@ validate_user_account() {
     fi
     
     if [[ "$extensionAccount" != "$userAccount" ]]; then
-        log_error_exit "Extension account '$extensionAccount' is different from user account '$userAccount'"
+        log_error_exit "Extension account '$extensionAccount' is different from user account '$userAccount', make sure you are using the correct account"
     fi
 }
 
@@ -584,7 +591,7 @@ get_media_server_config() {
 # Video Indexer
 ######################
 
-create_preset() {
+commands_create_preset() {
     if [[ -z "$presetName" ]]; then
         log_error "Missing required presetName"
         exit 1
@@ -596,7 +603,7 @@ create_preset() {
     ]'
 
     local url="$extensionUrl/Accounts/$accountId/live/presets"
-    log_info "Creating preset '$presetName' at $url"
+    log_info "Creating preset '$presetName'"
 
     local response
     response=$(curl -s -k -X POST "$url" \
@@ -632,7 +639,7 @@ commands_create_camera_vi() {
     
     local presetId
     log_info "Creating preset '$presetName'"
-    response=$(create_preset)
+    response=$(commands_create_preset)
     presetId=$(echo "$response" | jq -r '.Id')
 
     if [[ -z "$presetId" || "$presetId" == "null" ]]; then
@@ -804,49 +811,80 @@ prerequisites_validation() {
 }
 
 validate_input() {
-    local input_command="$1"
-    shift
-
-    if [[ -z "$input_command" ]]; then
+    if [[ -z "$1" ]]; then
         log_error "No command provided."
         show_help
     fi
 
-    if [[ $# -lt 1 || "$1" =~ ^-- ]]; then
-        log_error "Missing subcommand for command '$input_command'."
+    command="$1"
+    subCommand="${2:-}"
+    shift 2
+
+    if [[ "$3" =~ ^-- ]]; then
+        log_error "Missing subcommand for command."
+    else
+        subType="${3:-}"
+        shift
+    fi
+
+    remaining_args=("$@")
+
+    if [[ -z "$subType" || "$subType" == --* ]]; then
+        log_error "Missing subcommand for command '$command'."
         show_help
     fi
 
-    command="$input_command"
-    subCommand="$1"
-    shift
-    
-    # Store remaining args for parse_arguments
-    remaining_args=("$@")
+    log_info "Command: $command"
+    log_info "Subcommand: $subCommand"
+    log_info "SubType: $subType"
+    log_info "remaining_args: ${remaining_args[*]}"
+
+    exit 0
 }
 
 run_command() {
-    log_info "Running command: $command $subCommand"
+    log_info "Running command: $command $subCommand $subType"
     
     case "$command" in
     create)
         case "$subCommand" in
-        camera)
-            prerequisites_validation
-            commands_create_camera
+        aio)
+            case "$subType" in
+            camera)
+                prerequisites_validation
+                commands_create_camera
+                ;;
+            aep)
+                prerequisites_validation
+                aio_create_asset_endpoint
+                ;;
+            asset)
+                prerequisites_validation
+                aio_create_asset
+                ;;
+            *)
+                log_error "Unknown subType '$subType' for '$subCommand'"
+                show_help
+                ;;
+            esac
             ;;
-        camera_vi)
-            prerequisites_validation
-            commands_create_camera_vi
+        vi)
+            case "$subType" in
+            camera)
+                prerequisites_validation
+                commands_create_camera_vi
+                ;;
+            preset)
+                prerequisites_validation
+                commands_create_preset
+                ;;
+            *)
+                log_error "Unknown subcommand '$subType' for '$subCommand'"
+                show_help
+                ;;
+            esac
             ;;
-        asset)
-            prerequisites_validation
-            aio_create_asset
-            ;;
-        aep)
-            prerequisites_validation
-            aio_create_asset_endpoint
-            ;;
+       
         *)
             log_error "Unknown subcommand '$subCommand' for '$command'"
             show_help

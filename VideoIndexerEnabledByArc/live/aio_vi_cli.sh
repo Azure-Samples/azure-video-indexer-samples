@@ -133,6 +133,24 @@ parse_arguments() {
             ;;
         esac
     done
+
+    if $interactiveMode; then
+        log_info "Interactive mode enabled. Prompting for parameters..."
+        
+        # Prompt for Cluster Parameters
+        read -p "Enter Cluster Name: " clusterName
+        read -p "Enter Cluster Resource Group: " clusterResourceGroup
+        
+
+        # Prompt for AIO Parameters
+        read -p "Enter Camera Address (RTSP URL): " cameraAddress
+        read -p "Use Camera Secret? (true/false): " useCameraSecret
+
+        if [[ "$useCameraSecret" == "true" ]]; then
+            read -p "Enter Camera Username: " cameraUsername
+            read -p "Enter Camera Password: " cameraPassword
+        fi
+    fi
 }
 
 ######################
@@ -635,6 +653,10 @@ commands_create_camera() {
 }
 
 commands_create_camera_vi() {
+    if $interactiveMode; then
+        read -p "Enter Camera Name: " cameraName
+        read -p "Enter Preset Name: " presetName
+    fi
     log_info "Creating camera '$cameraName'"
 
     local response

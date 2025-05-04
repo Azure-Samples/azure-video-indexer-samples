@@ -1,4 +1,5 @@
-# Video Indexer Live Enabled Arc Extension 
+# Video Indexer Live Enabled Arc Extension
+# Private Preview Only!
 
 ## About
 
@@ -26,65 +27,56 @@ Follow these steps to deploy the Video Indexer Live Enabled Arc Extension to you
 | Kubernetes | > 1.29
 | Azure CLI | > 2.64.0
 
+
+## Working with Live CLI
+
+The `vi_cli.sh` can help you running commands easily.
+| Command             | Description                                             |
+| ------------------- | ------------------------------------------------------- |
+| `create aio camera` | Create asset endpoint profile, asset, preset and camera |
+| `create aio aep`    | Create asset endpoint profile                           |
+| `create aio asset`  | Create asset                                            |
+| `create vi camera`  | Create a camera and preset in vi                        |
+| `create vi preset`  | Create a preset in vi                                   |
+| `upgrade extension` | Upgrade extension                                       |
+| `show token`        | Show access token                                       |
+| `show extension`    | Show extension                                          |
+| `show account`      | Show user account                                       |
+
+
+| Option                 | Description                                     |
+| ---------------------- | ----------------------------------------------- |
+| `-y`, `--yes`          | Should continue without prompt for confirmation |
+| `-h`, `--help`         | Show this help message and exit                 |
+| `-s`, `--skip`         | Skip prerequisites check                        |
+| `-it`, `--interactive` | Enable interactive mode                         |
+
+**_Note_:** Please make sure your end of line sequence is LF and not CRLF for the script to work right away.
+
 ## Installation Steps
 
-### Step 2 - Create Azure Arc Video Indexer Extension using CLI
+### Step 1 - Update Azure Arc Video Indexer Extension using CLI
 
-```bash
-wget -SSL https://raw.githubusercontent.com/Azure-Samples/media-services-video-indexer/master/VideoIndexerEnabledByArc/live/vi_extension_install.sh
+To **create** Azure Arc Video Indexer Extension using CLI, see:
+[](https://github.com/Azure-Samples/azure-video-indexer-samples/blob/master/VideoIndexerEnabledByArc/aks/readme.md#step-2---create-azure-arc-video-indexer-extension-using-cli)
 
-chmod +x ./vi_extension_install.sh
 
-sh vi_extension_install.sh
-```
-
+To **update** Azure Arc Video Indexer Extension using CLI, continue here:
 As mentioned above, Video Indexer has two modes: **Media Files Enabled** and **Live Enabled** solution.  
 This section will help you to enable/disable between modes.  
 To get your current extension settings, run this command:
 
 ```bash
- ./aio_vi_cli.sh show extension
+ ./vi_cli.sh show extension -it
 ```
 
 Run this command to toggle between modes, for example, to enable both **Media Files** and **Live** solutions, we will set liveStreamEnabled and mediaFilesEnabled equals true.
 
 ```bash
- ./aio_vi_cli.sh upgrade extension
+ ./vi_cli.sh upgrade extension -it
 ```
 
-
-### Step 3 (Alternative) - Deploy Using Bicep Template
-
-In case you do not wish to use Az CLI Commands to deploy the video indexer arc extension , you can use the bicep deployment
-provided on the current folder.
-> **_Note:_**: This Step replaces the need to run Step 2 + 3 above
-> **_Note:_**: In order to deploy the Bicep template you will need to use user-assigned Managed Identity with a 'Contributor' Role Assignment on the Subscription.
-
-1. Open The [Template File](vi.arcextension.template.bicep) file and Fill in the required parameters (see below).
-2. Run the Following Az CLi Commands in order to deploy the template using the [az deployment group create](https://learn.microsoft.com/en-us/cli/azure/deployment/group?view=azure-cli-latest#az-deployment-group-create) command.
-
-```shell
-az deployment group create --resource-group myResourceGroup --template-file .\vi.arcextension.template.bicep
-```
-
-### Step 4 - Verify Deployment
-
-```bash
-kubectl get pods -n video-indexer
-```
-
-you will see the video indexer pods are up and running.
-
-> **_Note_:** It might take few minutes for all the pods to become available and running .
-
-# How To Access the extension :
-**_Note_:** Please make sure your end of line sequence is LF and not CRLF for the script to work right away.
-```bash
- ./aio_vi_cli.sh 
-```
-
-
-### Step 5 - Connecting cameras to AIO
+### Step 2 - Connecting cameras to AIO
 
 Connecting cameras to AIO requires two main keypoints: asset endpoint profiles and assets.  
 **assets endpoint profile**: is the connection definition to your camera. 
@@ -93,26 +85,10 @@ Connecting cameras to AIO requires two main keypoints: asset endpoint profiles a
 **asset**: is what to do with this connection.
 [assets](https://learn.microsoft.com/en-us/rest/api/deviceregistry/assets/create-or-replace?view=rest-deviceregistry-2024-11-01&tabs=HTTP)
 
-Creating asset endpoint profiles and assets can be done from the [aio dashboard](https://iotoperations.azure.com/sites) or by using the `az cli`. This guide will show how to use the `az cli`.
-
-
-#### Creating camera without AIO
+Creating asset endpoint profiles and assets can be done from the [aio dashboard](https://iotoperations.azure.com/sites) or by using the `vi_cli.sh`. This guide will show how to use the `vi_cli.sh`.
 
 ```bash
- ./aio_vi_cli.sh create camera_vi
-```
-
-This command will create the following: 
-1. preset (VI)
-2. camera (VI)
-
-The preset and camera will be created in Video Indexer.  
-
-
-#### Creating camera with AIO
-
-```bash
- ./aio_vi_cli.sh create camera
+ ./vi_cli.sh create aio camera
 ```
 
 This command will create the following: 
@@ -122,4 +98,18 @@ This command will create the following:
 4. camera (VI)
 
 The assets are created in AIO, while the preset and camera will be created in Video Indexer.  
+
+#### Creating camera without AIO
+
+```bash
+ ./vi_cli.sh create vi camera
+```
+
+This command will create the following: 
+1. preset (VI)
+2. camera (VI)
+
+The preset and camera will be created in Video Indexer.
+
+
 

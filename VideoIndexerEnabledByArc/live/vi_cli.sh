@@ -94,14 +94,15 @@ show_help() {
     echo "  create vi camera      Create a camera and preset in vi."
     echo "  create vi preset      Create a preset in vi."
     echo "  upgrade extension     Upgrade extension."
+    echo "  show token            Show access token."
     echo "  show extension        Show extension"
     echo "  show account          Show user account."
     echo
     echo "Options:"
-    echo "  -y|--yes                     Should continue without prompt for confirmation."
-    echo "  -h|--help                    Show this help message and exit."
-    echo "  -s|--skip                    Skip prerequisites check."
-    echo "  -it|--interactive            Enable interactive mode."
+    echo "  -y|--yes              Should continue without prompt for confirmation."
+    echo "  -h|--help             Show this help message and exit."
+    echo "  -s|--skip             Skip prerequisites check."
+    echo "  -it|--interactive     Enable interactive mode."
 
     exit 0
 }
@@ -134,23 +135,18 @@ parse_arguments() {
         esac
     done
 
-    if $interactiveMode; then
-        log_info "Interactive mode enabled. Prompting for parameters..."
+    # if $interactiveMode; then
+    #     log_info "Interactive mode enabled. Prompting for parameters..."
         
-        # Prompt for Cluster Parameters
-        read -p "Enter Cluster Name: " clusterName
-        read -p "Enter Cluster Resource Group: " clusterResourceGroup
-        
+    #     # Prompt for AIO Parameters
+    #     read -p "Enter Camera Address (RTSP URL): " cameraAddress
+    #     read -p "Use Camera Secret? (true/false): " useCameraSecret
 
-        # Prompt for AIO Parameters
-        read -p "Enter Camera Address (RTSP URL): " cameraAddress
-        read -p "Use Camera Secret? (true/false): " useCameraSecret
-
-        if [[ "$useCameraSecret" == "true" ]]; then
-            read -p "Enter Camera Username: " cameraUsername
-            read -p "Enter Camera Password: " cameraPassword
-        fi
-    fi
+    #     if [[ "$useCameraSecret" == "true" ]]; then
+    #         read -p "Enter Camera Username: " cameraUsername
+    #         read -p "Enter Camera Password: " cameraPassword
+    #     fi
+    # fi
 }
 
 ######################
@@ -393,6 +389,10 @@ get_user_account() {
 }
 
 show_user_account() {
+    if $interactiveMode; then
+        read -p "Enter Account Name: " accountName
+        read -p "Enter Account Resource Group: " accountResourceGroup
+    fi
     response=$(get_user_account)
     log_info "User account details:"
     echo "$response" | jq -C '.'
@@ -719,6 +719,14 @@ BODY
 
 commands_upgrade_extension() {
     log_info "Upgrading Video Indexer extension"
+
+    if $interactiveMode; then
+        read -p "Enter Cluster Name: " clusterName
+        read -p "Enter Cluster Resource Group: " clusterResourceGroup
+        read -p "Enter Subscription Name: " subscriptionName
+        read -p "Enable Live Stream? (true/false): " liveStreamEnabled
+        read -p "Enable Media Files? (true/false): " mediaFilesEnabled
+    fi
     
     local extension
     extension=$(az k8s-extension list \
@@ -734,9 +742,9 @@ commands_upgrade_extension() {
 
     az k8s-extension update \
     --name videoindexer \
-    --cluster-name ${clusterName} \
+    --cluster-name "$clusterName" \
     --cluster-type connectedClusters \
-    --resource-group ${clusterResourceGroup} \
+    --resource-group "$clusterResourceGroup" \
     --config "videoIndexer.liveStreamEnabled=$liveStreamEnabled" \
     --config "videoIndexer.mediaFilesEnabled=$mediaFilesEnabled" \
     --only-show-errors
@@ -745,6 +753,10 @@ commands_upgrade_extension() {
 }
 
 commands_show_extension() {
+    if $interactiveMode; then
+        read -p "Enter Cluster Name: " clusterName
+        read -p "Enter Cluster Resource Group: " clusterResourceGroup
+    fi
     log_info "Showing Video Indexer extension details"
     
     local extension
@@ -867,7 +879,6 @@ validate_input() {
     remaining_args=("$@")
 }
 
-
 run_command() {
     log_info "Running command: $command $subCommand $subType"
     
@@ -910,7 +921,6 @@ run_command() {
                 ;;
             esac
             ;;
-       
         *)
             log_error "Unknown subcommand '$subCommand' for '$command'"
             show_help
@@ -932,6 +942,13 @@ run_command() {
         ;;
     show)
         case "$subCommand" in
+        token)
+            prerequisites_validation
+            init_access_token
+            if [[ -n "$accessToken" ]]; then
+                log_info "Access token: $accessToken"
+            fi
+            ;;
         extension)
             prerequisites_validation
             commands_show_extension

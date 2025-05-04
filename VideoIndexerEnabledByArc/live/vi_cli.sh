@@ -88,15 +88,20 @@ show_help() {
     echo "Usage: $0 <command> <subcommand> [options]"
     echo
     echo "Commands:"
-    echo "  create aio camera     Create asset endpoint profile, asset, preset and camera"
-    echo "  create aio aep        Create asset endpoint profile."
-    echo "  create aio asset      Create asset."
-    echo "  create vi camera      Create a camera and preset in vi."
-    echo "  create vi preset      Create a preset in vi."
-    echo "  upgrade extension     Upgrade extension."
-    echo "  show token            Show access token."
-    echo "  show extension        Show extension"
-    echo "  show account          Show user account."
+    echo "  create camera           Create camera"
+    echo "  create camera -aio      Create asset endpoint profile, asset, and camera"
+    echo "  create camera -preset   Create camera with preset"
+    echo "  create aep              Create asset endpoint profile."
+    echo "  create asset            Create asset."
+    echo "  create preset           Create a preset in vi."
+    echo "  delete camera           Delete a camera in vi."
+    echo "  delete preset           Delete a preset in vi."
+    echo "  upgrade extension       Upgrade extension."
+    echo "  show cameras            Show cameras."
+    echo "  show presets            Show presets."
+    echo "  show token              Show access token."
+    echo "  show extension          Show extension"
+    echo "  show account            Show user account."
     echo
     echo "Options:"
     echo "  -y|--yes              Should continue without prompt for confirmation."
@@ -111,6 +116,8 @@ parse_arguments() {
     skipPrompt=false
     skipPrerequisites=false
     interactiveMode=false
+    aioEnabled=false
+    presetEnabled=false
 
     while [[ $# -gt 0 ]]; do
       case "$1" in
@@ -128,6 +135,14 @@ parse_arguments() {
             ;;
         -h|--help)
             show_help
+            ;;
+        -aio|--aio-enabled)
+            aioEnabled="create"
+            shift
+            ;;
+        -preset|--preset-enabled)
+            presetEnabled="create"
+            shift
             ;;
         *)
             log_error_exit "Unknown option: $1"
@@ -647,12 +662,20 @@ commands_create_preset() {
 }
 
 commands_create_camera() {
-    aio_create_asset_endpoint
-    aio_create_asset
-    commands_create_camera_vi
+    if $aioEnabled; then
+        aio_create_camera
+    else
+        create_camera
+    fi
 }
 
-commands_create_camera_vi() {
+aio_create_camera() {
+    aio_create_asset_endpoint
+    aio_create_asset
+    create_camera
+}
+
+create_camera() {
     if $interactiveMode; then
         read -p "Enter Camera Name: " cameraName
         read -p "Enter Preset Name: " presetName
@@ -674,14 +697,16 @@ commands_create_camera_vi() {
     log_debug "Media Server Port: $mediaServerPort"
     
     local presetId
-    log_info "Creating preset '$presetName'"
-    response=$(create_preset)
-    presetId=$(echo "$response" | jq -r '.Id')
+    if $presetEnabled; then
+        log_info "Creating preset '$presetName'"
+        response=$(create_preset)
+        presetId=$(echo "$response" | jq -r '.Id')
 
-    if [[ -z "$presetId" || "$presetId" == "null" ]]; then
-        log_error_exit "Failed to create preset. Response: $response"
+        if [[ -z "$presetId" || "$presetId" == "null" ]]; then
+            log_error_exit "Failed to create preset. Response: $response"
+        fi
+        log_success "Preset created with ID: $presetId"
     fi
-    log_success "Preset created with ID: $presetId"
     
     local body
     body=$(cat <<BODY
@@ -859,72 +884,67 @@ prerequisites_validation() {
 }
 
 validate_input() {
-    local args=()
-    
-    for arg in "$@"; do
-        [[ "$arg" == --* || "$arg" == -* ]] && break
-        args+=("$arg")
-    done
+    local input_command="$1"
+    shift
 
-    if [[ ${#args[@]} -lt 2 ]]; then
-        log_error "Missing subcommand for command '${args[*]}'."
+    if [[ -z "$input_command" ]]; then
+        log_error "No command provided."
         show_help
     fi
 
-    command="${args[0]}"
-    subCommand="${args[1]}"
-    subType="${args[2]:-}"  # optional
+    if [[ $# -lt 1 || "$1" =~ ^-- ]]; then
+        log_error "Missing subcommand for command '$input_command'."
+        show_help
+    fi
 
-    shift "${#args[@]}"
+    command="$input_command"
+    subCommand="$1"
+    shift
+    
     remaining_args=("$@")
 }
 
 run_command() {
-    log_info "Running command: $command $subCommand $subType"
+    log_info "Running command: $command $subCommand"
     
     case "$command" in
     create)
         case "$subCommand" in
-        aio)
-            case "$subType" in
-            camera)
-                prerequisites_validation
-                commands_create_camera
-                ;;
-            aep)
-                prerequisites_validation
-                aio_create_asset_endpoint
-                ;;
-            asset)
-                prerequisites_validation
-                aio_create_asset
-                ;;
-            *)
-                log_error "Unknown subType '$subType' for '$subCommand'"
-                show_help
-                ;;
-            esac
+        camera)
+            prerequisites_validation
+            commands_create_camera
             ;;
-        vi)
-            case "$subType" in
-            camera)
-                prerequisites_validation
-                commands_create_camera_vi
-                ;;
-            preset)
-                prerequisites_validation
-                commands_create_preset
-                ;;
-            *)
-                log_error "Unknown subcommand '$subType' for '$subCommand'"
-                show_help
-                ;;
-            esac
+        aep)
+            prerequisites_validation
+            aio_create_asset_endpoint
+            ;;
+        asset)
+            prerequisites_validation
+            aio_create_asset
+            ;;
+        preset)
+            prerequisites_validation
+            commands_create_preset
             ;;
         *)
             log_error "Unknown subcommand '$subCommand' for '$command'"
             show_help
             ;;
+        esac
+        ;;
+    delete)
+        case "$subCommand" in
+        camera)
+            prerequisites_validation
+            commands_delete_camera_vi
+            ;;
+        preset)
+            prerequisites_validation
+            commands_delete_camera
+        ;;
+        *)
+            log_error "Unknown subcommand '$subCommand' for '$command'"
+            show_help
         esac
         ;;
     upgrade)
@@ -942,6 +962,14 @@ run_command() {
         ;;
     show)
         case "$subCommand" in
+        cameras)
+            prerequisites_validation
+            commands_show_cameras
+            ;;
+        presets)
+            prerequisites_validation
+            commands_show_presets
+            ;;
         token)
             prerequisites_validation
             init_access_token

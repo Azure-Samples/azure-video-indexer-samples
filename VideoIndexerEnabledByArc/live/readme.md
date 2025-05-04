@@ -76,8 +76,22 @@ Run this command to toggle between modes, for example, to enable both **Media Fi
  ./vi_cli.sh upgrade extension -it
 ```
 
-### Step 2 - Connecting cameras to AIO
+### Step 2 - Connecting cameras to VI
 
+#### With AIO disabled
+
+```bash
+ ./vi_cli.sh create vi camera
+```
+
+This command will create the following: 
+1. preset (VI)
+2. camera (VI)
+
+The preset and camera will be created in Video Indexer.
+
+
+#### With AIO enabled
 Connecting cameras to AIO requires two main keypoints: asset endpoint profiles and assets.  
 **assets endpoint profile**: is the connection definition to your camera. 
 [asset-endpoint-profiles](https://learn.microsoft.com/en-us/rest/api/deviceregistry/asset-endpoint-profiles/create-or-replace?view=rest-deviceregistry-2024-11-01&tabs=HTTP)
@@ -97,19 +111,4 @@ This command will create the following:
 3. preset (VI)
 4. camera (VI)
 
-The assets are created in AIO, while the preset and camera will be created in Video Indexer.  
-
-#### Creating camera without AIO
-
-```bash
- ./vi_cli.sh create vi camera
-```
-
-This command will create the following: 
-1. preset (VI)
-2. camera (VI)
-
-The preset and camera will be created in Video Indexer.
-
-
-
+The assets are created in AIO, while the preset and camera will be created in Video Indexer.

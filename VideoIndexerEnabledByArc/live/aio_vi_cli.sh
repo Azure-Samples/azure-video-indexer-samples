@@ -100,6 +100,8 @@ show_help() {
     echo "Options:"
     echo "  -y|--yes                     Should continue without prompt for confirmation."
     echo "  -h|--help                    Show this help message and exit."
+    echo "  -s|--skip                    Skip prerequisites check."
+    echo "  -it|--interactive            Enable interactive mode."
 
     exit 0
 }
@@ -591,17 +593,23 @@ get_media_server_config() {
 # Video Indexer
 ######################
 
-commands_create_preset() {
+create_preset() {
     if [[ -z "$presetName" ]]; then
         log_error "Missing required presetName"
         exit 1
     fi
 
-    local body='[
-        {"Id":"00000000-0000-0000-0000-000000000003"},
-        {"Id":"00000000-0000-0000-0000-000000000004"}
-    ]'
-
+    body=$(cat <<BODY
+    {
+        "Name": "$presetName",
+        "InsightTypes": [
+            {"Id":"00000000-0000-0000-0000-000000000003"},
+            {"Id":"00000000-0000-0000-0000-000000000004"}
+        ]
+    }
+BODY
+)
+    
     local url="$extensionUrl/Accounts/$accountId/live/presets"
     log_info "Creating preset '$presetName'"
 
@@ -611,6 +619,12 @@ commands_create_preset() {
         -H "Authorization: Bearer $accessToken" \
         -d "$body")
 
+    echo "$response"
+}
+
+commands_create_preset() {
+    response=$(create_preset)
+    log_info "Preset created:"
     echo "$response"
 }
 
@@ -639,7 +653,7 @@ commands_create_camera_vi() {
     
     local presetId
     log_info "Creating preset '$presetName'"
-    response=$(commands_create_preset)
+    response=$(create_preset)
     presetId=$(echo "$response" | jq -r '.Id')
 
     if [[ -z "$presetId" || "$presetId" == "null" ]]; then
@@ -811,36 +825,26 @@ prerequisites_validation() {
 }
 
 validate_input() {
-    if [[ -z "$1" ]]; then
-        log_error "No command provided."
+    local args=()
+    
+    for arg in "$@"; do
+        [[ "$arg" == --* || "$arg" == -* ]] && break
+        args+=("$arg")
+    done
+
+    if [[ ${#args[@]} -lt 2 ]]; then
+        log_error "Missing subcommand for command '${args[*]}'."
         show_help
     fi
 
-    command="$1"
-    subCommand="${2:-}"
-    shift 2
+    command="${args[0]}"
+    subCommand="${args[1]}"
+    subType="${args[2]:-}"  # optional
 
-    if [[ "$3" =~ ^-- ]]; then
-        log_error "Missing subcommand for command."
-    else
-        subType="${3:-}"
-        shift
-    fi
-
+    shift "${#args[@]}"
     remaining_args=("$@")
-
-    if [[ -z "$subType" || "$subType" == --* ]]; then
-        log_error "Missing subcommand for command '$command'."
-        show_help
-    fi
-
-    log_info "Command: $command"
-    log_info "Subcommand: $subCommand"
-    log_info "SubType: $subType"
-    log_info "remaining_args: ${remaining_args[*]}"
-
-    exit 0
 }
+
 
 run_command() {
     log_info "Running command: $command $subCommand $subType"

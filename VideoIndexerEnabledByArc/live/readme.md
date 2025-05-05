@@ -30,26 +30,49 @@ Follow these steps to deploy the Video Indexer Live Enabled Arc Extension to you
 
 ## Working with Live CLI
 
-The `vi_cli.sh` can help you running commands easily.
-| Command             | Description                                             |
-| ------------------- | ------------------------------------------------------- |
-| `create aio camera` | Create asset endpoint profile, asset, preset and camera |
-| `create aio aep`    | Create asset endpoint profile                           |
-| `create aio asset`  | Create asset                                            |
-| `create vi camera`  | Create a camera and preset in vi                        |
-| `create vi preset`  | Create a preset in vi                                   |
-| `upgrade extension` | Upgrade extension                                       |
-| `show token`        | Show access token                                       |
-| `show extension`    | Show extension                                          |
-| `show account`      | Show user account                                       |
+The `vi_cli.sh` script provides a comprehensive set of commands for managing Video Indexer and AIO resources. The script includes automatic prerequisites validation, error handling, and colored logging for better visibility.
+
+### Available Commands
+
+| Command             | Description                                             | Notes |
+| ------------------- | ------------------------------------------------------- | ----- |
+| `create camera`     | Create a camera with optional preset                    | Use `-aio` flag to create with AIO resources, `-preset` for preset creation |
+| `create aep`        | Create asset endpoint profile                           | Creates connection definition for your camera in AIO |
+| `create asset`      | Create asset in AIO                                     | Configures what to do with the camera connection |
+| `create preset`     | Create a preset in Video Indexer                        | Configures insight types for video analysis |
+| `delete camera`     | Delete a camera                                         | Also deletes associated AIO resources if `-aio` was used |
+| `delete preset`     | Delete a preset                                         | Removes preset configuration from Video Indexer |
+| `upgrade extension` | Upgrade Video Indexer extension                         | Can toggle between Media Files and Live Stream modes |
+| `show cameras`      | List all configured cameras                            | Shows camera configurations and status |
+| `show presets`      | List all available presets                             | Shows preset configurations |
+| `show token`        | Show access token                                      | Displays current extension access token |
+| `show extension`    | Show extension details                                 | Displays Video Indexer extension configuration |
+| `show account`      | Show user account details                              | Displays Video Indexer account information |
 
 
-| Option                 | Description                                     |
-| ---------------------- | ----------------------------------------------- |
-| `-y`, `--yes`          | Should continue without prompt for confirmation |
-| `-h`, `--help`         | Show this help message and exit                 |
-| `-s`, `--skip`         | Skip prerequisites check                        |
-| `-it`, `--interactive` | Enable interactive mode                         |
+### Command Options
+
+| Option                 | Description                                     | Notes |
+| ---------------------- | ----------------------------------------------- | ----- |
+| `-y`, `--yes`          | Skip confirmation prompts                       | Useful for automated scripts |
+| `-h`, `--help`         | Show command help and examples                 | Displays detailed usage information |
+| `-s`, `--skip`         | Skip prerequisites validation                   | Skips checking dependencies, Azure CLI version, and extensions |
+| `-it`, `--interactive` | Enable interactive parameter input             | Prompts for required parameters like camera name, credentials |
+| `-aio`                | Enable Azure IoT Operations integration         | Creates required AIO resources along with VI resources |
+| `-preset`             | Enable preset creation                         | Creates a preset with default insight types |
+
+The script performs automatic validation of:
+- Required dependencies (az, jq, curl)
+- Azure CLI version (>= 2.64.0)
+- Required Azure extensions
+- Valid Azure login and tokens
+- Resource provider registration
+
+In interactive mode (`-it`), the script will prompt for:
+- Cluster and resource group names
+- Account configuration
+- Camera details (name, RTSP URL)
+- Authentication credentials (if using camera secrets)
 
 **_Note_:** Please make sure your end of line sequence is LF and not CRLF for the script to work right away.
 
@@ -112,3 +135,13 @@ This command will create the following:
 4. camera (VI)
 
 The assets are created in AIO, while the preset and camera will be created in Video Indexer.
+
+### Example Usage with Error Handling
+
+```bash
+# Creating a camera with interactive mode and validation
+./vi_cli.sh create camera -it -aio
+
+# Creating a preset with skipped validation
+./vi_cli.sh create preset -s -y
+```

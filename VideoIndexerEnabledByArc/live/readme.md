@@ -12,20 +12,8 @@ The purpose of this document is to present the onboarding steps and pre-requisit
 If you don't already have the **Video Indexer Arc Extension**, please follow [Video Indexer Arc Extension](https://github.com/Azure-Samples/azure-video-indexer-samples/tree/master/VideoIndexerEnabledByArc/aks#video-indexer-arc-extension). 
 
 If you already have the **Video Indexer Arc Extension**, then continue with this guide.  
-The Video Indexer Live Enabled requires **Azure IoT Operations** (AIO) extension to be installed, you can follow this guide [Deploy Azure IoT Operations to an Arc-enabled Kubernetes cluster](https://learn.microsoft.com/en-us/azure/iot-operations/deploy-iot-ops/howto-deploy-iot-operations) and return to this point once complete.  
-
-
-## 1. Manual deployment steps start here
-
-Follow these steps to deploy the Video Indexer Live Enabled Arc Extension to your Arc K8S Enabled cluster. 
-
-### Minimum Software Requirements
-
-| Component |  Minimum Requirements
-| --- | ---
-| Operating System | Ubuntu 22.04 LTS or any Linux Compatible OS
-| Kubernetes | > 1.29
-| Azure CLI | > 2.64.0
+The Video Indexer Live Enabled can work with or without **Azure IoT Operations** (AIO) extension.   
+Learn more here: [Deploy Azure IoT Operations to an Arc-enabled Kubernetes cluster](https://learn.microsoft.com/en-us/azure/iot-operations/deploy-iot-ops/howto-deploy-iot-operations) 
 
 
 ## Working with Live CLI
@@ -76,9 +64,17 @@ In interactive mode (`-it`), the script will prompt for:
 
 **_Note_:** Please make sure your end of line sequence is LF and not CRLF for the script to work right away.
 
-## Installation Steps
 
-### Step 1 - Update Azure Arc Video Indexer Extension using CLI
+### Step 1 - Download the vi cli script
+```bash
+wget -SSL https://github.com/Azure-Samples/azure-video-indexer-samples/blob/live-private-preview/VideoIndexerEnabledByArc/live/vi_cli.sh
+
+chmod +x ./vi_cli.sh
+
+sh ./vi_cli.sh
+```
+
+### Step 2 - Update Azure Arc Video Indexer Extension using CLI
 
 To **create** Azure Arc Video Indexer Extension using CLI, see:
 [](https://github.com/Azure-Samples/azure-video-indexer-samples/blob/master/VideoIndexerEnabledByArc/aks/readme.md#step-2---create-azure-arc-video-indexer-extension-using-cli)
@@ -99,7 +95,7 @@ Run this command to toggle between modes, for example, to enable both **Media Fi
  ./vi_cli.sh upgrade extension -it
 ```
 
-### Step 2 - Connecting cameras to VI
+### Step 3 - Connecting cameras to VI
 
 #### With AIO disabled
 

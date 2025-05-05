@@ -67,7 +67,7 @@ In interactive mode (`-it`), the script will prompt for:
 
 ### Step 1 - Download the vi cli script
 ```bash
-wget -SSL https://github.com/Azure-Samples/azure-video-indexer-samples/blob/live-private-preview/VideoIndexerEnabledByArc/live/vi_cli.sh
+wget -SSL https://raw.githubusercontent.com/Azure-Samples/azure-video-indexer-samples/refs/heads/live-private-preview/VideoIndexerEnabledByArc/live/vi_cli.sh
 
 chmod +x ./vi_cli.sh
 

@@ -15,7 +15,6 @@ If you already have the **Video Indexer Arc Extension**, then continue with this
 The Video Indexer Live Enabled can work with or without **Azure IoT Operations** (AIO) extension.   
 Learn more here: [Deploy Azure IoT Operations to an Arc-enabled Kubernetes cluster](https://learn.microsoft.com/en-us/azure/iot-operations/deploy-iot-ops/howto-deploy-iot-operations) 
 
-
 ## Working with Live CLI
 
 The `vi_cli.sh` script provides a comprehensive set of commands for managing Video Indexer and AIO resources. The script includes automatic prerequisites validation, error handling, and colored logging for better visibility.
@@ -37,16 +36,28 @@ The `vi_cli.sh` script provides a comprehensive set of commands for managing Vid
 | `show extension`    | Show extension details                                 | Displays Video Indexer extension configuration |
 | `show account`      | Show user account details                              | Displays Video Indexer account information |
 
-
 ### Command Options
 
-| Option                 | Description                                     | Notes |
-| ---------------------- | ----------------------------------------------- | ----- |
-| `-y`, `--yes`          | Skip confirmation prompts                       | Useful for automated scripts |
-| `-h`, `--help`         | Show command help and examples                 | Displays detailed usage information |
-| `-s`, `--skip`         | Skip prerequisites validation                   | Skips checking dependencies, Azure CLI version, and extensions |
-| `-it`, `--interactive` | Enable interactive parameter input             | Prompts for required parameters like camera name, credentials |
-| `-aio`                | Enable Azure IoT Operations integration         | Creates required AIO resources along with VI resources |
+| Option                         | Description                                     | Notes |
+| ----------------------------- | ----------------------------------------------- | ----- |
+| `-y`, `--yes`                | Skip confirmation prompts                       | Useful for automated scripts |
+| `-h`, `--help`               | Show command help and examples                  | Displays detailed usage information |
+| `-s`, `--skip`               | Skip prerequisites validation                   | Skips checking dependencies, Azure CLI version, and extensions |
+| `-it`, `--interactive`       | Enable interactive parameter input              | Prompts for required parameters |
+| `-aio`, `--aio-enabled`      | Enable Azure IoT Operations integration         | Creates required AIO resources |
+| `-live`, `--live-enabled`    | Enable live stream capability                   | Used with upgrade extension |
+| `-media`, `--media-enabled`  | Enable media files capability                   | Used with upgrade extension |
+| `--clusterName`              | Name of the cluster                             | Required for most commands |
+| `--clusterResourceGroup`     | Resource group of the cluster                   | Required for most commands |
+| `--accountName`              | Name of the Video Indexer account               | Required for most commands |
+| `--accountResourceGroup`     | Resource group of the Video Indexer account     | Required for most commands |
+| `--cameraName`               | Name of the camera                              | Required for camera creation |
+| `--cameraAddress`            | RTSP address of the camera                      | Required for non-AIO cameras |
+| `--presetName`               | Name of the preset                              | Optional for camera creation |
+| `--presetId`                 | ID of the preset                                | Required for preset deletion |
+| `--cameraId`                 | ID of the camera                                | Required for camera deletion |
+| `--cameraUsername`           | Username for camera authentication              | Optional, used with AIO |
+| `--cameraPassword`           | Password for camera authentication              | Optional, used with AIO |
 
 The script performs automatic validation of:
 - Required dependencies (az, jq, curl)
@@ -80,34 +91,33 @@ This section will help you to enable/disable between modes.
 To get your current extension settings, run this command:
 
 ```bash
- ./vi_cli.sh show extension -it
+./vi_cli.sh show extension -it
 ```
 
-Run this command to toggle between modes, for example, to enable both **Media Files** and **Live** solutions, we will set liveStreamEnabled and mediaFilesEnabled equals true.
+Run this command to toggle between modes, for example, to enable both **Media Files** and **Live** solutions:
 
 ```bash
- ./vi_cli.sh upgrade extension \
+./vi_cli.sh upgrade extension \
 --clusterName "my-connected-cluster" \
 --clusterResourceGroup "my-connected-cluster" \
 --accountName "my-connected-cluster" \
 --accountResourceGroup "my-connected-cluster" \
 --live-enabled \
---media-enabled \
--s -y 
+--media-enabled
 ```
 
-Or if you prefer the interactive mode
+Or if you prefer the interactive mode:
 
 ```bash
- ./vi_cli.sh upgrade extension -it
+./vi_cli.sh upgrade extension -it
 ```
 
 ### Connecting cameras to VI With AIO disabled
 
-Create a camera with arguments
+Create a camera and preset with arguments:
 
 ```bash
- ./vi_cli.sh create camera -y -s \
+./vi_cli.sh create camera -y -s \
 --cameraName "my camera" \
 --cameraAddress "rtsp://my-ip-camera:8554/my-stream" \
 --presetName "my preset" \
@@ -117,18 +127,18 @@ Create a camera with arguments
 --accountResourceGroup "my-account-resource-group"
 ```
 
-Create a camera in interactive mode
+Create a camera in interactive mode:
 
 ```bash
- ./vi_cli.sh create camera -it
+./vi_cli.sh create camera -it
 ```
 
 ### Deleting cameras from VI with AIO disabled
 
-Delete a camera
+Delete a camera with arguments:
 
 ```bash
- ./vi_cli.sh delete camera -y -s \
+./vi_cli.sh delete camera -y -s \
 --cameraId "my camera id" \
 --clusterName "my-cluster-name" \
 --clusterResourceGroup "my-cluster-resource-group" \
@@ -136,41 +146,80 @@ Delete a camera
 --accountResourceGroup "my-account-resource-group"
 ```
 
-Delete a camera in interactive mode
+Delete a camera in interactive mode:
 
 ```bash
- ./vi_cli.sh delete camera -it
+./vi_cli.sh delete camera -it
 ```
 
 ### Connecting cameras to VI with AIO enabled
 
-Connecting cameras to AIO requires two main keypoints: asset endpoint profiles and assets.  
-**assets endpoint profile**: is the connection definition to your camera. 
-**asset**: is what to do with this connection.
+When connecting cameras with AIO integration, there are two main components:
+
+1. **Asset Endpoint Profile**: Defines the connection to your camera including:
+   - Target RTSP address
+   - Authentication method (Anonymous or Username/Password)
+   - Additional configuration settings
+
+2. **Asset**: Configures how to handle the camera connection including:
+   - Stream processing configuration
+   - Media server integration
+   - Data point settings for the stream
+
+To create a camera with AIO integration (creates all components):
 
 ```bash
- ./vi_cli.sh create camera -aio -it
+./vi_cli.sh create camera -aio -y -s \
+--cameraName "my camera" \
+--cameraAddress "rtsp://my-ip-camera:8554/my-stream" \
+--presetName "my preset" \
+--cameraUsername "optional-username" \
+--cameraPassword "optional-password" \
+--clusterName "my-cluster-name" \
+--clusterResourceGroup "my-cluster-resource-group" \
+--accountName "my-account-name" \
+--accountResourceGroup "my-account-resource-group"
 ```
 
 This command will create the following: 
-1. asset endpoint profile (AIO)
-2. asset (AIO)
-3. camera (VI)
+1. Asset endpoint profile (AIO)
+2. Asset (AIO)
+3. Preset (VI)
+4. Camera (VI)
 
-The assets are created in AIO, while the preset and camera will be created in Video Indexer.
+Or in interactive mode:
+
+```bash
+./vi_cli.sh create camera -aio -it
+```
 
 ### Deleting cameras from VI with AIO enabled
+
+To delete a camera and all associated AIO resources:
+
 ```bash
- ./vi_cli.sh delete camera -aio -it
+./vi_cli.sh delete camera -aio -y -s \
+--cameraId "my camera id" \
+--clusterName "my-cluster-name" \
+--clusterResourceGroup "my-cluster-resource-group" \
+--accountName "my-account-name" \
+--accountResourceGroup "my-account-resource-group"
+```
+
+Or in interactive mode:
+
+```bash
+./vi_cli.sh delete camera -aio -it
 ```
 
 This command will delete the following: 
-1. asset endpoint profile (AIO)
-2. asset (AIO)
-3. camera (VI)
+1. Asset endpoint profile (AIO)
+2. Asset (AIO)
+3. Camera (VI)
 
-### More commands
+### Additional Commands
 
+Show all configured cameras:
 ```bash
 ./vi_cli.sh show cameras -y -s \
 --clusterName "my-cluster-name" \
@@ -179,6 +228,7 @@ This command will delete the following:
 --accountResourceGroup "my-account-resource-group"
 ```
 
+List available presets:
 ```bash
 ./vi_cli.sh show presets -y -s \
 --clusterName "my-cluster-name" \
@@ -187,7 +237,7 @@ This command will delete the following:
 --accountResourceGroup "my-account-resource-group"
 ```
 
-
+Display current access token:
 ```bash
 ./vi_cli.sh show token -y -s \
 --clusterName "my-cluster-name" \
@@ -196,7 +246,7 @@ This command will delete the following:
 --accountResourceGroup "my-account-resource-group"
 ```
 
-
+Show extension details:
 ```bash
 ./vi_cli.sh show extension -y -s \
 --clusterName "my-cluster-name" \
@@ -205,11 +255,8 @@ This command will delete the following:
 --accountResourceGroup "my-account-resource-group"
 ```
 
-
+Display account information:
 ```bash
 ./vi_cli.sh show account -y -s \
---clusterName "my-cluster-name" \
---clusterResourceGroup "my-cluster-resource-group" \
 --accountName "my-account-name" \
 --accountResourceGroup "my-account-resource-group"
-```

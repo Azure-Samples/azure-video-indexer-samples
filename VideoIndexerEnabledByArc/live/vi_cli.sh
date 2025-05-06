@@ -1,41 +1,34 @@
 #!/bin/bash
 
 #################################################
-# Video Indexer CLI -CLI for interacting with 
-# Azure Video Indexer and IoT Operations
+# Video Indexer CLI for interacting with 
+# Azure Video Indexer and Azure IoT Operations
 #################################################
 
-# set your parameters here
-
-# Cluster parameters
+# Script parameters
 clusterName=""
 clusterResourceGroup=""
 accountName=""
 accountResourceGroup=""
-liveStreamEnabled=""
-mediaFilesEnabled=""
-
-# VI parameters
-cameraName="" 
+liveStreamEnabled=false
+mediaFilesEnabled=false
+cameraName=""
+cameraId=""
+presetId=""
+cameraAddress=""
+cameraUsername=""
+cameraPassword=""
 presetName=""
-cameraAddress="" # rtsp://localhost:8554
-
-# AIO parameters
-useCameraSecret="false"
-cameraUsername="<set-camera-username-if-useCameraSecret-is-true>"
-cameraPassword="<set-camera-password-if-useCameraSecret-is-true>"
-
-# DO NOT SET - Script variables will automatically set
+assetName=""
+assetEndpointName=""
 accessToken=""
 subscriptionId=""
 subscriptionName=""
-assetName=""
-assetEndpointName=""
 tenantId=""
 aioBaseURL=""
 extensionId=""
 extensionUrl=""
-accountId=""
+extensionAccountId=""
 
 ######################
 # Usage and Help
@@ -45,10 +38,10 @@ show_help() {
     echo "Usage: $0 <command> <subcommand> [options]"
     echo
     echo "Commands:"
-    echo "  create camera              Create camera"
+    echo "  create camera              Create a camera."
+    echo "  create preset              Create a preset."
     echo "  create aep                 Create asset endpoint profile."
     echo "  create asset               Create asset."
-    echo "  create preset              Create a preset in vi."
     echo "  delete camera              Delete a camera in vi."
     echo "  delete preset              Delete a preset in vi."
     echo "  upgrade extension          Upgrade extension."
@@ -59,17 +52,28 @@ show_help() {
     echo "  show account               Show user account."
     echo
     echo "Options:"
-    echo "  -y|--yes                   Should continue without prompt for confirmation."
-    echo "  -h|--help                  Show this help message and exit."
-    echo "  -s|--skip                  Skip prerequisites check."
-    echo "  -it|--interactive          Enable interactive mode."
-    echo "  -aio|--aio-enabled         Enable AIO."
-    echo "  -preset|--preset-enabled   Enable preset."
+    echo "  -y|--yes                        Should continue without prompt for confirmation."
+    echo "  -h|--help                       Show this help message and exit."
+    echo "  -s|--skip                       Skip prerequisites check."
+    echo "  -it|--interactive               Enable interactive mode."
+    echo "  -aio|--aio-enabled              Enable AIO."
+    echo "  -live|--live-enabled            Enable live stream."
+    echo "  -media|--media-enabled          Enable media files."
+    echo "  --clusterName <name>            Name of the cluster."
+    echo "  --clusterResourceGroup <name>   Resource group of the cluster."
+    echo "  --accountName <name>            Name of the Video Indexer account."
+    echo "  --accountResourceGroup <name>   Resource group of the Video Indexer account."
+    echo "  --cameraName <name>             Name of the camera."
+    echo "  --cameraAddress <address>       RTSP address of the camera."
+    echo "  --presetName <name>             Name of the preset."
+    echo "  --presetId <id>                 ID of the preset."
+    echo "  --cameraId <id>                 ID of the camera."
+    echo "  --cameraUsername (optional)     Username for the camera (AIO only)."
+    echo "  --cameraPassword (optional)     Password for the camera (AIO only)."
     echo
     echo "Examples:"
     echo "  create camera -aio         Create asset endpoint profile, asset, and camera"
-    echo "  create camera -preset      Create camera with preset"
-    echo "  create camera -aio -preset -y -it"
+    echo "  create camera -it          Create camera with interactive prompts"
     exit 0
 }
 
@@ -78,7 +82,6 @@ parse_arguments() {
     skipPrerequisites=false
     interactiveMode=false
     aioEnabled=false
-    presetEnabled=false
 
     while [[ $# -gt 0 ]]; do
       case "$1" in
@@ -101,9 +104,57 @@ parse_arguments() {
             aioEnabled=true
             shift
             ;;
-        -preset|--preset-enabled)
-            presetEnabled=true
+        -live|--live-enabled)
+            liveStreamEnabled=true
             shift
+            ;;
+        -media|--media-enabled)
+            mediaFilesEnabled=true
+            shift
+            ;;
+        --clusterName)
+            clusterName="$2"
+            shift 2
+            ;;
+        --clusterResourceGroup)
+            clusterResourceGroup="$2"
+            shift 2
+            ;;
+        --accountName)
+            accountName="$2"
+            shift 2
+            ;;
+        --accountResourceGroup)
+            accountResourceGroup="$2"
+            shift 2
+            ;;
+        --cameraName) 
+            cameraName="$2"
+            shift 2
+            ;;
+        --cameraId)
+            cameraId="$2"
+            shift 2
+            ;;
+        --presetId)
+            presetId="$2"
+            shift 2
+            ;;
+        --cameraAddress)
+            cameraAddress="$2"
+            shift 2
+            ;;
+        --presetName)
+            presetName="$2"
+            shift 2
+            ;;
+        --cameraUsername)
+            cameraUsername="$2"
+            shift 2
+            ;;
+        --cameraPassword)
+            cameraPassword="$2"
+            shift 2
             ;;
         *)
             log_error_exit "Unknown option: $1"
@@ -140,10 +191,6 @@ log_error() {
     echo -e "${RED}[ERROR]${RESET} $*"
 }
 
-log_success() {
-    echo -e "${GREEN}${BOLD}[SUCCESS]${RESET} $*"
-}
-
 log_error_exit() { 
     log_error "$1"
     exit 1
@@ -164,7 +211,7 @@ az_install() {
             curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
             if az --version > /dev/null 2>&1; then
-                log_success "Azure CLI successfully installed."
+                log_info "Azure CLI successfully installed."
             else
                 log_error_exit "Failed to install Azure CLI."
             fi
@@ -280,7 +327,7 @@ set_variables() {
     aioBaseURL="https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$clusterResourceGroup/providers/Microsoft.DeviceRegistry"
     
     az account set --subscription "$subscriptionId"
-    log_success "Subscription set to: ${BOLD}${subscriptionName}${RESET} (${subscriptionId})"
+    log_info "Subscription set to: ${BOLD}${subscriptionName}${RESET} (${subscriptionId})"
 }
 
 check_dependencies() {
@@ -323,22 +370,33 @@ init_access_token() {
         read -p "Enter Cluster Name: " clusterName
         read -p "Enter Cluster Resource Group: " clusterResourceGroup
     fi
+
+    validate_args --clusterName "$clusterName" --clusterResourceGroup "$clusterResourceGroup"
     
     local extension
     extension=$(get_vi_extension)
+    if [[ $? -ne 0 ]]; then
+        log_error_exit "Failed to retrieve Video Indexer extension: $extension"
+    fi
+
     extensionId=$(echo "$extension" | jq -r '.id'| tr -d '\r\n')
     extensionUrl=$(echo "$extension" | jq -r '.configurationSettings["videoIndexer.endpointUri"]' | tr -d '\r\n')
-    accountId=$(echo "$extension" | jq -r '.configurationSettings["videoIndexer.accountId"]' | tr -d '\r\n')
+    extensionAccountId=$(echo "$extension" | jq -r '.configurationSettings["videoIndexer.accountId"]' | tr -d '\r\n')
     
     if [[ -z "$extensionId" ]]; then
         log_error_exit "Error: extensionId is empty."
     fi
-
     if [[ -z "$extensionUrl" ]]; then
         log_error_exit "Error: extensionUrl is empty."
     fi
+    if [[ -z "$extensionAccountId" ]]; then
+        log_error_exit "Error: accountId is empty."
+    fi
 
-    validate_user_account "$accountId"
+    log_info "Extension Found"
+    log_info "Validating user account..."
+    validate_user_account "$extensionAccountId"
+    log_info "User account valid"
 
     local body
     body="{
@@ -347,9 +405,8 @@ init_access_token() {
         \"extensionId\": \"$extensionId\"
     }"
 
-    log_debug "Generating extension access token"
+    log_info "Generating extension access token"
     
-    # Generate extension access token
     local response
     response=$(az rest \
         --method post \
@@ -362,7 +419,7 @@ init_access_token() {
         log_error_exit "Error: Failed to retrieve access token."
     fi
     
-    log_success "Access token successfully generated"
+    log_info "Access token successfully generated"
 }
 
 get_user_account() {
@@ -378,32 +435,32 @@ show_user_account() {
         read -p "Enter Account Name: " accountName
         read -p "Enter Account Resource Group: " accountResourceGroup
     fi
+    validate_args --accountName "$accountName" --accountResourceGroup "$accountResourceGroup"
     response=$(get_user_account)
     log_info "User account details:"
     echo "$response" | jq -C '.'
 }
 
-get_user_account_id() {
-    response=$(get_user_account)
-    echo "$response"  | jq -r '.properties.accountId' | tr -d '\r\n'
-}
-
 validate_user_account() {
-    local extensionAccount="$1"
-    local userAccount
+    local extensionAccountId="$1"
+    local userAccountId
 
-    if [[ -z "$extensionAccount" ]]; then
-        log_error_exit "Missing extension account parameter"
+    if $interactiveMode; then
+        read -p "Enter Account Name: " accountName
+        read -p "Enter Account Resource Group: " accountResourceGroup
     fi
+
+    validate_args --accountName "$accountName" --accountResourceGroup "$accountResourceGroup"
     
-    userAccount=$(get_user_account_id)
+    response=$(get_user_account)
+    userAccountId=$(echo "$response" | jq -r '.properties.accountId' | tr -d '\r\n')
     
-    if [[ $? -ne 0 || -z "$userAccount" ]]; then
+    if [[ $? -ne 0 || -z "$userAccountId" ]]; then
         log_error_exit "Failed to retrieve user account"
     fi
     
-    if [[ "$extensionAccount" != "$userAccount" ]]; then
-        log_error_exit "Extension account '$extensionAccount' is different from user account '$userAccount', make sure you are using the correct account"
+    if [[ "$extensionAccountId" != "$userAccountId" ]]; then
+        log_error_exit "Extension account '$extensionAccountId' is different from user account '$userAccountId', make sure you are using the correct account"
     fi
 }
 
@@ -436,7 +493,7 @@ aio_create_asset_endpoint() {
     
     local authentication='{"method": "Anonymous"}'
 
-    if [[ "$useCameraSecret" == "true" ]]; then
+    if [[ "$aioEnabled" && -n "$cameraUsername" && -n "$cameraPassword" ]]; then
         local aep_secret_name="$assetEndpointName-secret"
         local namespace="azure-iot-operations"
 
@@ -446,8 +503,8 @@ aio_create_asset_endpoint() {
             log_info "Creating secret $aep_secret_name"
             
             kubectl create secret generic "$aep_secret_name" -n "$namespace" \
-            --from-literal=username=$cameraUsername \
-            --from-literal=password=$cameraPassword \
+            --from-literal=username="$cameraUsername" \
+            --from-literal=password="$cameraPassword" \
             
             log_debug "Secret created:"
             kubectl get secret "$aep_secret_name" -n "$namespace" -o yaml | log_debug
@@ -498,7 +555,7 @@ BODY
     --body "$body" \
     --only-show-errors
 
-    log_success "Asset endpoint successfully created"
+    log_info "Asset endpoint successfully created"
 }
 
 aio_delete_asset () {
@@ -600,7 +657,7 @@ BODY
     --body "$body" \
     --only-show-errors
 
-    log_success "Asset successfully created"
+    log_info "Asset successfully created"
 }
 
 aio_delete_camera() {
@@ -609,7 +666,7 @@ aio_delete_camera() {
 }
 
 get_media_server_config() {
-    local url="$extensionUrl/Accounts/$accountId/live/mediaServer/config"
+    local url="$extensionUrl/Accounts/$extensionAccountId/live/mediaServer/config"
 
     local response
     response=$(curl -s -k -X GET "$url" \
@@ -637,7 +694,7 @@ create_preset() {
 BODY
 )
     
-    local url="$extensionUrl/Accounts/$accountId/live/presets"
+    local url="$extensionUrl/Accounts/$extensionAccountId/live/presets"
 
     local response
     response=$(curl -s -k -X POST "$url" \
@@ -669,7 +726,7 @@ commands_delete_preset() {
 
     validate_args --presetId "$presetId"
 
-    local url="$extensionUrl/Accounts/$accountId/live/presets/$presetId"
+    local url="$extensionUrl/Accounts/$extensionAccountId/live/presets/$presetId"
     log_info "Deleting preset '$presetId'"
 
     curl -s -k -X DELETE "$url" \
@@ -678,7 +735,7 @@ commands_delete_preset() {
 }
 
 commands_show_presets() {
-    local url="$extensionUrl/Accounts/$accountId/live/presets"
+    local url="$extensionUrl/Accounts/$extensionAccountId/live/presets"
     response=$(curl -s -k -X GET "$url" \
          -H "Content-Type: application/json" \
          -H "Authorization: Bearer $accessToken")
@@ -694,16 +751,18 @@ commands_create_camera() {
 }
 
 delete_camera() {
-     if $interactiveMode; then
+    if $interactiveMode; then
         read -p "Enter camera id: " cameraId
     fi
 
     validate_args --cameraId "$cameraId"
    
-    url="$extensionUrl/Accounts/$accountId/live/cameras/$cameraId"
+    local url="$extensionUrl/Accounts/$extensionAccountId/live/camerasx/$cameraId"
     curl -s -k -X DELETE "$url" \
          -H "Content-Type: application/json" \
          -H "Authorization: Bearer $accessToken"
+    
+    log_info "Camera '$cameraId' deleted"
 }
 
 commands_delete_camera() {
@@ -715,7 +774,7 @@ commands_delete_camera() {
 }
 
 commands_show_cameras() {
-    local url="$extensionUrl/Accounts/$accountId/live/cameras"
+    local url="$extensionUrl/Accounts/$extensionAccountId/live/cameras"
     response=$(curl -s -k -X GET "$url" \
          -H "Content-Type: application/json" \
          -H "Authorization: Bearer $accessToken")
@@ -731,23 +790,13 @@ aio_create_camera_assets() {
 create_camera() {
     if $interactiveMode; then
         read -p "Enter Camera Name: " cameraName
+        read -p "Enter Preset Name (optional): " presetName
         if $aioEnabled; then
-            read -p "Use Camera Secret? (true/false): " useCameraSecret
-
-            if [[ "$useCameraSecret" == "true" ]]; then
-                read -p "Enter Camera Username: " cameraUsername
-                read -p "Enter Camera Password: " cameraPassword
-
-                validate_args --cameraUsername "$cameraUsername"
-                validate_args --cameraPassword "$cameraPassword"
-            fi
+            read -p "Enter Camera Username (optional): " cameraUsername
+            read -p "Enter Camera Password (optional): " cameraPassword
         else
-             read -p "Enter Camera Address (RTSP URL): " cameraAddress
-             validate_args --cameraAddress "$cameraAddress"
-        fi
-
-        if $presetEnabled; then
-            read -p "Enter Preset Name: " presetName
+            read -p "Enter Camera Address (RTSP URL): " cameraAddress
+            validate_args --cameraAddress "$cameraAddress"
         fi
     fi
 
@@ -773,8 +822,7 @@ create_camera() {
     fi
     
     presetId=null
-    if $presetEnabled; then
-        validate_args --presetName "$presetName"
+    if [[ -n "$presetName" ]]; then
         log_info "Creating preset '$presetName'"
         response=$(create_preset)
         presetId=$(echo "$response" | jq -r '.id')
@@ -783,7 +831,7 @@ create_camera() {
             log_error_exit "Failed to create preset. Response: $response"
         fi
         presetId="\"$presetId\""
-        log_success "Preset created with ID: $presetId"
+        log_info "Preset created with ID: $presetId"
     fi
     
     local body
@@ -798,11 +846,12 @@ create_camera() {
     }
 BODY
 )
-
+    
+    log_info "Creating camera '$cameraName'"
     echo "$body"
     
     local response cameraId
-    local url="$extensionUrl/Accounts/$accountId/live/cameras"
+    local url="$extensionUrl/Accounts/$extensionAccountId/live/cameras"
     response=$(curl -s -k -X POST "$url" \
          -H "Content-Type: application/json" \
          -H "Authorization: Bearer $accessToken" \
@@ -814,7 +863,7 @@ BODY
         log_error_exit "Failed to create camera. Response: $response"
     fi
     
-    log_success "Camera created with ID: $cameraId"
+    log_info "Camera created with ID: $cameraId"
 }
 
 ######################
@@ -822,12 +871,6 @@ BODY
 ######################
 
 get_vi_extension() {
-
-    if $interactiveMode; then
-        read -p "Enter Cluster Name: " clusterName
-        read -p "Enter Cluster Resource Group: " clusterResourceGroup
-    fi
-
     local response
     response=$(az k8s-extension list \
         --cluster-name "$clusterName" \
@@ -837,14 +880,12 @@ get_vi_extension() {
         --output json 2>&1)
 
     if [[ $? -ne 0 ]]; then
-        if [[ $response =~ "ERROR" && $response =~ "connection" ]]; then
-            log_error_exit "Failed to retrieve extension. please check your network connection"
-        else
-            log_error_exit "Failed to retrieve extension: $response"
-        fi
+        echo "$response"
+        exit 1
     fi
     if [[ -z "$response" || "$response" == "null" ]]; then
-        log_error_exit "No Video Indexer extension found for cluster '$clusterName' in resource group '$clusterResourceGroup'"
+        echo "No Video Indexer extension found for cluster '$clusterName' in resource group '$clusterResourceGroup'"
+        exit 1
     fi
 
     echo "$response"
@@ -853,13 +894,17 @@ get_vi_extension() {
 commands_upgrade_extension() {
     log_info "Upgrading Video Indexer extension"
 
-    extension=$(get_vi_extension)
-
     if $interactiveMode; then
+        read -p "Enter Cluster Name: " clusterName
+        read -p "Enter Cluster Resource Group: " clusterResourceGroup
         read -p "Enable Live Stream? (true/false): " liveStreamEnabled
         read -p "Enable Media Files? (true/false): " mediaFilesEnabled
     fi
 
+    extension=$(get_vi_extension)
+    if [[ $? -ne 0 ]]; then
+        log_error_exit "Failed to retrieve Video Indexer extension: $extension"
+    fi
     extensionName=$(echo "$extension" | jq -r '.name'| tr -d '\r\n')
 
     az k8s-extension update \
@@ -873,7 +918,7 @@ commands_upgrade_extension() {
 
     if [[ $? -eq 0 ]]; then
         register_resource_providers
-        log_success "Video Indexer extension successfully upgraded"
+        log_info "Video Indexer extension successfully upgraded"
     fi
 }
 
@@ -881,6 +926,11 @@ commands_show_extension() {
     
     log_info "Showing Video Indexer extension details"
     
+    if $interactiveMode; then
+        read -p "Enter Cluster Name: " clusterName
+        read -p "Enter Cluster Resource Group: " clusterResourceGroup
+    fi
+
     local extension
     extension=$(get_vi_extension)
 
@@ -968,9 +1018,11 @@ prerequisites_validation() {
     fi
 
     set_variables
+
     if $generate_access_token; then
         init_access_token
     fi
+
     print_summary
     prompt_confirmation
 }
@@ -982,8 +1034,7 @@ validate_args() {
         local arg_value="$2"
         
         if [[ -z "$arg_value" ]]; then
-            log_error "Usage: missing argument $arg_name"
-            show_help
+            log_error_exit "Usage: missing argument $arg_name, you can pass it as $arg_name or use '-it' flag for interactive mode"
         fi
         shift 2
     done
@@ -1020,6 +1071,10 @@ run_command() {
             prerequisites_validation
             commands_create_camera
             ;;
+        preset)
+            prerequisites_validation
+            commands_create_preset
+            ;;
         aep)
             prerequisites_validation
             aio_create_asset_endpoint
@@ -1027,10 +1082,6 @@ run_command() {
         asset)
             prerequisites_validation
             aio_create_asset
-            ;;
-        preset)
-            prerequisites_validation
-            commands_create_preset
             ;;
         *)
             log_error "Unknown subcommand '$subCommand' for '$command'"
@@ -1056,7 +1107,7 @@ run_command() {
     upgrade)
         case "$subCommand" in
         extension)
-            prerequisites_validation false
+            prerequisites_validation
             commands_upgrade_extension
             ;;
         *)
@@ -1078,7 +1129,8 @@ run_command() {
         token)
             prerequisites_validation
             if [[ -n "$accessToken" ]]; then
-                log_info "Extension Access token: $accessToken"
+                log_info "Extension Access token:"
+                echo "$accessToken"
             fi
             ;;
         extension)
@@ -1121,7 +1173,7 @@ main() {
 
     run_command
     
-    log_success "Operation completed successfully"
+    log_info "Operation completed successfully"
 }
 
 main "$@"

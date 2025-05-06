@@ -64,23 +64,18 @@ In interactive mode (`-it`), the script will prompt for:
 
 **_Note_:** Please make sure your end of line sequence is LF and not CRLF for the script to work right away.
 
-
 ### Step 1 - Download the vi cli script
 ```bash
 wget -SSL https://raw.githubusercontent.com/Azure-Samples/azure-video-indexer-samples/refs/heads/live-private-preview/VideoIndexerEnabledByArc/live/vi_cli.sh
 
 chmod +x ./vi_cli.sh
 
-sh ./vi_cli.sh
+./vi_cli.sh -h
 ```
 
 ### Step 2 - Update Azure Arc Video Indexer Extension using CLI
 
-To **create** Azure Arc Video Indexer Extension using CLI, see:
-[](https://github.com/Azure-Samples/azure-video-indexer-samples/blob/master/VideoIndexerEnabledByArc/aks/readme.md#step-2---create-azure-arc-video-indexer-extension-using-cli)
-
-
-To **update** Azure Arc Video Indexer Extension using CLI, continue here:
+To **update** Azure Arc Video Indexer Extension using CLI, continue here:  
 As mentioned above, Video Indexer has two modes: **Media Files Enabled** and **Live Enabled** solution.  
 This section will help you to enable/disable between modes.  
 To get your current extension settings, run this command:
@@ -95,33 +90,38 @@ Run this command to toggle between modes, for example, to enable both **Media Fi
  ./vi_cli.sh upgrade extension -it
 ```
 
-### Step 3 - Connecting cameras to VI
+### Connecting cameras to VI
 
 #### With AIO disabled
 
+Create a camera
+
 ```bash
- ./vi_cli.sh create vi camera
+ ./vi_cli.sh create camera -it
 ```
 
-This command will create the following: 
-1. preset (VI)
-2. camera (VI)
-
-The preset and camera will be created in Video Indexer.
-
-
-#### With AIO enabled
-Connecting cameras to AIO requires two main keypoints: asset endpoint profiles and assets.  
-**assets endpoint profile**: is the connection definition to your camera. 
-[asset-endpoint-profiles](https://learn.microsoft.com/en-us/rest/api/deviceregistry/asset-endpoint-profiles/create-or-replace?view=rest-deviceregistry-2024-11-01&tabs=HTTP)
-
-**asset**: is what to do with this connection.
-[assets](https://learn.microsoft.com/en-us/rest/api/deviceregistry/assets/create-or-replace?view=rest-deviceregistry-2024-11-01&tabs=HTTP)
-
-Creating asset endpoint profiles and assets can be done from the [aio dashboard](https://iotoperations.azure.com/sites) or by using the `vi_cli.sh`. This guide will show how to use the `vi_cli.sh`.
+Create a camera and preset.
 
 ```bash
- ./vi_cli.sh create aio camera
+ ./vi_cli.sh create camera -preset -it
+```
+
+#### Deleting cameras
+
+Delete a camera and preset.
+
+```bash
+ ./vi_cli.sh delete camera -preset -it
+```
+
+#### With AIO enabled
+
+Connecting cameras to AIO requires two main keypoints: asset endpoint profiles and assets.  
+**assets endpoint profile**: is the connection definition to your camera. 
+**asset**: is what to do with this connection.
+
+```bash
+ ./vi_cli.sh create camera -aio -preset -it
 ```
 
 This command will create the following: 
@@ -132,12 +132,13 @@ This command will create the following:
 
 The assets are created in AIO, while the preset and camera will be created in Video Indexer.
 
-### Example Usage with Error Handling
-
+#### Deleting cameras
 ```bash
-# Creating a camera with interactive mode and validation
-./vi_cli.sh create camera -it -aio
-
-# Creating a preset with skipped validation
-./vi_cli.sh create preset -s -y
+ ./vi_cli.sh delete camera -aio -preset -it
 ```
+
+This command will delete the following: 
+1. asset endpoint profile (AIO)
+2. asset (AIO)
+3. preset (VI)
+4. camera (VI)

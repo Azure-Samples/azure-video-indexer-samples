@@ -1,29 +1,24 @@
 #!/bin/bash
 
 #################################################
-# AIO Video Indexer CLI
-# CLI for interacting with Azure Video Indexer and IoT Operations
+# Video Indexer CLI -CLI for interacting with 
+# Azure Video Indexer and IoT Operations
 #################################################
-
-# set -e -o pipefail
-# set -x
 
 # set your parameters here
 
 # Cluster parameters
-clusterName="vi-arc-6-wus2-connected-aks"
-clusterResourceGroup="vi-arc-6-wus2-rg"
-# accountName="VI-FE-ARC-2"
-# accountResourceGroup="vi-fe-arc"
-accountName="vi-arc-dev"
-accountResourceGroup="vi-arc-dev-rg"
-liveStreamEnabled="true"
-mediaFilesEnabled="true"
+clusterName=""
+clusterResourceGroup=""
+accountName=""
+accountResourceGroup=""
+liveStreamEnabled=""
+mediaFilesEnabled=""
 
 # VI parameters
-cameraName="my-camera-name"
-presetName="my-preset-name"
-cameraAddress="rtsp://localhost:8554" # "<set-camera-address>"
+cameraName="" 
+presetName=""
+cameraAddress="" # rtsp://localhost:8554
 
 # AIO parameters
 useCameraSecret="false"
@@ -31,7 +26,6 @@ cameraUsername="<set-camera-username-if-useCameraSecret-is-true>"
 cameraPassword="<set-camera-password-if-useCameraSecret-is-true>"
 
 # DO NOT SET - Script variables will automatically set
-azToken=""
 accessToken=""
 subscriptionId=""
 subscriptionName=""
@@ -44,43 +38,6 @@ extensionUrl=""
 accountId=""
 
 ######################
-# Logging
-######################
-
-# Color codes for pretty logging
-RESET="\033[0m"
-RED="\033[0;31m"
-GREEN="\033[0;32m"
-YELLOW="\033[0;33m"
-CYAN="\033[0;36m"
-BOLD="\033[1m"
-
-log_debug() {
-    echo -e "${CYAN}[DEBUG]${RESET} $*"
-}
-
-log_info() {
-    echo -e "${GREEN}[INFO]${RESET} $*"
-}
-
-log_warn() {
-    echo -e "${YELLOW}[WARN]${RESET} $*"
-}
-
-log_error() {
-    echo -e "${RED}[ERROR]${RESET} $*"
-}
-
-log_success() {
-    echo -e "${GREEN}${BOLD}[SUCCESS]${RESET} $*"
-}
-
-log_error_exit() { 
-    log_error "$1"
-    exit 1
-}
-
-######################
 # Usage and Help
 ######################
 
@@ -88,28 +45,30 @@ show_help() {
     echo "Usage: $0 <command> <subcommand> [options]"
     echo
     echo "Commands:"
-    echo "  create camera           Create camera"
-    echo "  create camera -aio      Create asset endpoint profile, asset, and camera"
-    echo "  create camera -preset   Create camera with preset"
-    echo "  create aep              Create asset endpoint profile."
-    echo "  create asset            Create asset."
-    echo "  create preset           Create a preset in vi."
-    echo "  delete camera           Delete a camera in vi."
-    echo "  delete preset           Delete a preset in vi."
-    echo "  upgrade extension       Upgrade extension."
-    echo "  show cameras            Show cameras."
-    echo "  show presets            Show presets."
-    echo "  show token              Show access token."
-    echo "  show extension          Show extension"
-    echo "  show account            Show user account."
+    echo "  create camera              Create camera"
+    echo "  create aep                 Create asset endpoint profile."
+    echo "  create asset               Create asset."
+    echo "  create preset              Create a preset in vi."
+    echo "  delete camera              Delete a camera in vi."
+    echo "  delete preset              Delete a preset in vi."
+    echo "  upgrade extension          Upgrade extension."
+    echo "  show cameras               Show cameras."
+    echo "  show presets               Show presets."
+    echo "  show token                 Show access token."
+    echo "  show extension             Show extension"
+    echo "  show account               Show user account."
     echo
     echo "Options:"
-    echo "  -y|--yes              Should continue without prompt for confirmation."
-    echo "  -h|--help             Show this help message and exit."
-    echo "  -s|--skip             Skip prerequisites check."
-    echo "  -it|--interactive     Enable interactive mode."
+    echo "  -y|--yes                   Should continue without prompt for confirmation."
+    echo "  -h|--help                  Show this help message and exit."
+    echo "  -s|--skip                  Skip prerequisites check."
+    echo "  -it|--interactive          Enable interactive mode."
+    echo "  -aio|--aio-enabled         Enable AIO."
+    echo "  -preset|--preset-enabled   Enable preset."
     echo
     echo "Examples:"
+    echo "  create camera -aio         Create asset endpoint profile, asset, and camera"
+    echo "  create camera -preset      Create camera with preset"
     echo "  create camera -aio -preset -y -it"
     exit 0
 }
@@ -151,6 +110,43 @@ parse_arguments() {
             ;;
         esac
     done
+}
+
+######################
+# Logging
+######################
+
+# Color codes for pretty logging
+RESET="\033[0m"
+RED="\033[0;31m"
+GREEN="\033[0;32m"
+YELLOW="\033[0;33m"
+CYAN="\033[0;36m"
+BOLD="\033[1m"
+
+log_debug() {
+    echo -e "${CYAN}[DEBUG]${RESET} $*"
+}
+
+log_info() {
+    echo -e "${GREEN}[INFO]${RESET} $*"
+}
+
+log_warn() {
+    echo -e "${YELLOW}[WARN]${RESET} $*"
+}
+
+log_error() {
+    echo -e "${RED}[ERROR]${RESET} $*"
+}
+
+log_success() {
+    echo -e "${GREEN}${BOLD}[SUCCESS]${RESET} $*"
+}
+
+log_error_exit() { 
+    log_error "$1"
+    exit 1
 }
 
 ######################
@@ -322,22 +318,14 @@ init_access_token() {
     fi
 
     log_info "Initializing access token"
+
+    if $interactiveMode; then
+        read -p "Enter Cluster Name: " clusterName
+        read -p "Enter Cluster Resource Group: " clusterResourceGroup
+    fi
     
     local extension
-    extension=$(az k8s-extension list \
-        --cluster-name "$clusterName" \
-        --cluster-type connectedClusters \
-        --resource-group "$clusterResourceGroup" \
-        --query "[?extensionType == 'microsoft.videoindexer'] | [0]" \
-        --output json 2>&1)
-    
-    if [[ $? -ne 0 && $extension =~ "ERROR" && $extension =~ "connection" ]]; then
-        log_error_exit "Failed to retrieve extension. please check your network connection"
-    fi
-    if [[ -z "$extension" || "$extension" == "null" ]]; then
-        log_error_exit "No Video Indexer extension found for cluster '$clusterName' in resource group '$clusterResourceGroup'"
-    fi
-
+    extension=$(get_vi_extension)
     extensionId=$(echo "$extension" | jq -r '.id'| tr -d '\r\n')
     extensionUrl=$(echo "$extension" | jq -r '.configurationSettings["videoIndexer.endpointUri"]' | tr -d '\r\n')
     accountId=$(echo "$extension" | jq -r '.configurationSettings["videoIndexer.accountId"]' | tr -d '\r\n')
@@ -348,12 +336,6 @@ init_access_token() {
 
     if [[ -z "$extensionUrl" ]]; then
         log_error_exit "Error: extensionUrl is empty."
-    fi
-
-    azToken=$(az account get-access-token --resource https://management.azure.com/ --query accessToken -o tsv | tr -d '\r\n')
-
-    if [[ -z "$azToken" ]]; then
-        log_error_exit "Error: Failed to retrieve Azure management token."
     fi
 
     validate_user_account "$accountId"
@@ -369,9 +351,9 @@ init_access_token() {
     
     # Generate extension access token
     local response
-    response=$(az rest --method post \
+    response=$(az rest \
+        --method post \
         --uri "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$accountResourceGroup/providers/Microsoft.VideoIndexer/accounts/$accountName/generateExtensionAccessToken?api-version=2023-06-02-preview" \
-        --headers "accept=application/json" "Authorization=Bearer $azToken" "Content-Type=application/json" \
         --body "$body")
 
     accessToken=$(echo "$response" | jq -r '.accessToken')
@@ -386,8 +368,7 @@ init_access_token() {
 get_user_account() {
     response=$(az rest \
         --method get \
-        --uri "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$accountResourceGroup/providers/Microsoft.VideoIndexer/accounts/$accountName?api-version=2023-06-02-preview" \
-        --headers "accept=application/json" "Authorization=Bearer $azToken" "Content-Type=application/json")
+        --uri "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$accountResourceGroup/providers/Microsoft.VideoIndexer/accounts/$accountName?api-version=2023-06-02-preview")
     
     echo "$response"
 }
@@ -840,58 +821,68 @@ BODY
 # Extension Management
 ######################
 
-commands_upgrade_extension() {
-    log_info "Upgrading Video Indexer extension"
+get_vi_extension() {
 
     if $interactiveMode; then
         read -p "Enter Cluster Name: " clusterName
         read -p "Enter Cluster Resource Group: " clusterResourceGroup
-        read -p "Enable Live Stream? (true/false): " liveStreamEnabled
-        read -p "Enable Media Files? (true/false): " mediaFilesEnabled
     fi
-    
-    local extension
-    extension=$(az k8s-extension list \
-    --cluster-name "$clusterName" \
-    --cluster-type connectedClusters \
-    --resource-group "$clusterResourceGroup" \
-    --query "[?extensionType == 'microsoft.videoindexer'] | [0]" \
-    --output json)
-    
-    if [[ -z "$extension" || "$extension" == "null" ]]; then
+
+    local response
+    response=$(az k8s-extension list \
+        --cluster-name "$clusterName" \
+        --cluster-type connectedClusters \
+        --resource-group "$clusterResourceGroup" \
+        --query "[?extensionType == 'microsoft.videoindexer'] | [0]" \
+        --output json 2>&1)
+
+    if [[ $? -ne 0 ]]; then
+        if [[ $response =~ "ERROR" && $response =~ "connection" ]]; then
+            log_error_exit "Failed to retrieve extension. please check your network connection"
+        else
+            log_error_exit "Failed to retrieve extension: $response"
+        fi
+    fi
+    if [[ -z "$response" || "$response" == "null" ]]; then
         log_error_exit "No Video Indexer extension found for cluster '$clusterName' in resource group '$clusterResourceGroup'"
     fi
 
+    echo "$response"
+}
+
+commands_upgrade_extension() {
+    log_info "Upgrading Video Indexer extension"
+
+    extension=$(get_vi_extension)
+
+    if $interactiveMode; then
+        read -p "Enable Live Stream? (true/false): " liveStreamEnabled
+        read -p "Enable Media Files? (true/false): " mediaFilesEnabled
+    fi
+
+    extensionName=$(echo "$extension" | jq -r '.name'| tr -d '\r\n')
+
     az k8s-extension update \
-    --name videoindexer \
+    --name "$extensionName" \
     --cluster-name "$clusterName" \
     --cluster-type connectedClusters \
     --resource-group "$clusterResourceGroup" \
     --config "videoIndexer.liveStreamEnabled=$liveStreamEnabled" \
     --config "videoIndexer.mediaFilesEnabled=$mediaFilesEnabled" \
-    --only-show-errors
+    --yes
 
-    log_success "Video Indexer extension successfully upgraded"
+    if [[ $? -eq 0 ]]; then
+        register_resource_providers
+        log_success "Video Indexer extension successfully upgraded"
+    fi
 }
 
 commands_show_extension() {
-    if $interactiveMode; then
-        read -p "Enter Cluster Name: " clusterName
-        read -p "Enter Cluster Resource Group: " clusterResourceGroup
-    fi
+    
     log_info "Showing Video Indexer extension details"
     
     local extension
-    extension=$(az k8s-extension list \
-    --cluster-name "$clusterName" \
-    --cluster-type connectedClusters \
-    --resource-group "$clusterResourceGroup" \
-    --query "[?extensionType == 'microsoft.videoindexer'] | [0]" \
-    --output json)
-    
-    if [[ -z "$extension" || "$extension" == "null" ]]; then
-        log_error_exit "No Video Indexer extension found for cluster '$clusterName' in resource group '$clusterResourceGroup'"
-    fi
+    extension=$(get_vi_extension)
 
     echo "$extension" | jq -C '.'
 }
@@ -963,6 +954,8 @@ prompt_confirmation() {
 }
 
 prerequisites_validation() {
+    generate_access_token="${1:-true}"
+
     if ! $skipPrerequisites; then
         check_dependencies
         az_install
@@ -975,7 +968,9 @@ prerequisites_validation() {
     fi
 
     set_variables
-    init_access_token
+    if $generate_access_token; then
+        init_access_token
+    fi
     print_summary
     prompt_confirmation
 }
@@ -1061,9 +1056,8 @@ run_command() {
     upgrade)
         case "$subCommand" in
         extension)
-            prerequisites_validation
+            prerequisites_validation false
             commands_upgrade_extension
-            register_resource_providers
             ;;
         *)
             log_error "Unknown subcommand '$subCommand' for '$command'"
@@ -1083,17 +1077,16 @@ run_command() {
             ;;
         token)
             prerequisites_validation
-            init_access_token
             if [[ -n "$accessToken" ]]; then
                 log_info "Extension Access token: $accessToken"
             fi
             ;;
         extension)
-            prerequisites_validation
+            prerequisites_validation false
             commands_show_extension
             ;;
         account)
-            prerequisites_validation
+            prerequisites_validation false
             show_user_account
             ;;
         *)

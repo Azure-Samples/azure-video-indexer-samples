@@ -74,16 +74,23 @@ In interactive mode (`-it`), the script will prompt for:
 
 **_Note_:** Please make sure your end of line sequence is LF and not CRLF for the script to work right away.
 
-### Step 1 - Download the vi cli script
+### Download the vi cli script
 ```bash
-wget -SSL https://raw.githubusercontent.com/Azure-Samples/azure-video-indexer-samples/refs/heads/live-private-preview/VideoIndexerEnabledByArc/live/vi_cli.sh
+curl -fsSL -o vi_cli.sh https://raw.githubusercontent.com/Azure-Samples/azure-video-indexer-samples/refs/heads/live-private-preview/VideoIndexerEnabledByArc/live/vi_cli.sh
 
 chmod +x ./vi_cli.sh
 
 ./vi_cli.sh -h
 ```
 
-### Step 2 - Update Azure Arc Video Indexer Extension using CLI
+### Check Dependencies
+For the first time using the script, please run this command:
+
+```bash
+./vi_cli.sh check
+```
+
+### Update Azure Arc Video Indexer Extension using CLI
 
 To **update** Azure Arc Video Indexer Extension using CLI, continue here:  
 As mentioned above, Video Indexer has two modes: **Media Files Enabled** and **Live Enabled** solution.  

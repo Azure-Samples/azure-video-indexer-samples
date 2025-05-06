@@ -204,10 +204,11 @@ az_install() {
     log_info "Checking if Azure CLI (az) is installed..."
 
     if ! command -v az > /dev/null 2>&1; then
-        log_info "Azure CLI is not installed. Installing..."
+        log_info "Azure CLI is not installed."
         read -p "Do you want to install Azure CLI? (true/false): " installAzureCLI
         
         if "$installAzureCLI"; then
+            log_info "Installing Azure CLI..."
             curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
             if az --version > /dev/null 2>&1; then
@@ -215,6 +216,8 @@ az_install() {
             else
                 log_error_exit "Failed to install Azure CLI."
             fi
+        else
+            log_error_exit "Azure CLI is required. Please install it."
         fi
     else
         log_info "Azure CLI is already installed."
@@ -319,8 +322,11 @@ az_get_subscription_prop() {
 set_variables() {
     log_info "Setting variables..."
     
-    assetName="$cameraName-asset"
-    assetEndpointName="$cameraName-asset-endpoint"
+    if [[ -n "$cameraName" ]]; then
+        assetName="$cameraName-asset"
+        assetEndpointName="$cameraName-asset-endpoint"
+    fi
+   
     subscriptionId=$(az_get_subscription_prop "id" | tr -d '\r\n')
     subscriptionName=$(az_get_subscription_prop "name" | tr -d '\r\n')
     tenantId=$(az_get_subscription_prop "tenantId")
@@ -330,7 +336,7 @@ set_variables() {
     log_info "Subscription set to: ${BOLD}${subscriptionName}${RESET} (${subscriptionId})"
 }
 
-check_dependencies() {
+check_required_tools() {
     local missing_deps=false
     
     log_info "Checking dependencies"
@@ -1003,19 +1009,17 @@ prompt_confirmation() {
     esac
 }
 
+check_dependencies(){
+    check_required_tools
+    az_install
+    az_check_version
+    az_install_extensions
+    az_check_token
+    az_login
+}
+
 prerequisites_validation() {
     generate_access_token="${1:-true}"
-
-    if ! $skipPrerequisites; then
-        check_dependencies
-        az_install
-        az_check_version
-        az_install_extensions
-        az_check_token
-        az_login
-    else
-         log_info "Skipping prerequisites validation..."
-    fi
 
     set_variables
 
@@ -1065,6 +1069,9 @@ run_command() {
     log_info "Running command: $command $subCommand"
     
     case "$command" in
+    check)
+        check_dependencies
+        ;;
     create)
         case "$subCommand" in
         camera)

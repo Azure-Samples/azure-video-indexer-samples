@@ -315,11 +315,6 @@ az_get_subscription_prop() {
 set_variables() {
     log_info "Setting variables..."
     
-    if [[ -n "$cameraName" ]]; then
-        assetName="$cameraName-asset"
-        assetEndpointName="$cameraName-asset-endpoint"
-    fi
-   
     subscriptionId=$(az_get_subscription_prop "id" | tr -d '\r\n')
     subscriptionName=$(az_get_subscription_prop "name" | tr -d '\r\n')
     tenantId=$(az_get_subscription_prop "tenantId")
@@ -330,11 +325,10 @@ set_variables() {
 }
 
 check_required_tools() {
-    local missing_deps=false
+    missing_deps=false
     
     log_info "Checking dependencies"
     
-    # Check for required tools
     for cmd in az jq curl; do
         if ! command -v $cmd &> /dev/null; then
             log_error "Required dependency '$cmd' not found"
@@ -351,7 +345,7 @@ check_required_tools() {
         fi
     done
     
-    if [[ "$missing_deps" == "true" ]]; then
+    if $missing_deps; then
         log_error_exit "Please install the missing dependencies and try again"
     fi
     
@@ -412,10 +406,18 @@ init_access_token() {
         --uri "https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$accountResourceGroup/providers/Microsoft.VideoIndexer/accounts/$accountName/generateExtensionAccessToken?api-version=2023-06-02-preview" \
         --body "$body")
 
+    if [[ $? -ne 0 ]]; then
+        log_error_exit "Failed to generate access token: $response"
+    fi
+
+    if [[ -z "$response" || "$response" == "null" ]]; then
+        log_error_exit "Failed to generate access token."
+    fi
+
     accessToken=$(echo "$response" | jq -r '.accessToken')
 
     if [[ -z "$accessToken" || "$accessToken" == "null" ]]; then
-        log_error_exit "Error: Failed to retrieve access token."
+        log_error_exit "Failed to retrieve access token."
     fi
     
     log_info "Access token successfully generated"
@@ -436,6 +438,12 @@ show_user_account() {
     fi
     validate_args --accountName "$accountName" --accountResourceGroup "$accountResourceGroup"
     response=$(get_user_account)
+    if [[ $? -ne 0 ]]; then
+        log_error_exit "Failed to retrieve user account: $response"
+    fi
+    if [[ -z "$response" || "$response" == "null" ]]; then
+        log_error_exit "Failed to retrieve user account."
+    fi
     log_info "User account details:"
     echo "$response" | jq -C '.'
 }
@@ -452,6 +460,14 @@ validate_user_account() {
     validate_args --accountName "$accountName" --accountResourceGroup "$accountResourceGroup"
     
     response=$(get_user_account)
+
+    if [[ $? -ne 0 ]]; then
+        log_error_exit "Failed to retrieve user account: $response"
+    fi
+    if [[ -z "$response" || "$response" == "null" ]]; then
+        log_error_exit "Failed to retrieve user account."
+    fi
+    
     userAccountId=$(echo "$response" | jq -r '.properties.accountId' | tr -d '\r\n')
     
     if [[ $? -ne 0 || -z "$userAccountId" ]]; then
@@ -467,9 +483,16 @@ validate_user_account() {
 # AIO
 ######################
 
-aio_create_asset_endpoint() {
-    log_info "Creating asset endpoint profile '$assetEndpointName' in resource group '$clusterResourceGroup'"
+aio_create_camera_assets() {
+    aio_create_asset_endpoint
+    aio_create_asset
+}
 
+aio_create_asset_endpoint() {
+
+    assetEndpointName="$cameraName-asset-endpoint"
+    log_info "Creating asset endpoint profile '$assetEndpointName' in resource group '$clusterResourceGroup'"
+    
     local aioCluster aioLocation aioCustomLocation
     aioCluster=$(az iot ops list -g "$clusterResourceGroup" -o json)
     
@@ -487,16 +510,18 @@ aio_create_asset_endpoint() {
         log_error_exit "Failed to retrieve custom location from $clusterResourceGroup"
     fi
     
-    log_debug "Location: $aioLocation"
-    log_debug "Custom Location: $aioCustomLocation"
-    
     local authentication='{"method": "Anonymous"}'
 
-    if [[ "$aioEnabled" && -n "$cameraUsername" && -n "$cameraPassword" ]]; then
+    if $interactiveMode; then
+        read -p "Enter Camera Username (optional): " cameraUsername
+        read -p "Enter Camera Password (optional): " cameraPassword
+    fi
+
+    if [[ -n "$cameraUsername" && -n "$cameraPassword" ]]; then
         local aep_secret_name="$assetEndpointName-secret"
         local namespace="azure-iot-operations"
 
-        # install kubectl
+        # TODO: install kubectl
         
         if ! kubectl get secret "$aep_secret_name" -n "$namespace" > /dev/null 2>&1; then
             log_info "Creating secret $aep_secret_name"
@@ -544,8 +569,6 @@ BODY
 )
 
     local url="$aioBaseURL/assetEndpointProfiles/$assetEndpointName?api-version=2024-11-01"
-    log_debug "Request URL: $url"
-    log_debug "Request body: $body"
 
     az rest \
     --method PUT \
@@ -558,26 +581,29 @@ BODY
 }
 
 aio_delete_asset () {
-    log_info "deleting media asset $asset"
+    assetName="$cameraName-asset"
+    log_info "deleting media asset $assetName"
 
     az iot ops asset delete \
-    -n "$asset" \
-    -g "$group"
+    -n "$assetName" \
+    -g "$clusterResourceGroup"
 
-    log_info "deleted media asset $asset"
+    log_info "deleted media asset $assetName"
 }
 
 aio_delete_asset_endpoint () {
-    log_info "deleting media asset endpoint $asset_endpoint"
+    assetEndpointName="$cameraName-asset-endpoint"
+    log_info "deleting media asset endpoint $assetEndpointName"
     
     az iot ops asset endpoint delete \
-    -n "$asset_endpoint" \
-    -g "$group"
+    -n "$assetEndpointName" \
+    -g "$clusterResourceGroup"
 
-    log_info "deleted media asset endpoint $asset_endpoint"
+    log_info "deleted media asset endpoint $assetEndpointName"
 }
 
 aio_create_asset() {
+    assetName="$cameraName-asset"
     log_info "Creating asset '$assetName'"
     
     local aioCluster aioLocation aioCustomLocation
@@ -599,16 +625,17 @@ aio_create_asset() {
 
     local response
     response=$(get_media_server_config)
-    
+    if [[ $? -ne 0 ]]; then
+        log_error_exit "Failed to retrieve media server configuration. Response: $response"
+    fi
+
     local mediaServerAddress mediaServerPort
     mediaServerAddress=$(echo "$response" | jq -r '.host' | tr -d '\r\n')
     mediaServerPort=$(echo "$response" | jq -r '.port' | tr -d '\r\n')
 
-    if [[ -z "$mediaServerAddress" || "$mediaServerAddress" == "null" ]]; then
-        log_error_exit "Failed to retrieve media server configuration. Response: $response"
-    fi
-    
-    log_debug "Media Server Address: rtsp://$mediaServerAddress:$mediaServerPort"
+    log_debug "Media Server Address: $mediaServerAddress"
+    log_debug "Media Server Port: $mediaServerPort"
+    cameraAddress="rtsp://$mediaServerAddress:$mediaServerPort/$cameraName"
 
     local body
     body=$(cat <<BODY 
@@ -672,6 +699,10 @@ get_media_server_config() {
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer $accessToken")
     
+    if [[ $? -ne 0 ]]; then
+        echo "Failed to retrieve media server configuration. Response: $response"
+        exit 1
+    fi
     echo "$response"
 }
 
@@ -680,7 +711,6 @@ get_media_server_config() {
 ######################
 
 create_preset() {
-    validate_args --presetName "$presetName"
 
     body=$(cat <<BODY
     {
@@ -708,12 +738,14 @@ commands_create_preset() {
     if $interactiveMode; then
         read -p "Enter Preset Name: " presetName
     fi
-    response=$(create_preset)
-    presetId=$(echo "$response" | jq -r '.id')
 
-    if [[ -z "$presetId" || "$presetId" == "null" ]]; then
+    validate_args --presetName "$presetName"
+
+    response=$(create_preset)
+    if [[ $? -ne 0 ]]; then
         log_error_exit "Failed to create preset. Response: $response"
     fi
+    presetId=$(echo "$response" | jq -r '.id')
     log_info "Preset created."
     echo "$response"
 }
@@ -743,6 +775,13 @@ commands_show_presets() {
 }
 
 commands_create_camera() {
+    if $interactiveMode; then
+        read -p "Enter Camera Name: " cameraName
+        read -p "Enter Preset Name (optional): " presetName
+    fi
+
+    validate_args --cameraName "$cameraName"
+
     if $aioEnabled; then
         aio_create_camera_assets
     fi
@@ -781,54 +820,40 @@ commands_show_cameras() {
     echo "$response" | jq -C '.'
 }
 
-aio_create_camera_assets() {
-    aio_create_asset_endpoint
-    aio_create_asset
-}
-
 create_camera() {
-    if $interactiveMode; then
-        read -p "Enter Camera Name: " cameraName
-        read -p "Enter Preset Name (optional): " presetName
-        if $aioEnabled; then
-            read -p "Enter Camera Username (optional): " cameraUsername
-            read -p "Enter Camera Password (optional): " cameraPassword
-        else
-            read -p "Enter Camera Address (RTSP URL): " cameraAddress
-            validate_args --cameraAddress "$cameraAddress"
-        fi
-    fi
-
-    validate_args --cameraName "$cameraName"
 
     log_info "Creating camera '$cameraName'"
 
     if $aioEnabled; then
         local response
         response=$(get_media_server_config)
+        if [[ $? -ne 0 ]]; then
+            log_error_exit "Failed to retrieve media server configuration. Response: $response"
+        fi
 
         local mediaServerAddress mediaServerPort
         mediaServerAddress=$(echo "$response" | jq -r '.host' | tr -d '\r\n')
         mediaServerPort=$(echo "$response" | jq -r '.port' | tr -d '\r\n')
 
-        if [[ -z "$mediaServerAddress" || "$mediaServerAddress" == "null" ]]; then
-            log_error_exit "Failed to retrieve media server configuration. Response: $response"
-        fi
-        
         log_debug "Media Server Address: $mediaServerAddress"
         log_debug "Media Server Port: $mediaServerPort"
         cameraAddress="rtsp://$mediaServerAddress:$mediaServerPort/$cameraName"
+    else
+        if $interactiveMode; then
+            read -p "Enter Camera Address (RTSP URL): " cameraAddress
+        fi
     fi
+
+    validate_args --cameraAddress "$cameraAddress"
     
     presetId=null
     if [[ -n "$presetName" ]]; then
         log_info "Creating preset '$presetName'"
         response=$(create_preset)
-        presetId=$(echo "$response" | jq -r '.id')
-
-        if [[ -z "$presetId" || "$presetId" == "null" ]]; then
+        if [[ $? -ne 0 ]]; then
             log_error_exit "Failed to create preset. Response: $response"
         fi
+        presetId=$(echo "$response" | jq -r '.id')
         presetId="\"$presetId\""
         log_info "Preset created with ID: $presetId"
     fi
@@ -1023,6 +1048,10 @@ prerequisites_validation() {
 
     if $generate_access_token; then
         init_access_token
+    fi
+
+    if [[ -n "$clusterResourceGroup" && "$aioEnabled" ]]; then
+        aioBaseURL="https://management.azure.com/subscriptions/$subscriptionId/resourceGroups/$clusterResourceGroup/providers/Microsoft.DeviceRegistry"
     fi
 
     print_summary

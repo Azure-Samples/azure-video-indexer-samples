@@ -42,7 +42,6 @@ The `vi_cli.sh` script provides a comprehensive set of commands for managing Vid
 | ----------------------------- | ----------------------------------------------- | ----- |
 | `-y`, `--yes`                | Skip confirmation prompts                       | Useful for automated scripts |
 | `-h`, `--help`               | Show command help and examples                  | Displays detailed usage information |
-| `-s`, `--skip`               | Skip prerequisites validation                   | Skips checking dependencies, Azure CLI version, and extensions |
 | `-it`, `--interactive`       | Enable interactive parameter input              | Prompts for required parameters |
 | `-aio`, `--aio-enabled`      | Enable Azure IoT Operations integration         | Creates required AIO resources |
 | `-live`, `--live-enabled`    | Enable live stream capability                   | Used with upgrade extension |
@@ -124,7 +123,7 @@ Or if you prefer the interactive mode:
 Create a camera and preset with arguments:
 
 ```bash
-./vi_cli.sh create camera -y -s \
+./vi_cli.sh create camera -y \
 --cameraName "my camera" \
 --cameraAddress "rtsp://my-ip-camera:8554/my-stream" \
 --presetName "my preset" \
@@ -145,7 +144,7 @@ Create a camera in interactive mode:
 Delete a camera with arguments:
 
 ```bash
-./vi_cli.sh delete camera -y -s \
+./vi_cli.sh delete camera -y \
 --cameraId "my camera id" \
 --clusterName "my-cluster-name" \
 --clusterResourceGroup "my-cluster-resource-group" \
@@ -176,7 +175,7 @@ When connecting cameras with AIO integration, there are two main components:
 To create a camera with AIO integration (creates all components):
 
 ```bash
-./vi_cli.sh create camera -aio -y -s \
+./vi_cli.sh create camera -aio -y \
 --cameraName "my camera" \
 --cameraAddress "rtsp://my-ip-camera:8554/my-stream" \
 --presetName "my preset" \
@@ -205,7 +204,7 @@ Or in interactive mode:
 To delete a camera and all associated AIO resources:
 
 ```bash
-./vi_cli.sh delete camera -aio -y -s \
+./vi_cli.sh delete camera -aio -y \
 --cameraId "my camera id" \
 --clusterName "my-cluster-name" \
 --clusterResourceGroup "my-cluster-resource-group" \
@@ -228,7 +227,7 @@ This command will delete the following:
 
 Show all configured cameras:
 ```bash
-./vi_cli.sh show cameras -y -s \
+./vi_cli.sh show cameras -y \
 --clusterName "my-cluster-name" \
 --clusterResourceGroup "my-cluster-resource-group" \
 --accountName "my-account-name" \
@@ -237,7 +236,7 @@ Show all configured cameras:
 
 List available presets:
 ```bash
-./vi_cli.sh show presets -y -s \
+./vi_cli.sh show presets -y \
 --clusterName "my-cluster-name" \
 --clusterResourceGroup "my-cluster-resource-group" \
 --accountName "my-account-name" \
@@ -246,7 +245,7 @@ List available presets:
 
 Display current access token:
 ```bash
-./vi_cli.sh show token -y -s \
+./vi_cli.sh show token -y \
 --clusterName "my-cluster-name" \
 --clusterResourceGroup "my-cluster-resource-group" \
 --accountName "my-account-name" \
@@ -255,7 +254,7 @@ Display current access token:
 
 Show extension details:
 ```bash
-./vi_cli.sh show extension -y -s \
+./vi_cli.sh show extension -y \
 --clusterName "my-cluster-name" \
 --clusterResourceGroup "my-cluster-resource-group" \
 --accountName "my-account-name" \
@@ -264,6 +263,6 @@ Show extension details:
 
 Display account information:
 ```bash
-./vi_cli.sh show account -y -s \
+./vi_cli.sh show account -y \
 --accountName "my-account-name" \
 --accountResourceGroup "my-account-resource-group"

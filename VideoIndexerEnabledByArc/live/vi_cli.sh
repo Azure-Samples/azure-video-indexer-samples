@@ -29,6 +29,9 @@ aioBaseURL=""
 extensionId=""
 extensionUrl=""
 extensionAccountId=""
+skipPrompt=false
+interactiveMode=false
+aioEnabled=false
 
 ######################
 # Usage and Help
@@ -54,7 +57,6 @@ show_help() {
     echo "Options:"
     echo "  -y|--yes                        Should continue without prompt for confirmation."
     echo "  -h|--help                       Show this help message and exit."
-    echo "  -s|--skip                       Skip prerequisites check."
     echo "  -it|--interactive               Enable interactive mode."
     echo "  -aio|--aio-enabled              Enable AIO."
     echo "  -live|--live-enabled            Enable live stream."
@@ -78,19 +80,10 @@ show_help() {
 }
 
 parse_arguments() {
-    skipPrompt=false
-    skipPrerequisites=false
-    interactiveMode=false
-    aioEnabled=false
-
     while [[ $# -gt 0 ]]; do
       case "$1" in
         -y|--yes)
             skipPrompt=true
-            shift
-            ;;
-        -s|--skip)
-            skipPrerequisites=true
             shift
             ;;
         -it|--interactive)
@@ -936,9 +929,14 @@ commands_show_extension() {
         read -p "Enter Cluster Name: " clusterName
         read -p "Enter Cluster Resource Group: " clusterResourceGroup
     fi
+    
+    validate_args --clusterName "$clusterName" --clusterResourceGroup "$clusterResourceGroup"
 
     local extension
     extension=$(get_vi_extension)
+    if [[ $? -ne 0 ]]; then
+        log_error_exit "Failed to retrieve Video Indexer extension: $extension"
+    fi
 
     echo "$extension" | jq -C '.'
 }
@@ -1074,7 +1072,6 @@ run_command() {
        dependencies)
             check_dependencies
             ;;
-            
         *)
             log_error "Unknown subcommand '$subCommand' for '$command'"
             show_help

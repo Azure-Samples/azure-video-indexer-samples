@@ -1070,7 +1070,16 @@ run_command() {
     
     case "$command" in
     check)
-        check_dependencies
+       case "$subCommand" in
+       dependencies)
+            check_dependencies
+            ;;
+            
+        *)
+            log_error "Unknown subcommand '$subCommand' for '$command'"
+            show_help
+            ;;
+        esac
         ;;
     create)
         case "$subCommand" in

@@ -87,7 +87,7 @@ chmod +x ./vi_cli.sh
 For the first time using the script, please run this command:
 
 ```bash
-./vi_cli.sh check
+./vi_cli.sh check dependencies
 ```
 
 ### Update Azure Arc Video Indexer Extension using CLI

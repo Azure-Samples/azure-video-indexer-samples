@@ -1087,6 +1087,16 @@ validate_args() {
 }
 
 validate_input() {
+    if [[ $# -eq 0 ]]; then
+        show_help
+    fi
+
+    for arg in "$@"; do
+        if [[ "$arg" == "-h" || "$arg" == "--help" ]]; then
+            show_help
+        fi
+    done
+
     local input_command="$1"
     shift
 
@@ -1217,20 +1227,14 @@ run_command() {
 
 main() {
     set_script_variables
-    log_info "Starting Video Indexer CLI"
-    
-    if [[ $# -eq 0 ]]; then
-        show_help
-    fi
-    
     validate_input "$@"
     parse_arguments "${remaining_args[@]}"
-    
+
     trap 'log_error_exit "Script interrupted"' INT TERM
     trap 'log_error "Error at line $LINENO"' ERR
 
+    log_info "Starting Video Indexer CLI"
     run_command
-    
     log_info "Operation completed successfully"
 }
 

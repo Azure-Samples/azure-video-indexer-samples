@@ -38,6 +38,8 @@ export VI_ACCOUNT_NAME=""
 export VI_ACCOUNT_RESOURCE_GROUP=""
 ```
 
+This is an easy way to set the environment variables just once.
+
 These modes can be used together. For example:
 ```bash
 export VI_CLUSTER_NAME="your-cluster-name"

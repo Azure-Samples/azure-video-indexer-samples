@@ -499,13 +499,11 @@ aio_create_camera_assets() {
 aio_create_asset_endpoint() {
 
     assetEndpointName="$cameraName-asset-endpoint"
-    log_info "Creating asset endpoint profile '$assetEndpointName' in resource group '$clusterResourceGroup'"
-    
     local aioCluster aioLocation aioCustomLocation
     aioCluster=$(az iot ops list -g "$clusterResourceGroup" -o json)
     
     if [[ -z "$aioCluster" || "$aioCluster" == "[]" ]]; then
-        log_error_exit "No IoT Operations instances found in resource group '$clusterResourceGroup'"
+        log_error_exit "No AIO instance found in resource group '$clusterResourceGroup'"
     fi
     
     aioLocation=$(echo "$aioCluster" | jq -r ".[0].location" | tr -d '\r\n')
@@ -521,6 +519,7 @@ aio_create_asset_endpoint() {
     local authentication='{"method": "Anonymous"}'
 
     if $interactiveMode; then
+        get_parameter_value "Enter Camera Address (RTSP URL)" cameraAddress
         get_parameter_value "Enter Camera Username (optional)" cameraUsername
         get_parameter_value "Enter Camera Password (optional)" cameraPassword
     fi
@@ -576,14 +575,19 @@ BODY
 BODY
 )
 
+    log_info "Creating asset endpoint profile '$assetEndpointName' in resource group '$clusterResourceGroup'"
     local url="$aioBaseURL/assetEndpointProfiles/$assetEndpointName?api-version=2024-11-01"
 
-    az rest \
+    response=$(az rest \
     --method PUT \
     --url "$url" \
     --headers '{"Content-Type": "application/json"}' \
     --body "$body" \
-    --only-show-errors
+    --only-show-errors)
+
+    if [[ $? -ne 0 ]]; then
+        log_error_exit "Failed to create asset endpoint profile. Response: $response"
+    fi
 
     log_info "Asset endpoint successfully created"
 }
@@ -640,10 +644,8 @@ aio_create_asset() {
     local mediaServerAddress mediaServerPort
     mediaServerAddress=$(echo "$response" | jq -r '.host' | tr -d '\r\n')
     mediaServerPort=$(echo "$response" | jq -r '.port' | tr -d '\r\n')
-
-    log_debug "Media Server Address: $mediaServerAddress"
-    log_debug "Media Server Port: $mediaServerPort"
     cameraAddress="rtsp://$mediaServerAddress:$mediaServerPort/$cameraName"
+    log_debug "Media Server Address: $cameraAddress"
 
     local body
     body=$(cat <<BODY 
@@ -681,15 +683,17 @@ BODY
 )
 
     local url="$aioBaseURL/assets/$assetName?api-version=2024-11-01"
-    log_debug "Request URL: $url"
-    log_debug "Request body: $body"
 
-    az rest \
+    response=$(az rest \
     --method PUT \
     --url "$url" \
     --headers '{"Content-Type": "application/json"}' \
     --body "$body" \
-    --only-show-errors
+    --only-show-errors)
+
+    if [[ $? -ne 0 ]]; then
+        log_error_exit "Failed to create asset. Response: $response"
+    fi
 
     log_info "Asset successfully created"
 }
@@ -840,10 +844,8 @@ create_camera() {
         local mediaServerAddress mediaServerPort
         mediaServerAddress=$(echo "$response" | jq -r '.host' | tr -d '\r\n')
         mediaServerPort=$(echo "$response" | jq -r '.port' | tr -d '\r\n')
-
-        log_debug "Media Server Address: $mediaServerAddress"
-        log_debug "Media Server Port: $mediaServerPort"
         cameraAddress="rtsp://$mediaServerAddress:$mediaServerPort/$cameraName"
+        log_debug "Media Server Address: $cameraAddress"
     else
         if $interactiveMode; then
             get_parameter_value "Enter Camera Address (RTSP URL)" cameraAddress

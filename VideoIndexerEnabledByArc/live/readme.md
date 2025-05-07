@@ -91,8 +91,8 @@ chmod +x ./vi_cli.sh
 
 # View help
 ./vi_cli.sh -h
-For the first time using the script, please run this command:
-# Check dependencies
+
+# For the first time using the script, please run this command:
 ./vi_cli.sh check dependencies
 ```
 

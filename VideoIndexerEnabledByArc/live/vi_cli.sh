@@ -5,37 +5,42 @@
 # Azure Video Indexer and Azure IoT Operations
 #################################################
 
-# Script parameters
-clusterName=""
-clusterResourceGroup=""
-accountName=""
-accountResourceGroup=""
-liveStreamEnabled=false
-mediaFilesEnabled=false
-cameraName=""
-cameraId=""
-presetId=""
-cameraAddress=""
-cameraUsername=""
-cameraPassword=""
-presetName=""
-assetName=""
-assetEndpointName=""
-accessToken=""
-subscriptionId=""
-subscriptionName=""
-tenantId=""
-aioBaseURL=""
-extensionId=""
-extensionUrl=""
-extensionAccountId=""
-skipPrompt=false
-interactiveMode=false
-aioEnabled=false
+set_script_variables() {
+    clusterName="${VI_CLUSTER_NAME:-}"
+    clusterResourceGroup="${VI_CLUSTER_RESOURCE_GROUP:-}"
+    accountName="${VI_ACCOUNT_NAME:-}"
+    accountResourceGroup="${VI_ACCOUNT_RESOURCE_GROUP:-}"
+    liveStreamEnabled=false
+    mediaFilesEnabled=false
+    cameraName=""
+    cameraId=""
+    cameraAddress=""
+    cameraUsername=""
+    cameraPassword=""
+    presetName=""
+    presetId=""
+    assetName=""
+    assetEndpointName=""
+    accessToken=""
+    subscriptionId=""
+    subscriptionName=""
+    tenantId=""
+    aioBaseURL=""
+    extensionId=""
+    extensionUrl=""
+    extensionAccountId=""
+    skipPrompt=false
+    interactiveMode=false
+    aioEnabled=false
 
-######################
-# Usage and Help
-######################
+    # Color codes for pretty logging
+    RESET="\033[0m"
+    RED="\033[0;31m"
+    GREEN="\033[0;32m"
+    YELLOW="\033[0;33m"
+    CYAN="\033[0;36m"
+    BOLD="\033[1m"
+}
 
 show_help() {
     echo "Usage: $0 <command> <subcommand> [options]"
@@ -155,18 +160,6 @@ parse_arguments() {
         esac
     done
 }
-
-######################
-# Logging
-######################
-
-# Color codes for pretty logging
-RESET="\033[0m"
-RED="\033[0;31m"
-GREEN="\033[0;32m"
-YELLOW="\033[0;33m"
-CYAN="\033[0;36m"
-BOLD="\033[1m"
 
 log_debug() {
     echo -e "${CYAN}[DEBUG]${RESET} $*"
@@ -360,8 +353,8 @@ init_access_token() {
     log_info "Initializing access token"
 
     if $interactiveMode; then
-        read -p "Enter Cluster Name: " clusterName
-        read -p "Enter Cluster Resource Group: " clusterResourceGroup
+        get_parameter_value "Enter Cluster Name" clusterName
+        get_parameter_value "Enter Cluster Resource Group" clusterResourceGroup
     fi
 
     validate_args --clusterName "$clusterName" --clusterResourceGroup "$clusterResourceGroup"
@@ -431,10 +424,27 @@ get_user_account() {
     echo "$response"
 }
 
+function get_parameter_value () {
+    local question="$1"
+    local variable="$2"
+    local current_value="${!variable}"
+
+    local prompt="$question"
+    if [[ -n $current_value ]]; then
+        prompt+=" [$current_value]"
+    fi
+    prompt+=": "
+
+    read -p "$prompt" input
+    if [[ -n $input ]]; then
+        eval "$variable=\"$input\""
+    fi
+}
+
 show_user_account() {
     if $interactiveMode; then
-        read -p "Enter Account Name: " accountName
-        read -p "Enter Account Resource Group: " accountResourceGroup
+        get_parameter_value "Enter Account Name" accountName
+        get_parameter_value "Enter Account Resource Group" accountResourceGroup
     fi
     validate_args --accountName "$accountName" --accountResourceGroup "$accountResourceGroup"
     response=$(get_user_account)
@@ -453,8 +463,8 @@ validate_user_account() {
     local userAccountId
 
     if $interactiveMode; then
-        read -p "Enter Account Name: " accountName
-        read -p "Enter Account Resource Group: " accountResourceGroup
+        get_parameter_value "Enter Account Name" accountName
+        get_parameter_value "Enter Account Resource Group" accountResourceGroup
     fi
 
     validate_args --accountName "$accountName" --accountResourceGroup "$accountResourceGroup"
@@ -513,8 +523,8 @@ aio_create_asset_endpoint() {
     local authentication='{"method": "Anonymous"}'
 
     if $interactiveMode; then
-        read -p "Enter Camera Username (optional): " cameraUsername
-        read -p "Enter Camera Password (optional): " cameraPassword
+        get_parameter_value "Enter Camera Username (optional)" cameraUsername
+        get_parameter_value "Enter Camera Password (optional)" cameraPassword
     fi
 
     if [[ -n "$cameraUsername" && -n "$cameraPassword" ]]; then
@@ -736,7 +746,7 @@ BODY
 
 commands_create_preset() {
     if $interactiveMode; then
-        read -p "Enter Preset Name: " presetName
+        get_parameter_value "Enter Preset Name" presetName
     fi
 
     validate_args --presetName "$presetName"
@@ -752,7 +762,7 @@ commands_create_preset() {
 
 commands_delete_preset() {
     if $interactiveMode; then
-        read -p "Enter Preset id: " presetId
+        get_parameter_value "Enter Preset id" presetId
     fi
 
     validate_args --presetId "$presetId"
@@ -776,8 +786,8 @@ commands_show_presets() {
 
 commands_create_camera() {
     if $interactiveMode; then
-        read -p "Enter Camera Name: " cameraName
-        read -p "Enter Preset Name (optional): " presetName
+        get_parameter_value "Enter Camera Name" cameraName
+        get_parameter_value "Enter Preset Name (optional)" presetName
     fi
 
     validate_args --cameraName "$cameraName"
@@ -790,7 +800,7 @@ commands_create_camera() {
 
 delete_camera() {
     if $interactiveMode; then
-        read -p "Enter camera id: " cameraId
+        get_parameter_value "Enter camera id" cameraId
     fi
 
     validate_args --cameraId "$cameraId"
@@ -840,7 +850,7 @@ create_camera() {
         cameraAddress="rtsp://$mediaServerAddress:$mediaServerPort/$cameraName"
     else
         if $interactiveMode; then
-            read -p "Enter Camera Address (RTSP URL): " cameraAddress
+            get_parameter_valuep "Enter Camera Address (RTSP URL)" cameraAddress
         fi
     fi
 
@@ -919,10 +929,8 @@ commands_upgrade_extension() {
     log_info "Upgrading Video Indexer extension"
 
     if $interactiveMode; then
-        read -p "Enter Cluster Name: " clusterName
-        read -p "Enter Cluster Resource Group: " clusterResourceGroup
-        read -p "Enable Live Stream? (true/false): " liveStreamEnabled
-        read -p "Enable Media Files? (true/false): " mediaFilesEnabled
+        get_parameter_value "Enable Live Stream? (true/false)" liveStreamEnabled
+        get_parameter_value "Enable Media Files? (true/false)" mediaFilesEnabled
     fi
 
     extension=$(get_vi_extension)
@@ -951,8 +959,8 @@ commands_show_extension() {
     log_info "Showing Video Indexer extension details"
     
     if $interactiveMode; then
-        read -p "Enter Cluster Name: " clusterName
-        read -p "Enter Cluster Resource Group: " clusterResourceGroup
+        get_parameter_value "Enter Cluster Name" clusterName
+        get_parameter_value "Enter Cluster Resource Group" clusterResourceGroup
     fi
     
     validate_args --clusterName "$clusterName" --clusterResourceGroup "$clusterResourceGroup"
@@ -1201,6 +1209,7 @@ run_command() {
 ######################
 
 main() {
+    set_script_variables
     log_info "Starting Video Indexer CLI"
     
     if [[ $# -eq 0 ]]; then

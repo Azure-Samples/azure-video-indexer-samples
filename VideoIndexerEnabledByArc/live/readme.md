@@ -3,7 +3,7 @@
 
 ## Prerequisites
 
-If you don't already have the **Video Indexer Arc Extension**, please follow [Video Indexer Arc Extension](https://github.com/Azure-Samples/azure-video-indexer-samples/tree/master/VideoIndexerEnabledByArc/aks#video-indexer-arc-extension). 
+If you don't already have the **Video Indexer Arc Extension**, please follow [Video Indexer Arc Extension](https://github.com/Azure-Samples/azure-video-indexer-samples/blob/live-private-preview/VideoIndexerEnabledByArc/live/create_live_extension.md). 
 
 If you already have the **Video Indexer Arc Extension**, then continue with this guide.  
 The Video Indexer Live Enabled can work with or without **Azure IoT Operations** (AIO) extension.   

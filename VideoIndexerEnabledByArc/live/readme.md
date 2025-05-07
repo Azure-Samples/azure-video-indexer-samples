@@ -9,6 +9,23 @@ If you already have the **Video Indexer Arc Extension**, then continue with this
 The Video Indexer Live Enabled can work with or without **Azure IoT Operations** (AIO) extension.   
 Learn more here: [Deploy Azure IoT Operations to an Arc-enabled Kubernetes cluster](https://learn.microsoft.com/en-us/azure/iot-operations/deploy-iot-ops/howto-deploy-iot-operations) 
 
+
+## Download and Setup
+
+```bash
+# Download the script
+curl -fsSL -o vi_cli.sh https://raw.githubusercontent.com/Azure-Samples/azure-video-indexer-samples/refs/heads/live-private-preview/VideoIndexerEnabledByArc/live/vi_cli.sh
+
+# Make it executable
+chmod +x ./vi_cli.sh
+
+# View help
+./vi_cli.sh -h
+
+# For the first time using the script, please run this command:
+./vi_cli.sh check dependencies
+```
+
 ## Working with Live CLI
 
 The `vi_cli.sh` script provides a comprehensive set of commands for managing Video Indexer and AIO resources.  
@@ -79,22 +96,6 @@ The script automatically validates:
 - Required Azure CLI extensions (azure-iot-ops, connectedk8s, k8s-extension, customlocation)
 - Valid Azure login and tokens
 - Azure resource provider registration
-
-### Download and Setup
-
-```bash
-# Download the script
-curl -fsSL -o vi_cli.sh https://raw.githubusercontent.com/Azure-Samples/azure-video-indexer-samples/refs/heads/live-private-preview/VideoIndexerEnabledByArc/live/vi_cli.sh
-
-# Make it executable
-chmod +x ./vi_cli.sh
-
-# View help
-./vi_cli.sh -h
-
-# For the first time using the script, please run this command:
-./vi_cli.sh check dependencies
-```
 
 ### Managing the Video Indexer Extension
 

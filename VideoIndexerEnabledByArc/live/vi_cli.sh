@@ -306,8 +306,6 @@ az_get_subscription_prop() {
 }
 
 set_variables() {
-    log_info "Setting variables..."
-    
     subscriptionId=$(az_get_subscription_prop "id" | tr -d '\r\n')
     subscriptionName=$(az_get_subscription_prop "name" | tr -d '\r\n')
     tenantId=$(az_get_subscription_prop "tenantId")
@@ -431,7 +429,7 @@ function get_parameter_value () {
 
     local prompt="$question"
     if [[ -n $current_value ]]; then
-        prompt+=" [$current_value]"
+        prompt+=" or use provided [$current_value]"
     fi
     prompt+=": "
 
@@ -832,8 +830,6 @@ commands_show_cameras() {
 
 create_camera() {
 
-    log_info "Creating camera '$cameraName'"
-
     if $aioEnabled; then
         local response
         response=$(get_media_server_config)
@@ -850,7 +846,7 @@ create_camera() {
         cameraAddress="rtsp://$mediaServerAddress:$mediaServerPort/$cameraName"
     else
         if $interactiveMode; then
-            get_parameter_valuep "Enter Camera Address (RTSP URL)" cameraAddress
+            get_parameter_value "Enter Camera Address (RTSP URL)" cameraAddress
         fi
     fi
 
@@ -881,7 +877,7 @@ create_camera() {
 BODY
 )
     
-    log_info "Creating camera '$cameraName'"
+    log_info "Creating camera..."
     echo "$body"
     
     local response cameraId
@@ -890,7 +886,14 @@ BODY
          -H "Content-Type: application/json" \
          -H "Authorization: Bearer $accessToken" \
          -d "$body")
-         
+
+    if [[ $? -ne 0 ]]; then
+        log_error_exit "Failed to create camera. Response: $response"
+    fi
+    if [[ -z "$response" || "$response" == "null" ]]; then
+        log_error_exit "Failed to create camera."
+    fi
+ 
     cameraId=$(echo "$response" | jq -r '.id')
     
     if [[ -z "$cameraId" || "$cameraId" == "null" ]]; then
@@ -948,10 +951,12 @@ commands_upgrade_extension() {
     --config "videoIndexer.mediaFilesEnabled=$mediaFilesEnabled" \
     --yes
 
-    if [[ $? -eq 0 ]]; then
-        register_resource_providers
-        log_info "Video Indexer extension successfully upgraded"
+    if [[ $? -ne 0 ]]; then
+        log_error_exit "Failed to upgrade Video Indexer extension"
     fi
+
+    register_resource_providers
+    log_info "Video Indexer extension successfully upgraded"
 }
 
 commands_show_extension() {

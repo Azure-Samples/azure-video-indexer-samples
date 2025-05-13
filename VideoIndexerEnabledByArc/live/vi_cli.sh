@@ -18,6 +18,8 @@ set_script_variables() {
     cameraUsername=""
     cameraPassword=""
     cameraDescription=""
+    cameraStreamingEnabled=true
+    cameraRecordingEnabled=true
     presetName=""
     presetId=""
     assetName=""
@@ -33,6 +35,7 @@ set_script_variables() {
     skipPrompt=false
     interactiveMode=false
     aioEnabled=false
+    createdBy="vi-cli"
 
     # Color codes for pretty logging
     RESET="\033[0m"
@@ -74,6 +77,8 @@ show_help() {
     echo "  --cameraName <name>             Name of the camera."
     echo "  --cameraDescription <desc>      Description of the camera."
     echo "  --cameraAddress <address>       RTSP address of the camera."
+    echo "  --cameraStreamingEnabled        Enable streaming for the camera."
+    echo "  --cameraRecordingEnabled        Enable recording for the camera."
     echo "  --presetName <name>             Name of the preset."
     echo "  --presetId <id>                 ID of the preset."
     echo "  --cameraId <id>                 ID of the camera."
@@ -134,6 +139,14 @@ parse_arguments() {
             ;;
         --cameraDescription) 
             cameraDescription="$2"
+            shift 2
+            ;;
+        --cameraStreamingEnabled)
+            cameraStreamingEnabled="$2"
+            shift 2
+            ;;
+        --cameraRecordingEnabled)
+            cameraRecordingEnabled="$2"
             shift 2
             ;;
         --cameraId)
@@ -543,11 +556,11 @@ aio_create_asset_endpoint() {
         get_parameter_value "Enter Camera Password (optional)" cameraPassword
     fi
 
+    validate_args --cameraAddress "$cameraAddress"
+
     if [[ -n "$cameraUsername" && -n "$cameraPassword" ]]; then
         local aep_secret_name="$assetEndpointName-secret"
         local namespace="azure-iot-operations"
-
-        # TODO: install kubectl
         
         if ! kubectl get secret "$aep_secret_name" -n "$namespace" > /dev/null 2>&1; then
             log_info "Creating secret $aep_secret_name"
@@ -583,7 +596,7 @@ BODY
         "name": "$aioCustomLocation"
     },
     "tags": {
-        "createdBy": "vi-arc-extension"
+        "createdBy": "$createdBy"
     },
     "properties": {
         "targetAddress": "$cameraAddress",
@@ -613,24 +626,40 @@ BODY
 
 aio_delete_asset () {
     assetName="$cameraName-asset"
-    log_info "deleting media asset $assetName"
+    log_info "deleting asset $assetName"
 
-    az iot ops asset delete \
-    -n "$assetName" \
-    -g "$clusterResourceGroup"
+   local url="$aioBaseURL/assets/$assetName?api-version=2024-11-01"
 
-    log_info "deleted media asset $assetName"
+    response=$(az rest \
+    --method DELETE \
+    --url "$url" \
+    --headers '{"Content-Type": "application/json"}' \
+    --only-show-errors)
+
+    if [[ $? -ne 0 ]]; then
+        log_error_exit "Failed to delete asset. Response: $response"
+    fi
+
+    log_info "deleted asset $assetName"
 }
 
 aio_delete_asset_endpoint () {
     assetEndpointName="$cameraName-asset-endpoint"
-    log_info "deleting media asset endpoint $assetEndpointName"
-    
-    az iot ops asset endpoint delete \
-    -n "$assetEndpointName" \
-    -g "$clusterResourceGroup"
+    log_info "deleting asset endpoint $assetEndpointName"
 
-    log_info "deleted media asset endpoint $assetEndpointName"
+    local url="$aioBaseURL/assetEndpointProfiles/$assetEndpointName?api-version=2024-11-01"
+
+    response=$(az rest \
+    --method DELETE \
+    --url "$url" \
+    --headers '{"Content-Type": "application/json"}' \
+    --only-show-errors)
+
+    if [[ $? -ne 0 ]]; then
+        log_error_exit "Failed to delete asset endpoint profile. Response: $response"
+    fi
+
+    log_info "deleted asset endpoint $assetEndpointName"
 }
 
 aio_create_asset() {
@@ -675,7 +704,7 @@ aio_create_asset() {
         "name": "$aioCustomLocation"
     },
     "tags": {
-        "createdBy": "vi-arc-extension"
+        "createdBy": "$createdBy"
     },
     "properties": {
         "enabled": true,
@@ -810,6 +839,8 @@ commands_create_camera() {
         get_parameter_value "Enter Camera Name" cameraName
         get_parameter_value "Enter Preset Name (optional)" presetName
         get_parameter_value "Enter Camera Description (optional)" cameraDescription
+        get_parameter_value "Enable Live Streaming? (true/false)" cameraStreamingEnabled
+        get_parameter_value "Enable Recording? (true/false)" cameraRecordingEnabled
     fi
 
     validate_args --cameraName "$cameraName"
@@ -826,20 +857,50 @@ delete_camera() {
     fi
 
     validate_args --cameraId "$cameraId"
-   
+
     local url="$extensionUrl/Accounts/$extensionAccountId/live/cameras/$cameraId"
-    curl -s -k -X DELETE "$url" \
+
+    cameraResponse=$(curl -s -k -X GET "$url" \
          -H "Content-Type: application/json" \
-         -H "Authorization: Bearer $accessToken"
+         -H "Authorization: Bearer $accessToken")
+
+    if [[ $? -ne 0 ]]; then
+        echo "Failed to retrieve camera details. Response: $cameraResponse"
+        exit 1
+    fi
+    if [[ -z "$cameraResponse" || "$cameraResponse" == "null" ]]; then
+        echo "Failed to retrieve camera details."
+        exit 1
+    fi
     
-    log_info "Camera '$cameraId' deleted"
+    cameraName=$(echo "$cameraResponse" | jq -r '.name' | tr -d '\r\n')
+    if [[ -z "$cameraName" || "$cameraName" == "null" ]]; then
+        echo "Failed to retrieve camera details. Response: $cameraResponse"
+        exit 1
+    fi
+    
+    deleteResponse=$(curl -s -k -X DELETE "$url" \
+         -H "Content-Type: application/json" \
+         -H "Authorization: Bearer $accessToken")
+    
+    if [[ $? -ne 0 ]]; then
+        echo "Failed to delete camera. Response: $deleteResponse"
+        exit 1
+    fi
+    echo "$cameraResponse"
 }
 
 commands_delete_camera() {
+    cameraResponse=$(delete_camera)
+    if [[ $? -ne 0 ]]; then
+        log_error_exit "$cameraResponse"
+    fi
+    
+    cameraName=$(echo "$cameraResponse" | jq -r '.name' | tr -d '\r\n')
+    log_info "Camera '$cameraName' deleted successfully from Video Indexer."
+
     if $aioEnabled; then
-        aio_delete_camera
-    else
-        delete_camera
+        aio_delete_camera "$cameraResponse"
     fi
 }
 
@@ -893,8 +954,8 @@ create_camera() {
         "Description": "$cameraDescription",
         "RtspUrl": "$cameraAddress",
         "PresetId": $presetId,
-        "LiveStreamingEnabled": true,
-        "RecordingEnabled": true
+        "LiveStreamingEnabled": $cameraStreamingEnabled,
+        "RecordingEnabled": $cameraRecordingEnabled,
     }
 BODY
 )

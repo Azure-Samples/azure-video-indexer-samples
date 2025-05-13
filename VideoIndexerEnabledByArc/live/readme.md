@@ -128,25 +128,16 @@ The most basic command to start with is by just using the interactive mode.
 ```bash
 ./vi_cli.sh create camera -it
 ```
-
-Another option is to prefill all know parameters but keep the interactive mode:
+This command will ask you to fill in the camera parameters.  
+Another option is to prefill all known parameters but keep the interactive mode:
 ```bash
 ./vi_cli.sh create camera --cameraName "<camera-name>" --clusterName "<cluster-name>" -it
 ```
 
-
-Create a camera without interactive mode:
-```bash
-./vi_cli.sh create camera -y \
---cameraName "<camera-name>" \
---cameraAddress "<rtsp-camera-address>" \
---clusterName "<cluster-name>" \
---clusterResourceGroup "<cluster-resource-group>" \
---accountName "<account-name>" \
---accountResourceGroup "<account-resource-group>"
-```
-
-If you want to create camera and a preset connected to it, just pass the --presetName
+#### Create camera and preset
+To create a new camera along with a preset linked to it, simply provide the --presetName parameter.
+This will generate a new preset using the name you specify.
+The preset will contain insights for both people and vehicle object detection.
 
 ```bash
 ./vi_cli.sh create camera -y \
@@ -208,11 +199,12 @@ Create a camera with AIO integration:
 --accountResourceGroup "<account-resource-group>"
 ```
 
-This creates:
-1. Asset endpoint profile (AIO)
-2. Asset (AIO)
-3. Preset (VI)
-4. Camera (VI)
+This command does the following:
+1. Creates Asset endpoint profile in AIO.
+2. Creates Asset in AIO.
+3. Creates Preset in Video Indexer.
+4. Creates Camera in Video Indexer.
+5. Connects the AIO Asset and the AIO Asset endpoint profile to the Video Indexer Camera.
 
 Delete a camera with AIO integration:
 ```bash

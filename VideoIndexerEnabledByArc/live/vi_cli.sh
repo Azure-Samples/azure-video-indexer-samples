@@ -686,7 +686,7 @@ aio_create_asset() {
     local response
     response=$(get_media_server_config)
     if [[ $? -ne 0 ]]; then
-        log_error_exit "Failed to retrieve media server configuration. Response: $response"
+        log_error_exit "$response"
     fi
 
     local mediaServerAddress mediaServerPort
@@ -919,7 +919,7 @@ create_camera() {
         local response
         response=$(get_media_server_config)
         if [[ $? -ne 0 ]]; then
-            log_error_exit "Failed to retrieve media server configuration. Response: $response"
+            log_error_exit "$response"
         fi
 
         local mediaServerAddress mediaServerPort

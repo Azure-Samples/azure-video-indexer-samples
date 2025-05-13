@@ -42,8 +42,8 @@ This is an easy way to set the environment variables just once.
 
 These modes can be used together. For example:
 ```bash
-export VI_CLUSTER_NAME="your-cluster-name"
-./vi_cli.sh create camera --cameraName "my camera" -it
+export VI_CLUSTER_NAME="<cluster-name>"
+./vi_cli.sh create camera --cameraName "<camera-name>" -it
 ```
 
 ### Available Commands
@@ -109,10 +109,10 @@ Show current extension settings:
 Update extension settings (enable both Media Files and Live modes):
 ```bash
 ./vi_cli.sh upgrade extension \
---clusterName "my-connected-cluster" \
---clusterResourceGroup "my-connected-cluster" \
---accountName "my-connected-cluster" \
---accountResourceGroup "my-connected-cluster" \
+--clusterName "<your-cluster-name>" \
+--clusterResourceGroup "<your-cluster-resource-group>" \
+--accountName "<your-account-name>" \
+--accountResourceGroup "<your-account-resource-group>" \
 --live-enabled \
 --media-enabled
 ```
@@ -124,26 +124,49 @@ Or use interactive mode:
 
 ### Managing Cameras Without AIO
 
-Create a camera with preset:
+The most basic command to start with is by just using the interactive mode.
+```bash
+./vi_cli.sh create camera -it
+```
+
+Another option is to prefill all know parameters but keep the interactive mode:
+```bash
+./vi_cli.sh create camera --cameraName "<camera-name>" --clusterName "<cluster-name>" -it
+```
+
+
+Create a camera without interactive mode:
 ```bash
 ./vi_cli.sh create camera -y \
---cameraName "my camera" \
---cameraAddress "rtsp://my-ip-camera:8554/my-stream" \
---presetName "my preset" \
---clusterName "my-cluster-name" \
---clusterResourceGroup "my-cluster-resource-group" \
---accountName "my-account-name" \
---accountResourceGroup "my-account-resource-group"
+--cameraName "<camera-name>" \
+--cameraAddress "<rtsp-camera-address>" \
+--clusterName "<cluster-name>" \
+--clusterResourceGroup "<cluster-resource-group>" \
+--accountName "<account-name>" \
+--accountResourceGroup "<account-resource-group>"
+```
+
+If you want to create camera and a preset connected to it, just pass the --presetName
+
+```bash
+./vi_cli.sh create camera -y \
+--cameraName "<camera-name>" \
+--cameraAddress "<rtsp-camera-address>" \
+--presetName "<preset-name>" \
+--clusterName "<cluster-name>" \
+--clusterResourceGroup "<cluster-resource-group>" \
+--accountName "<account-name>" \
+--accountResourceGroup "<account-resource-group>"
 ```
 
 Delete a camera:
 ```bash
 ./vi_cli.sh delete camera -y \
---cameraId "my camera id" \
---clusterName "my-cluster-name" \
---clusterResourceGroup "my-cluster-resource-group" \
---accountName "my-account-name" \
---accountResourceGroup "my-account-resource-group"
+--cameraId "<camera-id>" \
+--clusterName "<cluster-name>" \
+--clusterResourceGroup "<cluster-resource-group>" \
+--accountName "<account-name>" \
+--accountResourceGroup "<account-resource-group>"
 ```
 
 ### Managing Cameras With AIO
@@ -163,15 +186,15 @@ When using AIO integration, the following components are created:
 Create a camera with AIO integration:
 ```bash
 ./vi_cli.sh create camera -aio -y \
---cameraName "my camera" \
---cameraAddress "rtsp://my-ip-camera:8554/my-stream" \
---presetName "my preset" \
---cameraUsername "optional-username" \
---cameraPassword "optional-password" \
---clusterName "my-cluster-name" \
---clusterResourceGroup "my-cluster-resource-group" \
---accountName "my-account-name" \
---accountResourceGroup "my-account-resource-group"
+--cameraName "<camera-name>" \
+--cameraAddress "<rtsp-camera-address>" \
+--presetName "<preset-name>" \
+--cameraUsername "<optional-username>" \
+--cameraPassword "<optional-password>" \
+--clusterName "<cluster-name>" \
+--clusterResourceGroup "<cluster-resource-group>" \
+--accountName "<account-name>" \
+--accountResourceGroup "<account-resource-group>"
 ```
 
 This creates:
@@ -183,11 +206,11 @@ This creates:
 Delete a camera with AIO integration:
 ```bash
 ./vi_cli.sh delete camera -aio -y \
---cameraId "my camera id" \
---clusterName "my-cluster-name" \
---clusterResourceGroup "my-cluster-resource-group" \
---accountName "my-account-name" \
---accountResourceGroup "my-account-resource-group"
+--cameraId "<camera-id>" \
+--clusterName "<cluster-name>" \
+--clusterResourceGroup "<cluster-resource-group>" \
+--accountName "<account-name>" \
+--accountResourceGroup "<account-resource-group>"
 ```
 
 This deletes:
@@ -200,33 +223,33 @@ This deletes:
 List all cameras:
 ```bash
 ./vi_cli.sh show cameras -y \
---clusterName "my-cluster-name" \
---clusterResourceGroup "my-cluster-resource-group" \
---accountName "my-account-name" \
---accountResourceGroup "my-account-resource-group"
+--clusterName "<cluster-name>" \
+--clusterResourceGroup "<cluster-resource-group>" \
+--accountName "<account-name>" \
+--accountResourceGroup "<account-resource-group>"
 ```
 
 List presets:
 ```bash
 ./vi_cli.sh show presets -y \
---clusterName "my-cluster-name" \
---clusterResourceGroup "my-cluster-resource-group" \
---accountName "my-account-name" \
---accountResourceGroup "my-account-resource-group"
+--clusterName "<cluster-name>" \
+--clusterResourceGroup "<cluster-resource-group>" \
+--accountName "<account-name>" \
+--accountResourceGroup "<account-resource-group>"
 ```
 
 Show access token:
 ```bash
 ./vi_cli.sh show token -y \
---clusterName "my-cluster-name" \
---clusterResourceGroup "my-cluster-resource-group" \
---accountName "my-account-name" \
---accountResourceGroup "my-account-resource-group"
+--clusterName "<cluster-name>" \
+--clusterResourceGroup "<cluster-resource-group>" \
+--accountName "<account-name>" \
+--accountResourceGroup "<account-resource-group>"
 ```
 
 Show account info:
 ```bash
 ./vi_cli.sh show account -y \
---accountName "my-account-name" \
---accountResourceGroup "my-account-resource-group"
+--accountName "<account-name>" \
+--accountResourceGroup "<account-resource-group>"
 ```

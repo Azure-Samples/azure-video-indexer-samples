@@ -17,6 +17,7 @@ set_script_variables() {
     cameraAddress=""
     cameraUsername=""
     cameraPassword=""
+    cameraDescription=""
     presetName=""
     presetId=""
     assetName=""
@@ -130,6 +131,10 @@ parse_arguments() {
             cameraName="$2"
             shift 2
             ;;
+        --cameraDescription) 
+            cameraDescription="$2"
+            shift 2
+            ;;
         --cameraId)
             cameraId="$2"
             shift 2
@@ -192,10 +197,23 @@ az_install() {
     if ! command -v az > /dev/null 2>&1; then
         log_info "Azure CLI is not installed."
         read -p "Do you want to install Azure CLI? (true/false): " installAzureCLI
-        
-        if "$installAzureCLI"; then
-            log_info "Installing Azure CLI..."
-            curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+        if [[ "$installAzureCLI" == "true" ]]; then
+            os_name=$(uname)
+
+            if [[ "$os_name" == "Linux" ]]; then
+                log_info "Installing Azure CLI on Linux..."
+                curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+            elif [[ "$os_name" == "Darwin" ]]; then
+                if ! command -v brew > /dev/null 2>&1; then
+                    log_error_exit "Homebrew is not installed. Please install Homebrew first: https://brew.sh"
+                fi
+                log_info "Installing Azure CLI on macOS..."
+                brew install azure-cli
+            else
+                log_error_exit "Unsupported OS: $os_name"
+            fi
 
             if az --version > /dev/null 2>&1; then
                 log_info "Azure CLI successfully installed."
@@ -790,6 +808,7 @@ commands_create_camera() {
     if $interactiveMode; then
         get_parameter_value "Enter Camera Name" cameraName
         get_parameter_value "Enter Preset Name (optional)" presetName
+        get_parameter_value "Enter Camera Description (optional)" cameraDescription
     fi
 
     validate_args --cameraName "$cameraName"
@@ -870,7 +889,7 @@ create_camera() {
     body=$(cat <<BODY
     {
         "Name": "$cameraName",
-        "Description": "$cameraName",
+        "Description": "$cameraDescription",
         "RtspUrl": "$cameraAddress",
         "PresetId": $presetId,
         "LiveStreamingEnabled": true,
@@ -1080,7 +1099,7 @@ validate_args() {
         local arg_value="$2"
         
         if [[ -z "$arg_value" ]]; then
-            log_error_exit "Usage: missing argument $arg_name, you can pass it as $arg_name or use '-it' flag for interactive mode"
+            log_error_exit "Usage: missing argument $arg_name, please run again with $arg_name or use '-it' flag for interactive mode"
         fi
         shift 2
     done

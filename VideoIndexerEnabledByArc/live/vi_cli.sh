@@ -955,7 +955,7 @@ create_camera() {
         "RtspUrl": "$cameraAddress",
         "PresetId": $presetId,
         "LiveStreamingEnabled": $cameraStreamingEnabled,
-        "RecordingEnabled": $cameraRecordingEnabled,
+        "RecordingEnabled": $cameraRecordingEnabled
     }
 BODY
 )

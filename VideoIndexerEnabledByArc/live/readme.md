@@ -83,6 +83,9 @@ export VI_CLUSTER_NAME="<cluster-name>"
 | `--presetName`               | Name of the preset                              | No |
 | `--presetId`                 | ID of the preset                                | Yes* |
 | `--cameraId`                 | ID of the camera                                | Yes* |
+| `--cameraDescription`        | Description of the camera                       | No |
+| `--cameraStreamingEnabled`   | Enable streaming for the camera                 | No |
+| `--cameraRecordingEnabled`   | Enable recording for the camera                 | No |
 | `--cameraUsername`           | Username for camera authentication (AIO only)   | No |
 | `--cameraPassword`           | Password for camera authentication (AIO only)   | No |
 

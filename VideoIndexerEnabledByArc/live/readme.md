@@ -48,21 +48,21 @@ export VI_CLUSTER_NAME="<cluster-name>"
 
 ### Available Commands
 
-| Command             | Description                                             | Notes |
-| ------------------- | ------------------------------------------------------- | ----- |
-| `check dependencies`| Check and install required dependencies                 | Validates az CLI, jq, curl installation |
-| `create camera`     | Create a camera with optional preset                    | Use `-aio` flag to create with AIO resources |
-| `create aep`        | Create asset endpoint profile                           | Creates connection definition for your camera in AIO |
-| `create asset`      | Create asset in AIO                                     | Configures what to do with the camera connection |
-| `create preset`     | Create a preset in Video Indexer                        | Configures insight types for video analysis |
-| `delete camera`     | Delete a camera and associated resources                | Also deletes associated AIO resources if `-aio` was used |
-| `delete preset`     | Delete a preset                                         | Removes preset configuration from Video Indexer |
-| `upgrade extension` | Upgrade Video Indexer extension                         | Can toggle between Media Files and Live Stream modes |
-| `show cameras`      | List all configured cameras                            | Shows camera configurations and status |
-| `show presets`      | List all available presets                             | Shows preset configurations |
-| `show token`        | Show access token                                      | Displays current extension access token |
-| `show extension`    | Show extension details                                 | Displays Video Indexer extension configuration |
-| `show account`      | Show user account details                              | Displays Video Indexer account information |
+| Command             | Description                                             | Example Usage |
+| ------------------- | ------------------------------------------------------- | ------------- |
+| `check dependencies`| Check and install required dependencies                 | `./vi_cli.sh check dependencies` |
+| `create camera`     | Create a camera with optional preset                    | `./vi_cli.sh create camera -it` |
+| `create aep`        | Create asset endpoint profile                           | `./vi_cli.sh create aep -y` (AIO only) |
+| `create asset`      | Create asset                                            | `./vi_cli.sh create asset -y` (AIO only) |
+| `create preset`     | Create a preset in Video Indexer                        | `./vi_cli.sh create preset --presetName "<name>"` |
+| `delete camera`     | Delete a camera and associated resources                | `./vi_cli.sh delete camera -y --cameraId "<id>"` |
+| `delete preset`     | Delete a preset                                         | `./vi_cli.sh delete preset -y --presetId "<id>"` |
+| `upgrade extension` | Upgrade Video Indexer extension                         | `./vi_cli.sh upgrade extension -it` |
+| `show cameras`      | List all configured cameras                             | `./vi_cli.sh show cameras -y` |
+| `show presets`      | List all available presets                              | `./vi_cli.sh show presets -y` |
+| `show token`        | Show access token                                       | `./vi_cli.sh show token -y` |
+| `show extension`    | Show extension details                                  | `./vi_cli.sh show extension -it` |
+| `show account`      | Show user account details                               | `./vi_cli.sh show account -it` |
 
 ### Command Options
 
@@ -83,8 +83,8 @@ export VI_CLUSTER_NAME="<cluster-name>"
 | `--presetName`               | Name of the preset                              | No |
 | `--presetId`                 | ID of the preset                                | Yes* |
 | `--cameraId`                 | ID of the camera                                | Yes* |
-| `--cameraUsername`           | Username for camera authentication              | No |
-| `--cameraPassword`           | Password for camera authentication              | No |
+| `--cameraUsername`           | Username for camera authentication (AIO only)   | No |
+| `--cameraPassword`           | Password for camera authentication (AIO only)   | No |
 
 \* Required for most commands unless using interactive mode (-it)  
 

@@ -72,6 +72,7 @@ show_help() {
     echo "  --accountName <name>            Name of the Video Indexer account."
     echo "  --accountResourceGroup <name>   Resource group of the Video Indexer account."
     echo "  --cameraName <name>             Name of the camera."
+    echo "  --cameraDescription <desc>      Description of the camera."
     echo "  --cameraAddress <address>       RTSP address of the camera."
     echo "  --presetName <name>             Name of the preset."
     echo "  --presetId <id>                 ID of the preset."
@@ -440,7 +441,7 @@ get_user_account() {
     echo "$response"
 }
 
-function get_parameter_value () {
+get_parameter_value () {
     local question="$1"
     local variable="$2"
     local current_value="${!variable}"

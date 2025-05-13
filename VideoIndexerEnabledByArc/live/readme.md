@@ -3,11 +3,11 @@
 
 ## Prerequisites
 
-If you don't already have the **Video Indexer Arc Extension**, please follow [Video Indexer Arc Extension](https://github.com/Azure-Samples/azure-video-indexer-samples/blob/live-private-preview/VideoIndexerEnabledByArc/live/create_live_extension.md). 
+If you haven't installed the **Video Indexer Arc Extension** yet, please follow the [installation guide](https://github.com/Azure-Samples/azure-video-indexer-samples/blob/live-private-preview/VideoIndexerEnabledByArc/live/create_live_extension.md). 
 
-If you already have the **Video Indexer Arc Extension**, then continue with this guide.  
-The Video Indexer Live Enabled can work with or without **Azure IoT Operations** (AIO) extension.   
-Learn more here: [Deploy Azure IoT Operations to an Arc-enabled Kubernetes cluster](https://learn.microsoft.com/en-us/azure/iot-operations/deploy-iot-ops/howto-deploy-iot-operations) 
+Once you have installed the **Video Indexer Arc Extension**, you can continue with this guide.
+Note that Video Indexer Live can operate with or without the **Azure IoT Operations** (AIO) extension.
+To learn more about AIO, see: [Deploy Azure IoT Operations to an Arc-enabled Kubernetes cluster](https://learn.microsoft.com/en-us/azure/iot-operations/deploy-iot-ops/howto-deploy-iot-operations) 
 
 
 ## Download and Setup
@@ -28,19 +28,30 @@ chmod +x ./vi_cli.sh
 
 ## Working with Live CLI
 
-The `vi_cli.sh` script provides a comprehensive set of commands for managing Video Indexer and AIO resources.  
-It supports three operation modes: interactive (-it), command-line arguments, and environment variables.  
-The supported environment variables include:
-```bash
-export VI_CLUSTER_NAME=""
-export VI_CLUSTER_RESOURCE_GROUP=""
-export VI_ACCOUNT_NAME=""
-export VI_ACCOUNT_RESOURCE_GROUP=""
-```
+The `vi_cli.sh` script provides a comprehensive set of commands for managing Video Indexer and AIO resources. You can interact with the script in three different ways:
 
-This is an easy way to set the environment variables just once.
+1. Interactive Mode (-it)
+   - Guides you through parameter input
+   - Prompts for required values
+   - Best for beginners
 
-These modes can be used together. For example:
+2. Command-line Arguments
+   - Specify all parameters in the command
+   - Suitable for automation
+   - Requires knowing parameter names
+
+3. Environment Variables
+   - Set common parameters once
+   - Reduces command length
+   - Available variables:
+   ```bash
+   export VI_CLUSTER_NAME=""
+   export VI_CLUSTER_RESOURCE_GROUP=""
+   export VI_ACCOUNT_NAME=""
+   export VI_ACCOUNT_RESOURCE_GROUP=""
+   ```
+
+You can combine these approaches. For example:
 ```bash
 export VI_CLUSTER_NAME="<cluster-name>"
 ./vi_cli.sh create camera --cameraName "<camera-name>" -it
@@ -50,19 +61,19 @@ export VI_CLUSTER_NAME="<cluster-name>"
 
 | Command             | Description                                             | Example Usage |
 | ------------------- | ------------------------------------------------------- | ------------- |
-| `check dependencies`| Check and install required dependencies                 | `./vi_cli.sh check dependencies` |
-| `create camera`     | Create a camera with optional preset                    | `./vi_cli.sh create camera -it` |
-| `create aep`        | Create asset endpoint profile                           | `./vi_cli.sh create aep -y` (AIO only) |
-| `create asset`      | Create asset                                            | `./vi_cli.sh create asset -y` (AIO only) |
-| `create preset`     | Create a preset in Video Indexer                        | `./vi_cli.sh create preset --presetName "<name>"` |
-| `delete camera`     | Delete a camera and associated resources                | `./vi_cli.sh delete camera -y --cameraId "<id>"` |
-| `delete preset`     | Delete a preset                                         | `./vi_cli.sh delete preset -y --presetId "<id>"` |
-| `upgrade extension` | Upgrade Video Indexer extension                         | `./vi_cli.sh upgrade extension -it` |
-| `show cameras`      | List all configured cameras                             | `./vi_cli.sh show cameras -y` |
-| `show presets`      | List all available presets                              | `./vi_cli.sh show presets -y` |
-| `show token`        | Show access token                                       | `./vi_cli.sh show token -y` |
-| `show extension`    | Show extension details                                  | `./vi_cli.sh show extension -it` |
-| `show account`      | Show user account details                               | `./vi_cli.sh show account -it` |
+| `check dependencies`| Validates and installs required tools                   | `./vi_cli.sh check dependencies` |
+| `create camera`     | Creates a new camera with optional analysis preset      | `./vi_cli.sh create camera -it` |
+| `create aep`        | Creates a camera connection profile (AIO only)          | `./vi_cli.sh create aep -y` (AIO only) |
+| `create asset`      | Creates stream handling settings (AIO only)             | `./vi_cli.sh create asset -y` (AIO only) |
+| `create preset`     | Creates an analysis preset for video processing         | `./vi_cli.sh create preset --presetName "<name>"` |
+| `delete camera`     | Removes a camera and its associated resources           | `./vi_cli.sh delete camera -y --cameraId "<id>"` |
+| `delete preset`     | Removes an analysis preset configuration                | `./vi_cli.sh delete preset -y --presetId "<id>"` |
+| `upgrade extension` | Updates the extension configuration                     | `./vi_cli.sh upgrade extension -it` |
+| `show cameras`      | Lists all registered cameras                           | `./vi_cli.sh show cameras -y` |
+| `show presets`      | Lists all available analysis presets                   | `./vi_cli.sh show presets -y` |
+| `show token`        | Retrieves current access token                         | `./vi_cli.sh show token -y` |
+| `show extension`    | Displays current extension settings                    | `./vi_cli.sh show extension -it` |
+| `show account`      | Shows Video Indexer account details                    | `./vi_cli.sh show account -it` |
 
 ### Command Options
 
@@ -109,6 +120,15 @@ Show current extension settings:
 ./vi_cli.sh show extension -it
 ```
 
+Upgrade current extension settings:
+```bash
+./vi_cli.sh upgrade extension -it
+```
+This interactive mode command will ask you to:  
+Enable Live Stream? (true/false)  
+Enable Media Files? (true/false)
+
+
 Update extension settings (enable both Media Files and Live modes):
 ```bash
 ./vi_cli.sh upgrade extension \
@@ -120,27 +140,28 @@ Update extension settings (enable both Media Files and Live modes):
 --media-enabled
 ```
 
-Or use interactive mode:
-```bash
-./vi_cli.sh upgrade extension -it
-```
-
 ### Managing Cameras Without AIO
 
-The most basic command to start with is by just using the interactive mode.
-```bash
-./vi_cli.sh create camera -it
-```
-This command will ask you to fill in the camera parameters.  
-Another option is to prefill all known parameters but keep the interactive mode:
-```bash
-./vi_cli.sh create camera --cameraName "<camera-name>" --clusterName "<cluster-name>" -it
-```
+#### Creating a Camera
+There are two recommended ways to create a camera:
 
-#### Create camera and preset
-To create a new camera along with a preset linked to it, simply provide the --presetName parameter.
-This will generate a new preset using the name you specify.
-The preset will contain insights for both people and vehicle object detection.
+1. Using Interactive Mode
+   ```bash
+   ./vi_cli.sh create camera -it
+   ```
+   This is the simplest option - the script will guide you through entering all required parameters.
+
+2. Using Pre-filled Parameters
+   ```bash
+   ./vi_cli.sh create camera --cameraName "<camera-name>" --clusterName "<cluster-name>"
+   ```
+
+#### Creating a Camera with Preset
+To enable automatic video analysis on your camera:
+Include the `--presetName` parameter when creating the camera.  
+The script will automatically create a preset that detects:
+   - People in the video stream
+   - Vehicles in the video stream
 
 ```bash
 ./vi_cli.sh create camera -y \
@@ -153,17 +174,20 @@ The preset will contain insights for both people and vehicle object detection.
 --accountResourceGroup "<account-resource-group>"
 ```
 
-Delete a camera:
-To find the camera id you want to delete, you can list all cameras:
-```bash
-./vi_cli.sh show cameras -y \
---clusterName "<cluster-name>" \
---clusterResourceGroup "<cluster-resource-group>" \
---accountName "<account-name>" \
---accountResourceGroup "<account-resource-group>"
-```
+#### Deleting a Camera
 
-Then run the following command with the desired camera id.
+To delete a camera, follow these steps:
+
+1. Find the Camera ID
+   ```bash
+   ./vi_cli.sh show cameras -y \
+   --clusterName "<cluster-name>" \
+   --clusterResourceGroup "<cluster-resource-group>" \
+   --accountName "<account-name>" \
+   --accountResourceGroup "<account-resource-group>"
+   ```
+
+2. Delete Using the Camera ID
 
 ```bash
 ./vi_cli.sh delete camera -y \
@@ -176,7 +200,7 @@ Then run the following command with the desired camera id.
 
 ### Managing Cameras With AIO
 
-When using AIO integration, the following components are created:
+When you enable AIO integration, the system creates and manages two additional components:
 
 1. **Asset Endpoint Profile**: Defines the camera connection
    - Target RTSP address
@@ -188,7 +212,8 @@ When using AIO integration, the following components are created:
    - Media server integration
    - Data point configuration
 
-Create a camera with AIO integration:
+#### Creating a Camera with AIO
+Use the following command to create a camera with full AIO integration:
 ```bash
 ./vi_cli.sh create camera -aio -y \
 --cameraName "<camera-name>" \
@@ -202,14 +227,15 @@ Create a camera with AIO integration:
 --accountResourceGroup "<account-resource-group>"
 ```
 
-This command does the following:
-1. Creates Asset endpoint profile in AIO.
-2. Creates Asset in AIO.
-3. Creates Preset in Video Indexer.
-4. Creates Camera in Video Indexer.
-5. Connects the AIO Asset and the AIO Asset endpoint profile to the Video Indexer Camera.
+The command above performs these steps automatically:
+1. Creates an Asset Endpoint Profile in AIO
+2. Creates an Asset in AIO for stream management
+3. Creates a Video Preset in Video Indexer
+4. Creates a Camera in Video Indexer
+5. Links all components together for seamless operation
 
-Delete a camera with AIO integration:
+#### Deleting a Camera with AIO Integration
+To remove a camera and all its associated components:
 ```bash
 ./vi_cli.sh delete camera -aio -y \
 --cameraId "<camera-id>" \
@@ -219,10 +245,12 @@ Delete a camera with AIO integration:
 --accountResourceGroup "<account-resource-group>"
 ```
 
-This deletes:
-1. Asset endpoint profile (AIO)
-2. Asset (AIO)
-3. Camera (VI)
+This command removes:
+1. The Asset Endpoint Profile from AIO
+2. The Asset configuration from AIO
+3. The Camera from Video Indexer
+
+All components are deleted in the correct order to ensure clean removal.
 
 ### Additional Commands
 

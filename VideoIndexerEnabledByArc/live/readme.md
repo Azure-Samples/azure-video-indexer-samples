@@ -160,6 +160,17 @@ If you want to create camera and a preset connected to it, just pass the --prese
 ```
 
 Delete a camera:
+To find the camera id you want to delete, you can list all cameras:
+```bash
+./vi_cli.sh show cameras -y \
+--clusterName "<cluster-name>" \
+--clusterResourceGroup "<cluster-resource-group>" \
+--accountName "<account-name>" \
+--accountResourceGroup "<account-resource-group>"
+```
+
+Then run the following command with the desired camera id.
+
 ```bash
 ./vi_cli.sh delete camera -y \
 --cameraId "<camera-id>" \

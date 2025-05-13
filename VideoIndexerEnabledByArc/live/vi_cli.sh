@@ -827,7 +827,7 @@ delete_camera() {
 
     validate_args --cameraId "$cameraId"
    
-    local url="$extensionUrl/Accounts/$extensionAccountId/live/camerasx/$cameraId"
+    local url="$extensionUrl/Accounts/$extensionAccountId/live/cameras/$cameraId"
     curl -s -k -X DELETE "$url" \
          -H "Content-Type: application/json" \
          -H "Authorization: Bearer $accessToken"

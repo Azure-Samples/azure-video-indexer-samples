@@ -10,17 +10,21 @@ Before using any API endpoints, you need to obtain an access token. The token is
 
 ```bash
 # Set your environment variables
-export BASE_ADDRESS="https://vi-arc-1-wus2.westus2.cloudapp.azure.com"
-export SUBSCRIPTION="24237b72-8546-4da5-b204-8c3cb76dd930"
-export RG="vi-arc-dev-rg"
-export VI_ACCOUNT_NAME="vi-arc-dev"
-export ACCOUNT_ID="4b262bbd-aca6-4a0c-8b52-518c7076cfea"
+export BASE_ADDRESS="<your arc extension base address>"
+export SUBSCRIPTION="<your azure subscription id>"
+export RG="<your video indexer account resource group>"
+export VI_ACCOUNT_NAME="<your video indexer account name>"
+export ACCOUNT_ID="<your video indexer account id>"
 
 # Get Azure token
 AZ_TOKEN=$(az account get-access-token --resource https://management.azure.com/ --query accessToken -o tsv)
 
-# Get extension access token
-ARC_ENV_ID="/subscriptions/$SUBSCRIPTION/resourceGroups/vi-arc-1-wus2-rg/providers/Microsoft.Kubernetes/connectedClusters/vi-arc-1-wus2-connected-aks/Providers/Microsoft.KubernetesConfiguration/extensions/vi-arc-1-wus2"
+# Get extension access token - replace with your Arc environment resource group and cluster details
+export ARC_RESOURCE_GROUP="<your arc environment resource group>"
+export ARC_CLUSTER_NAME="<your arc connected cluster name>"
+export ARC_EXTENSION_NAME="<your arc extension name>"
+
+ARC_ENV_ID="/subscriptions/$SUBSCRIPTION/resourceGroups/$ARC_RESOURCE_GROUP/providers/Microsoft.Kubernetes/connectedClusters/$ARC_CLUSTER_NAME/Providers/Microsoft.KubernetesConfiguration/extensions/$ARC_EXTENSION_NAME"
 
 VI_ARC_DEV_TOKEN=$(curl -s -k -X POST "https://management.azure.com/subscriptions/$SUBSCRIPTION/resourcegroups/$RG/providers/Microsoft.VideoIndexer/accounts/$VI_ACCOUNT_NAME/generateExtensionAccessToken?api-version=2023-06-02-preview" \
     -H "Authorization: Bearer $AZ_TOKEN" \

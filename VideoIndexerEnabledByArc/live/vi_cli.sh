@@ -752,7 +752,7 @@ aio_delete_camera() {
 }
 
 get_media_server_config() {
-    local url="$extensionUrl/Accounts/$extensionAccountId/live/mediaServer/config"
+    local url="$extensionUrl/Accounts/$extensionAccountId/mediaServer/config"
 
     local response
     response=$(curl -s -k -X GET "$url" \
@@ -783,7 +783,7 @@ create_preset() {
 BODY
 )
     
-    local url="$extensionUrl/Accounts/$extensionAccountId/live/presets"
+    local url="$extensionUrl/Accounts/$extensionAccountId/presets"
 
     local response
     response=$(curl -s -k -X POST "$url" \
@@ -817,7 +817,7 @@ commands_delete_preset() {
 
     validate_args --presetId "$presetId"
 
-    local url="$extensionUrl/Accounts/$extensionAccountId/live/presets/$presetId"
+    local url="$extensionUrl/Accounts/$extensionAccountId/presets/$presetId"
     log_info "Deleting preset '$presetId'"
 
     curl -s -k -X DELETE "$url" \
@@ -826,7 +826,7 @@ commands_delete_preset() {
 }
 
 commands_show_presets() {
-    local url="$extensionUrl/Accounts/$extensionAccountId/live/presets"
+    local url="$extensionUrl/Accounts/$extensionAccountId/presets"
     response=$(curl -s -k -X GET "$url" \
          -H "Content-Type: application/json" \
          -H "Authorization: Bearer $accessToken")
@@ -858,7 +858,7 @@ delete_camera() {
 
     validate_args --cameraId "$cameraId"
 
-    local url="$extensionUrl/Accounts/$extensionAccountId/live/cameras/$cameraId"
+    local url="$extensionUrl/Accounts/$extensionAccountId/cameras/$cameraId"
 
     cameraResponse=$(curl -s -k -X GET "$url" \
          -H "Content-Type: application/json" \
@@ -905,7 +905,7 @@ commands_delete_camera() {
 }
 
 commands_show_cameras() {
-    local url="$extensionUrl/Accounts/$extensionAccountId/live/cameras"
+    local url="$extensionUrl/Accounts/$extensionAccountId/cameras"
     response=$(curl -s -k -X GET "$url" \
          -H "Content-Type: application/json" \
          -H "Authorization: Bearer $accessToken")
@@ -964,7 +964,7 @@ BODY
     echo "$body"
     
     local response cameraId
-    local url="$extensionUrl/Accounts/$extensionAccountId/live/cameras"
+    local url="$extensionUrl/Accounts/$extensionAccountId/cameras"
     response=$(curl -s -k -X POST "$url" \
          -H "Content-Type: application/json" \
          -H "Authorization: Bearer $accessToken" \

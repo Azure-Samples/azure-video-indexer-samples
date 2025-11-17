@@ -1,260 +1,816 @@
 # Video Indexer Arc APIs Documentation
 
-**Version:** v1  
-**OpenAPI:** 3.0.1
+**API Version:** v1  
+**OpenAPI Specification:** 3.0.1  
+**Authentication:** Bearer Token (JWT)
+
+## Table of Contents
+- [Authentication](#authentication)
+- [Agent Jobs](#agent-jobs)
+- [Agents](#agents)
+- [Chats](#chats)
+- [Extensions](#extensions)
+- [Indexing](#indexing)
+- [Videos](#videos)
+- [Live Cameras](#live-cameras)
+- [Live Insights](#live-insights)
+- [Live Presets](#live-presets)
+- [Custom Insights](#custom-insights)
+- [Spatial Analysis Rules](#spatial-analysis-rules)
+- [Monitored Zones](#monitored-zones)
+- [Tags](#tags)
+- [Jobs](#jobs)
+- [Textual Summarization](#textual-summarization)
+- [Translation](#translation)
+- [Search](#search)
+- [Prompt Content](#prompt-content)
+- [Languages & Models](#languages--models)
+
+---
 
 ## Authentication
 
-All endpoints require **Bearer Token** authentication (JWT).
+All API endpoints require Bearer token authentication.
 
+**Header:**
 ```
 Authorization: Bearer {your-jwt-token}
 ```
 
-## API Categories
+---
 
-### 1. Agent Jobs
-Manage automated agent jobs for video processing.
+## Agent Jobs
 
-- **POST** `/Accounts/{accountId}/AgentJobs` - Create agent job
-- **GET** `/Accounts/{accountId}/AgentJobs` - List all agent jobs
-- **GET** `/Accounts/{accountId}/AgentJobs/{agentJobId}` - Get agent job by ID
-- **PUT** `/Accounts/{accountId}/AgentJobs/{agentJobId}` - Update agent job
-- **DELETE** `/Accounts/{accountId}/AgentJobs/{agentJobId}` - Delete agent job
+### Create Agent Job
+**POST** `/Accounts/{accountId}/AgentJobs`
 
-### 2. Agents
-Retrieve available AI agents.
+Creates a new automated agent job for video processing.
 
-- **GET** `/Accounts/{accountId}/agents` - Get available agents list
+**Parameters:**
+- `accountId` (path, required): UUID - Account identifier
 
-### 3. Chats
-Manage conversation chats with AI agents.
+**Request Body:**
+```json
+{
+  "agentId": "uuid",
+  "name": "string",
+  "description": "string",
+  "eventName": "string",
+  "intervalInSeconds": 3600,
+  "retentionInSeconds": 86400,
+  "enabled": true,
+  "prompt": "string",
+  "callbackUrl": "https://example.com/callback",
+  "cameraId": "uuid"
+}
+```
 
-- **POST** `/Accounts/{accountId}/chats` - Create new chat
-- **GET** `/Accounts/{accountId}/chats` - List all chats
-- **GET** `/Accounts/{accountId}/chats/{chatId}` - Get chat by ID
-- **DELETE** `/Accounts/{accountId}/chats/{chatId}` - Delete chat
-- **POST** `/Accounts/{accountId}/chats/{chatId}/messages` - Send message
-- **GET** `/Accounts/{accountId}/chats/{chatId}/messages` - Get chat messages
-- **GET** `/Accounts/{accountId}/chats/{chatId}/messages/{messageId}` - Get message by ID
-- **DELETE** `/Accounts/{accountId}/chats/{chatId}/messages/{messageId}` - Delete message
+**Response 200:**
+```json
+{
+  "id": "uuid",
+  "agentId": "uuid",
+  "name": "Job Name",
+  "state": 1,
+  "createTime": "2024-01-01T00:00:00Z",
+  "lastUpdateTime": "2024-01-01T00:00:00Z"
+}
+```
 
-### 4. Extensions
-Get extension details and configuration.
+**Error Responses:**
+- 400: Agent job name can't be empty
+- 401: Unauthorized
+- 404: Account not found
+- 500: Server Error
 
-- **GET** `/Accounts/{accountId}/extension` - Get extension details
-- **GET** `/info` - Get general extension info
+---
 
-### 5. Indexing
-Upload and manage video indexing operations.
+### List Agent Jobs
+**GET** `/Accounts/{accountId}/AgentJobs`
 
-- **POST** `/Accounts/{accountId}/Videos` - Upload video for indexing
-- **GET** `/Accounts/{accountId}/Videos/{videoId}/Index` - Get video index
-- **PUT** `/Accounts/{accountId}/Videos/{videoId}/Index` - Update video index
-- **PATCH** `/Accounts/{accountId}/Videos/{videoId}/Index` - Update video index (partial)
-- **PUT** `/Accounts/{accountId}/Videos/{videoId}/ReIndex` - Re-index video
+**Query Parameters:**
+- `pageSize` (optional): 1-1000, default: 25
+- `skip` (optional): default: 0
+- `cameraId` (optional): Filter by camera ID (array)
 
-### 6. Videos
-Manage videos and retrieve video information.
+**Response 200:**
+```json
+{
+  "results": [
+    {
+      "id": "uuid",
+      "name": "Agent Job Name",
+      "enabled": true,
+      "state": 1
+    }
+  ],
+  "nextPage": {
+    "pageSize": 25,
+    "skip": 0,
+    "done": false
+  }
+}
+```
 
-- **GET** `/Accounts/{accountId}/Videos` - List all videos
-- **GET** `/Accounts/{accountId}/Videos/{videoId}` - Get video details
-- **DELETE** `/Accounts/{accountId}/Videos/{videoId}` - Delete video
-- **DELETE** `/Accounts/{accountId}/Videos/{videoId}/SourceFile` - Delete video source file
-- **GET** `/Accounts/{accountId}/Videos/{videoId}/Captions` - Get video captions
-- **GET** `/Accounts/{accountId}/Videos/{videoId}/Sprite` - Get video sprite
-- **GET** `/Accounts/{accountId}/Videos/{videoId}/Thumbnails/{thumbnailId}` - Get thumbnail
-- **GET** `/Accounts/{accountId}/Videos/{videoId}/streaming-url` - Get streaming URL
-- **GET** `/Accounts/{accountId}/Videos/{videoId}/streaming-manifest/{manifestFile}` - Download manifest
-- **GET** `/Accounts/{accountId}/Videos/{videoId}/streaming-file/{fileName}` - Download streaming file
-- **GET** `/Accounts/{accountId}/Videos/{videoId}/FramesFilePaths` - Get frames file paths
-- **GET** `/Accounts/{accountId}/Videos/{videoId}/tags` - Get video tags
-- **PUT** `/Accounts/{accountId}/Videos/{videoId}/tags/{tagId}` - Add tag to video
-- **DELETE** `/Accounts/{accountId}/Videos/{videoId}/tags/{tagId}` - Remove tag from video
-- **GET** `/Accounts/{accountId}/Videos/{videoId}/insightTypes` - Get video insight types
-- **GET** `/Accounts/{accountId}/Videos/{videoId}/liveInsights/Pages/{pageNumber}` - Get recorded insights page by number
-- **GET** `/Accounts/{accountId}/Videos/{videoId}/liveInsights/Pages` - Get recorded insights page by time
+---
 
-### 7. Live Cameras
-Manage live camera feeds and configurations.
+### Get Agent Job
+**GET** `/Accounts/{accountId}/AgentJobs/{agentJobId}`
 
-- **POST** `/Accounts/{accountId}/cameras` - Add new camera
-- **GET** `/Accounts/{accountId}/cameras` - List all cameras
-- **GET** `/Accounts/{accountId}/cameras/{cameraId}` - Get camera by ID
-- **PATCH** `/Accounts/{accountId}/cameras/{cameraId}` - Update camera
-- **DELETE** `/Accounts/{accountId}/cameras/{cameraId}` - Remove camera
-- **GET** `/Accounts/{accountId}/cameras/{cameraId}/Thumbnail` - Get camera thumbnail
-- **GET** `/Accounts/{accountId}/cameras/{cameraId}/streaming-manifest/{manifestFile}` - Get live streaming manifest
-- **GET** `/Accounts/{accountId}/cameras/{cameraId}/streaming-file/{fileName}` - Download live streaming file
+**Response 200:** Returns agent job details
 
-### 8. Live Insights
-Retrieve real-time insights from camera feeds.
+---
 
-- **GET** `/Accounts/{accountId}/Cameras/{cameraId}/Insights` - Get live insights by date/time
+### Update Agent Job
+**PUT** `/Accounts/{accountId}/AgentJobs/{agentJobId}`
 
-### 9. Live Presets
-Manage indexing presets for live cameras.
+**Request Body:** Same as Create Agent Job
 
-- **POST** `/Accounts/{accountId}/Presets` - Create preset
-- **GET** `/Accounts/{accountId}/Presets` - List all presets
-- **GET** `/Accounts/{accountId}/Presets/{presetId}` - Get preset by ID
-- **PATCH** `/Accounts/{accountId}/Presets/{presetId}` - Update preset
-- **DELETE** `/Accounts/{accountId}/Presets/{presetId}` - Delete preset
+---
 
-### 10. Custom Insights
-Create and manage custom AI insights.
+### Delete Agent Job
+**DELETE** `/Accounts/{accountId}/AgentJobs/{agentJobId}`
 
-- **POST** `/Accounts/{accountId}/customInsights` - Create custom insight
-- **GET** `/Accounts/{accountId}/customInsights` - List custom insights
-- **GET** `/Accounts/{accountId}/customInsights/{insightId}` - Get custom insight by ID
-- **PUT** `/Accounts/{accountId}/customInsights/{insightId}` - Update custom insight
-- **DELETE** `/Accounts/{accountId}/customInsights/{insightId}` - Delete custom insight
-- **POST** `/Accounts/{accountId}/customInsights/{insightId}/Images` - Add images batch to custom insight
-- **GET** `/Accounts/{accountId}/customInsights/{insightId}/Images/{imageId}` - Get image from custom insight
-- **DELETE** `/Accounts/{accountId}/customInsights/{insightId}/Images/{imageId}` - Delete image from custom insight
+**Response 204:** No Content - Successfully deleted
 
-### 11. Spatial Analysis Rules
-Configure spatial analysis for camera zones.
+---
 
-- **POST** `/Accounts/{accountId}/cameras/{cameraId}/SpatialAnalysisRules` - Create spatial analysis rule
-- **GET** `/Accounts/{accountId}/cameras/{cameraId}/SpatialAnalysisRules` - List spatial analysis rules
-- **GET** `/Accounts/{accountId}/cameras/{cameraId}/SpatialAnalysisRules/{spatialAnalysisRuleId}` - Get rule by ID
-- **PATCH** `/Accounts/{accountId}/cameras/{cameraId}/SpatialAnalysisRules/{spatialAnalysisRuleId}` - Update rule
-- **DELETE** `/Accounts/{accountId}/cameras/{cameraId}/SpatialAnalysisRules/{spatialAnalysisRuleId}` - Delete rule
-- **PUT** `/Accounts/{accountId}/cameras/{cameraId}/SpatialAnalysisRules/{ruleId}/tags/{tagId}` - Add tag to rule
-- **DELETE** `/Accounts/{accountId}/cameras/{cameraId}/SpatialAnalysisRules/{ruleId}/tags/{tagId}` - Delete tag from rule
+## Agents
 
-### 12. Monitored Zones
-Manage monitored zones for spatial analysis.
+### Get Available Agents
+**GET** `/Accounts/{accountId}/agents`
 
-- **POST** `/Accounts/{accountId}/monitoredZones` - Create monitored zone
-- **GET** `/Accounts/{accountId}/monitoredZones` - List monitored zones
-- **GET** `/Accounts/{accountId}/monitoredZones/{monitoredZoneId}` - Get zone by ID
-- **PATCH** `/Accounts/{accountId}/monitoredZones/{monitoredZoneId}` - Update zone
-- **DELETE** `/Accounts/{accountId}/monitoredZones/{monitoredZoneId}` - Delete zone
+Retrieves the list of available AI agents.
 
-### 13. Tags
-Manage tags for organizing content.
+**Query Parameters:**
+- `pageSize`: 1-1000, default: 25
+- `skip`: default: 0
+- `sortBy`: Options: Name, AgentId, Description, CreateTime (use '-' prefix for desc)
 
-- **POST** `/Accounts/{accountId}/tags` - Create tag
-- **GET** `/Accounts/{accountId}/tags` - List all tags
-- **GET** `/Accounts/{accountId}/tags/{tagId}` - Get tag by ID
-- **DELETE** `/Accounts/{accountId}/tags/{tagId}` - Delete tag
+**Response 200:**
+```json
+{
+  "results": [
+    {
+      "agentId": "uuid",
+      "name": "Agent Name",
+      "description": "Agent description",
+      "createTime": "2024-01-01T00:00:00Z"
+    }
+  ]
+}
+```
 
-### 14. Jobs
-Track job progress and status.
+---
 
-- **GET** `/Accounts/{accountId}/Jobs/{jobId}` - Get indexing job status
+## Chats
 
-### 15. Textual Summarization
-Generate and manage video summaries.
+### Create Chat
+**POST** `/Accounts/{accountId}/chats`
 
-- **POST** `/Accounts/{accountId}/Videos/{videoId}/Summaries/Textual` - Summarize video
-- **GET** `/Accounts/{accountId}/Videos/{videoId}/Summaries/Textual` - List video summaries
-- **GET** `/Accounts/{accountId}/Videos/{videoId}/Summaries/Textual/{summaryId}` - Get summary by ID
-- **DELETE** `/Accounts/{accountId}/Videos/{videoId}/Summaries/Textual/{summaryId}` - Delete summary
-- **GET** `/Accounts/{accountId}/Videos/{videoId}/Summaries/Textual/{summaryId}/report` - Get summary report
+Creates a new conversation chat.
 
-### 16. Translation
-Translate video insights to different languages.
+**Response 201:**
+```json
+{
+  "chatId": "uuid",
+  "createTime": "2024-01-01T00:00:00Z"
+}
+```
 
-- **POST** `/Accounts/{accountId}/Videos/{videoId}/Translate` - Translate video index
+**Error Responses:**
+- 400: Invalid agent name
+- 403: Insufficient permissions for AI Assistant features
+- 429: Too many chats creation requests
 
-### 17. Search
+---
+
+### List Chats
+**GET** `/Accounts/{accountId}/chats`
+
+**Query Parameters:**
+- `pageSize`: 1-1000, default: 25
+- `skip`: default: 0
+- `includeAgentJobChats`: boolean, default: false
+- `sortBy`: default: "-CreateTime"
+
+**Response 200:**
+```json
+{
+  "results": [
+    {
+      "id": "uuid",
+      "title": "Chat Title",
+      "status": 1,
+      "createTime": "2024-01-01T00:00:00Z"
+    }
+  ]
+}
+```
+
+---
+
+### Send Message
+**POST** `/Accounts/{accountId}/chats/{chatId}/messages`
+
+**Request Body:**
+```json
+{
+  "sourceId": "string",
+  "sourceType": 0,
+  "content": "Your message here",
+  "videoStartTime": "2024-01-01T00:00:00Z",
+  "videoEndTime": "2024-01-01T00:00:00Z",
+  "agentId": "uuid"
+}
+```
+
+**Response 202:**
+```json
+{
+  "messageId": "string",
+  "chatId": "uuid"
+}
+```
+
+---
+
+### Get Chat Messages
+**GET** `/Accounts/{accountId}/chats/{chatId}/messages`
+
+**Query Parameters:**
+- `limit`: 1-100, default: 25
+- `sortOrder`: 0 (asc) or 1 (desc)
+- `startAfter`: Message ID for pagination
+
+**Response 200:**
+```json
+{
+  "chatInfo": {
+    "chatId": "uuid",
+    "createTime": "2024-01-01T00:00:00Z"
+  },
+  "results": [
+    {
+      "messageId": "string",
+      "chatId": "uuid",
+      "role": 0,
+      "content": {
+        "type": 0,
+        "text": "Message content"
+      },
+      "createTime": "2024-01-01T00:00:00Z"
+    }
+  ]
+}
+```
+
+---
+
+## Indexing
+
+### Upload Video
+**POST** `/Accounts/{accountId}/Videos`
+
+Uploads and indexes a video.
+
+**Query Parameters:**
+- `name` (required): Video name
+- `videoUrl` (optional): URL to video file
+- `language` (optional): Language code (e.g., en-US, es-ES)
+- `indexingPreset` (optional): Default, Basic, BasicAudio, BasicVideo
+- `streamingPreset` (optional): Default, SingleBitrate, NoStreaming
+- `excludedAI` (optional): Array of AI types to exclude
+- `description` (optional): Video description
+- `metadata` (optional): Custom metadata
+- `callbackUrl` (optional): URL for notifications
+
+**Form Data:**
+- `fileName`: Binary video file
+
+**Response 200:**
+```json
+{
+  "id": "video-id",
+  "name": "Video Name",
+  "state": 1,
+  "created": "2024-01-01T00:00:00Z"
+}
+```
+
+**Error Responses:**
+- 400: Invalid input or excluded AI options
+- 507: Insufficient storage space
+
+---
+
+### Get Video Index
+**GET** `/Accounts/{accountId}/Videos/{videoId}/Index`
+
+**Query Parameters:**
+- `language` (optional): Language for translation
+- `includeStreamingUrls`: boolean, default: true
+
+**Response 200:** Full video index with insights (see schema below)
+
+---
+
+### Re-Index Video
+**PUT** `/Accounts/{accountId}/Videos/{videoId}/ReIndex`
+
+**Query Parameters:**
+- `excludedAI`: Array of AI types to exclude
+- `indexingPreset`: Preset to use
+- `sourceLanguage`: Language code
+- `callbackUrl`: Notification URL
+
+**Response 204:** Re-indexing started successfully
+
+**Error Responses:**
+- 400: Cannot re-index failed upload
+- 409: Video already being indexed
+
+---
+
+## Videos
+
+### List Videos
+**GET** `/Accounts/{accountId}/Videos`
+
+**Query Parameters:**
+- `createdAfter`: ISO 8601 date-time
+- `createdBefore`: ISO 8601 date-time
+- `pageSize`: 1-1000, default: 25
+- `skip`: default: 0
+- `source`: Filter by camera ID or 'Upload'
+- `sortBy`: Options: StartTime, EndTime, LastModified, DisplayName, Duration
+- `insightType`: Filter by insight type ID
+- `insightName`: Filter by insight name
+- `tagId`, `tagValue`, `tagKey`: Filter by tags
+
+**Response 200:**
+```json
+{
+  "results": [
+    {
+      "id": "video-id",
+      "name": "Video Name",
+      "state": 2,
+      "durationInSeconds": 120,
+      "created": "2024-01-01T00:00:00Z",
+      "thumbnailId": "uuid"
+    }
+  ],
+  "nextPage": {
+    "pageSize": 25,
+    "skip": 0,
+    "done": false
+  }
+}
+```
+
+---
+
+### Get Video
+**GET** `/Accounts/{accountId}/Videos/{videoId}`
+
+**Response 200:**
+```json
+{
+  "id": "video-id",
+  "name": "Video Name",
+  "state": 2,
+  "processingProgress": "100%",
+  "durationInSeconds": 120,
+  "thumbnailId": "uuid",
+  "startTime": "2024-01-01T00:00:00Z",
+  "endTime": "2024-01-01T01:00:00Z",
+  "source": "camera-id or Upload"
+}
+```
+
+---
+
+### Delete Video
+**DELETE** `/Accounts/{accountId}/Videos/{videoId}`
+
+**Response 204:** Video deleted successfully
+
+---
+
+### Get Video Captions
+**GET** `/Accounts/{accountId}/Videos/{videoId}/Captions`
+
+**Query Parameters:**
+- `language`: Language code
+- `format`: Vtt, Ttml, Srt, Txt, Csv (default: Vtt)
+
+**Response 200:** Caption file content
+
+---
+
+### Get Video Streaming URL
+**GET** `/Accounts/{accountId}/Videos/{videoId}/streaming-url`
+
+**Response 200:**
+```json
+{
+  "url": "https://streaming-url",
+  "jwt": "token"
+}
+```
+
+---
+
+## Live Cameras
+
+### Add Camera
+**POST** `/Accounts/{accountId}/cameras`
+
+**Request Body:**
+```json
+{
+  "name": "Camera Name",
+  "description": "Camera description",
+  "presetId": "uuid",
+  "isPinned": false,
+  "liveStreamingEnabled": true,
+  "recordingEnabled": true,
+  "recordingsRetentionInHours": 720,
+  "insightsRetentionInHours": 720,
+  "rtspUrl": "rtsp://camera-url"
+}
+```
+
+**Response 200:**
+```json
+{
+  "id": "uuid",
+  "name": "Camera Name",
+  "status": 1,
+  "liveStreamingEnabled": true,
+  "recordingEnabled": true,
+  "createTime": "2024-01-01T00:00:00Z"
+}
+```
+
+---
+
+### List Cameras
+**GET** `/Accounts/{accountId}/cameras`
+
+**Query Parameters:**
+- `pageSize`: 1-1000, default: 25
+- `skip`: default: 0
+- `name`: Filter by name
+- `presetIds`: Filter by preset IDs
+- `isPinned`: Filter by pinned status
+- `status`: Filter by camera status (0-3)
+- `liveStreamingEnabled`: boolean
+- `recordingEnabled`: boolean
+- `sortBy`: default: "-liveStreamingEnabled,-recordingEnabled,name"
+
+**Response 200:**
+```json
+{
+  "results": [
+    {
+      "id": "uuid",
+      "name": "Camera 1",
+      "status": 1,
+      "liveStreamingEnabled": true,
+      "recordingEnabled": true
+    }
+  ]
+}
+```
+
+---
+
+### Update Camera
+**PATCH** `/Accounts/{accountId}/cameras/{cameraId}`
+
+**Request Body:** Same as Add Camera
+
+---
+
+### Remove Camera
+**DELETE** `/Accounts/{accountId}/cameras/{cameraId}`
+
+**Response 204:** Camera removed successfully
+
+---
+
+## Live Insights
+
+### Get Live Insights by DateTime
+**GET** `/Accounts/{accountId}/Cameras/{cameraId}/Insights`
+
+**Query Parameters:**
+- `dateTime`: ISO 8601 timestamp
+- `includedInsightsTypes`: Array of insight types (format: "insightName-modelType")
+
+**Response 200:**
+```json
+{
+  "cameraId": "uuid",
+  "height": 1080,
+  "width": 1920,
+  "start": "2024-01-01T00:00:00Z",
+  "end": "2024-01-01T00:01:00Z",
+  "detections": [
+    {
+      "insightName": "Vehicles",
+      "modelType": "ObjectDetection",
+      "id": "uuid",
+      "instances": [
+        {
+          "x": 0.5,
+          "y": 0.5,
+          "width": 0.2,
+          "height": 0.3,
+          "confidence": 0.95,
+          "start": "2024-01-01T00:00:05Z",
+          "end": "2024-01-01T00:00:10Z"
+        }
+      ]
+    }
+  ]
+}
+```
+
+---
+
+## Custom Insights
+
+### Create Custom Insight
+**POST** `/Accounts/{accountId}/customInsights`
+
+**Request Body:**
+```json
+{
+  "insightName": "Custom Object",
+  "modelType": 1,
+  "description": "Description",
+  "prompt": {
+    "text": "Detect X in the image",
+    "images": [
+      {
+        "name": "example.jpg",
+        "id": "uuid"
+      }
+    ]
+  }
+}
+```
+
+**Response 200:**
+```json
+{
+  "id": "uuid",
+  "insightName": "Custom Object",
+  "modelType": 1,
+  "createTime": "2024-01-01T00:00:00Z"
+}
+```
+
+---
+
+### Add Images to Custom Insight
+**POST** `/Accounts/{accountId}/customInsights/{insightId}/Images`
+
+**Form Data:**
+- `metadata`: JSON string
+- `images`: Array of image files
+
+**Response 200:**
+```json
+[
+  {
+    "name": "image1.jpg",
+    "id": "uuid",
+    "positiveExample": true,
+    "error": null
+  }
+]
+```
+
+---
+
+## Spatial Analysis Rules
+
+### Create Spatial Analysis Rule
+**POST** `/Accounts/{accountId}/cameras/{cameraId}/SpatialAnalysisRules`
+
+**Request Body:**
+```json
+{
+  "name": "Zone Entry",
+  "description": "Detect entry into zone",
+  "type": 0,
+  "coordinates": [
+    {"x": 0.1, "y": 0.1},
+    {"x": 0.9, "y": 0.1},
+    {"x": 0.9, "y": 0.9},
+    {"x": 0.1, "y": 0.9}
+  ],
+  "direction": [
+    {"x": 0.5, "y": 0.0},
+    {"x": 0.5, "y": 1.0}
+  ],
+  "monitoredZoneId": "uuid",
+  "active": true,
+  "tagIds": ["uuid"]
+}
+```
+
+**Response 200:** Spatial analysis rule created
+
+**Error Responses:**
+- 409: Cannot activate more than 10 rules on a camera
+
+---
+
+## Textual Summarization
+
+### Summarize Video
+**POST** `/Accounts/{accountId}/Videos/{videoId}/Summaries/Textual`
+
+**Query Parameters:**
+- `length`: Short, Medium, Long (default: Medium)
+- `style`: Neutral, Casual, Formal (default: Neutral)
+- `modelName`: Phi, Qwen (default: Phi)
+- `includedFrames`: None, Keyframes (default: None)
+- `eventsToFocusOn`: String describing events to highlight
+- `summarizeFrom`: ISO 8601 datetime (for camera recordings)
+- `summarizeUntil`: ISO 8601 datetime (for camera recordings)
+
+**Response 202:** Accepted - Summary generation started
+
+---
+
+### Get Video Summary
+**GET** `/Accounts/{accountId}/Videos/{videoId}/Summaries/Textual/{summaryId}`
+
+**Response 200:**
+```json
+{
+  "id": "uuid",
+  "videoId": "video-id",
+  "state": 2,
+  "summary": "This video shows...",
+  "createTime": "2024-01-01T00:00:00Z",
+  "disclaimer": "AI-generated content"
+}
+```
+
+---
+
+## Search
+
+### Search Videos
+**POST** `/Accounts/{accountId}/videos/search`
+
 Natural language search across video content.
 
-- **POST** `/Accounts/{accountId}/videos/search` - Search videos using natural language
+**Request Body:**
+```json
+{
+  "query": "Find videos with people wearing red",
+  "filters": {
+    "source": ["camera-id-1"],
+    "insightName": ["People"],
+    "createdAfter": "2024-01-01T00:00:00Z",
+    "createdBefore": "2024-12-31T23:59:59Z",
+    "tagValue": ["important"]
+  }
+}
+```
 
-### 18. Prompt Content
-Generate prompt content for LLM integration.
+**Response 200:**
+```json
+{
+  "results": [
+    {
+      "videoId": "video-id",
+      "start": 10.5,
+      "end": 25.3,
+      "confidence": 0.89,
+      "detectedAis": [
+        {
+          "insightName": "People",
+          "modelType": "ObjectDetection"
+        }
+      ],
+      "thumbnailBase64": "base64-string"
+    }
+  ]
+}
+```
 
-- **POST** `/Accounts/{accountId}/Videos/{videoId}/PromptContent` - Create prompt content
-- **GET** `/Accounts/{accountId}/Videos/{videoId}/PromptContent` - Get prompt content
+---
 
-### 19. Languages & Models
-Get supported languages and models.
+## Tags
 
-- **GET** `/SupportedLanguages` - Get supported languages
-- **GET** `/Accounts/{accountId}/LanguageModels` - Get language models
-- **GET** `/Accounts/{accountId}/SupportedAIs` - Get supported AI models
-- **GET** `/Accounts/{accountId}/builtInInsightTypes` - List built-in insight types
-- **GET** `/Accounts/{accountId}/insightTypes` - List insight types
+### Create Tag
+**POST** `/Accounts/{accountId}/tags`
 
-### 20. Miscellaneous
-Additional utility endpoints.
+**Request Body:**
+```json
+{
+  "key": "category",
+  "value": "important"
+}
+```
 
-- **GET** `/Accounts/{accountId}/VideoInfo` - Get video network info
-- **GET** `/Accounts/{accountId}/mediaServer/config` - Get media server config
+**Response 200:**
+```json
+{
+  "id": "uuid",
+  "key": "category",
+  "value": "important",
+  "createTime": "2024-01-01T00:00:00Z"
+}
+```
 
-## Common Parameters
+---
 
-### Path Parameters
-- `accountId` (UUID, required) - Account identifier
-- `videoId` (string, required) - Video identifier
-- `cameraId` (UUID, required) - Camera identifier
+### List Tags
+**GET** `/Accounts/{accountId}/tags`
 
-### Query Parameters
-- `pageSize` (integer, 1-1000, default: 25) - Number of results per page
-- `skip` (integer, default: 0) - Number of records to skip
-- `language` (string) - Language code (e.g., en-US, fr-FR)
-- `sortBy` (string) - Sort field with optional `-` prefix for descending order
+**Query Parameters:**
+- `key`: Filter by key
+- `value`: Filter by value
+- `createdBefore`, `createdAfter`: Date filters
+- `pageSize`, `skip`, `sortBy`
+
+---
 
 ## Response Codes
 
-### Success Codes
-- **200** - OK
-- **201** - Created
-- **202** - Accepted
-- **204** - No Content
-- **303** - See Other
+### Success
+- **200** OK - Request successful
+- **201** Created - Resource created
+- **202** Accepted - Request accepted for processing
+- **204** No Content - Successful deletion
+- **303** See Other - Redirect (job completed)
 
-### Error Codes
-- **400** - Bad Request
-- **401** - Unauthorized
-- **403** - Forbidden
-- **404** - Not Found
-- **409** - Conflict
-- **429** - Too Many Requests
-- **500** - Server Error
-- **507** - Insufficient Storage
+### Client Errors
+- **400** Bad Request - Invalid input
+- **401** Unauthorized - Authentication required
+- **403** Forbidden - Insufficient permissions
+- **404** Not Found - Resource not found
+- **409** Conflict - Resource conflict
 
-## Supported Languages
+### Server Errors
+- **429** Too Many Requests - Rate limit exceeded
+- **500** Internal Server Error
+- **507** Insufficient Storage
 
-The API supports 50+ languages including:
-- Arabic (ar-EG)
-- Chinese Simplified (zh-Hans)
-- Chinese Traditional (zh-Hant)
-- English (en-US)
-- French (fr-FR)
-- German (de-DE)
-- Hebrew (he-IL)
-- Japanese (ja-JP)
-- Korean (ko-KR)
-- Spanish (es-ES)
-- And many more...
+---
 
-## Indexing Presets
+## Common Data Types
 
-- **Default** - Full indexing with all features
-- **Basic** - Basic indexing
-- **BasicAudio** - Audio-only indexing
-- **BasicVideo** - Video-only indexing
+### TimeSpan Format
+```
+"00:01:30.500"  // 1 minute, 30.5 seconds
+```
 
-## Streaming Presets
+### DateTime Format (ISO 8601)
+```
+"2024-01-01T12:00:00Z"
+```
 
-- **Default** - Standard streaming quality
-- **SingleBitrate** - Single bitrate streaming
-- **NoStreaming** - No streaming output
+### UUID Format
+```
+"550e8400-e29b-41d4-a716-446655440000"
+```
+
+---
+
+## Rate Limiting
+
+API calls are subject to rate limiting. Respect retry-after headers on 429 responses.
+
+---
+
+## Pagination
+
+Most list endpoints support pagination:
+- `pageSize`: Number of items per page (1-1000)
+- `skip`: Number of items to skip
+- Response includes `nextPage` object with pagination info
+
+---
 
 ## Notes
 
 1. All timestamps use ISO 8601 format
 2. UUIDs are used for resource identifiers
-3. Pagination is supported via `pageSize` and `skip` parameters
-4. Maximum file upload size and duration limits apply
-5. Rate limiting is enforced on API calls
-6. Bearer tokens expire and must be refreshed
+3. Bearer tokens expire and must be refreshed
+4. Maximum upload sizes and duration limits apply per account tier
+5. Some features require specific permissions or limited access approvals
 
 ---
 
-*For detailed schema information and examples, refer to the OpenAPI specification file.*
+*For complete schema definitions and additional endpoints, refer to the OpenAPI specification file.*

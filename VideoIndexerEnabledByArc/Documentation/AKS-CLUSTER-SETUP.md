@@ -508,7 +508,7 @@ az k8s-extension create \
     --config "ViAi.gpu.enabled=${VI_GPU_SUMMARIZATION}" \
     --config "ViAi.gpu.tolerations.key=${VI_GPU_TOLERATIONS_KEY}" \
     --config "ViAi.deepstream.nodeSelector.workload=${VI_DEEPSTREAM_NODE_SELECTOR}" \
-    --config "storage.storageClass=azurefile-csi" \
+    --config "storage.storageClass=azurefile-csi-premium-premium-premium-premium" \
     --config "storage.accessMode=ReadWriteMany"
 ```
 
@@ -546,7 +546,7 @@ az k8s-extension create \
     --config "ViAi.deepstream.nodeSelector.workload=${VI_DEEPSTREAM_NODE_SELECTOR}" \
     --config "ViAi.summarization.nodeSelector.workload=${VI_SUMMARIZATION_NODE_SELECTOR}" \
     --config "ViAi.inference.nodeSelector.workload=${VI_INFERENCE_NODE_SELECTOR}" \
-    --config "storage.storageClass=azurefile-csi" \
+    --config "storage.storageClass=azurefile-csi-premium-premium" \
     --config "storage.accessMode=ReadWriteMany"
 ```
 
@@ -586,7 +586,7 @@ az k8s-extension update \
     --config "ViAi.LiveSummarization.enabled=${VI_LIVE_SUMMARIZATION_ENABLED}" \
     --config "ViAi.gpu.enabled=${VI_GPU_SUMMARIZATION}" \
     --config "ViAi.gpu.tolerations.key=${VI_GPU_TOLERATIONS_KEY}" \
-    --config "storage.storageClass=azurefile-csi" \
+    --config "storage.storageClass=azurefile-csi-premium-premium" \
     --yes
 ```
 
@@ -622,7 +622,7 @@ az k8s-extension delete \
 | `videoIndexer.rag.applicationId` | RAG application ID | If RAG enabled | - |
 | `videoIndexer.rag.managedIdentityClientId` | Managed identity for RAG | If RAG enabled | - |
 | `videoIndexer.rag.tenantId` | Azure tenant ID | If RAG enabled | - |
-| `storage.storageClass` | Kubernetes storage class | No | azurefile-csi |
+| `storage.storageClass` | Kubernetes storage class | No | azurefile-csi-premium-premium |
 | `storage.accessMode` | Storage access mode | No | ReadWriteMany |
 
 ---

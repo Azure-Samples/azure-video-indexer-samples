@@ -651,7 +651,7 @@ EOF
             --config ViAi.gpu.enabled=${viGpuSummarization} \
             --config ViAi.gpu.tolerations.key=${viGpuTolerationsKey} \
             --config ViAi.deepstream.nodeSelector.workload=deepstream \
-            --config storage.storageClass=azurefile-csi \
+            --config storage.storageClass=azurefile-csi-premium \
             --config storage.accessMode=ReadWriteMany \
             --yes"
         
@@ -704,7 +704,7 @@ EOF
             --config ViAi.gpu.enabled=${viGpuSummarization} \
             --config ViAi.gpu.tolerations.key=${viGpuTolerationsKey} \
             --config ViAi.deepstream.nodeSelector.workload=deepstream \
-            --config storage.storageClass=azurefile-csi \
+            --config storage.storageClass=azurefile-csi-premium \
             --config storage.accessMode=ReadWriteMany"
         
         # Add agents config if enabled

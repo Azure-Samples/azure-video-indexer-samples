@@ -1,21 +1,54 @@
 # Video Indexer Arc - AKS Cluster Setup Guide
 
-This guide provides step-by-step instructions for creating an Azure Kubernetes Service (AKS) cluster configured for Video Indexer Arc deployment.
+This guide provides step-by-step instructions for creating an Azure Kubernetes Service (AKS) cluster and deploying the Video Indexer Arc extension.
 
 ## Table of Contents
 
-- [Prerequisites](#prerequisites)
-- [Configuration Variables](#configuration-variables)
-- [Step 1: Install CLI Tools](#step-1-install-cli-tools)
-- [Step 2: Create Resource Group](#step-2-create-resource-group)
-- [Step 3: Create AKS Cluster](#step-3-create-aks-cluster)
-- [Step 4: Add Node Pools](#step-4-add-node-pools)
-- [Step 5: Install NVIDIA GPU Operator](#step-5-install-nvidia-gpu-operator)
-- [Step 6: Configure Ingress Controller](#step-6-configure-ingress-controller)
-- [Step 7: Connect to Azure Arc](#step-7-connect-to-azure-arc)
-- [Step 8: Install Cert Manager](#step-8-install-cert-manager)
-- [DNS and SSL Configuration](#dns-and-ssl-configuration)
-- [Verification](#verification)
+- [Video Indexer Arc - AKS Cluster Setup Guide](#video-indexer-arc---aks-cluster-setup-guide)
+  - [Table of Contents](#table-of-contents)
+  - [Prerequisites](#prerequisites)
+  - [Configuration Variables](#configuration-variables)
+  - [Step 1: Install CLI Tools](#step-1-install-cli-tools)
+  - [Step 2: Create Resource Group](#step-2-create-resource-group)
+  - [Step 3: Create AKS Cluster](#step-3-create-aks-cluster)
+    - [Add Maintenance Windows (Optional but Recommended)](#add-maintenance-windows-optional-but-recommended)
+    - [Get Cluster Credentials](#get-cluster-credentials)
+  - [Step 4: Add Node Pools](#step-4-add-node-pools)
+    - [General Workload Node Pool (Required)](#general-workload-node-pool-required)
+    - [GPU Deepstream Node Pool (Required for Live Pipeline)](#gpu-deepstream-node-pool-required-for-live-pipeline)
+    - [GPU Agents Node Pool (Optional - for RAG/Visual Search)](#gpu-agents-node-pool-optional---for-ragvisual-search)
+    - [GPU Summarization Node Pool (Optional)](#gpu-summarization-node-pool-optional)
+    - [CPU Summarization Node Pool (Optional - Alternative to GPU)](#cpu-summarization-node-pool-optional---alternative-to-gpu)
+  - [Step 5: Install NVIDIA GPU Operator](#step-5-install-nvidia-gpu-operator)
+  - [Step 6: Configure Ingress Controller](#step-6-configure-ingress-controller)
+    - [Create Public IP](#create-public-ip)
+    - [Enable App Routing](#enable-app-routing)
+    - [Create Nginx Ingress Controller](#create-nginx-ingress-controller)
+    - [Verify Ingress Controller](#verify-ingress-controller)
+  - [Step 7: Connect to Azure Arc](#step-7-connect-to-azure-arc)
+  - [Step 8: Install Cert Manager](#step-8-install-cert-manager)
+  - [Step 9: Deploy Video Indexer Arc Extension](#step-9-deploy-video-indexer-arc-extension)
+    - [Extension Configuration Variables](#extension-configuration-variables)
+    - [Create Extension (Basic Configuration)](#create-extension-basic-configuration)
+    - [Create Extension (Full Configuration with Agents and RAG)](#create-extension-full-configuration-with-agents-and-rag)
+    - [Verify Extension Installation](#verify-extension-installation)
+    - [Update Extension](#update-extension)
+    - [Delete Extension](#delete-extension)
+    - [Extension Configuration Reference](#extension-configuration-reference)
+  - [DNS and SSL Configuration](#dns-and-ssl-configuration)
+    - [DNS Options](#dns-options)
+    - [SSL/TLS Options](#ssltls-options)
+  - [Verification](#verification)
+    - [Verify Cluster Status](#verify-cluster-status)
+    - [Summary of Created Resources](#summary-of-created-resources)
+    - [Node Pool Summary](#node-pool-summary)
+  - [Next Steps](#next-steps)
+  - [Troubleshooting](#troubleshooting)
+    - [Extension Not Installing](#extension-not-installing)
+    - [GPU Nodes Not Scaling](#gpu-nodes-not-scaling)
+    - [Ingress Not Getting IP](#ingress-not-getting-ip)
+    - [Arc Connection Issues](#arc-connection-issues)
+  - [Clean Up](#clean-up)
 
 ---
 
@@ -403,6 +436,197 @@ az k8s-extension show \
 
 ---
 
+## Step 9: Deploy Video Indexer Arc Extension
+
+This step deploys the Video Indexer Arc extension to your cluster.
+
+### Extension Configuration Variables
+
+Set the following variables for your Video Indexer Arc extension:
+
+```bash
+# REQUIRED: Video Indexer Extension Configuration
+export VI_EXTENSION_NAME="video-indexer"
+export VI_EXTENSION_VERSION="<YOUR_EXTENSION_VERSION>"  # e.g., "1.2.53" - Get the latest stable version
+
+# REQUIRED: Video Indexer Account Information
+export VI_ACCOUNT_ID="<YOUR_VI_ACCOUNT_ID>"              # Your Video Indexer account ID (GUID)
+export VI_ACCOUNT_RESOURCE_ID="<YOUR_VI_ACCOUNT_RESOURCE_ID>"  # Full ARM resource ID of your VI account
+# Format: /subscriptions/<sub-id>/resourceGroups/<rg>/providers/Microsoft.VideoIndexer/accounts/<account-name>
+
+# REQUIRED: Endpoint URI (your cluster's public endpoint)
+export VI_ENDPOINT_URI="https://${FQDN}"  # Or your custom domain if configured
+
+# Feature Flags (set to "true" to enable)
+export VI_LIVE_VIDEO_ENABLED="true"       # Enable live video stream processing
+export VI_MEDIA_UPLOADS_ENABLED="true"    # Enable media file uploads
+export VI_LIVE_SUMMARIZATION_ENABLED="true"  # Enable live summarization
+export VI_GPU_SUMMARIZATION="false"       # Use GPU for summarization
+
+# Agents Configuration (Optional - requires gpuagents node pool)
+export VI_AGENTS_ENABLED="false"          # Enable AI agents
+export VI_AGENTS_MODE="basic"             # Options: "basic" or "advanced"
+
+# RAG Configuration (Optional - requires agents enabled)
+export VI_RAG_ENABLED="false"
+export VI_RAG_ENDPOINT=""                 # RAG service endpoint
+export VI_RAG_APPLICATION_ID=""           # RAG application ID
+export VI_RAG_MANAGED_IDENTITY_CLIENT_ID="" # Managed identity client ID for RAG
+export VI_RAG_TENANT_ID=""                # Azure tenant ID
+
+# Node Selectors (Optional - match your node pool labels)
+export VI_DEEPSTREAM_NODE_SELECTOR="deepstream"     # Node selector for deepstream workloads
+export VI_SUMMARIZATION_NODE_SELECTOR="summarization" # Node selector for summarization
+export VI_INFERENCE_NODE_SELECTOR="agents"          # Node selector for inference/agents
+
+# GPU Tolerations
+export VI_GPU_TOLERATIONS_KEY="nvidia.com/gpu"
+```
+
+### Create Extension (Basic Configuration)
+
+For a basic deployment with live video and media uploads:
+
+```bash
+az k8s-extension create \
+    --name ${VI_EXTENSION_NAME} \
+    --extension-type "Microsoft.videoIndexer" \
+    --scope cluster \
+    --release-namespace "video-indexer" \
+    --cluster-name ${CONNECTED_CLUSTER} \
+    --resource-group ${RG} \
+    --cluster-type "connectedClusters" \
+    --version ${VI_EXTENSION_VERSION} \
+    --release-train "stable" \
+    --auto-upgrade-minor-version "false" \
+    --config "videoIndexer.accountId=${VI_ACCOUNT_ID}" \
+    --config "videoIndexer.accountResourceId=${VI_ACCOUNT_RESOURCE_ID}" \
+    --config "videoIndexer.endpointUri=${VI_ENDPOINT_URI}" \
+    --config "videoIndexer.mediaUploadsEnabled=${VI_MEDIA_UPLOADS_ENABLED}" \
+    --config "videoIndexer.liveVideoStreamEnabled=${VI_LIVE_VIDEO_ENABLED}" \
+    --config "ViAi.LiveSummarization.enabled=${VI_LIVE_SUMMARIZATION_ENABLED}" \
+    --config "ViAi.gpu.enabled=${VI_GPU_SUMMARIZATION}" \
+    --config "ViAi.gpu.tolerations.key=${VI_GPU_TOLERATIONS_KEY}" \
+    --config "ViAi.deepstream.nodeSelector.workload=${VI_DEEPSTREAM_NODE_SELECTOR}" \
+    --config "storage.storageClass=azurefile-csi" \
+    --config "storage.accessMode=ReadWriteMany"
+```
+
+### Create Extension (Full Configuration with Agents and RAG)
+
+For a full deployment with agents and RAG features:
+
+```bash
+az k8s-extension create \
+    --name ${VI_EXTENSION_NAME} \
+    --extension-type "Microsoft.videoIndexer" \
+    --scope cluster \
+    --release-namespace "video-indexer" \
+    --cluster-name ${CONNECTED_CLUSTER} \
+    --resource-group ${RG} \
+    --cluster-type "connectedClusters" \
+    --version ${VI_EXTENSION_VERSION} \
+    --release-train "stable" \
+    --auto-upgrade-minor-version "false" \
+    --config "videoIndexer.accountId=${VI_ACCOUNT_ID}" \
+    --config "videoIndexer.accountResourceId=${VI_ACCOUNT_RESOURCE_ID}" \
+    --config "videoIndexer.endpointUri=${VI_ENDPOINT_URI}" \
+    --config "videoIndexer.mediaUploadsEnabled=${VI_MEDIA_UPLOADS_ENABLED}" \
+    --config "videoIndexer.liveVideoStreamEnabled=${VI_LIVE_VIDEO_ENABLED}" \
+    --config "videoIndexer.rag.enabled=${VI_RAG_ENABLED}" \
+    --config "videoIndexer.rag.endpoint=${VI_RAG_ENDPOINT}" \
+    --config "videoIndexer.rag.applicationId=${VI_RAG_APPLICATION_ID}" \
+    --config "videoIndexer.rag.managedIdentityClientId=${VI_RAG_MANAGED_IDENTITY_CLIENT_ID}" \
+    --config "videoIndexer.rag.tenantId=${VI_RAG_TENANT_ID}" \
+    --config "videoIndexer.agents.enabled=${VI_AGENTS_ENABLED}" \
+    --config "videoIndexer.agents.mode=${VI_AGENTS_MODE}" \
+    --config "ViAi.LiveSummarization.enabled=${VI_LIVE_SUMMARIZATION_ENABLED}" \
+    --config "ViAi.gpu.enabled=${VI_GPU_SUMMARIZATION}" \
+    --config "ViAi.gpu.tolerations.key=${VI_GPU_TOLERATIONS_KEY}" \
+    --config "ViAi.deepstream.nodeSelector.workload=${VI_DEEPSTREAM_NODE_SELECTOR}" \
+    --config "ViAi.summarization.nodeSelector.workload=${VI_SUMMARIZATION_NODE_SELECTOR}" \
+    --config "ViAi.inference.nodeSelector.workload=${VI_INFERENCE_NODE_SELECTOR}" \
+    --config "storage.storageClass=azurefile-csi" \
+    --config "storage.accessMode=ReadWriteMany"
+```
+
+### Verify Extension Installation
+
+```bash
+# Check extension status
+az k8s-extension show \
+    --name ${VI_EXTENSION_NAME} \
+    --cluster-name ${CONNECTED_CLUSTER} \
+    --resource-group ${RG} \
+    --cluster-type "connectedClusters" \
+    --query "{name:name, provisioningState:provisioningState, version:version}"
+
+# Check pods in video-indexer namespace
+kubectl get pods -n video-indexer --context ${KUBECTL_CONTEXT}
+```
+
+### Update Extension
+
+To update an existing extension with new configuration:
+
+```bash
+az k8s-extension update \
+    --name ${VI_EXTENSION_NAME} \
+    --cluster-name ${CONNECTED_CLUSTER} \
+    --resource-group ${RG} \
+    --cluster-type "connectedClusters" \
+    --version ${VI_EXTENSION_VERSION} \
+    --release-train "stable" \
+    --auto-upgrade-minor-version "false" \
+    --config "videoIndexer.accountId=${VI_ACCOUNT_ID}" \
+    --config "videoIndexer.accountResourceId=${VI_ACCOUNT_RESOURCE_ID}" \
+    --config "videoIndexer.endpointUri=${VI_ENDPOINT_URI}" \
+    --config "videoIndexer.mediaUploadsEnabled=${VI_MEDIA_UPLOADS_ENABLED}" \
+    --config "videoIndexer.liveVideoStreamEnabled=${VI_LIVE_VIDEO_ENABLED}" \
+    --config "ViAi.LiveSummarization.enabled=${VI_LIVE_SUMMARIZATION_ENABLED}" \
+    --config "ViAi.gpu.enabled=${VI_GPU_SUMMARIZATION}" \
+    --config "ViAi.gpu.tolerations.key=${VI_GPU_TOLERATIONS_KEY}" \
+    --config "storage.storageClass=azurefile-csi" \
+    --yes
+```
+
+### Delete Extension
+
+To remove the extension:
+
+```bash
+az k8s-extension delete \
+    --name ${VI_EXTENSION_NAME} \
+    --cluster-name ${CONNECTED_CLUSTER} \
+    --resource-group ${RG} \
+    --cluster-type "connectedClusters" \
+    --yes
+```
+
+### Extension Configuration Reference
+
+| Parameter | Description | Required | Default |
+|-----------|-------------|----------|---------|
+| `videoIndexer.accountId` | Video Indexer account GUID | Yes | - |
+| `videoIndexer.accountResourceId` | Full ARM resource ID | Yes | - |
+| `videoIndexer.endpointUri` | Public endpoint URI | Yes | - |
+| `videoIndexer.mediaUploadsEnabled` | Enable media uploads | No | true |
+| `videoIndexer.liveVideoStreamEnabled` | Enable live video | No | false |
+| `ViAi.LiveSummarization.enabled` | Enable live summarization | No | true |
+| `ViAi.gpu.enabled` | Use GPU for summarization | No | false |
+| `ViAi.gpu.tolerations.key` | GPU node taint key | No | nvidia.com/gpu |
+| `videoIndexer.agents.enabled` | Enable AI agents | No | false |
+| `videoIndexer.agents.mode` | Agents mode (basic/advanced) | No | basic |
+| `videoIndexer.rag.enabled` | Enable RAG features | No | false |
+| `videoIndexer.rag.endpoint` | RAG service endpoint | If RAG enabled | - |
+| `videoIndexer.rag.applicationId` | RAG application ID | If RAG enabled | - |
+| `videoIndexer.rag.managedIdentityClientId` | Managed identity for RAG | If RAG enabled | - |
+| `videoIndexer.rag.tenantId` | Azure tenant ID | If RAG enabled | - |
+| `storage.storageClass` | Kubernetes storage class | No | azurefile-csi |
+| `storage.accessMode` | Storage access mode | No | ReadWriteMany |
+
+---
+
 ## DNS and SSL Configuration
 
 ### DNS Options
@@ -478,17 +702,42 @@ az connectedk8s show --name ${CONNECTED_CLUSTER} --resource-group $RG \
 
 ## Next Steps
 
-After completing cluster setup:
+After completing the cluster setup and extension deployment:
 
-1. Deploy the Video Indexer Arc extension
-2. Configure the extension with your cluster settings
-3. Verify the extension is running properly
+1. Access the Video Indexer portal at your configured endpoint URI
+2. Test live video stream processing with a camera source
+3. Upload test media files to verify indexing
+4. Configure alerts and monitoring as needed
 
-For extension deployment, refer to the Video Indexer Arc deployment documentation.
+For additional documentation and API reference, visit the Video Indexer documentation.
 
 ---
 
 ## Troubleshooting
+
+### Extension Not Installing
+
+```bash
+# Check extension provisioning state
+az k8s-extension show \
+    --name ${VI_EXTENSION_NAME} \
+    --cluster-name ${CONNECTED_CLUSTER} \
+    --resource-group ${RG} \
+    --cluster-type "connectedClusters" \
+    --query "provisioningState"
+
+# Check extension error message
+az k8s-extension show \
+    --name ${VI_EXTENSION_NAME} \
+    --cluster-name ${CONNECTED_CLUSTER} \
+    --resource-group ${RG} \
+    --cluster-type "connectedClusters" \
+    --query "statuses"
+
+# Check pods in video-indexer namespace
+kubectl get pods -n video-indexer --context ${KUBECTL_CONTEXT}
+kubectl describe pods -n video-indexer --context ${KUBECTL_CONTEXT}
+```
 
 ### GPU Nodes Not Scaling
 

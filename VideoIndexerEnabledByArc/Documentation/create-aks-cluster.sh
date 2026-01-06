@@ -41,6 +41,38 @@ tags="createdBy=${resourcesPrefix} purpose=vi-arc-deployment"
 kubectlContext="${resourcesPrefix}"
 
 #===========================================================================================================#
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Video Indexer Extension Configuration @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#===========================================================================================================#
+
+# REQUIRED: Extension version - Get the latest stable version number
+viExtensionVersion="<YOUR_EXTENSION_VERSION>"  # e.g., "1.2.53"
+
+# REQUIRED: Video Indexer Account Information
+viAccountId="<YOUR_VI_ACCOUNT_ID>"              # Your Video Indexer account ID (GUID)
+viAccountResourceId="<YOUR_VI_ACCOUNT_RESOURCE_ID>"  # Full ARM resource ID
+# Format: /subscriptions/<sub-id>/resourceGroups/<rg>/providers/Microsoft.VideoIndexer/accounts/<account-name>
+
+# Extension Feature Flags
+viLiveVideoEnabled="true"           # Enable live video stream processing
+viMediaUploadsEnabled="true"        # Enable media file uploads
+viLiveSummarizationEnabled="true"   # Enable live summarization
+viGpuSummarization="false"          # Use GPU for summarization
+
+# Agents Configuration (Optional)
+viAgentsEnabled="false"             # Enable AI agents
+viAgentsMode="basic"                # Options: "basic" or "advanced"
+
+# RAG Configuration (Optional - set if viAgentsEnabled=true and you need RAG)
+viRagEnabled="false"
+viRagEndpoint=""                    # RAG service endpoint
+viRagApplicationId=""               # RAG application ID
+viRagManagedIdentityClientId=""     # Managed identity client ID for RAG
+viRagTenantId=""                    # Azure tenant ID
+
+# GPU Tolerations
+viGpuTolerationsKey="nvidia.com/gpu"
+
+#===========================================================================================================#
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Feature Flags - Set to true/false @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #===========================================================================================================#
 
@@ -139,6 +171,22 @@ function validate_configuration() {
     
     if [[ "$enableSsl" == "true" ]] && [[ -z "$sslKeyVaultCertificateUri" ]]; then
         echo "ERROR: SSL is enabled but 'sslKeyVaultCertificateUri' is not set"
+        errors=$((errors + 1))
+    fi
+    
+    # Extension configuration validation
+    if [[ "$viExtensionVersion" == "<YOUR_EXTENSION_VERSION>" ]] || [[ -z "$viExtensionVersion" ]]; then
+        echo "ERROR: Please set the VI extension version in 'viExtensionVersion' variable"
+        errors=$((errors + 1))
+    fi
+    
+    if [[ "$viAccountId" == "<YOUR_VI_ACCOUNT_ID>" ]] || [[ -z "$viAccountId" ]]; then
+        echo "ERROR: Please set your Video Indexer account ID in 'viAccountId' variable"
+        errors=$((errors + 1))
+    fi
+    
+    if [[ "$viAccountResourceId" == "<YOUR_VI_ACCOUNT_RESOURCE_ID>" ]] || [[ -z "$viAccountResourceId" ]]; then
+        echo "ERROR: Please set your Video Indexer account resource ID in 'viAccountResourceId' variable"
         errors=$((errors + 1))
     fi
     
@@ -559,6 +607,160 @@ EOF
             sleep 10
         done
     fi
+    #===========================================================================================================#
+    #======== Install Video Indexer Arc Extension =============================================================#
+    #===========================================================================================================#
+    echo ""
+    echo "================================================================"
+    echo "============= Installing Video Indexer Arc Extension ==========="
+    echo "================================================================"
+    
+    # Set the endpoint URI based on SSL configuration
+    if [[ "$enableSsl" == "true" ]]; then
+        viEndpointUri="https://${EXPECTED_FQDN}"
+    else
+        viEndpointUri="http://${EXPECTED_FQDN}"
+    fi
+    
+    # Check if extension already exists
+    viExtExists=$(az k8s-extension show \
+        --name "${extensionName}" \
+        --cluster-name "${connectedClusterName}" \
+        --resource-group "${rg}" \
+        --cluster-type "connectedClusters" \
+        --query "name" -o tsv 2>/dev/null || true)
+    
+    if [[ -n "${viExtExists}" ]]; then
+        echo "Video Indexer extension already exists. Updating..."
+        
+        # Build the update command
+        updateCmd="az k8s-extension update \
+            --name ${extensionName} \
+            --cluster-name ${connectedClusterName} \
+            --resource-group ${rg} \
+            --cluster-type connectedClusters \
+            --version ${viExtensionVersion} \
+            --release-train stable \
+            --auto-upgrade-minor-version false \
+            --config videoIndexer.accountId=${viAccountId} \
+            --config videoIndexer.accountResourceId=${viAccountResourceId} \
+            --config videoIndexer.endpointUri=${viEndpointUri} \
+            --config videoIndexer.mediaUploadsEnabled=${viMediaUploadsEnabled} \
+            --config videoIndexer.liveVideoStreamEnabled=${viLiveVideoEnabled} \
+            --config ViAi.LiveSummarization.enabled=${viLiveSummarizationEnabled} \
+            --config ViAi.gpu.enabled=${viGpuSummarization} \
+            --config ViAi.gpu.tolerations.key=${viGpuTolerationsKey} \
+            --config ViAi.deepstream.nodeSelector.workload=deepstream \
+            --config storage.storageClass=azurefile-csi \
+            --config storage.accessMode=ReadWriteMany \
+            --yes"
+        
+        # Add agents config if enabled
+        if [[ "$viAgentsEnabled" == "true" ]]; then
+            updateCmd="${updateCmd} \
+            --config videoIndexer.agents.enabled=${viAgentsEnabled} \
+            --config videoIndexer.agents.mode=${viAgentsMode} \
+            --config ViAi.inference.nodeSelector.workload=agents"
+        fi
+        
+        # Add RAG config if enabled
+        if [[ "$viRagEnabled" == "true" ]]; then
+            updateCmd="${updateCmd} \
+            --config videoIndexer.rag.enabled=${viRagEnabled} \
+            --config videoIndexer.rag.endpoint=${viRagEndpoint} \
+            --config videoIndexer.rag.applicationId=${viRagApplicationId} \
+            --config videoIndexer.rag.managedIdentityClientId=${viRagManagedIdentityClientId} \
+            --config videoIndexer.rag.tenantId=${viRagTenantId}"
+        fi
+        
+        # Add summarization node selector if GPU summarization is enabled
+        if [[ "$enableSummarizationGpu" == "true" ]] || [[ "$enableSummarizationCpu" == "true" ]]; then
+            updateCmd="${updateCmd} \
+            --config ViAi.summarization.nodeSelector.workload=summarization"
+        fi
+        
+        eval $updateCmd
+    else
+        echo "Creating Video Indexer extension..."
+        
+        # Build the create command
+        createCmd="az k8s-extension create \
+            --name ${extensionName} \
+            --extension-type Microsoft.videoIndexer \
+            --scope cluster \
+            --release-namespace video-indexer \
+            --cluster-name ${connectedClusterName} \
+            --resource-group ${rg} \
+            --cluster-type connectedClusters \
+            --version ${viExtensionVersion} \
+            --release-train stable \
+            --auto-upgrade-minor-version false \
+            --config videoIndexer.accountId=${viAccountId} \
+            --config videoIndexer.accountResourceId=${viAccountResourceId} \
+            --config videoIndexer.endpointUri=${viEndpointUri} \
+            --config videoIndexer.mediaUploadsEnabled=${viMediaUploadsEnabled} \
+            --config videoIndexer.liveVideoStreamEnabled=${viLiveVideoEnabled} \
+            --config ViAi.LiveSummarization.enabled=${viLiveSummarizationEnabled} \
+            --config ViAi.gpu.enabled=${viGpuSummarization} \
+            --config ViAi.gpu.tolerations.key=${viGpuTolerationsKey} \
+            --config ViAi.deepstream.nodeSelector.workload=deepstream \
+            --config storage.storageClass=azurefile-csi \
+            --config storage.accessMode=ReadWriteMany"
+        
+        # Add agents config if enabled
+        if [[ "$viAgentsEnabled" == "true" ]]; then
+            createCmd="${createCmd} \
+            --config videoIndexer.agents.enabled=${viAgentsEnabled} \
+            --config videoIndexer.agents.mode=${viAgentsMode} \
+            --config ViAi.inference.nodeSelector.workload=agents"
+        fi
+        
+        # Add RAG config if enabled
+        if [[ "$viRagEnabled" == "true" ]]; then
+            createCmd="${createCmd} \
+            --config videoIndexer.rag.enabled=${viRagEnabled} \
+            --config videoIndexer.rag.endpoint=${viRagEndpoint} \
+            --config videoIndexer.rag.applicationId=${viRagApplicationId} \
+            --config videoIndexer.rag.managedIdentityClientId=${viRagManagedIdentityClientId} \
+            --config videoIndexer.rag.tenantId=${viRagTenantId}"
+        fi
+        
+        # Add summarization node selector if GPU summarization is enabled
+        if [[ "$enableSummarizationGpu" == "true" ]] || [[ "$enableSummarizationCpu" == "true" ]]; then
+            createCmd="${createCmd} \
+            --config ViAi.summarization.nodeSelector.workload=summarization"
+        fi
+        
+        eval $createCmd
+    fi
+    
+    # Wait for extension to be ready
+    echo "Waiting for Video Indexer extension to be ready..."
+    for i in {1..60}; do
+        state=$(az k8s-extension show \
+            --name "${extensionName}" \
+            --cluster-name "${connectedClusterName}" \
+            --resource-group "${rg}" \
+            --cluster-type "connectedClusters" \
+            --query "provisioningState" -o tsv 2>/dev/null || true)
+        
+        if [[ "${state}" == "Succeeded" ]]; then
+            echo "Video Indexer extension installed successfully!"
+            break
+        elif [[ "${state}" == "Failed" ]]; then
+            echo "ERROR: Video Indexer extension installation failed."
+            echo "Check the extension status for more details:"
+            echo "  az k8s-extension show --name ${extensionName} --cluster-name ${connectedClusterName} --resource-group ${rg} --cluster-type connectedClusters"
+            break
+        fi
+        
+        echo "  Status: ${state:-unknown} (retry ${i}/60)"
+        sleep 10
+    done
+    
+    # Verify pods are running
+    echo "Verifying Video Indexer pods..."
+    kubectl get pods -n video-indexer --context ${kubectlContext}
 fi
 
 #===========================================================================================================#
@@ -600,12 +802,25 @@ if [[ "$enableSsl" == "true" ]]; then
     echo "  Certificate URI: ${sslKeyVaultCertificateUri}"
 fi
 echo ""
+echo "Video Indexer Extension:"
+echo "  Extension Name: ${extensionName}"
+echo "  Extension Version: ${viExtensionVersion}"
+echo "  Endpoint URI: ${viEndpointUri}"
+echo "  Account ID: ${viAccountId}"
+echo "  Live Video: ${viLiveVideoEnabled}"
+echo "  Media Uploads: ${viMediaUploadsEnabled}"
+echo "  Agents Enabled: ${viAgentsEnabled}"
+echo "  RAG Enabled: ${viRagEnabled}"
+echo ""
 echo "Next Steps:"
-echo "  1. Deploy the Video Indexer Arc extension"
-echo "  2. Configure your DNS to point to: ${PUBLIC_IP}"
-echo "     Or use the Azure FQDN: ${EXPECTED_FQDN}"
+echo "  1. Access the Video Indexer portal at: ${viEndpointUri}"
+echo "  2. Test live video stream processing with a camera source"
+echo "  3. Upload test media files to verify indexing"
 echo ""
 echo "To connect to the cluster:"
 echo "  kubectl config use-context ${kubectlContext}"
+echo ""
+echo "To check Video Indexer pods:"
+echo "  kubectl get pods -n video-indexer --context ${kubectlContext}"
 echo ""
 echo "================================================================"

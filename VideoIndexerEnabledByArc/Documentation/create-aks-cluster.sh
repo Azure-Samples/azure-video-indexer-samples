@@ -106,7 +106,11 @@ workerVmSize="Standard_D32a_v4"
 summarizationWorkerVmSize="Standard_F32s_v2"
 
 # GPU VM size for deepstream, agents, and summarization
-# Recommended: Standard_NC40ads_H100_v5 (1 H100 GPU) or Standard_NC24ads_A100_v4 (1 A100 GPU)
+# Options (choose based on availability and quota in your region):
+#   - Standard_NC40ads_H100_v5 (1 H100 GPU) - Best performance
+#   - Standard_NC24ads_A100_v4 (1 A100 GPU) - High performance
+#   - Standard_NV36ads_A10_v5 (1 A10 GPU) - Cost-effective
+# Check quota with: az vm list-usage --location $region -o table | grep -i "<GPU_TYPE>"
 gpuVmSize="Standard_NC40ads_H100_v5"
 
 #===========================================================================================================#
@@ -298,7 +302,8 @@ if [[ $install_aks_cluster == "true" ]]; then
             exit 1
         fi
         
-        # Add maintenance window
+        # Add maintenance windows - schedules automatic upgrades during off-peak hours
+        # Recommended for production. Adjust --utc-offset for your timezone (e.g., -08:00 for US West/PST)
         az aks maintenanceconfiguration add --resource-group $rg --cluster-name $aks \
             --name aksManagedAutoUpgradeSchedule --schedule-type Weekly \
             --day-of-week Friday --interval-weeks 3 --duration 8 \

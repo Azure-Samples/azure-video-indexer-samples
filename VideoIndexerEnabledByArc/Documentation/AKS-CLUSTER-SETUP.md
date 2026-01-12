@@ -7,10 +7,11 @@ This guide provides step-by-step instructions for creating an Azure Kubernetes S
 - [Video Indexer Arc - AKS Cluster Setup Guide](#video-indexer-arc---aks-cluster-setup-guide)
   - [Table of Contents](#table-of-contents)
   - [Prerequisites](#prerequisites)
+    - [Check GPU Quota](#check-gpu-quota)
   - [Configuration Variables](#configuration-variables)
   - [Step 1: Install CLI Tools](#step-1-install-cli-tools)
   - [Step 2: Create Resource Group](#step-2-create-resource-group)
-  - [Step 3: Create AKS Cluster](#step-3-create-aks-cluster)
+  - [Step 3: Create AKS Cluster ⏱️ ~5-10 min](#step-3-create-aks-cluster-️-5-10-min)
     - [Add Maintenance Windows (Optional but Recommended)](#add-maintenance-windows-optional-but-recommended)
     - [Get Cluster Credentials](#get-cluster-credentials)
   - [Step 4: Add Node Pools](#step-4-add-node-pools)
@@ -19,15 +20,15 @@ This guide provides step-by-step instructions for creating an Azure Kubernetes S
     - [GPU Agents Node Pool (Optional - for RAG/Visual Search)](#gpu-agents-node-pool-optional---for-ragvisual-search)
     - [GPU Summarization Node Pool (Optional)](#gpu-summarization-node-pool-optional)
     - [CPU Summarization Node Pool (Optional - Alternative to GPU)](#cpu-summarization-node-pool-optional---alternative-to-gpu)
-  - [Step 5: Install NVIDIA GPU Operator](#step-5-install-nvidia-gpu-operator)
+  - [Step 5: Install NVIDIA GPU Operator ⏱️ ~3-5 min](#step-5-install-nvidia-gpu-operator-️-3-5-min)
   - [Step 6: Configure Ingress Controller](#step-6-configure-ingress-controller)
     - [Create Public IP](#create-public-ip)
     - [Enable App Routing](#enable-app-routing)
     - [Create Nginx Ingress Controller](#create-nginx-ingress-controller)
     - [Verify Ingress Controller](#verify-ingress-controller)
-  - [Step 7: Connect to Azure Arc](#step-7-connect-to-azure-arc)
+  - [Step 7: Connect to Azure Arc ⏱️ ~3-5 min](#step-7-connect-to-azure-arc-️-3-5-min)
   - [Step 8: Install Cert Manager](#step-8-install-cert-manager)
-  - [Step 9: Deploy Video Indexer Arc Extension](#step-9-deploy-video-indexer-arc-extension)
+  - [Step 9: Deploy Video Indexer Arc Extension ⏱️ ~5-15 min](#step-9-deploy-video-indexer-arc-extension-️-5-15-min)
     - [Extension Configuration Variables](#extension-configuration-variables)
     - [Create Extension (Basic Configuration)](#create-extension-basic-configuration)
     - [Create Extension (Full Configuration with Agents and RAG)](#create-extension-full-configuration-with-agents-and-rag)
@@ -57,8 +58,37 @@ This guide provides step-by-step instructions for creating an Azure Kubernetes S
 - Azure CLI installed and logged in
 - kubectl installed
 - Helm 3.x installed
-- Sufficient Azure quota for GPU VMs in your region
+- Bash-compatible shell (WSL, Git Bash, or Azure Cloud Shell)
+- Sufficient Azure quota for GPU VMs in your region (see quota check below)
 - Azure subscription with required permissions
+
+### Check GPU Quota
+
+Before starting, verify you have sufficient GPU quota in your target region. Video Indexer Arc supports various GPU types:
+
+| GPU Type | VM Size Example | Use Case |
+|----------|-----------------|----------|
+| H100 | Standard_NC40ads_H100_v5 | Best performance |
+| A100 | Standard_NC24ads_A100_v4 | High performance |
+| A10 | Standard_NV36ads_A10_v5 | Cost-effective option |
+
+Check your quota for each GPU type you plan to use:
+
+```bash
+# Set your target region first
+export REGION="<YOUR_AZURE_REGION>"
+
+# Check H100 quota
+az vm list-usage --location $REGION -o table | grep -i H100
+
+# Check A100 quota
+az vm list-usage --location $REGION -o table | grep -i A100
+
+# Check A10 quota
+az vm list-usage --location $REGION -o table | grep -i A10
+```
+
+> ⚠️ **Important**: If your quota shows 0 available, you'll need to request a quota increase before proceeding. This can take several days.
 
 ---
 
@@ -124,7 +154,7 @@ az group create --name $RG --location $REGION --tags $TAGS
 
 ---
 
-## Step 3: Create AKS Cluster
+## Step 3: Create AKS Cluster ⏱️ ~5-10 min
 
 Get the latest AKS version and create the cluster:
 
@@ -155,6 +185,8 @@ az aks create -n $AKS -g $RG \
 ```
 
 ### Add Maintenance Windows (Optional but Recommended)
+
+Maintenance windows schedule automatic Kubernetes and node OS upgrades during specific times to minimize disruption. This is recommended for production environments to ensure updates happen during off-peak hours. For development/testing, you can skip this step. Adjust `--utc-offset` to match your timezone (e.g., `-08:00` for US West/PST).
 
 ```bash
 # Auto-upgrade maintenance window
@@ -285,7 +317,7 @@ az aks nodepool add -g $RG --cluster-name $AKS -n workloadf32 \
 
 ---
 
-## Step 5: Install NVIDIA GPU Operator
+## Step 5: Install NVIDIA GPU Operator ⏱️ ~3-5 min
 
 Install the NVIDIA GPU operator for GPU workloads:
 
@@ -395,7 +427,7 @@ kubectl get svc nginx -n app-routing-system --context ${KUBECTL_CONTEXT} -w
 
 ---
 
-## Step 7: Connect to Azure Arc
+## Step 7: Connect to Azure Arc ⏱️ ~3-5 min
 
 Connect your AKS cluster to Azure Arc:
 
@@ -436,7 +468,7 @@ az k8s-extension show \
 
 ---
 
-## Step 9: Deploy Video Indexer Arc Extension
+## Step 9: Deploy Video Indexer Arc Extension ⏱️ ~5-15 min
 
 This step deploys the Video Indexer Arc extension to your cluster.
 

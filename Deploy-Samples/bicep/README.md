@@ -39,7 +39,7 @@ Before deploying the Bicep items, please ensure that you have the following prer
 
 ### Option 2 : Deploy using Az CLI
 
-1. Open The [Template File](main.template.json) file and inspect its content.
+1. Open The [Template File](main.bicep) file and inspect its content.
 2. Open The [Parameter File](main.parameters.json) file and Fill in the required parameters (see below).
 3. Run the Following Az CLi Commands:
 
@@ -54,9 +54,8 @@ az group create -n myResourceGroup -l eastus
 ```shell
 az deployment group create \
 --resource-group myResourceGroup \
---template-file .\main.template.json \
---parameters=.\main.parameters.json  
-
+--template-file main.bicep \
+--parameters main.parameters.json 
 ```
 
 ## Parameters

@@ -3,10 +3,10 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "videoIndexerAccountName": {
-      "value": "<Video Indexer Account Name>"
+      "value": "VIDIND1235"
     },
     "storageAccountName": {
-      "value": "<Azure Storage Account Name>"
+      "value": "vidstr1235"
     }
   }
 }

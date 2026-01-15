@@ -1,5 +1,15 @@
 # Video Indexer Arc Extension
 
+> **📚 New Comprehensive Guide Available!**
+>
+> For a detailed, step-by-step guide on creating an AKS cluster with GPU support and deploying the Video Indexer Arc extension, see:
+> - **[AKS-CLUSTER-SETUP.md](./AKS-CLUSTER-SETUP.md)** - Complete setup guide with output examples
+> - **[create-aks-cluster.sh](./create-aks-cluster.sh)** - Automated deployment script
+>
+> The guide includes GPU quota checking, troubleshooting tips, and support for live video processing.
+
+---
+
 ## About
 
 Video Indexer Arc Enabled Solution is an Azure Arc Extension Enabled Service aimed at running Video and Audio Analysis on Edge Devices. The solution is designed to run on Azure Arc-enabled Kubernetes and supports many video formats, including MP4 and four additional common formats. The solution supports many languages in all basic audio-related models and assumes that one VI resource is mapped to one extension.

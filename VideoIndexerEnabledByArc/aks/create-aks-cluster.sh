@@ -450,7 +450,7 @@ if [[ $install_aks_cluster == "true" ]]; then
     
     # Install GPU operator with default values from NVIDIA
     helm upgrade -i gpu-operator --wait -n gpu-operator --create-namespace \
-        --version v25.3.2 \
+        --version v25.10.01 \
         nvidia/gpu-operator --kube-context ${kubectlContext}
     echo "NVIDIA GPU Operator installed."
 

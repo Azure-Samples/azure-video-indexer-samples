@@ -550,7 +550,7 @@ helm repo update
 
 # Install GPU operator
 helm upgrade -i gpu-operator --wait -n gpu-operator --create-namespace \
-    --version v25.3.2 \
+    --version v25.10.01 \
     nvidia/gpu-operator --kube-context ${KUBECTL_CONTEXT}
 ```
 

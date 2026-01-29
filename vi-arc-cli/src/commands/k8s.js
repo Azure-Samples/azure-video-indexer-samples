@@ -4,7 +4,8 @@
  */
 
 import { Command } from 'commander';
-import { prompt } from 'enquirer';
+import enquirer from 'enquirer';
+const { prompt } = enquirer;
 import chalk from 'chalk';
 import boxen from 'boxen';
 import Table from 'cli-table3';

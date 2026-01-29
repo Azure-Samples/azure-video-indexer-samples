@@ -10,7 +10,17 @@
   "scripts": {
     "start": "node src/index.js",
     "lint": "eslint src/",
-    "test": "echo \"No tests yet\" && exit 0"
+    "test": "echo \"No tests yet\" && exit 0",
+    "build": "pkg . --out-path dist",
+    "build:win": "pkg . --targets node18-win-x64 --out-path dist",
+    "build:linux": "pkg . --targets node18-linux-x64 --out-path dist",
+    "build:mac": "pkg . --targets node18-macos-x64 --out-path dist",
+    "build:all": "pkg . --targets node18-win-x64,node18-linux-x64,node18-macos-x64 --out-path dist"
+  },
+  "pkg": {
+    "scripts": "src/**/*.js",
+    "assets": ["package.json"],
+    "outputPath": "dist"
   },
   "keywords": [
     "azure",

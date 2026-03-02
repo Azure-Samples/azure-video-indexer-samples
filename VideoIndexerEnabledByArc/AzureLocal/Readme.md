@@ -17,9 +17,9 @@ TL;DR:
 export RG="YOUR_RESOURCE_GROUP_NAME"
 export CLUSTER_NAME="YOUR_CLUSTER_NAME"
 ```
-- Install Azure IoT Operations dependencies (for Cert Manager)
+- Install Cert Manager
 ```bash
-az k8s-extension create --cluster-name "${CLUSTER_NAME}" --name "${CLUSTER_NAME}-certmgr" --resource-group "${RG}" --cluster-type connectedClusters --extension-type microsoft.iotoperations.platform --scope cluster --release-namespace cert-manager
+az k8s-extension create --cluster-name "${CLUSTER_NAME}" --name "azure-cert-manager" --resource-group "${RG}" --cluster-type connectedClusters --extension-type Microsoft.CertManagement --scope cluster
 ```
 -  Install the Azure Container Storage enabled by Azure Arc extension
 ```bash

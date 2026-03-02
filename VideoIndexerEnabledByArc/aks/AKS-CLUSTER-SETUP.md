@@ -694,16 +694,15 @@ Connected
 Install the cert-manager extension required for Video Indexer Arc:
 
 ```bash
-CM_EXT_NAME="${AKS}-certmgr"
+CM_EXT_NAME="azure-cert-manager"
 
 az k8s-extension create \
     --cluster-name "${CONNECTED_CLUSTER}" \
     --name "${CM_EXT_NAME}" \
     --resource-group "${RG}" \
     --cluster-type connectedClusters \
-    --extension-type microsoft.iotoperations.platform \
-    --scope cluster \
-    --release-namespace cert-manager
+    --extension-type Microsoft.CertManagement \
+    --scope cluster
 
 # Wait for extension to be ready
 az k8s-extension show \

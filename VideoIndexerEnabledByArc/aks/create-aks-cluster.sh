@@ -564,29 +564,28 @@ EOF
     #======== Install Cert Manager Extension =====#
     #=============================================#
     echo "Installing cert-manager extension..."
-    cm_ext_name="${aks}-certmgr"
-    
+    cm_ext_name="azure-cert-manager"
+
     cm_exists=$(
         az k8s-extension list \
             --cluster-name "${connectedClusterName}" \
             --resource-group "${rg}" \
             --cluster-type connectedClusters \
-            --query "[?name=='${cm_ext_name}' || (extensionType=='microsoft.iotoperations.platform' && releaseNamespace=='cert-manager')].name" \
-            -o tsv
+            --query "[?name=='${cm_ext_name}' || extensionType=='Microsoft.CertManagement'].name" \
+            -o tsv 2>/dev/null || true
     )
-    
+
     if [[ -n "${cm_exists}" ]]; then
-        echo "cert-manager extension already installed. Skipping."
+        echo "cert-manager extension (Microsoft.CertManagement) already installed (${cm_exists}). Skipping."
     else
         az k8s-extension create \
             --cluster-name "${connectedClusterName}" \
             --name "${cm_ext_name}" \
             --resource-group "${rg}" \
             --cluster-type connectedClusters \
-            --extension-type microsoft.iotoperations.platform \
-            --scope cluster \
-            --release-namespace cert-manager
-        
+            --extension-type Microsoft.CertManagement \
+            --scope cluster
+
         # Wait for extension to be ready
         echo "Waiting for cert-manager extension..."
         for i in {1..30}; do
